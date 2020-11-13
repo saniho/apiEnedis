@@ -1,0 +1,10 @@
+**A voir**
+
+
+**Done**
+v 1.0.1.0
+
+gestion synchro erronée( exemple le matin pas de donnée sur la veille )
+gestion pour eviter de synchoniser trop souvent
+
+gestion cas ou le contrat est récent

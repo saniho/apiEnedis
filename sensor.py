@@ -11,6 +11,7 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_TOKEN,
     CONF_CODE,
+    CONF_DELAY,
     CONF_SCAN_INTERVAL,
     ATTR_ATTRIBUTION,
 )
@@ -26,13 +27,17 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-SCAN_INTERVAL = timedelta(seconds=1800)
+VERSION = "1.0.1.0"
+
+SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
+DEFAUT_DELAI_INTERVAL = timedelta(seconds=3600) # interrogation faite toutes les heures
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_TOKEN): cv.string,
-        vol.Optional(CONF_CODE): cv.string,
+        vol.Required(CONF_CODE): cv.string,
         vol.Optional(CONF_NAME): cv.string,
+        vol.Optional(CONF_DELAY, default=DEFAUT_DELAI_INTERVAL): cv.positive_int,
     }
 )
 
@@ -46,6 +51,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     token = config.get(CONF_TOKEN)
     code = config.get(CONF_CODE)
     update_interval = config.get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
+    delai_interval = config.get(CONF_DELAY)
 
     try:
         session = []
@@ -53,7 +59,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         _LOGGER.exception("Could not run my First Extension")
         return False
     _LOGGER.warning("passe ici %s %s " %( token, code ))
-    myDataEnedis = apiEnedis.apiEnedis( token, code )
+    myDataEnedis = apiEnedis.apiEnedis( token, code, delai_interval )
     add_entities([myEnedis(session, name, update_interval, myDataEnedis )], True)
     # on va gerer  un element par heure ... maintenant
 
@@ -90,17 +96,24 @@ class myEnedis(Entity):
         status_counts = defaultdict(int)
 
         _LOGGER.warning("call update")
-        status_counts["lastSynchro"] = datetime.datetime.now()
-        status_counts['yesterday'] = self._myDataEnedis.getYesterday()
-        status_counts['last_month'] = self._myDataEnedis.getLastMonth()
-        status_counts['current_month'] = self._myDataEnedis.getCurrentMonth()
-        status_counts['last_year'] = self._myDataEnedis.getLastYear()
-        status_counts['current_year'] = self._myDataEnedis.getCurrentYear()
-        #status_counts['yesterday'] = ""
-        self._attributes = {ATTR_ATTRIBUTION: ""}
-        self._attributes.update(status_counts)
-        ## pour debloquer
-        self._state = " "
+        # gestion du None et du non update des valeurs precedentes
+        self._myDataEnedis.update()
+        if ( self._myDataEnedis.getStatusLastCall()):# update avec statut ok
+            status_counts["lastSynchro"] = datetime.datetime.now()
+            status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
+            status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
+            status_counts['yesterday'] = self._myDataEnedis.getYesterday()
+            status_counts['last_month'] = self._myDataEnedis.getLastMonth()
+            status_counts['current_month'] = self._myDataEnedis.getCurrentMonth()
+            status_counts['last_year'] = self._myDataEnedis.getLastYear()
+            status_counts['current_year'] = self._myDataEnedis.getCurrentYear()
+            #status_counts['yesterday'] = ""
+            self._attributes = {ATTR_ATTRIBUTION: ""}
+            self._attributes.update(status_counts)
+            ## pour debloquer
+            self._state = status_counts['yesterday']
+        else:
+            return
 
     @property
     def device_state_attributes(self):
