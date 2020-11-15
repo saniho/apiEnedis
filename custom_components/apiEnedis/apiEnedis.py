@@ -157,9 +157,8 @@ class apiEnedis:
                 niemejour += 1
                 days = {}
                 days[ 'date'] = x[ 'date']
-                days[ 'jourName'] = x[ 'date']
                 days[ 'niemejour'] = niemejour
-                days[ 'value'] = x[ 'value']
+                days[ 'value'] = int( x[ 'value'] )
                 dicoLast7days.append(days)
             return dicoLast7days
 
@@ -312,7 +311,7 @@ class apiEnedis:
 def main():
     import configparser
     mon_conteneur = configparser.ConfigParser()
-    mon_conteneur.read("../myCredential/security.txt")
+    mon_conteneur.read("../../../myCredential/security.txt")
     token = mon_conteneur['ENEDIS']['TOKEN']
     PDL_ID = mon_conteneur['ENEDIS']['CODE']
     myDataEnedis = apiEnedis( token, PDL_ID, delai = 10 ) # on fait un update 10 secondes après le dernier ok
