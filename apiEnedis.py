@@ -49,6 +49,20 @@ class apiEnedis:
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
         return self.getDataPeriod( hier, cejour )
 
+    def CallgetCurrentWeek(self):
+        import datetime
+        today = datetime.date.today()
+        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        firstdateofweek = (datetime.date.today()-datetime.timedelta(days=datetime.datetime.today().weekday() % 7)).strftime("%Y-%m-%d")
+        return self.getDataPeriod( firstdateofweek, cejour)
+
+    def CallgetLastWeek(self):
+        import datetime
+        today = datetime.date.today()
+        start_date = today + datetime.timedelta(-today.weekday(), weeks=-1)
+        end_date = today + datetime.timedelta(-today.weekday())
+        return self.getDataPeriod( start_date, end_date)
+
     def CallgetLastMonth(self):
         import datetime
         today = datetime.date.today()
@@ -103,6 +117,22 @@ class apiEnedis:
 
     def getYesterday(self):
         return self._yesterday
+
+    def getCurrentWeek(self):
+        data = self.CallgetCurrentWeek()
+        tot = 0
+        for x in data["meter_reading"]["interval_reading"]:
+            tot += int(x["value"])
+        return tot
+
+    def getLastWeek(self):
+        data = self.CallgetLastWeek()
+        tot = 0
+        for x in data["meter_reading"]["interval_reading"]:
+            tot += int(x["value"])
+        return tot
+
+
 
     def updateYesterday(self, data=None):
         if ( data == None ): data = self.CallgetYesterday()

@@ -107,6 +107,9 @@ class myEnedis(Entity):
             status_counts['current_month'] = self._myDataEnedis.getCurrentMonth()
             status_counts['last_year'] = self._myDataEnedis.getLastYear()
             status_counts['current_year'] = self._myDataEnedis.getCurrentYear()
+            status_counts['current_week'] = self._myDataEnedis.getCurrentWeek()
+            status_counts['last_week'] = self._myDataEnedis.getLastWeek()
+
             #status_counts['yesterday'] = ""
             self._attributes = {ATTR_ATTRIBUTION: ""}
             self._attributes.update(status_counts)
