@@ -27,10 +27,10 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-VERSION = "1.0.1.0"
+__VERSION__ = "1.0.1.2"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
-DEFAUT_DELAI_INTERVAL = timedelta(seconds=3600) # interrogation faite toutes les heures
+DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -46,7 +46,7 @@ from . import apiEnedis
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the platform."""
-    _LOGGER.warning("passe ici - 1")
+    _LOGGER.warning("myEnedis version %s " %( __VERSION__))
     name = config.get(CONF_NAME)
     token = config.get(CONF_TOKEN)
     code = config.get(CONF_CODE)
@@ -58,8 +58,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     except :
         _LOGGER.exception("Could not run my First Extension")
         return False
-    _LOGGER.warning("passe ici %s %s " %( token, code ))
-    myDataEnedis = apiEnedis.apiEnedis( token, code, delai_interval )
+    #_LOGGER.warning("passe ici %s %s " %( token, code ))
+    myDataEnedis = apiEnedis.apiEnedis( token, code, delai_interval, _LOGGER )
     add_entities([myEnedis(session, name, update_interval, myDataEnedis )], True)
     # on va gerer  un element par heure ... maintenant
 
@@ -103,10 +103,13 @@ class myEnedis(Entity):
             status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
             status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
             status_counts['yesterday'] = self._myDataEnedis.getYesterday()
+            status_counts['last_week'] = self._myDataEnedis.getLastWeek()
+            status_counts['current_week'] = self._myDataEnedis.getCurrentWeek()
             status_counts['last_month'] = self._myDataEnedis.getLastMonth()
             status_counts['current_month'] = self._myDataEnedis.getCurrentMonth()
             status_counts['last_year'] = self._myDataEnedis.getLastYear()
             status_counts['current_year'] = self._myDataEnedis.getCurrentYear()
+            status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
             #status_counts['yesterday'] = ""
             self._attributes = {ATTR_ATTRIBUTION: ""}
             self._attributes.update(status_counts)

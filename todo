@@ -1,10 +1,15 @@
 **A voir**
 
+gestion si token ou PDL inconnu 
+
+change delai_defaut à plutot 12h( 2/3 fois par jours un check ) ?
+
+dans le sensor, mettre la consommation sur 7 jours glissant, pour integration à une card après ?
+
+% vs l'année passé
+
+% vs le mois de l'année passé
+
+% vs le mois precedent ?
 
 **Done**
-v 1.0.1.0
-
-gestion synchro erronée( exemple le matin pas de donnée sur la veille )
-gestion pour eviter de synchoniser trop souvent
-
-gestion cas ou le contrat est récent
