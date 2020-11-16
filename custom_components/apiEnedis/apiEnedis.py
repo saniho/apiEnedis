@@ -14,6 +14,7 @@ class apiEnedis:
         self._currentYear = None
         self._lastWeek = None
         self._last7Days = None
+        self._lastMonthLastYear = None
         self._currentWeek = None
         self._yesterday = None
         self._lastUpdate = None
@@ -90,7 +91,10 @@ class apiEnedis:
         today = datetime.date.today()
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
         firstdateofweek = (datetime.date.today()-datetime.timedelta(days=datetime.datetime.today().weekday() % 7)).strftime("%Y-%m-%d")
-        return self.getDataPeriod( firstdateofweek, cejour)
+        if ( cejour == firstdateofweek ):
+            return 0 # cas lundi = premier jour de la semaine et donc rien de dispo
+        else:
+            return self.getDataPeriod( firstdateofweek, cejour)
 
     def CallgetLast7Days(self):
         import datetime
@@ -115,6 +119,15 @@ class apiEnedis:
         debCurrentMonth = first.strftime("%Y-%m-01")
         return self.getDataPeriod( debPreviousMonth, debCurrentMonth )
 
+    def CallgetLastMonthLastYear(self):
+        import datetime
+        today = datetime.date.today()
+        first = today.replace(day=1, year=today.year-1)
+        lastMonthLastYear = first - datetime.timedelta(days=1)
+        debPreviousMonth = lastMonthLastYear.strftime("%Y-%m-01")
+        debCurrentMonth = first.strftime("%Y-%m-01")
+        return self.getDataPeriod( debPreviousMonth, debCurrentMonth )
+
 
     def CallgetLastYear(self):
         import datetime
@@ -130,7 +143,10 @@ class apiEnedis:
         today = datetime.date.today()
         debCurrentMonth = today.strftime("%Y-%m-01")
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
-        return self.getDataPeriod( debCurrentMonth, cejour)
+        if ( debCurrentMonth != cejour ):
+           return self.getDataPeriod( debCurrentMonth, cejour)
+        else:
+            return 0
 
     def CallgetCurrentYear(self):
         import datetime
@@ -175,9 +191,14 @@ class apiEnedis:
         self.myLog("--updateYesterday --")
         if ( data == None ): data = self.CallgetYesterday()
         self.myLog("updateYesterday : data %s" %(data))
+        self.checkData( data )
         self._yesterday = self.analyseValue( data )
 
     def checkDataPeriod(self, dataAnswer ):
+        if ("error" in dataAnswer.keys()):
+            raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
+
+    def checkData(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
             raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
 
@@ -189,6 +210,15 @@ class apiEnedis:
         self.myLog("updateLastMonth : data %s" %(data))
         self.checkDataPeriod(data)
         self._lastMonth = self.analyseValueAndAdd( data )
+
+    def getLastMonthLastYear(self):
+        return self._lastMonthLastYear
+    def updateLastMonthLastYear(self, data=None):
+        self.myLog("--updateLastMonthLastYear --")
+        if ( data == None ): data = self.CallgetLastMonthLastYear()
+        self.myLog("updateLastMonthLastYear : data %s" %(data))
+        self.checkDataPeriod(data)
+        self._lastMonthLastYear = self.analyseValueAndAdd( data )
 
     def getLastWeek(self):
         return self._lastWeek
@@ -215,8 +245,11 @@ class apiEnedis:
         self.myLog("--updateCurrentWeek --")
         if ( data == None ): data = self.CallgetCurrentWeek()
         self.myLog("updateCurrentWeek : data %s" %(data))
-        self.checkDataPeriod(data)
-        self._currentWeek = self.analyseValueAndAdd( data )
+        if ( data != 0 ):
+            self.checkDataPeriod(data)
+            self._currentWeek = self.analyseValueAndAdd( data )
+        else:
+            self._currentWeek = data
 
     def getCurrentMonth(self):
         return self._currentMonth
@@ -224,9 +257,11 @@ class apiEnedis:
         self.myLog("--updateCurrentMonth --")
         if ( data == None ): data = self.CallgetCurrentMonth()
         self.myLog("updateCurrentMonth : data %s" %(data))
-        self.checkDataPeriod(data)
-        self._currentMonth = self.analyseValueAndAdd( data )
-
+        if ( data != 0 ):
+            self.checkDataPeriod(data)
+            self._currentMonth = self.analyseValueAndAdd( data )
+        else:
+            self._currentMonth = data
     def getLastYear(self):
         return self._lastYear
     def updateLastYear(self, data=None):
@@ -286,6 +321,7 @@ class apiEnedis:
                     self.updateLastMonth()
                     self.updateCurrentYear()
                     self.updateLastYear()
+                    self.updateLastMonthLastYear()
                     self.updateTimeLastCall()
                     self.updateStatusLastCall( True )
                 except Exception as inst:
@@ -299,7 +335,10 @@ class apiEnedis:
                 if ( inst.args == ("call", None)):
                     print("Erreur call")
                     # Erreur lors du call...
+                    # Erreur lors du call...
+                    self.updateTimeLastCall()
                     self.updateStatusLastCall( False )
+                    self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
                 else:
                     print("Erreur inconnue call ERROR ", inst)
                     print("Erreur last answer", inst)
@@ -315,13 +354,20 @@ def main():
     token = mon_conteneur['ENEDIS']['TOKEN']
     PDL_ID = mon_conteneur['ENEDIS']['CODE']
     myDataEnedis = apiEnedis( token, PDL_ID, delai = 10 ) # on fait un update 10 secondes après le dernier ok
+
+    " Gestion du cas ou la requete yesrday ne donne rien"
+    #data = {'error': 'result_400', 'enedis_return': {'error': 'Invalid_request', 'error_description': 'Start date should be before end date.', 'error_uri': 'https://bluecoder.enedis.fr/api-doc/consulter-souscrire'}}
+    #myDataEnedis.updateYesterday( data )
+    #data = {'error': 'result_404', 'enedis_return': {'error': 'no_data_found', 'error_description': 'no measure found for this usage point', 'error_uri': 'https://bluecoder.enedis.fr/api-doc/consulter-souscrire'}}
+    #myDataEnedis.updateYesterday(data)
+    #print(1/0)
+    #myDataEnedis.updateCurrentWeek()
+    #myDataEnedis.updateCurrentMonth()
     myDataEnedis.update()
-
-    #myDataEnedis.updateLast7Days()
-
     print( myDataEnedis.getYesterday(),
            myDataEnedis.getCurrentMonth(),
            myDataEnedis.getLastMonth(),
+           myDataEnedis.getLastMonthLastYear(),
            myDataEnedis.getCurrentWeek(),
            myDataEnedis.getLastWeek(),
            myDataEnedis.getLast7Days(),

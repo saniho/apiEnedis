@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.2.0"
+__VERSION__ = "1.0.2.1"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
@@ -97,6 +97,7 @@ class myEnedis(Entity):
 
         _LOGGER.warning("call update")
         # gestion du None et du non update des valeurs precedentes
+        status_counts["version"] = __VERSION__
         self._myDataEnedis.update()
         if ( self._myDataEnedis.getStatusLastCall()):# update avec statut ok
             status_counts["lastSynchro"] = datetime.datetime.now()
@@ -108,12 +109,27 @@ class myEnedis(Entity):
             last7days = self._myDataEnedis.getLast7Days()
             for day in last7days:
                 status_counts['day_%s' %(day["niemejour"])] = day["value"]
+            status_counts['daily'] = [(day["value"]*0.001) for day in last7days]
+
+            status_counts["halfhourly"] = []
+            status_counts["peak_hours"] = 0
+            status_counts["offpeak_hours"] = 0
+            status_counts["peak_offpeak_percent"] = 0
+            status_counts["daily_cost"] = 0
             status_counts['current_week'] = self._myDataEnedis.getCurrentWeek()
             status_counts['last_month'] = self._myDataEnedis.getLastMonth()
             status_counts['current_month'] = self._myDataEnedis.getCurrentMonth()
             status_counts['last_year'] = self._myDataEnedis.getLastYear()
             status_counts['current_year'] = self._myDataEnedis.getCurrentYear()
             status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
+            if (( self._myDataEnedis.getLastMonthLastYear() != None) and
+                    (self._myDataEnedis.getLastMonthLastYear() != 0) and
+                    (self._myDataEnedis.getLastMonth() != None)):
+                status_counts["monthly_evolution"] = \
+                    (( self._myDataEnedis.getLastMonth() - self._myDataEnedis.getLastMonthLastYear())
+                    / self._myDataEnedis.getLastMonthLastYear() ) *100
+            else:
+                status_counts["monthly_evolution"] = 0
             #status_counts['yesterday'] = ""
             self._attributes = {ATTR_ATTRIBUTION: ""}
             self._attributes.update(status_counts)
