@@ -10,18 +10,30 @@ exemple de configuration sensors.yaml
   scan_interval: 3600
 ```
 
+![picture](img/sensor_v1_0_2_2.png)
+
 ![picture](img/sensor_v2.png)
 
 
 VERSION
+**1.0.2.2**
 
-**1.0.0.0**
+ajout de la gestion des heures HC/HP, pour cela indiquer dans votre sensor yalm les tranches horaires
 
-premiere version
+ajout gestion du calcul du prix sur la veille
 
-**1.0.1.0**
+**changement du nom du sensor dans le sensor.yaml, myEnedis remplace apiEnedis**
 
-ajout de la remontée yesterday au niveau du state pour permettre l'utilisation par certaines card( graphique par exemple )
+**1.0.2.0**
+
+integration à HACS
+
+**changement du nom du sensor dans le sensor.yaml, myEnedis remplace apiEnedis**
+**1.0.1.2**
+
+Delay est maintenant facultatif dans sensor.yaml
+
+ajout de la consmmation last week, and current week
 
 **1.0.1.1**
 
@@ -29,14 +41,11 @@ gestion des contrats de moins de 2 ans
 
 remonté d'un statut indiquant l'erreur remonté par la gateway s'il y a erreur
 
-**1.0.1.2**
+**1.0.1.0**
 
-Delay est maintenant facultatif dans sensor.yaml
+ajout de la remontée yesterday au niveau du state pour permettre l'utilisation par certaines card( graphique par exemple )
 
-ajout de la consmmation last week, and current week
+**1.0.0.0**
 
-**1.0.2.0**
+premiere version
 
-integration à HACS
-
-**changement du nom du sensor dans le sensor.yaml, myEnedis remplace apiEnedis**

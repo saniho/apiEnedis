@@ -27,17 +27,25 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.2.1"
+__VERSION__ = "1.0.2.2"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
+DEFAUT_HEURES_CREUSES = "[]"
+DEFAUT_COST = "0.0"
+HEURES_CREUSES = "heures_creuses"
+HC_COUT = "hc_cout"
+HP_COUT = "hp_cout"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_TOKEN): cv.string,
         vol.Required(CONF_CODE): cv.string,
         vol.Optional(CONF_NAME): cv.string,
+        vol.Optional(HEURES_CREUSES, default=DEFAUT_HEURES_CREUSES): cv.string,
         vol.Optional(CONF_DELAY, default=DEFAUT_DELAI_INTERVAL): cv.positive_int,
+        vol.Optional(HC_COUT, default=DEFAUT_COST): cv.string,
+        vol.Optional(HP_COUT, default=DEFAUT_COST): cv.string,
     }
 )
 
@@ -50,6 +58,11 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     name = config.get(CONF_NAME)
     token = config.get(CONF_TOKEN)
     code = config.get(CONF_CODE)
+    #[['00:30', '07:00'], ['10:00', "11:30"]]
+    heuresCreusesCh = config.get(HEURES_CREUSES)
+    heuresCreuses =eval(heuresCreusesCh)
+    HCCost = float(config.get(HC_COUT))
+    HPCost = float(config.get(HP_COUT))
     update_interval = config.get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
     delai_interval = config.get(CONF_DELAY)
 
@@ -59,7 +72,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         _LOGGER.exception("Could not run my First Extension")
         return False
     #_LOGGER.warning("passe ici %s %s " %( token, code ))
-    myDataEnedis = apiEnedis.apiEnedis( token, code, delai_interval, _LOGGER )
+    myDataEnedis = apiEnedis.apiEnedis( token, code, delai_interval, \
+        heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER )
     add_entities([myEnedis(session, name, update_interval, myDataEnedis )], True)
     # on va gerer  un element par heure ... maintenant
 
@@ -112,10 +126,16 @@ class myEnedis(Entity):
             status_counts['daily'] = [(day["value"]*0.001) for day in last7days]
 
             status_counts["halfhourly"] = []
-            status_counts["peak_hours"] = 0
-            status_counts["offpeak_hours"] = 0
-            status_counts["peak_offpeak_percent"] = 0
-            status_counts["daily_cost"] = 0
+            status_counts["offpeak_hours"] = self._myDataEnedis.getYesterdayHC() * 0.001 * 0.5
+            status_counts["peak_hours"] = self._myDataEnedis.getYesterdayHP() * 0.001 * 0.5
+            if (( self._myDataEnedis.getYesterdayHC() + self._myDataEnedis.getYesterdayHP() ) != 0 ):
+                status_counts["peak_offpeak_percent"] = ( self._myDataEnedis.getYesterdayHP()* 100 )/ \
+                ( self._myDataEnedis.getYesterdayHC() + self._myDataEnedis.getYesterdayHP() )
+            else:
+                status_counts["peak_offpeak_percent"] = 0
+            status_counts["yesterday_HC_cost"] = 0.001 * self._myDataEnedis.getHCCost( self._myDataEnedis.getYesterdayHC())
+            status_counts["yesterday_HP_cost"] = 0.001 * self._myDataEnedis.getHPCost( self._myDataEnedis.getYesterdayHP())
+            status_counts["daily_cost"] = status_counts["yesterday_HC_cost"] + status_counts["yesterday_HP_cost"]
             status_counts['current_week'] = self._myDataEnedis.getCurrentWeek()
             status_counts['last_month'] = self._myDataEnedis.getLastMonth()
             status_counts['current_month'] = self._myDataEnedis.getCurrentMonth()
