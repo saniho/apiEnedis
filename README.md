@@ -6,7 +6,10 @@ exemple de configuration sensors.yaml
 # enedis
 - platform: myEnedis
   token: <<votreToken>>
-  code: <<votrecode>>
+  code: <<votrecode>>  
+  heures_creuses: "[['00:30', '07:00'], ['10:00', '11:30']]"
+  hc_cout: 0.1230
+  hp_cout: 0.1580
   scan_interval: 3600
 ```
 
