@@ -19,6 +19,10 @@ exemple de configuration sensors.yaml
 
 
 VERSION
+**1.0.2.3**
+
+correction bug
+
 **1.0.2.2**
 
 ajout de la gestion des heures HC/HP, pour cela indiquer dans votre sensor yalm les tranches horaires

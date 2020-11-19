@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.2.2"
+__VERSION__ = "1.0.2.3"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures

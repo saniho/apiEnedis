@@ -27,6 +27,8 @@ class apiEnedis:
         self._heuresCreuses = heuresCreuses
         self._heuresCreusesCost = heuresCreusesCost
         self._heuresPleinesCost = heuresPleinesCost
+        self._HC = 0
+        self._HP = 0
         if ( log == None ):
             self._log = logging.getLogger(__nameMyEnedis__)
             self._log.setLevel(logging.DEBUG)
@@ -153,7 +155,7 @@ class apiEnedis:
         debCurrentMonth = today.strftime("%Y-%m-01")
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
         if ( debCurrentMonth != cejour ):
-           return self.getDataPeriod( debCurrentMonth, cejour)
+            return self.getDataPeriod( debCurrentMonth, cejour)
         else:
             return 0
 
@@ -172,6 +174,7 @@ class apiEnedis:
             for x in data["meter_reading"]["interval_reading"]:
                 tot += int(x["value"])
             return tot
+
     def analyseValueAndMadeDico(self, data):
         dicoLast7days = []
         if ( data == None ): #pas de valeur
@@ -185,7 +188,7 @@ class apiEnedis:
                 days[ 'niemejour'] = niemejour
                 days[ 'value'] = int( x[ 'value'] )
                 dicoLast7days.append(days)
-            return dicoLast7days
+        return dicoLast7days
 
     def analyseValue(self, data):
         if ( data == None ): #pas de valeur
@@ -222,12 +225,12 @@ class apiEnedis:
 
             if ( heurePleine):
                 self._HP += int(x["value"])
-                print( heure, heurePleine, x[ "value" ], self._HP)
+                #print( heure, heurePleine, x[ "value" ], self._HP)
             else:
                 self._HC += int(x["value"])
-                print( heure, heurePleine, x[ "value" ], self._HC)
-        print(self._HC)
-        print(self._HP)
+                #print( heure, heurePleine, x[ "value" ], self._HC)
+        #print(self._HC)
+        #print(self._HP)
 
     def updateDataYesterdayHCHP(self, data=None):
         self.myLog("--updateDataHCHP --")
