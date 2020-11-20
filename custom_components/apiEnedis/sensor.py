@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.2.3"
+__VERSION__ = "1.0.2.5"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
@@ -60,7 +60,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     code = config.get(CONF_CODE)
     #[['00:30', '07:00'], ['10:00', "11:30"]]
     heuresCreusesCh = config.get(HEURES_CREUSES)
-    heuresCreuses =eval(heuresCreusesCh)
+    heuresCreuses = eval(heuresCreusesCh)
     HCCost = float(config.get(HC_COUT))
     HPCost = float(config.get(HP_COUT))
     update_interval = config.get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
@@ -87,6 +87,7 @@ class myEnedis(Entity):
         self._myDataEnedis = myDataEnedis
         self._attributes = None
         self._state = None
+        self._unit = "kWh"
         self.update = Throttle(interval)(self._update)
 
     @property
@@ -102,7 +103,7 @@ class myEnedis(Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement of this entity, if any."""
-        return ""
+        return self._unit
 
     def _update(self):
         """Update device state."""
@@ -154,7 +155,7 @@ class myEnedis(Entity):
             self._attributes = {ATTR_ATTRIBUTION: ""}
             self._attributes.update(status_counts)
             ## pour debloquer
-            self._state = status_counts['yesterday']
+            self._state = status_counts['yesterday']*0.001
         else:
             return
 

@@ -220,9 +220,14 @@ class apiEnedis:
             heure = x["date"][11:16]
             heurePleine = True
             for heureCreuse in self._heuresCreuses:
+                try: # gestion du 00:00 en heure de fin de creneau
+                    if ( heure == {"24:00":"00:00"}[heureCreuse[1]]):
+                        heurePleine = False
+                except:
+                    pass
                 if (heureCreuse[0] < heure) and (heure <= heureCreuse[1]):
                     heurePleine = False
-
+            #print ( heure, "==>", heurePleine)
             if ( heurePleine):
                 self._HP += int(x["value"])
                 #print( heure, heurePleine, x[ "value" ], self._HP)
@@ -365,9 +370,9 @@ class apiEnedis:
                     self.updateCurrentMonth()
                     self.updateLastMonth()
                     self.updateCurrentYear()
+                    self.updateDataYesterdayHCHP()
                     self.updateLastYear()
                     self.updateLastMonthLastYear()
-                    self.updateDataYesterdayHCHP()
                     self.updateTimeLastCall()
                     self.updateStatusLastCall( True )
                 except Exception as inst:
@@ -399,10 +404,17 @@ def main():
     mon_conteneur.read("../../../myCredential/security.txt")
     token = mon_conteneur['ENEDIS']['TOKEN']
     PDL_ID = mon_conteneur['ENEDIS']['CODE']
+
+
+    heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
     myDataEnedis = apiEnedis( token=token, PDL_ID=PDL_ID, delai = 10, \
-        heuresCreuses=[['00:30','07:00'], ['10:00', "11:30"]],
+        heuresCreuses=eval(heureCreusesCh),
         heuresCreusesCost=0.20,
-        heuresPleinesCost=1.30) # on fait un update 10 secondes après le dernier ok
+        heuresPleinesCost=1.30)
+    #myDataEnedis = apiEnedis( token=token, PDL_ID=PDL_ID, delai = 10, \
+    #    heuresCreuses=[],
+    #    heuresCreusesCost=0.20,
+    #    heuresPleinesCost=1.30) # on fait un update 10 secondes après le dernier ok
 
     " Gestion du cas ou la requete yesrday ne donne rien"
     #data = {'error': 'result_400', 'enedis_return': {'error': 'Invalid_request', 'error_description': 'Start date should be before end date.', 'error_uri': 'https://bluecoder.enedis.fr/api-doc/consulter-souscrire'}}
@@ -410,17 +422,17 @@ def main():
     #data = {'error': 'result_404', 'enedis_return': {'error': 'no_data_found', 'error_description': 'no measure found for this usage point', 'error_uri': 'https://bluecoder.enedis.fr/api-doc/consulter-souscrire'}}
     #myDataEnedis.updateYesterday(data)
     #data = {"meter_reading":{"usage_point_id":"25869464529695","start":"2020-11-12","end":"2020-11-13","quality":"BRUT","interval_reading":[{"value":"1142","date":"2020-11-12 00:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"1854","date":"2020-11-12 01:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"3366","date":"2020-11-12 01:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"4224","date":"2020-11-12 02:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"4132","date":"2020-11-12 02:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"3898","date":"2020-11-12 03:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"2852","date":"2020-11-12 03:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"826","date":"2020-11-12 04:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"986","date":"2020-11-12 04:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"1722","date":"2020-11-12 05:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"1742","date":"2020-11-12 05:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"716","date":"2020-11-12 06:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"756","date":"2020-11-12 06:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"1502","date":"2020-11-12 07:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"1314","date":"2020-11-12 07:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"792","date":"2020-11-12 08:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"668","date":"2020-11-12 08:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"670","date":"2020-11-12 09:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"678","date":"2020-11-12 09:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"702","date":"2020-11-12 10:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"724","date":"2020-11-12 10:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"4394","date":"2020-11-12 11:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"4034","date":"2020-11-12 11:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"1830","date":"2020-11-12 12:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"682","date":"2020-11-12 12:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"846","date":"2020-11-12 13:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"860","date":"2020-11-12 13:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"906","date":"2020-11-12 14:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"1944","date":"2020-11-12 14:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"2218","date":"2020-11-12 15:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"1090","date":"2020-11-12 15:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"822","date":"2020-11-12 16:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"832","date":"2020-11-12 16:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"912","date":"2020-11-12 17:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"874","date":"2020-11-12 17:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"1760","date":"2020-11-12 18:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"3484","date":"2020-11-12 18:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"1892","date":"2020-11-12 19:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"856","date":"2020-11-12 19:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"922","date":"2020-11-12 20:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"1598","date":"2020-11-12 20:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"902","date":"2020-11-12 21:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"894","date":"2020-11-12 21:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"916","date":"2020-11-12 22:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"2096","date":"2020-11-12 22:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"2128","date":"2020-11-12 23:00:00","interval_length":"PT30M","measure_type":"B"},{"value":"1376","date":"2020-11-12 23:30:00","interval_length":"PT30M","measure_type":"B"},{"value":"866","date":"2020-11-13 00:00:00","interval_length":"PT30M","measure_type":"B"}],"reading_type":{"unit":"W","measurement_kind":"power","aggregate":"average"}}}
-    #response = myDataEnedis.updateDataYesterdayHCHP(data)
+    response = myDataEnedis.updateDataYesterdayHCHP()
     #print(response)
-    #print(myDataEnedis.getYesterdayHC())
-    #print(myDataEnedis.getYesterdayHP())
-    #print(myDataEnedis.getHCCost(myDataEnedis.getYesterdayHC()))
-    #print(myDataEnedis.getHPCost(myDataEnedis.getYesterdayHP()))
+    print(myDataEnedis.getYesterdayHC())
+    print(myDataEnedis.getYesterdayHP())
+    print(myDataEnedis.getHCCost(myDataEnedis.getYesterdayHC()))
+    print(myDataEnedis.getHPCost(myDataEnedis.getYesterdayHP()))
     #print(1/0)
     #myDataEnedis.updateCurrentWeek()
     #print(1/0)
     #myDataEnedis.updateCurrentMonth()
-    myDataEnedis.update()
+    #myDataEnedis.update()
     print( myDataEnedis.getYesterday(),
            myDataEnedis.getCurrentMonth(),
            myDataEnedis.getLastMonth(),
@@ -432,10 +444,12 @@ def main():
            myDataEnedis.getLastYear() )
     print( myDataEnedis.getTimeLastCall(), myDataEnedis.getLastUpdate(), myDataEnedis.getStatusLastCall())
     print( myDataEnedis.getErrorLastCall())
-
-    last7days = myDataEnedis.getLast7Days()
-    for day in last7days:
-        print('day_%s' % (day["niemejour"]), day["value"] )
+    print("HC/HP")
+    print( myDataEnedis.getYesterdayHC())
+    print( myDataEnedis.getYesterdayHP())
+    #last7days = myDataEnedis.getLast7Days()
+    #for day in last7days:
+    #    print('day_%s' % (day["niemejour"]), day["value"] )
 #
 if __name__ == '__main__':
     main()

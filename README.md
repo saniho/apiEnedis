@@ -18,7 +18,12 @@ exemple de configuration sensors.yaml
 ![picture](img/sensor_v2.png)
 
 
-VERSION
+_**VERSION**_
+
+**1.0.2.4**
+
+add Unit of measurement
+
 **1.0.2.3**
 
 correction bug
