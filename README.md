@@ -20,6 +20,12 @@ exemple de configuration sensors.yaml
 
 _**VERSION**_
 
+**1.0.2.5**
+
+state general du sensor converti en Kwh
+
+correction de bugs
+
 **1.0.2.4**
 
 add Unit of measurement
