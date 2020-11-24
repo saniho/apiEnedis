@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.2.5"
+__VERSION__ = "1.0.3.0a"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
@@ -74,6 +74,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     #_LOGGER.warning("passe ici %s %s " %( token, code ))
     myDataEnedis = apiEnedis.apiEnedis( token, code, delai_interval, \
         heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER )
+    myDataEnedis.updateContract()
+    myDataEnedis.updateHCHP()
+    _LOGGER.warning("myDataEnedis._heuresCreuses: %s" %(myDataEnedis._heuresCreuses))
     add_entities([myEnedis(session, name, update_interval, myDataEnedis )], True)
     # on va gerer  un element par heure ... maintenant
 
@@ -137,11 +140,11 @@ class myEnedis(Entity):
             status_counts["yesterday_HC_cost"] = 0.001 * self._myDataEnedis.getHCCost( self._myDataEnedis.getYesterdayHC())
             status_counts["yesterday_HP_cost"] = 0.001 * self._myDataEnedis.getHPCost( self._myDataEnedis.getYesterdayHP())
             status_counts["daily_cost"] = status_counts["yesterday_HC_cost"] + status_counts["yesterday_HP_cost"]
-            status_counts['current_week'] = self._myDataEnedis.getCurrentWeek()
-            status_counts['last_month'] = self._myDataEnedis.getLastMonth()
-            status_counts['current_month'] = self._myDataEnedis.getCurrentMonth()
-            status_counts['last_year'] = self._myDataEnedis.getLastYear()
-            status_counts['current_year'] = self._myDataEnedis.getCurrentYear()
+            status_counts['current_week'] = self._myDataEnedis.getCurrentWeek() * 0.001
+            status_counts['last_month'] = self._myDataEnedis.getLastMonth() * 0.001
+            status_counts['current_month'] = self._myDataEnedis.getCurrentMonth() * 0.001
+            status_counts['last_year'] = self._myDataEnedis.getLastYear() * 0.001
+            status_counts['current_year'] = self._myDataEnedis.getCurrentYear() * 0.001
             status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
             if (( self._myDataEnedis.getLastMonthLastYear() != None) and
                     (self._myDataEnedis.getLastMonthLastYear() != 0) and
