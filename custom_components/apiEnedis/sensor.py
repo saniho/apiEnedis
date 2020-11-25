@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.3.0a"
+__VERSION__ = "1.0.3.0b"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
@@ -154,6 +154,8 @@ class myEnedis(Entity):
                     / self._myDataEnedis.getLastMonthLastYear() ) *100
             else:
                 status_counts["monthly_evolution"] = 0
+            status_counts["subscribed_power"] = self._myDataEnedis.getsubscribed_power()
+            status_counts["offpeak_hours"] = self._myDataEnedis.getoffpeak_hours()
             #status_counts['yesterday'] = ""
             self._attributes = {ATTR_ATTRIBUTION: ""}
             self._attributes.update(status_counts)

@@ -27,6 +27,7 @@ class apiEnedis:
         self._heuresCreuses = heuresCreuses
         self._heuresCreusesCost = heuresCreusesCost
         self._heuresPleinesCost = heuresPleinesCost
+        self._contract = {'subscribed_power':"", 'offpeak_hours':""}
         self._HC = 0
         self._HP = 0
         if ( log == None ):
@@ -233,7 +234,8 @@ class apiEnedis:
         return self._contract['offpeak_hours']
     def getcleanoffpeak_hours(self, offpeak=None):
         if ( offpeak == None ): offpeak = self._contract['offpeak_hours']
-        offpeakClean1 = offpeak.split("(")[1].replace(")","").replace("H",":").split("-")
+        #print(offpeak)
+        offpeakClean1 = offpeak.split("(")[1].replace(")","").replace("H",":").replace(";","-").split("-")
         opcnew = []
         deb = ""
         fin = ""
@@ -248,6 +250,7 @@ class apiEnedis:
                     deb = "00:00"
                     fin = opc
                 opcnew.append([deb, fin])
+                deb = opc
             else:
                 deb = opc
             lastopc = opc

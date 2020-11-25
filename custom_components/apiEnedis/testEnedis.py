@@ -40,10 +40,11 @@ def test1(myDataEnedis):
 
 def test2( myDataEnedis ):
     myDataEnedis.updateContract()
-    #print(myDataEnedis.getContract())
+    print(myDataEnedis.getContract())
     #print(myDataEnedis.getcleanoffpeak_hours("HC (23H30-07H30)"))
     #print(myDataEnedis.getcleanoffpeak_hours("HC (03H30-07H30)"))
     #print(myDataEnedis.getcleanoffpeak_hours("HC (18H30-22H30)"))
+    #print(myDataEnedis.getcleanoffpeak_hours("HC (1H04-7H04;14H04-16H04)"))
     #print(myDataEnedis._heuresCreuses)
     myDataEnedis.updateHCHP()
     print(myDataEnedis._heuresCreuses)
@@ -53,8 +54,10 @@ def main():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
-    token = mon_conteneur['ENEDIS']['TOKEN']
-    PDL_ID = mon_conteneur['ENEDIS']['CODE']
+    qui = "ENEDIS2"
+    token = mon_conteneur[qui]['TOKEN']
+    PDL_ID = mon_conteneur[qui]['CODE']
+    print(token, PDL_ID)
 
     heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
     myDataEnedis = apiEnedis.apiEnedis(token=token, PDL_ID=PDL_ID, delai=10, \
