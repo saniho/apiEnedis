@@ -30,6 +30,9 @@ class apiEnedis:
         self._contract = {'subscribed_power':"", 'offpeak_hours':""}
         self._HC = 0
         self._HP = 0
+
+        self._joursHC={}
+        self._joursHP={}
         if ( log == None ):
             self._log = logging.getLogger(__nameMyEnedis__)
             self._log.setLevel(logging.DEBUG)
@@ -130,6 +133,13 @@ class apiEnedis:
         start_date = today - datetime.timedelta(7)
         end_date = (datetime.date.today()).strftime("%Y-%m-%d")
         return self.getDataPeriod( start_date, end_date)
+
+    def CallgetLast7DaysDetails(self):
+        import datetime
+        today = datetime.date.today()
+        start_date = today - datetime.timedelta(7)
+        end_date = (datetime.date.today()).strftime("%Y-%m-%d")
+        return self.getDataPeriodCLC( start_date, end_date)
 
     def CallgetLastWeek(self):
         import datetime
@@ -280,31 +290,59 @@ class apiEnedis:
         return self._HP
     def getYesterdayHC(self):
         return self._HC
+    def get7DaysHP(self):
+        return self._joursHP
+    def get7DaysHC(self):
+        return self._joursHC
     def getHCCost(self, val):
-        return val*self._heuresCreusesCost*0.5 # car à l'heure et non à la demi-heure
+        return val*self._heuresCreusesCost # car à l'heure et non à la demi-heure
     def getHPCost(self, val):
-        return val*self._heuresPleinesCost*0.5 # car à l'heure et non à la demi-heure
+        return val*self._heuresPleinesCost # car à l'heure et non à la demi-heure
+
+    def _getHCHPfromHour(self, heure):
+        heurePleine = True
+        for heureCreuse in self._heuresCreuses:
+            try:  # gestion du 00:00 en heure de fin de creneau
+                if (heure == {"24:00": "00:00"}[heureCreuse[1]]):
+                    heurePleine = False
+            except:
+                pass
+            if (heureCreuse[0] < heure) and (heure <= heureCreuse[1]):
+                heurePleine = False
+        return heurePleine
+
+    def createMultiDaysHCHP(self, data):
+        self._joursHC={}
+        self._joursHP={}
+        dateDuJour = (datetime.date.today()).strftime("%Y-%m-%d")
+        for x in data["meter_reading"]["interval_reading"]:
+            date = x["date"][:10]
+            if ( date == dateDuJour ):
+                pass
+            else:
+                heure = x["date"][11:16]
+                if date not in self._joursHC:self._joursHC[date] = 0
+                if date not in self._joursHP:self._joursHP[date] = 0
+                heurePleine = self._getHCHPfromHour( heure )
+                if (heurePleine):
+                    self._joursHP[date] += int(x["value"]) * 0.5
+                else:
+                    self._joursHC[date] +=int(x["value"]) * 0.5
+        #print(self._joursHC)
+        #print(self._joursHP)
+
     def createHCHP(self, data):
         self._HP = 0
         self._HC = 0
         for x in data["meter_reading"]["interval_reading"]:
             heure = x["date"][11:16]
-            heurePleine = True
-            for heureCreuse in self._heuresCreuses:
-                try: # gestion du 00:00 en heure de fin de creneau
-                    if ( heure == {"24:00":"00:00"}[heureCreuse[1]]):
-                        heurePleine = False
-                except:
-                    pass
-                if (heureCreuse[0] < heure) and (heure <= heureCreuse[1]):
-                    heurePleine = False
-            #print ( heure, "==>", heurePleine)
+            heurePleine = self._getHCHPfromHour( heure )
             if ( heurePleine):
-                self._HP += int(x["value"])
+                self._HP += int(x["value"]) * 0.5# car par transhce de 30 minutes
                 #print( heure, heurePleine, x[ "value" ], self._HP)
             else:
-                self._HC += int(x["value"])
-                #print( heure, heurePleine, x[ "value" ], self._HC)
+                self._HC += int(x["value"]) * 0.5# car par transhce de 30 minutes
+            #print( heure, " ", heurePleine, ", ", x[ "value" ], self._HC, self._HP)
         #print(self._HC)
         #print(self._HP)
 
@@ -363,6 +401,16 @@ class apiEnedis:
         self.checkDataPeriod(data)
         # construction d'un dico utile ;)
         self._last7Days = self.analyseValueAndMadeDico( data )
+
+    def getLast7DaysDetails(self):
+        return self._last7DaysDetails
+    def updateLast7DaysDetails(self, data=None):
+        self.myLog("--updateLast7DaysDetails --")
+        if ( data == None ): data = self.CallgetLast7DaysDetails()
+        self.myLog("updateLast7DaysDetails : data %s" %(data))
+        self.checkDataPeriod(data)
+        # construction d'un dico utile ;)
+        self.createMultiDaysHCHP(data)
 
     def getCurrentWeek(self):
         return self._currentWeek
@@ -449,6 +497,7 @@ class apiEnedis:
                     self.updateLastYear()
                     self.updateLastMonthLastYear()
                     self.updateTimeLastCall()
+                    self.updateLast7DaysDetails()
                     self.updateStatusLastCall( True )
                 except Exception as inst:
                     if ( inst.args[:2] == ("call", "error")): # gestion que c'est pas une erreur de contrat trop recent ?

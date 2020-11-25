@@ -50,11 +50,26 @@ def test2( myDataEnedis ):
     print(myDataEnedis._heuresCreuses)
     pass
 
+def test3( myDateEnedis):
+    #retour = myDateEnedis.updateLast7DaysDetails( data )
+    retour = myDateEnedis.updateLast7DaysDetails()
+    retour = myDateEnedis.updateDataYesterdayHCHP()
+    myDateEnedis.updateLast7Days()
+    last7days = myDateEnedis.getLast7Days()
+    for day in last7days:
+        print('day_%s' % (day["niemejour"]), " ", day["date"], " ", day["value"] )
+    last7daysHP = myDateEnedis.get7DaysHP()
+    listeClef = list(last7daysHP.keys())
+    listeClef.reverse()
+    for clef in listeClef:
+        print( clef, " ", last7daysHP[clef] )
+    print(retour)
+
 def main():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
-    qui = "ENEDIS2"
+    qui = "ENEDIS"
     token = mon_conteneur[qui]['TOKEN']
     PDL_ID = mon_conteneur[qui]['CODE']
     print(token, PDL_ID)
@@ -69,7 +84,8 @@ def main():
     #    heuresCreusesCost=0.20,
     #    heuresPleinesCost=1.30) # on fait un update 10 secondes après le dernier ok
     #test1( myDataEnedis )
-    test2( myDataEnedis)
+    #test2( myDataEnedis)
+    test3( myDataEnedis)
 
 if __name__ == '__main__':
     main()

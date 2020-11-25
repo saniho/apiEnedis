@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.3.0b"
+__VERSION__ = "1.0.3.0b1"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
@@ -129,9 +129,26 @@ class myEnedis(Entity):
                 status_counts['day_%s' %(day["niemejour"])] = day["value"]
             status_counts['daily'] = [(day["value"]*0.001) for day in last7days]
 
+            last7daysHP = self._myDataEnedis.get7DaysHP()
+            listeClef = list(last7daysHP.keys())
+            listeClef.reverse()
+            niemejour = 0
+            for clef in listeClef:
+                print(clef, " ", last7daysHP[clef])
+                niemejour += 1
+                status_counts['day_%s_HP' % (niemejour)] = last7daysHP[clef]
+            last7daysHC = self._myDataEnedis.get7DaysHC()
+            listeClef = list(last7daysHC.keys())
+            listeClef.reverse()
+            niemejour = 0
+            for clef in listeClef:
+                print(clef, " ", last7daysHC[clef])
+                niemejour += 1
+                status_counts['day_%s_HC' % (niemejour)] = last7daysHC[clef]
+            # gestion du cout par jour ....
             status_counts["halfhourly"] = []
-            status_counts["offpeak_hours"] = self._myDataEnedis.getYesterdayHC() * 0.001 * 0.5
-            status_counts["peak_hours"] = self._myDataEnedis.getYesterdayHP() * 0.001 * 0.5
+            status_counts["offpeak_hours"] = self._myDataEnedis.getYesterdayHC() * 0.001
+            status_counts["peak_hours"] = self._myDataEnedis.getYesterdayHP() * 0.001
             if (( self._myDataEnedis.getYesterdayHC() + self._myDataEnedis.getYesterdayHP() ) != 0 ):
                 status_counts["peak_offpeak_percent"] = ( self._myDataEnedis.getYesterdayHP()* 100 )/ \
                 ( self._myDataEnedis.getYesterdayHC() + self._myDataEnedis.getYesterdayHP() )
