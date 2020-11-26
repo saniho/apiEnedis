@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.3.0b1"
+__VERSION__ = "1.0.3.0b4"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
@@ -134,7 +134,6 @@ class myEnedis(Entity):
             listeClef.reverse()
             niemejour = 0
             for clef in listeClef:
-                print(clef, " ", last7daysHP[clef])
                 niemejour += 1
                 status_counts['day_%s_HP' % (niemejour)] = last7daysHP[clef]
             last7daysHC = self._myDataEnedis.get7DaysHC()
@@ -142,10 +141,17 @@ class myEnedis(Entity):
             listeClef.reverse()
             niemejour = 0
             for clef in listeClef:
-                print(clef, " ", last7daysHC[clef])
+                #print(clef, " ", last7daysHC[clef])
                 niemejour += 1
                 status_counts['day_%s_HC' % (niemejour)] = last7daysHC[clef]
             # gestion du cout par jour ....
+            
+            niemejour = 0
+            cout = []
+            for clef in listeClef:
+                niemejour += 1
+                cout.append( 0.001 * self._myDataEnedis.getHCCost( last7daysHC[clef] ) + 0.001 * self._myDataEnedis.getHPCost( last7daysHC[clef] ) )
+            status_counts['dailyweek_cost'] = [(day_cost) for day_cost in cout]
             status_counts["halfhourly"] = []
             status_counts["offpeak_hours"] = self._myDataEnedis.getYesterdayHC() * 0.001
             status_counts["peak_hours"] = self._myDataEnedis.getYesterdayHP() * 0.001
@@ -172,7 +178,7 @@ class myEnedis(Entity):
             else:
                 status_counts["monthly_evolution"] = 0
             status_counts["subscribed_power"] = self._myDataEnedis.getsubscribed_power()
-            status_counts["offpeak_hours"] = self._myDataEnedis.getoffpeak_hours()
+            status_counts["offpeak_hours_information"] = self._myDataEnedis.getoffpeak_hours()
             #status_counts['yesterday'] = ""
             self._attributes = {ATTR_ATTRIBUTION: ""}
             self._attributes.update(status_counts)
