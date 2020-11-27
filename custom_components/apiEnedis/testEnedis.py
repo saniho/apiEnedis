@@ -1,5 +1,7 @@
 import apiEnedis
 
+def test(myDataEnedis):
+    myDataEnedis.update()
 def test1(myDataEnedis):
 
 
@@ -69,7 +71,7 @@ def main():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
-    qui = "ENEDIS"
+    qui = "ENEDIS3"
     token = mon_conteneur[qui]['TOKEN']
     PDL_ID = mon_conteneur[qui]['CODE']
     print(token, PDL_ID)
@@ -83,9 +85,10 @@ def main():
     #    heuresCreuses=[],
     #    heuresCreusesCost=0.20,
     #    heuresPleinesCost=1.30) # on fait un update 10 secondes après le dernier ok
-    #test1( myDataEnedis )
+    test(myDataEnedis)
+    #test1(myDataEnedis)
     #test2( myDataEnedis)
-    test3( myDataEnedis)
+    #test3( myDataEnedis)
 
 if __name__ == '__main__':
     main()

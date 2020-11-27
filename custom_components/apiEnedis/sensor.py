@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.3.0b4"
+__VERSION__ = "1.0.3.0b6"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
@@ -137,7 +137,7 @@ class myEnedis(Entity):
                 niemejour += 1
                 status_counts['day_%s_HP' % (niemejour)] = last7daysHP[clef]
             last7daysHC = self._myDataEnedis.get7DaysHC()
-            listeClef = list(last7daysHC.keys())
+            listeClef = list(last7daysHP.keys())
             listeClef.reverse()
             niemejour = 0
             for clef in listeClef:
@@ -150,8 +150,40 @@ class myEnedis(Entity):
             cout = []
             for clef in listeClef:
                 niemejour += 1
-                cout.append( 0.001 * self._myDataEnedis.getHCCost( last7daysHC[clef] ) + 0.001 * self._myDataEnedis.getHPCost( last7daysHC[clef] ) )
+                cout.append( 0.001 * self._myDataEnedis.getHCCost( last7daysHC[clef] ) +
+                             0.001 * self._myDataEnedis.getHPCost( last7daysHP[clef] ) )
             status_counts['dailyweek_cost'] = [(day_cost) for day_cost in cout]
+            niemejour = 0
+            coutHC = []
+            for clef in listeClef:
+                niemejour += 1
+                coutHC.append(
+                    0.001 * self._myDataEnedis.getHCCost(last7daysHC[clef]))
+            status_counts['dailyweek_costHC'] = [(day_cost) for day_cost in coutHC]
+
+            niemejour = 0
+            dailyHC = []
+            for clef in listeClef:
+                niemejour += 1
+                dailyHC.append(last7daysHC[clef])
+            status_counts['dailyweek_HC'] = [(0.001 * day_HC) for day_HC in dailyHC]
+
+            status_counts['dailyweek'] = [(day) for day in listeClef]
+            niemejour = 0
+            coutHP = []
+            for clef in listeClef:
+                niemejour += 1
+                coutHP.append(
+                    0.001 * self._myDataEnedis.getHPCost(last7daysHP[clef]))
+            status_counts['dailyweek_costHP'] = [(day_cost) for day_cost in coutHP]
+
+            niemejour = 0
+            dailyHP = []
+            for clef in listeClef:
+                niemejour += 1
+                dailyHP.append(last7daysHP[clef])
+            status_counts['dailyweek_HP'] = [(0.001 * day_HP) for day_HP in dailyHP]
+
             status_counts["halfhourly"] = []
             status_counts["offpeak_hours"] = self._myDataEnedis.getYesterdayHC() * 0.001
             status_counts["peak_hours"] = self._myDataEnedis.getYesterdayHP() * 0.001

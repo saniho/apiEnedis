@@ -14,7 +14,7 @@ class apiEnedis:
         self._currentMonth = None
         self._currentYear = None
         self._lastWeek = None
-        self._last7Days = None
+        self._last7Days = []
         self._lastMonthLastYear = None
         self._currentWeek = None
         self._yesterday = None
@@ -23,6 +23,7 @@ class apiEnedis:
         self._statusLastCall = False
         self._errorLastCall = None
         self._lastAnswer = None
+        self._errorLastMethodCall = None
         self._delai = delai
         self._heuresCreuses = heuresCreuses
         self._heuresCreusesCost = heuresCreusesCost
@@ -36,13 +37,17 @@ class apiEnedis:
         if ( log == None ):
             self._log = logging.getLogger(__nameMyEnedis__)
             self._log.setLevel(logging.DEBUG)
+            #self._log.setLevel(logging.WARNING)
         else:
             self._log = log
             self._log.setLevel(logging.DEBUG)
         pass
 
     def myLog(self, message):
+        self._log.info(message)
+    def myLogWarning(self, message):
         self._log.warning(message)
+
 
     def post_and_get_json(self, url, params=None, data=None, headers=None):
         try:
@@ -228,12 +233,17 @@ class apiEnedis:
         else:
             contract = None
             for x in data['customer']['usage_points']:
-                #print("usage_points", x)
-                if ( x["usage_point"]['usage_point_id'] == self._PDL_ID):
-                    #print( x["contracts"]["subscribed_power"] )
-                    #print( x["contracts"]["offpeak_hours"] )
-                    contract = {'subscribed_power' : x["contracts"]["subscribed_power"],
-                            'offpeak_hours': x["contracts"]["offpeak_hours"]}
+                if ( str(x["usage_point"]['usage_point_id']) == self._PDL_ID):
+                    contract = {}
+                    if ( "subscribed_power" in x["contracts"]):
+                        contract['subscribed_power']= x["contracts"]["subscribed_power"]
+                    else:
+                        contract['subscribed_power']= "???"
+                    print("ici !!")
+                    if ( "offpeak_hours" in x["contracts"]):
+                        contract['offpeak_hours']= x["contracts"]["offpeak_hours"]
+                    else:
+                        contract['offpeak_hours']= None
             return contract
 
     def getContract(self):
@@ -244,28 +254,32 @@ class apiEnedis:
         return self._contract['offpeak_hours']
     def getcleanoffpeak_hours(self, offpeak=None):
         if ( offpeak == None ): offpeak = self._contract['offpeak_hours']
-        #print(offpeak)
-        offpeakClean1 = offpeak.split("(")[1].replace(")","").replace("H",":").replace(";","-").split("-")
-        opcnew = []
-        deb = ""
-        fin = ""
-        lastopc = ""
-        for opc in offpeakClean1:
-            opc = opc.rjust(5).replace(" ", "0")
-            if ( lastopc != "" ):
-                fin = opc
-                if ( lastopc> opc):
-                    fin = "23:59"
-                    opcnew.append([deb, fin])
-                    deb = "00:00"
+        if ( offpeak != None ):
+            offpeakClean1 = offpeak.split("(")[1].replace(")","").replace("H",":").replace(";","-").split("-")
+            opcnew = []
+            deb = ""
+            fin = ""
+            lastopc = ""
+            for opc in offpeakClean1:
+                opc = opc.rjust(5).replace(" ", "0")
+                if ( lastopc != "" ):
                     fin = opc
-                opcnew.append([deb, fin])
-                deb = opc
-            else:
-                deb = opc
-            lastopc = opc
+                    if ( lastopc> opc):
+                        fin = "23:59"
+                        opcnew.append([deb, fin])
+                        deb = "00:00"
+                        fin = opc
+                    opcnew.append([deb, fin])
+                    deb = opc
+                else:
+                    deb = opc
+                lastopc = opc
+        else:
+            opcnew = []
         return opcnew
+
     def updateContract(self, data=None):
+        self.updateLastMethodCall("updateContract")
         self.myLog("--updateContract --")
         if ( data == None ): data = self.CallgetDataContract()
         self.myLog("updateContract : data %s" %(data))
@@ -281,6 +295,7 @@ class apiEnedis:
         return self._yesterday
 
     def updateYesterday(self, data=None):
+        self.updateLastMethodCall("updateYesterday")
         self.myLog("--updateYesterday --")
         if ( data == None ): data = self.CallgetYesterday()
         self.myLog("updateYesterday : data %s" %(data))
@@ -347,6 +362,7 @@ class apiEnedis:
         #print(self._HP)
 
     def updateDataYesterdayHCHP(self, data=None):
+        self.updateLastMethodCall("updateDataHCHP")
         self.myLog("--updateDataHCHP --")
         if (data == None): data = self.CallgetDataYesterdayHCHP()
         self.myLog("updateDataHCHP : data %s" % (data))
@@ -368,6 +384,7 @@ class apiEnedis:
     def getLastMonth(self):
         return self._lastMonth
     def updateLastMonth(self, data=None):
+        self.updateLastMethodCall("updateLastMonth")
         self.myLog("--updateLastMonth --")
         if ( data == None ): data = self.CallgetLastMonth()
         self.myLog("updateLastMonth : data %s" %(data))
@@ -377,6 +394,7 @@ class apiEnedis:
     def getLastMonthLastYear(self):
         return self._lastMonthLastYear
     def updateLastMonthLastYear(self, data=None):
+        self.updateLastMethodCall("updateLastMonthLastYear")
         self.myLog("--updateLastMonthLastYear --")
         if ( data == None ): data = self.CallgetLastMonthLastYear()
         self.myLog("updateLastMonthLastYear : data %s" %(data))
@@ -386,6 +404,7 @@ class apiEnedis:
     def getLastWeek(self):
         return self._lastWeek
     def updateLastWeek(self, data=None):
+        self.updateLastMethodCall("updateLastWeek")
         self.myLog("--updateLastWeek --")
         if ( data == None ): data = self.CallgetLastWeek()
         self.myLog("updateLastWeek : data %s" %(data))
@@ -395,6 +414,7 @@ class apiEnedis:
     def getLast7Days(self):
         return self._last7Days
     def updateLast7Days(self, data=None):
+        self.updateLastMethodCall("updateLast7Days")
         self.myLog("--updateLast7Days --")
         if ( data == None ): data = self.CallgetLast7Days()
         self.myLog("updateLast7Days : data %s" %(data))
@@ -405,6 +425,7 @@ class apiEnedis:
     def getLast7DaysDetails(self):
         return self._last7DaysDetails
     def updateLast7DaysDetails(self, data=None):
+        self.updateLastMethodCall("updateLast7DaysDetails")
         self.myLog("--updateLast7DaysDetails --")
         if ( data == None ): data = self.CallgetLast7DaysDetails()
         self.myLog("updateLast7DaysDetails : data %s" %(data))
@@ -415,6 +436,7 @@ class apiEnedis:
     def getCurrentWeek(self):
         return self._currentWeek
     def updateCurrentWeek(self, data=None):
+        self.updateLastMethodCall("updateCurrentWeek")
         self.myLog("--updateCurrentWeek --")
         if ( data == None ): data = self.CallgetCurrentWeek()
         self.myLog("updateCurrentWeek : data %s" %(data))
@@ -427,6 +449,7 @@ class apiEnedis:
     def getCurrentMonth(self):
         return self._currentMonth
     def updateCurrentMonth(self, data=None):
+        self.updateLastMethodCall("updateCurrentMonth")
         self.myLog("--updateCurrentMonth --")
         if ( data == None ): data = self.CallgetCurrentMonth()
         self.myLog("updateCurrentMonth : data %s" %(data))
@@ -438,6 +461,7 @@ class apiEnedis:
     def getLastYear(self):
         return self._lastYear
     def updateLastYear(self, data=None):
+        self.updateLastMethodCall("updateLastYear")
         self.myLog("--updateLastYear --")
         if ( data == None ): data = self.CallgetLastYear()
         self.myLog("updateLastYear : data %s" %(data))
@@ -447,6 +471,7 @@ class apiEnedis:
     def getCurrentYear(self):
         return self._currentYear
     def updateCurrentYear(self, data=None):
+        self.updateLastMethodCall("updateCurrentYear")
         self.myLog("--updateCurrentYear --")
         if ( data == None ): data = self.CallgetCurrentYear()
         self.myLog("updateCurrentYear : data %s" %(data))
@@ -470,6 +495,10 @@ class apiEnedis:
 
     def getErrorLastCall(self):
         return self._errorLastCall
+    def getLastMethodCall(self):
+        return self._errorLastMethodCall
+    def updateLastMethodCall(self, methodName):
+        self._errorLastMethodCall = methodName
     def updateErrorLastCall(self, errorMessage):
         self._errorLastCall = errorMessage
 
@@ -483,7 +512,9 @@ class apiEnedis:
         if (( self.getTimeLastCall() == None ) or
             ( self.getStatusLastCall() == False) or
             ( self.getDelaiIsGood() )):
-            print("on doit updater")
+            self.updateStatusLastCall( False ) # on met par defaut en erreur, et si cela se termine bien, alors il devient ok
+            self.updateErrorLastCall( "")
+            self.updateLastMethodCall("")
             try:
                 self.updateYesterday()
                 try:
@@ -501,22 +532,26 @@ class apiEnedis:
                     self.updateStatusLastCall( True )
                 except Exception as inst:
                     if ( inst.args[:2] == ("call", "error")): # gestion que c'est pas une erreur de contrat trop recent ?
-                        print("Erreur call ERROR ", inst.args)
+                        self.myLogWarning("Erreur call ERROR %s" %(inst))
                         # Erreur lors du call...
                         self.updateTimeLastCall()
                         self.updateStatusLastCall( True )
                         self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
+                        self.myLogWarning( self.getLastMethodCall())
             except Exception as inst:
                 if ( inst.args == ("call", None)):
-                    print("Erreur call")
+                    self.myLogWarning("Erreur call")
                     # Erreur lors du call...
                     # Erreur lors du call...
                     self.updateTimeLastCall()
                     self.updateStatusLastCall( False )
                     self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
+                    self.myLogWarning( self.getLastMethodCall())
                 else:
-                    print("Erreur inconnue call ERROR ", inst)
-                    print("Erreur last answer", inst)
+                    self.myLogWarning("Erreur inconnue call ERROR %s" %(inst))
+                    self.myLogWarning("Erreur last answer %s" %(inst))
+
+                    self.myLogWarning(self.getLastMethodCall())
 
         else:
             print("pas d'update trop tot !!!")
