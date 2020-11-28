@@ -27,10 +27,10 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.3.2"
+__VERSION__ = "1.0.3.3"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
-DEFAUT_DELAI_INTERVAL = 3600 # interrogation faite toutes 2 les heures
+DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
 DEFAUT_HEURES_CREUSES = "[]"
 DEFAUT_COST = "0.0"
 HEURES_CREUSES = "heures_creuses"
@@ -96,6 +96,7 @@ class myEnedis(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
+        #return "myEnedis.%s" %(self._myDataEnedis.get_PDL_ID())
         return "myEnedis"
 
     @property

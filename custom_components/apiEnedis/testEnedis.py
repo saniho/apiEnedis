@@ -1,6 +1,9 @@
 import apiEnedis
 
 def test(myDataEnedis):
+    myDataEnedis.updateCurrentWeek()
+    myDataEnedis.updateCurrentWeek()
+    myDataEnedis.updateCurrentWeek()
     myDataEnedis.update()
 def test1(myDataEnedis):
 
@@ -71,7 +74,7 @@ def main():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
-    qui = "ENEDIS3"
+    qui = "ENEDIS4"
     token = mon_conteneur[qui]['TOKEN']
     PDL_ID = mon_conteneur[qui]['CODE']
     print(token, PDL_ID)

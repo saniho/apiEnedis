@@ -44,11 +44,13 @@ class apiEnedis:
         pass
 
     def myLog(self, message):
-        self._log.info(message)
+        #self._log.info(message)
+        self._log.warning(message)
     def myLogWarning(self, message):
         self._log.warning(message)
 
-
+    def get_PDL_ID(self):
+        return self._PDL_ID
     def post_and_get_json(self, url, params=None, data=None, headers=None):
         try:
             import logging
@@ -371,7 +373,11 @@ class apiEnedis:
 
     def checkDataPeriod(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
-            raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
+            if ( dataAnswer['enedis_return']["error"] == "ADAM-ERR0123" ) :
+                return False
+            else:
+                raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
+        return True
 
     def checkData(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
@@ -388,8 +394,10 @@ class apiEnedis:
         self.myLog("--updateLastMonth --")
         if ( data == None ): data = self.CallgetLastMonth()
         self.myLog("updateLastMonth : data %s" %(data))
-        self.checkDataPeriod(data)
-        self._lastMonth = self.analyseValueAndAdd( data )
+        if ( self.checkDataPeriod(data)):
+            self._lastMonth = self.analyseValueAndAdd( data )
+        else:
+            self._lastMonth = 0
 
     def getLastMonthLastYear(self):
         return self._lastMonthLastYear
@@ -398,8 +406,10 @@ class apiEnedis:
         self.myLog("--updateLastMonthLastYear --")
         if ( data == None ): data = self.CallgetLastMonthLastYear()
         self.myLog("updateLastMonthLastYear : data %s" %(data))
-        self.checkDataPeriod(data)
-        self._lastMonthLastYear = self.analyseValueAndAdd( data )
+        if ( self.checkDataPeriod(data)):
+            self._lastMonthLastYear = self.analyseValueAndAdd( data )
+        else:
+            self._lastMonthLastYear = 0
 
     def getLastWeek(self):
         return self._lastWeek
@@ -465,8 +475,10 @@ class apiEnedis:
         self.myLog("--updateLastYear --")
         if ( data == None ): data = self.CallgetLastYear()
         self.myLog("updateLastYear : data %s" %(data))
-        self.checkDataPeriod(data)
-        self._lastYear =  self.analyseValueAndAdd( data )
+        if ( self.checkDataPeriod(data)):
+            self._lastYear =  self.analyseValueAndAdd( data )
+        else: # pas de donnée disponible
+            self._lastYear = 0
 
     def getCurrentYear(self):
         return self._currentYear
@@ -475,8 +487,10 @@ class apiEnedis:
         self.myLog("--updateCurrentYear --")
         if ( data == None ): data = self.CallgetCurrentYear()
         self.myLog("updateCurrentYear : data %s" %(data))
-        self.checkDataPeriod(data)
-        self._currentYear = self.analyseValueAndAdd( data )
+        if ( self.checkDataPeriod(data)):
+            self._currentYear = self.analyseValueAndAdd( data )
+        else:
+            self._currentYear = 0
 
     def getLastUpdate(self):
         return self._lastUpdate
@@ -516,19 +530,32 @@ class apiEnedis:
             self.updateErrorLastCall( "")
             self.updateLastMethodCall("")
             try:
+                self.myLogWarning( "myEnedis ... update lancé")
                 self.updateYesterday()
                 try:
+                    time.sleep(1)
                     self.updateCurrentWeek()
+                    time.sleep(1)
                     self.updateLastWeek()
+                    time.sleep(1)
                     self.updateLast7Days()
+                    time.sleep(1)
                     self.updateCurrentMonth()
+                    time.sleep(1)
                     self.updateLastMonth()
+                    time.sleep(1)
                     self.updateCurrentYear()
+                    time.sleep(1)
                     self.updateDataYesterdayHCHP()
+                    time.sleep(1)
                     self.updateLastYear()
+                    time.sleep(1)
                     self.updateLastMonthLastYear()
+                    time.sleep(1)
                     self.updateTimeLastCall()
+                    time.sleep(1)
                     self.updateLast7DaysDetails()
+                    time.sleep(1)
                     self.updateStatusLastCall( True )
                 except Exception as inst:
                     if ( inst.args[:2] == ("call", "error")): # gestion que c'est pas une erreur de contrat trop recent ?
