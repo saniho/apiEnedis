@@ -20,6 +20,12 @@ exemple de configuration sensors.yaml
 
 _**VERSION**_
 
+**1.0.4.0**
+
+gestion de contrat recent, correction calcul de monté si relevé compteur par tranche de 10 minutes, 30 minutes
+
+attention le nom du sensor contiendra maintenant le numéro de PDL( cela permet de piloter plusieurs compteurs )
+
 **1.0.2.5**
 
 state general du sensor converti en Kwh
