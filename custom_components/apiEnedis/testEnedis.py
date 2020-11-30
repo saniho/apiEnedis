@@ -70,7 +70,38 @@ def test3( myDateEnedis):
         print( clef, " ", last7daysHP[clef] )
     print(retour)
 
-def main():
+def testComplet( myDataEnedis ):
+    import sensorEnedis, time, logging
+    logger = logging.getLogger("testEnedis")
+    status_counts = sensorEnedis.manageSensorState( myDataEnedis, logger )
+    if ( myDataEnedis.getStatusLastCall() == False ):
+        sensorEnedis.logSensorState(status_counts)
+        # on se met en attente 10 secondes, car Enedis HS
+        print("**** ERROR *** ", myDataEnedis.getLastMethodCall())
+        myDataEnedis.updateLastMethodCallError( myDataEnedis.getLastMethodCall()) # on met l'etat precedent
+        sensorEnedis.logSensorState(status_counts)
+        time.sleep( 10 )
+        status_counts = sensorEnedis.manageSensorState(myDataEnedis, logger)
+    sensorEnedis.logSensorState(status_counts)
+
+def testMulti():
+    import configparser
+    mon_conteneur = configparser.ConfigParser()
+    mon_conteneur.read("../../../myCredential/security.txt")
+    #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4"]:
+    for qui in ["ENEDIS5"]:
+        token = mon_conteneur[qui]['TOKEN']
+        PDL_ID = mon_conteneur[qui]['CODE']
+        print(token, PDL_ID)
+        heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
+        myDataEnedis = apiEnedis.apiEnedis( token=token, PDL_ID=PDL_ID, delai=10, \
+            heuresCreuses=eval(heureCreusesCh), heuresCreusesCost=0.0797, heuresPleinesCost=0.1175 )
+        myDataEnedis.updateContract()
+        myDataEnedis.updateHCHP()
+        print(myDataEnedis.getContract())
+        testComplet( myDataEnedis )
+
+def testMono():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
@@ -88,10 +119,14 @@ def main():
     #    heuresCreuses=[],
     #    heuresCreusesCost=0.20,
     #    heuresPleinesCost=1.30) # on fait un update 10 secondes après le dernier ok
-    test(myDataEnedis)
+    #test(myDataEnedis)
     #test1(myDataEnedis)
     #test2( myDataEnedis)
     #test3( myDataEnedis)
+
+def main():
+    testMulti()
+    #testMonot()
 
 if __name__ == '__main__':
     main()
