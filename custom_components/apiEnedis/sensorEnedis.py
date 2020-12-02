@@ -16,7 +16,7 @@ def manageSensorState( _myDataEnedis,_LOGGER = None ):
             last7days = _myDataEnedis.getLast7Days()
             for day in last7days:
                 status_counts['day_%s' % (day["niemejour"])] = day["value"]
-            status_counts['daily'] = [(day["value"] * 0.001) for day in last7days]
+            status_counts['daily'] = [("{:.2f}".format(day["value"] * 0.001)) for day in last7days]
 
             last7daysHP = _myDataEnedis.get7DaysHP()
             listeClef = list(last7daysHP.keys())
@@ -90,7 +90,8 @@ def manageSensorState( _myDataEnedis,_LOGGER = None ):
                                         0.001 * _myDataEnedis.getHCCost( _myDataEnedis.getYesterdayHC()) + \
                                         0.001 * _myDataEnedis.getHPCost( _myDataEnedis.getYesterdayHP())
                                         )
-            status_counts["yesterday_HC_cost"] + status_counts["yesterday_HP_cost"]
+            status_counts["yesterday_HC"] = "{:.3f}".format(_myDataEnedis.getYesterdayHC() * 0.001 )
+            status_counts["yesterday_HP"] = "{:.3f}".format(_myDataEnedis.getYesterdayHP() * 0.001 )
             status_counts['current_week'] = _myDataEnedis.getCurrentWeek() * 0.001
             status_counts['last_month'] = _myDataEnedis.getLastMonth() * 0.001
             status_counts['current_month'] = _myDataEnedis.getCurrentMonth() * 0.001

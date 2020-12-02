@@ -89,7 +89,7 @@ def testMulti():
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
     #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4"]:
-    for qui in ["ENEDIS5"]:
+    for qui in ["ENEDIS2"]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         print(token, PDL_ID)

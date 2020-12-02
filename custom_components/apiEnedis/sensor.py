@@ -27,7 +27,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.4.0"
+__VERSION__ = "1.0.4.1c"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
@@ -75,9 +75,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     #_LOGGER.warning("passe ici %s %s " %( token, code ))
     myDataEnedis = apiEnedis.apiEnedis( token, code, delai_interval, \
         heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER )
-    myDataEnedis.updateContract()
-    myDataEnedis.updateHCHP()
-    _LOGGER.warning("myDataEnedis._heuresCreuses: %s" %(myDataEnedis._heuresCreuses))
+    #myDataEnedis.updateContract()
+    #myDataEnedis.updateHCHP()
+    #_LOGGER.warning("myDataEnedis._heuresCreuses: %s" %(myDataEnedis._heuresCreuses))
     add_entities([myEnedis(session, name, update_interval, myDataEnedis )], True)
     # on va gerer  un element par heure ... maintenant
 
@@ -116,6 +116,9 @@ class myEnedis(Entity):
         status_counts = defaultdict(int)
 
         _LOGGER.warning("call update")
+        if ( self._myDataEnedis.getContract() == None ):
+            self._myDataEnedis.updateContract()
+            self._myDataEnedis.updateHCHP()
         try:
             status_counts = sensorEnedis.manageSensorState(self._myDataEnedis)
             if (self._myDataEnedis.getStatusLastCall() == False):

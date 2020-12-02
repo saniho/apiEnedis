@@ -29,7 +29,7 @@ class apiEnedis:
         self._heuresCreuses = heuresCreuses
         self._heuresCreusesCost = heuresCreusesCost
         self._heuresPleinesCost = heuresPleinesCost
-        self._contract = {'subscribed_power':"", 'offpeak_hours':""}
+        self._contract = None #{'subscribed_power':"", 'offpeak_hours':""}
         self._HC = 0
         self._HP = 0
         self._interval_length = 1
@@ -336,10 +336,15 @@ class apiEnedis:
         dateDuJour = (datetime.date.today()).strftime("%Y-%m-%d")
         for x in data["meter_reading"]["interval_reading"]:
             date = x["date"][:10]
-            if ( date == dateDuJour ):
-                pass
-            else:
-                heure = x["date"][11:16]
+            heure = x["date"][11:16]
+            if ( heure == "00:00" ): # alors sur la veille, var c'est la fin de la tranche du jour precedent
+                date = (datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(1) ).strftime("%Y-%m-%d")
+
+            #if ( date == dateDuJour ):
+            #    print("ici", x["date"], x["value"])
+            #    pass
+            #else:
+            if(1):
                 if date not in self._joursHC:self._joursHC[date] = 0
                 if date not in self._joursHP:self._joursHP[date] = 0
                 heurePleine = self._getHCHPfromHour( heure )
@@ -347,6 +352,9 @@ class apiEnedis:
                     self._joursHP[date] += int(x["value"]) * self.getCoeffIntervalLength() # car c'est en heure
                 else:
                     self._joursHC[date] +=int(x["value"]) * self.getCoeffIntervalLength() # car c'est pas en heure
+            if ( date >= "2020-12-01" ):
+                print( "*", heure, " ", heurePleine, ", ", x[ "value" ], self._joursHC[date], self._joursHP[date],
+                       self._joursHC[date] + self._joursHP[date])
         #print(self._joursHC)
         #print(self._joursHP)
 
@@ -372,7 +380,7 @@ class apiEnedis:
                 #print( heure, heurePleine, x[ "value" ], self._HP)
             else:
                 self._HC += int(x["value"]) * self.getCoeffIntervalLength()# car par transhce de 30 minutes
-            #print( heure, " ", heurePleine, ", ", x[ "value" ], self._HC, self._HP)
+            #print( heure, " ", heurePleine, ", ", x[ "value" ], self._HC, self._HP, self._HC + self._HP)
         #print(self._HC)
         #print(self._HP)
 
