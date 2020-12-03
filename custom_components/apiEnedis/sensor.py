@@ -29,7 +29,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.4.1e"
+__VERSION__ = "1.0.4.1f"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
@@ -100,7 +100,6 @@ class myEnedis(RestoreEntity):
     def name(self):
         """Return the name of the sensor."""
         return "myEnedis.%s" %(self._myDataEnedis.get_PDL_ID())
-        #return "myEnedis"
 
     @property
     def state(self):
@@ -158,10 +157,13 @@ class myEnedis(RestoreEntity):
         if not state:
             return
         self._state = state.state
+        _LOGGER.warning("*** / / / \ \ \ *** passe ici init _state %s " % (self._state))
 
         # ADDED CODE HERE
         if 'timeLastCall' in state.attributes:
             self._attributes = state.attributes
+
+            _LOGGER.warning("*** / / / \ \ \ *** passe ici init %s " %( self._attributes ))
 
         #async_dispatcher_connect(
         #    self.hass, DATA_UPDATED, self._schedule_immediate_update
