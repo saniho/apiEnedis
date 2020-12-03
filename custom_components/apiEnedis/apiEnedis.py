@@ -286,7 +286,7 @@ class apiEnedis:
         self.updateLastMethodCall("updateContract")
         self.myLog("--updateContract --")
         if ( data == None ): data = self.CallgetDataContract()
-        self.myLog("updateContract : data %s" %(data))
+        self.myLogWarning("updateContract : data %s" %(data))
         self.checkDataContract( data )
         self._contract = self.analyseValueContract( data )
 

@@ -16,7 +16,9 @@ from homeassistant.const import (
     ATTR_ATTRIBUTION,
 )
 
-from homeassistant.helpers.entity import Entity
+#from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.util import Throttle
 from homeassistant.util import slugify
 from homeassistant.util.dt import now, parse_date
@@ -27,7 +29,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.4.1c"
+__VERSION__ = "1.0.4.1e"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
@@ -81,7 +83,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     add_entities([myEnedis(session, name, update_interval, myDataEnedis )], True)
     # on va gerer  un element par heure ... maintenant
 
-class myEnedis(Entity):
+class myEnedis(RestoreEntity):
     """."""
 
     def __init__(self, session, name, interval, myDataEnedis):
@@ -148,3 +150,19 @@ class myEnedis(Entity):
     @property
     def icon(self):
         """Icon to use in the frontend."""
+
+    async def async_added_to_hass(self) -> None:
+        """Handle entity which will be added."""
+        await super().async_added_to_hass()
+        state = await self.async_get_last_state()
+        if not state:
+            return
+        self._state = state.state
+
+        # ADDED CODE HERE
+        if 'timeLastCall' in state.attributes:
+            self._attributes = state.attributes
+
+        #async_dispatcher_connect(
+        #    self.hass, DATA_UPDATED, self._schedule_immediate_update
+        #)
