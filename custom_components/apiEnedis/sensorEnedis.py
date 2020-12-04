@@ -9,6 +9,7 @@ def manageSensorState( _myDataEnedis,_LOGGER = None ):
         return
     if (_myDataEnedis.getStatusLastCall()):  # update avec statut ok
         try:
+            status_counts["typeCompteur"] = _myDataEnedis.getTypePDL()
             if ( _myDataEnedis.isConsommation()):
                 status_counts["lastSynchro"] = datetime.datetime.now()
                 status_counts["lastUpdate"] = _myDataEnedis.getLastUpdate()
