@@ -160,7 +160,7 @@ class myEnedis(RestoreEntity):
         _LOGGER.warning("*** / / / \ \ \ *** passe ici init _state %s " % (self._state))
 
         # ADDED CODE HERE
-        if 'timeLastCall' in state.attributes:
+        if 'lastSynchro' in state.attributes:
             self._attributes = state.attributes
 
             _LOGGER.warning("*** / / / \ \ \ *** passe ici init %s " %( self._attributes ))
