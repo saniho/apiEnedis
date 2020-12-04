@@ -133,7 +133,7 @@ class myEnedis(RestoreEntity):
                     _LOGGER.warning("%s - **** ERROR *** %s" %(self.get_PDL_ID(), self._myDataEnedis.getLastMethodCall()))
                     self._myDataEnedis.updateLastMethodCallError(self._myDataEnedis.getLastMethodCall())  # on met l'etat precedent
             else:
-                if ( not self.getUpdateRealise()): return # si pas d'update
+                if ( not self._myDataEnedis.getUpdateRealise()): return # si pas d'update
                 self._attributes = {ATTR_ATTRIBUTION: ""}
                 self._attributes.update(status_counts)
                 self._state = status_counts['yesterday']*0.001
