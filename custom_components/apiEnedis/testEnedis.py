@@ -89,7 +89,7 @@ def testMulti():
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
     #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4"]:
-    for qui in ["ENEDIS7"]:
+    for qui in ["ENEDIS","ENEDIS7"]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         print(token, PDL_ID)
@@ -98,14 +98,15 @@ def testMulti():
             heuresCreuses=eval(heureCreusesCh), heuresCreusesCost=0.0797, heuresPleinesCost=0.1175 )
         myDataEnedis.updateContract()
         myDataEnedis.updateHCHP()
-        print(myDataEnedis.getContract())
+        #print(myDataEnedis.getContract())
+        #print(myDataEnedis.getTypePDL())
         testComplet( myDataEnedis )
 
 def testMono():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
-    qui = "ENEDIS4"
+    qui = "ENEDIS7"
     token = mon_conteneur[qui]['TOKEN']
     PDL_ID = mon_conteneur[qui]['CODE']
     print(token, PDL_ID)
@@ -115,6 +116,15 @@ def testMono():
                                        heuresCreuses=eval(heureCreusesCh),
                                        heuresCreusesCost=0.20,
                                        heuresPleinesCost=1.30)
+    myDataEnedis.updateContract()
+    myDataEnedis.updateHCHP()
+    print(myDataEnedis.getContract())
+    myDataEnedis.updateProductionYesterday()
+    retour = myDataEnedis.getProductionYesterday()
+    print("retour", retour)
+    myDataEnedis.updateYesterday()
+    retour = myDataEnedis.getYesterday()
+    print("retour", retour)
     # myDataEnedis = apiEnedis( token=token, PDL_ID=PDL_ID, delai = 10, \
     #    heuresCreuses=[],
     #    heuresCreusesCost=0.20,
@@ -126,7 +136,7 @@ def testMono():
 
 def main():
     testMulti()
-    #testMonot()
+    #testMono()
 
 if __name__ == '__main__':
     main()

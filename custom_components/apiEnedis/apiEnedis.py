@@ -18,6 +18,7 @@ class apiEnedis:
         self._lastMonthLastYear = None
         self._currentWeek = None
         self._yesterday = None
+        self._productionYesterday = None
         self._lastUpdate = None
         self._timeLastUpdate = None
         self._statusLastCall = True
@@ -33,6 +34,7 @@ class apiEnedis:
         self._HC = 0
         self._HP = 0
         self._interval_length = 1
+        self._updateRealise = False
 
         self._joursHC={}
         self._joursHP={}
@@ -51,6 +53,10 @@ class apiEnedis:
     def myLogWarning(self, message):
         self._log.warning(message)
 
+    def setUpdateRealise(self, value):
+        self._updateRealise = value
+    def getUpdateRealise(self):
+        return self._updateRealise
     def get_PDL_ID(self):
         return self._PDL_ID
     def post_and_get_json(self, url, params=None, data=None, headers=None):
@@ -73,6 +79,22 @@ class apiEnedis:
         self.myLog("--get dataPeriod : %s => %s --" %( deb, fin ))
         payload = {
             'type': 'daily_consumption',
+            'usage_point_id': self._PDL_ID,
+            'start': '%s' %(deb),
+            'end': '%s' %(fin),
+        }
+        headers = {
+            'Authorization': self._token,
+            'Content-Type': "application/json",
+        }
+        dataAnswer = self.post_and_get_json("https://enedisgateway.tech/api", data=payload, headers=headers)
+        self.setLastAnswsr( dataAnswer )
+        return dataAnswer
+
+    def getDataProductionPeriod(self, deb, fin ):
+        self.myLog("--get ProductionPeriod : %s => %s --" %( deb, fin ))
+        payload = {
+            'type': 'daily_production',
             'usage_point_id': self._PDL_ID,
             'start': '%s' %(deb),
             'end': '%s' %(fin),
@@ -120,6 +142,11 @@ class apiEnedis:
         hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
         return self.getDataPeriod( hier, cejour )
+
+    def CallgetProductionYesterday(self):
+        hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
+        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        return self.getDataProductionPeriod( hier, cejour )
 
     def CallgetDataYesterdayHCHP(self):
         hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
@@ -242,7 +269,9 @@ class apiEnedis:
                     contract['contracts'] = x["contracts"]
                     if ( "subscribed_power" in x["contracts"]):
                         contract['subscribed_power']= x["contracts"]["subscribed_power"]
+                        contract["mode_PDL"] = "consommation"
                     else:
+                        contract["mode_PDL"] = "production"
                         contract['subscribed_power']= "???"
                     if ( "offpeak_hours" in x["contracts"]):
                         contract['offpeak_hours']= x["contracts"]["offpeak_hours"]
@@ -256,6 +285,12 @@ class apiEnedis:
         return self._contract['subscribed_power']
     def getoffpeak_hours(self):
         return self._contract['offpeak_hours']
+    def getTypePDL(self):
+        return self._contract["mode_PDL"]
+    def isConsommation(self):
+        return self._contract["mode_PDL"] == "consommation"
+    def isProduction(self):
+        return self._contract["mode_PDL"] == "production"
     def getcleanoffpeak_hours(self, offpeak=None):
         if ( offpeak == None ): offpeak = self._contract['offpeak_hours']
         if ( offpeak != None ):
@@ -286,7 +321,7 @@ class apiEnedis:
         self.updateLastMethodCall("updateContract")
         self.myLog("--updateContract --")
         if ( data == None ): data = self.CallgetDataContract()
-        self.myLogWarning("updateContract : data %s" %(data))
+        self.myLog("updateContract : data %s" %(data))
         self.checkDataContract( data )
         self._contract = self.analyseValueContract( data )
 
@@ -303,8 +338,20 @@ class apiEnedis:
         self.myLog("--updateYesterday --")
         if ( data == None ): data = self.CallgetYesterday()
         self.myLog("updateYesterday : data %s" %(data))
+        if ( self.checkData( data )):
+            self._yesterday = self.analyseValue( data )
+        else:
+            self._yesterday = 0
+    def getProductionYesterday(self):
+        return self._productionYesterday
+
+    def updateProductionYesterday(self, data=None):
+        self.updateLastMethodCall("updateProductionYesterday")
+        self.myLog("--updateProductionYesterday --")
+        if ( data == None ): data = self.CallgetProductionYesterday()
+        self.myLog("updateProductionYesterday : data %s" %(data))
         self.checkData( data )
-        self._yesterday = self.analyseValue( data )
+        self._productionYesterday = self.analyseValue( data )
     def getYesterdayHP(self):
         return self._HP
     def getYesterdayHC(self):
@@ -404,7 +451,18 @@ class apiEnedis:
 
     def checkData(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
-            raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
+            print("ici")
+            dataAnswer['enedis_return'] = json.loads(dataAnswer['enedis_return'])
+            print(dataAnswer['enedis_return'])
+            # à faire que si le type est string !!!
+            print(type(dataAnswer['enedis_return']))
+            if ( dataAnswer['enedis_return']["error"] == "ADAM-DC-0008" ):
+                print("la")
+                #No consent can be found for this customer and this usage point
+                return False
+            else:
+                raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
+        return True
 
     def checkDataContract(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
@@ -559,41 +617,47 @@ class apiEnedis:
             self.updateErrorLastCall( "")
             self.updateLastMethodCall("")
             try:
+                self.setUpdateRealise( True )
                 self.myLogWarning( "myEnedis ...%s update lancé, status precedent : %s" % (self.get_PDL_ID(), self.getStatusLastCall()))
-                if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
-                    self.updateYesterday()
-                try:
-                    if( self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
-                        self.updateCurrentWeek()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastWeek"):
-                        self.updateLastWeek()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7Days"):
-                        self.updateLast7Days()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentMonth"):
-                        self.updateCurrentMonth()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonth"):
-                        self.updateLastMonth()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentYear"):
-                        self.updateCurrentYear()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateDataYesterdayHCHP"):
-                        self.updateDataYesterdayHCHP()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastYear"):
-                        self.updateLastYear()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonthLastYear"):
-                        self.updateLastMonthLastYear()
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7DaysDetails"):
-                        self.updateLast7DaysDetails()
-                    self.updateTimeLastCall()
-                    self.updateStatusLastCall( True )
-                    self.myLogWarning("mise à jour effectuee")
-                except Exception as inst:
-                    if ( inst.args[:2] == ("call", "error")): # gestion que c'est pas une erreur de contrat trop recent ?
-                        self.myLogWarning("%s - Erreur call ERROR %s" %(self.get_PDL_ID(), inst))
-                        # Erreur lors du call...
+                if ( self.isConsommation()):
+                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
+                        self.updateYesterday()
+                    try:
+                        if( self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
+                            self.updateCurrentWeek()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastWeek"):
+                            self.updateLastWeek()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7Days"):
+                            self.updateLast7Days()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentMonth"):
+                            self.updateCurrentMonth()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonth"):
+                            self.updateLastMonth()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentYear"):
+                            self.updateCurrentYear()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateDataYesterdayHCHP"):
+                            self.updateDataYesterdayHCHP()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastYear"):
+                            self.updateLastYear()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonthLastYear"):
+                            self.updateLastMonthLastYear()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7DaysDetails"):
+                            self.updateLast7DaysDetails()
                         self.updateTimeLastCall()
-                        self.updateStatusLastCall( False )
-                        self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
-                        self.myLogWarning( "%s - last call : %s" %(self.get_PDL_ID(), self.getLastMethodCall()))
+                        self.updateStatusLastCall( True )
+                        self.myLogWarning("mise à jour effectuee")
+                    except Exception as inst:
+                        if ( inst.args[:2] == ("call", "error")): # gestion que c'est pas une erreur de contrat trop recent ?
+                            self.myLogWarning("%s - Erreur call ERROR %s" %(self.get_PDL_ID(), inst))
+                            # Erreur lors du call...
+                            self.updateTimeLastCall()
+                            self.updateStatusLastCall( False )
+                            self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
+                            self.myLogWarning( "%s - last call : %s" %(self.get_PDL_ID(), self.getLastMethodCall()))
+                elif ( self.isProduction()):
+                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
+                        self.updateProductionYesterday()
+
             except Exception as inst:
                 if ( inst.args == ("call", None)):
                     self.myLogWarning("%s - Erreur call"%(self.get_PDL_ID(), ))
@@ -610,5 +674,6 @@ class apiEnedis:
                     self.myLogWarning(self.getLastMethodCall())
 
         else:
+            self.setUpdateRealise( False )
             self.myLogWarning("%s pas d'update trop tot !!!" %(self.get_PDL_ID()))
         self.updateLastUpdate()
