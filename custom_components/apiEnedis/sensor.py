@@ -29,7 +29,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.4.1g"
+__VERSION__ = "1.0.4.1h"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
@@ -133,6 +133,7 @@ class myEnedis(RestoreEntity):
                     _LOGGER.warning("%s - **** ERROR *** %s" %(self.get_PDL_ID(), self._myDataEnedis.getLastMethodCall()))
                     self._myDataEnedis.updateLastMethodCallError(self._myDataEnedis.getLastMethodCall())  # on met l'etat precedent
             else:
+                if ( not self.getUpdateRealise()): return # si pas d'update
                 self._attributes = {ATTR_ATTRIBUTION: ""}
                 self._attributes.update(status_counts)
                 self._state = status_counts['yesterday']*0.001

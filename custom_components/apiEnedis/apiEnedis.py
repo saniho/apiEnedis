@@ -399,9 +399,7 @@ class apiEnedis:
                     self._joursHP[date] += int(x["value"]) * self.getCoeffIntervalLength() # car c'est en heure
                 else:
                     self._joursHC[date] +=int(x["value"]) * self.getCoeffIntervalLength() # car c'est pas en heure
-            if ( date >= "2020-12-01" ):
-                print( "*", heure, " ", heurePleine, ", ", x[ "value" ], self._joursHC[date], self._joursHP[date],
-                       self._joursHC[date] + self._joursHP[date])
+
         #print(self._joursHC)
         #print(self._joursHP)
 
@@ -451,13 +449,9 @@ class apiEnedis:
 
     def checkData(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
-            print("ici")
-            dataAnswer['enedis_return'] = json.loads(dataAnswer['enedis_return'])
-            print(dataAnswer['enedis_return'])
-            # à faire que si le type est string !!!
-            print(type(dataAnswer['enedis_return']))
+            if ( isinstance(dataAnswer['enedis_return'], str)):
+                dataAnswer['enedis_return'] = json.loads(dataAnswer['enedis_return'])
             if ( dataAnswer['enedis_return']["error"] == "ADAM-DC-0008" ):
-                print("la")
                 #No consent can be found for this customer and this usage point
                 return False
             else:

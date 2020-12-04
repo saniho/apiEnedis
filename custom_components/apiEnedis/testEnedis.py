@@ -89,7 +89,8 @@ def testMulti():
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
     #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4"]:
-    for qui in ["ENEDIS","ENEDIS7"]:
+    #for qui in ["ENEDIS","ENEDIS7"]:
+    for qui in ["ENEDIS8"]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         print(token, PDL_ID)
@@ -106,7 +107,7 @@ def testMono():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../../../myCredential/security.txt")
-    qui = "ENEDIS7"
+    qui = "ENEDIS8"
     token = mon_conteneur[qui]['TOKEN']
     PDL_ID = mon_conteneur[qui]['CODE']
     print(token, PDL_ID)
@@ -119,9 +120,9 @@ def testMono():
     myDataEnedis.updateContract()
     myDataEnedis.updateHCHP()
     print(myDataEnedis.getContract())
-    myDataEnedis.updateProductionYesterday()
-    retour = myDataEnedis.getProductionYesterday()
-    print("retour", retour)
+    #myDataEnedis.updateProductionYesterday()
+    #retour = myDataEnedis.getProductionYesterday()
+    #print("retour", retour)
     myDataEnedis.updateYesterday()
     retour = myDataEnedis.getYesterday()
     print("retour", retour)
