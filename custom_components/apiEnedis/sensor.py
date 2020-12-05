@@ -55,7 +55,7 @@ from . import sensorEnedis
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the platform."""
-    _LOGGER.warning("myEnedis version %s " %( __VERSION__))
+    _LOGGER.info("myEnedis version %s " %( __VERSION__))
     name = config.get(CONF_NAME)
     token = config.get(CONF_TOKEN)
     code = config.get(CONF_CODE)
@@ -77,7 +77,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER )
     myDataEnedis.updateContract()
     myDataEnedis.updateHCHP()
-    _LOGGER.warning("myDataEnedis._heuresCreuses: %s" %(myDataEnedis._heuresCreuses))
+    _LOGGER.info("myDataEnedis._heuresCreuses: %s" %(myDataEnedis._heuresCreuses))
     add_entities([myEnedis(session, name, update_interval, myDataEnedis )], True)
     # on va gerer  un element par heure ... maintenant
 
@@ -115,7 +115,7 @@ class myEnedis(Entity):
         import datetime
         status_counts = defaultdict(int)
 
-        _LOGGER.warning("call update")
+        _LOGGER.debug("call update")
         try:
             status_counts = sensorEnedis.manageSensorState(self._myDataEnedis)
             if (self._myDataEnedis.getStatusLastCall() == False):
