@@ -64,7 +64,13 @@ class apiEnedis:
             import logging
             import json
 
-            response = requests.post(url, params=params, data=json.dumps(data), headers=headers)
+            proxies = {
+              'http': 'http://localhost:8888',
+              'https': 'http://localhost:8888',
+            }
+            session = requests.Session()
+            #session.proxies.update(proxies)
+            response = session.post(url, params=params, data=json.dumps(data), headers=headers)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as error:
@@ -460,7 +466,8 @@ class apiEnedis:
 
     def checkDataContract(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
-            raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
+            self.myLogWarning( "** %s" %(dataAnswer["error"]))
+            raise Exception( 'call' , "error", dataAnswer["error"] )
 
     def getLastMonth(self):
         return self._lastMonth
