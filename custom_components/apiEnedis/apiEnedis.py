@@ -35,6 +35,7 @@ class apiEnedis:
         self._HP = 0
         self._interval_length = 1
         self._updateRealise = False
+        self._niemeAppel = 0
 
         self._joursHC={}
         self._joursHP={}
@@ -48,7 +49,8 @@ class apiEnedis:
         pass
 
     def myLog(self, message):
-        self._log.info(message)
+        pass
+        #self._log.info(message)
         #self._log.warning(message)
     def myLogWarning(self, message):
         self._log.warning(message)
@@ -65,12 +67,14 @@ class apiEnedis:
             import json
 
             proxies = {
-              'http': 'http://localhost:8888',
-              'https': 'http://localhost:8888',
+              'http': 'http://localhost:8500',
+              'https': 'http://localhost:8500',
             }
             session = requests.Session()
-            #session.proxies.update(proxies)
+            ##session.proxies.update(proxies)
             response = session.post(url, params=params, data=json.dumps(data), headers=headers)
+            #response = session.post(url, params=params, data=json.dumps(data), headers=headers, proxies=proxies,
+            #    verify='../../../hoverfly/cert.pem')
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as error:
@@ -621,7 +625,13 @@ class apiEnedis:
                 self.setUpdateRealise( True )
                 self.myLogWarning( "myEnedis ...%s update lancé, status precedent : %s" % (self.get_PDL_ID(), self.getStatusLastCall()))
                 if ( self.isConsommation()):
+                    self._niemeAppel += 1
                     if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
+
+                        """if (self.get_PDL_ID() == "xxx") and \
+                                ( self._niemeAppel >= 2 ) and ( self._niemeAppel < 4 ):
+                            self.myLogWarning("*** TEST CRASH CONTRACT xxxx *** %s" %(self._niemeAppel))
+                            print(1/0)  # on crash pour voir la reprise ;) """
                         self.updateYesterday()
                     try:
                         if( self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
@@ -672,6 +682,8 @@ class apiEnedis:
                     self.myLogWarning("Erreur inconnue call ERROR %s" %(inst))
                     self.myLogWarning("Erreur last answer %s" %(inst))
                     self.updateStatusLastCall( False )
+                    self.updateTimeLastCall()
+                    self.updateErrorLastCall("%s" %(inst))
                     self.myLogWarning(self.getLastMethodCall())
 
         else:

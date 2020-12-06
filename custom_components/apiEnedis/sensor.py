@@ -23,16 +23,19 @@ from homeassistant.util import Throttle
 from homeassistant.util import slugify
 from homeassistant.util.dt import now, parse_date
 
+import time
+
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.4.1i"
+__VERSION__ = "1.0.5.0a"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
+#DEFAUT_DELAI_INTERVAL = 120 # interrogation faite toutes 2 les heures
 DEFAUT_HEURES_CREUSES = "[]"
 DEFAUT_COST = "0.0"
 HEURES_CREUSES = "heures_creuses"
@@ -95,6 +98,21 @@ class myEnedis(RestoreEntity):
         self._state = None
         self._unit = "kWh"
         self.update = Throttle(interval)(self._update)
+        self._lastState = None
+        self._lastAttributes = None
+
+    def setLastState(self):
+        self._lastState = self._state
+    def setLastAttributes(self):
+        self._lastAttributes = self._attributes.copy()
+
+    def setStateFromLastState(self):
+        if ( self._lastState != None ) :
+            self._state = self._lastState
+    def setAttributesFromLastAttributes(self):
+        if ( self._lastAttributes != None ) :
+            self._attributes = self._lastAttributes.copy()
+            return self._attributes
 
     @property
     def name(self):
@@ -123,6 +141,9 @@ class myEnedis(RestoreEntity):
                 self._myDataEnedis.updateHCHP()
             except Exception as inst:
                 self._attributes = {ATTR_ATTRIBUTION: ""}
+                # on met les anciens attributs
+                self.setStateFromLastState()
+                self.setAttributesFromLastAttributes()
                 if ( inst.args[:2] == ("call", "error")): # gestion que c'est pas une erreur de contrat trop recent ?
                     _LOGGER.warning("Erreur call ERROR %s" %(inst))
                     status_counts['errorLastCall'] = "erreur gateway : %s" %(inst.args[2])
@@ -133,24 +154,35 @@ class myEnedis(RestoreEntity):
 
         if ( self._myDataEnedis.getContract() != None ):
             try:
-                status_counts = sensorEnedis.manageSensorState(self._myDataEnedis)
+                status_counts = sensorEnedis.manageSensorState(self._myDataEnedis, _LOGGER, __VERSION__)
                 if (self._myDataEnedis.getStatusLastCall() == False):
-                    _LOGGER.warning("%s - **** ERROR *** %s" %(self.get_PDL_ID(), self._myDataEnedis.getLastMethodCall()))
+                    _LOGGER.warning("%s - **** ERROR *** %s" %(self._myDataEnedis.get_PDL_ID(), self._myDataEnedis.getLastMethodCall()))
                     self._myDataEnedis.updateLastMethodCallError(self._myDataEnedis.getLastMethodCall())  # on met l'etat precedent
                     time.sleep( 10 )
                     # si pas ok, alors on fait un deuxième essai
-                    _LOGGER.warning("%s - **** on va tenter un deuxème essai *** %s" %(self.get_PDL_ID()))
-                    status_counts = sensorEnedis.manageSensorState(self._myDataEnedis, _LOGGER)
+                    _LOGGER.warning("%s - **** on va tenter un deuxème essai ***" %(self._myDataEnedis.get_PDL_ID()))
+                    status_counts = sensorEnedis.manageSensorState(self._myDataEnedis, _LOGGER, __VERSION__)
                     if (self._myDataEnedis.getStatusLastCall() == False):
-                        _LOGGER.warning("%s - **** ERROR *** %s" %(self.get_PDL_ID(), self._myDataEnedis.getLastMethodCall()))
+                        _LOGGER.warning("%s - **** ERROR *** %s" %(self._myDataEnedis.get_PDL_ID(), self._myDataEnedis.getLastMethodCall()))
                         self._myDataEnedis.updateLastMethodCallError(self._myDataEnedis.getLastMethodCall())  # on met l'etat precedent
+                        self.setStateFromLastState()
+                        status_counts = self.setAttributesFromLastAttributes()
+                        status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
+                        self._attributes.update(status_counts)
+                        _LOGGER.warning("%s - **** fin ERROR *** %s" % ( self._myDataEnedis.get_PDL_ID(), self._myDataEnedis.getLastMethodCall()))
+                        # si on a eut une erreur ... alors voir pour reprendre precedent ?
                 else:
                     if ( not self._myDataEnedis.getUpdateRealise()): return # si pas d'update
                     self._attributes = {ATTR_ATTRIBUTION: ""}
                     self._attributes.update(status_counts)
                     self._state = status_counts['yesterday']*0.001
+                    self.setLastState()
+                    self.setLastAttributes()
             except:
+                _LOGGER.warning("%s - **** CRASH *** " % (self._myDataEnedis.get_PDL_ID()))
                 self._attributes = {ATTR_ATTRIBUTION: ""}
+                self.setStateFromLastState()
+                status_counts = self.setAttributesFromLastAttributes()
                 status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
                 self._attributes.update(status_counts)
 
@@ -171,10 +203,15 @@ class myEnedis(RestoreEntity):
             return
 
         # ADDED CODE HERE
+        #_LOGGER.warning("*** kyes : %s " %(state.attributes.keys()))
         # si seulement pas eut de mise à jour !!
-        if 'yesterday' not in state.attributes.keys(): # pas plutot la key à checker ??
+        # si la clef yesterday est disponible dans l'element courant, alors c'est que l'on a eut une mise à jour
+        if 'yesterday' not in self._attributes.keys(): # pas plutot la key à checker ??
             self._state = state.state
-            #_LOGGER.warning("*** / / / \ \ \ *** passe ici init _state %s " % (self._state))
+            _LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
             self._attributes = state.attributes
-            #_LOGGER.warning("*** / / / \ \ \ *** passe ici init %s " %( self._attributes ))
+            _LOGGER.warning("*** / / / \ \ \ *** mise a jour attributes precedent %s " %( self._attributes ))
+            #on sauvegarde les elements pour les reprendre si errot
+            self.setLastAttributes()
+            self.setLastState()
 

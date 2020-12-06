@@ -1,8 +1,9 @@
 from collections import defaultdict
 import datetime
 
-def manageSensorState( _myDataEnedis,_LOGGER = None ):
+def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
     status_counts = defaultdict(int)
+    status_counts["version"] = version
     _myDataEnedis.update()
     if ( not _myDataEnedis.getUpdateRealise()):
         # si pas de mises à jour alors juste return !!
