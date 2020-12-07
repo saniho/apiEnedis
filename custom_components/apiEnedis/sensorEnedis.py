@@ -117,6 +117,7 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
                 # status_counts['yesterday'] = ""
             elif( _myDataEnedis.isProduction()):
                 status_counts["yesterday_production"] = _myDataEnedis.getProductionYesterday()
+                status_counts['errorLastCall'] = _myDataEnedis.getErrorLastCall()
 
 
         except:

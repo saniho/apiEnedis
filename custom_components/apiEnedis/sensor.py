@@ -31,7 +31,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.5.0a"
+__VERSION__ = "1.0.5.0"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
@@ -175,7 +175,10 @@ class myEnedis(RestoreEntity):
                     if ( not self._myDataEnedis.getUpdateRealise()): return # si pas d'update
                     self._attributes = {ATTR_ATTRIBUTION: ""}
                     self._attributes.update(status_counts)
-                    self._state = status_counts['yesterday']*0.001
+                    if ( self._myDataEnedis.isProduction()):
+                        self._state = status_counts['yesterday_production']*0.001
+                    else:
+                        self._state = status_counts['yesterday']*0.001
                     self.setLastState()
                     self.setLastAttributes()
             except:
