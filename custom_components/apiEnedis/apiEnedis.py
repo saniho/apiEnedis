@@ -49,9 +49,10 @@ class apiEnedis:
         pass
 
     def myLog(self, message):
-        pass
         #self._log.info(message)
         #self._log.warning(message)
+        pass
+
     def myLogWarning(self, message):
         self._log.warning(message)
 
@@ -392,6 +393,7 @@ class apiEnedis:
         self._joursHP={}
         dateDuJour = (datetime.date.today()).strftime("%Y-%m-%d")
         for x in data["meter_reading"]["interval_reading"]:
+            self._interval_length = x["interval_length"]
             date = x["date"][:10]
             heure = x["date"][11:16]
             if ( heure == "00:00" ): # alors sur la veille, var c'est la fin de la tranche du jour precedent
@@ -409,6 +411,10 @@ class apiEnedis:
                     self._joursHP[date] += int(x["value"]) * self.getCoeffIntervalLength() # car c'est en heure
                 else:
                     self._joursHC[date] +=int(x["value"]) * self.getCoeffIntervalLength() # car c'est pas en heure
+
+                # if ( date == "2020-12-06" ):
+                #     print("ici", x["date"], heure, " ", heurePleine, ", ", x[ "value" ], \
+                #           self._joursHP[date], self._joursHC[date], self._joursHP[date] + self._joursHC[date])
 
         #print(self._joursHC)
         #print(self._joursHP)
@@ -440,10 +446,10 @@ class apiEnedis:
         #print(self._HP)
 
     def updateDataYesterdayHCHP(self, data=None):
-        self.updateLastMethodCall("updateDataHCHP")
-        self.myLog("--updateDataHCHP --")
+        self.updateLastMethodCall("updateDataYesterdayHCHP")
+        self.myLog("--updateDataYesterdayHCHP --")
         if (data == None): data = self.CallgetDataYesterdayHCHP()
-        self.myLog("updateDataHCHP : data %s" % (data))
+        self.myLog("updateDataYesterdayHCHP : data %s" % (data))
         self.checkData(data)
         self.createHCHP(data)
 
@@ -612,6 +618,7 @@ class apiEnedis:
     def getDelai(self):
         return self._delai
     def getDelaiIsGood(self):
+        self.myLogWarning("TimeLastCall : %s" %(self.getTimeLastCall()))
         ecartOk = ( datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelai()
         return ecartOk
 
@@ -623,7 +630,8 @@ class apiEnedis:
             self.updateLastMethodCall("")
             try:
                 self.setUpdateRealise( True )
-                self.myLogWarning( "myEnedis ...%s update lancé, status precedent : %s" % (self.get_PDL_ID(), self.getStatusLastCall()))
+                self.myLogWarning( "myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
+                                   % (self.get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
                 if ( self.isConsommation()):
                     self._niemeAppel += 1
                     if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
@@ -647,7 +655,18 @@ class apiEnedis:
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentYear"):
                             self.updateCurrentYear()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateDataYesterdayHCHP"):
-                            self.updateDataYesterdayHCHP()
+                            try:
+                                self.updateDataYesterdayHCHP()
+                            except Exception as inst:
+                                if ( inst.args[:3] == ('call', 'error', 'no_data_found')): # gestion que c'est pas une erreur de contrat trop recent ?
+                                    # si le service ne repond pas, l'erreur pas grave
+                                    self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
+                                    pass
+                                else:
+                                    raise Exception(inst)
+
+                        # if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateDataYesterdayHCHP"):
+                        #     self.updateDataYesterdayHCHP()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastYear"):
                             self.updateLastYear()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonthLastYear"):

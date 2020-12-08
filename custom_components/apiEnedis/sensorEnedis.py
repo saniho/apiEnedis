@@ -9,6 +9,7 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
         # si pas de mises à jour alors juste return !!
         return
     if (_myDataEnedis.getStatusLastCall()):  # update avec statut ok
+        #if( 1 ): #
         try:
             status_counts["typeCompteur"] = _myDataEnedis.getTypePDL()
             if ( _myDataEnedis.isConsommation()):
@@ -19,10 +20,10 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
                 status_counts['yesterday'] = _myDataEnedis.getYesterday()
                 status_counts['last_week'] = _myDataEnedis.getLastWeek()
 
-                last7days = _myDataEnedis.getLast7Days()
-                for day in last7days:
-                    status_counts['day_%s' % (day["niemejour"])] = day["value"]
-                status_counts['daily'] = [("{:.2f}".format(day["value"] * 0.001)) for day in last7days]
+                #last7days = _myDataEnedis.getLast7Days()
+                #for day in last7days:
+                #    status_counts['day_%s' % (day["niemejour"])] = day["value"]
+                #status_counts['daily'] = [("{:.2f}".format(day["value"] * 0.001)) for day in last7days]
 
                 last7daysHP = _myDataEnedis.get7DaysHP()
                 listeClef = list(last7daysHP.keys())
@@ -80,6 +81,15 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
                     dailyHP.append(last7daysHP[clef])
                 status_counts['dailyweek_HP'] = [("{:.3f}".format(0.001 * day_HP)) for day_HP in dailyHP]
 
+                niemejour = 0
+                daily = []
+                for clef in listeClef:
+                    niemejour += 1
+                    somme = last7daysHP[clef] + last7daysHC[clef]
+                    status_counts['day_%s' %(niemejour)] = somme
+                    daily.append(somme)
+                status_counts['daily'] = [("{:.2f}".format(0.001 * day)) for day in daily]
+
                 status_counts["halfhourly"] = []
                 status_counts["offpeak_hours"] = _myDataEnedis.getYesterdayHC() * 0.001
                 status_counts["peak_hours"] = _myDataEnedis.getYesterdayHP() * 0.001
@@ -104,9 +114,9 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
                 status_counts['last_year'] = _myDataEnedis.getLastYear() * 0.001
                 status_counts['current_year'] = _myDataEnedis.getCurrentYear() * 0.001
                 status_counts['errorLastCall'] = _myDataEnedis.getErrorLastCall()
-                if ((_myDataEnedis.getLastMonthLastYear() != None) and
+                if ((_myDataEnedis.getLastMonthLastYear() is not None) and
                         (_myDataEnedis.getLastMonthLastYear() != 0) and
-                        (_myDataEnedis.getLastMonth() != None)):
+                        (_myDataEnedis.getLastMonth() is not None)):
                     status_counts["monthly_evolution"] = \
                         ((_myDataEnedis.getLastMonth() - _myDataEnedis.getLastMonthLastYear())
                          / _myDataEnedis.getLastMonthLastYear()) * 100

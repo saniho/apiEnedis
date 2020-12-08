@@ -31,7 +31,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.5.0"
+__VERSION__ = "1.0.5.1"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
@@ -94,7 +94,7 @@ class myEnedis(RestoreEntity):
         self._session = session
         self._name = name
         self._myDataEnedis = myDataEnedis
-        self._attributes = None
+        self._attributes = {}
         self._state = None
         self._unit = "kWh"
         self.update = Throttle(interval)(self._update)
@@ -113,6 +113,8 @@ class myEnedis(RestoreEntity):
         if ( self._lastAttributes != None ) :
             self._attributes = self._lastAttributes.copy()
             return self._attributes
+        else:
+            return {}
 
     @property
     def name(self):
