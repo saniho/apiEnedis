@@ -31,7 +31,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.5.1"
+__VERSION__ = "1.0.5.2"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
@@ -211,7 +211,7 @@ class myEnedis(RestoreEntity):
         #_LOGGER.warning("*** kyes : %s " %(state.attributes.keys()))
         # si seulement pas eut de mise à jour !!
         # si la clef yesterday est disponible dans l'element courant, alors c'est que l'on a eut une mise à jour
-        if 'yesterday' not in self._attributes.keys(): # pas plutot la key à checker ??
+        if 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys(): # pas plutot la key à checker ??
             self._state = state.state
             _LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
             self._attributes = state.attributes

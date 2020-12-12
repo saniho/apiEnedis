@@ -90,6 +90,7 @@ def testMulti():
     mon_conteneur.read("../../../myCredential/security.txt")
     #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4"]:
     #for qui in ["ENEDIS","ENEDIS7"]:
+    #for qui in ["ENEDIS9"]:
     for qui in ["ENEDIS"]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
@@ -97,11 +98,14 @@ def testMulti():
         heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
         myDataEnedis = apiEnedis.apiEnedis( token=token, PDL_ID=PDL_ID, delai=10, \
             heuresCreuses=eval(heureCreusesCh), heuresCreusesCost=0.0797, heuresPleinesCost=0.1175 )
+        #myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
+        #myDataEnedis._serverName = "http://localhost:5501" # pour record
         myDataEnedis.updateContract()
         myDataEnedis.updateHCHP()
         #print(myDataEnedis.getContract())
         #print(myDataEnedis.getTypePDL())
         testComplet( myDataEnedis )
+        print( myDataEnedis.getLastMethodCallError())
 
 def testMono():
     import configparser

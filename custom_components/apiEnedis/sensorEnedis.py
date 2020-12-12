@@ -9,8 +9,8 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
         # si pas de mises à jour alors juste return !!
         return
     if (_myDataEnedis.getStatusLastCall()):  # update avec statut ok
-        #if( 1 ): #
-        try:
+        if( 1 ): #
+        #try:
             status_counts["typeCompteur"] = _myDataEnedis.getTypePDL()
             if ( _myDataEnedis.isConsommation()):
                 status_counts["lastSynchro"] = datetime.datetime.now()
@@ -28,67 +28,101 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
                 last7daysHP = _myDataEnedis.get7DaysHP()
                 listeClef = list(last7daysHP.keys())
                 listeClef.reverse()
+
+                print(listeClef)
+                today = datetime.date.today()
+                listeClef = []
+                for i in range( 7 ):
+                    maDate = today - datetime.timedelta( i + 1)
+                    listeClef.append(maDate.strftime("%Y-%m-%d"))
+                print(listeClef)
                 niemejour = 0
                 for clef in listeClef:
                     niemejour += 1
-                    status_counts['day_%s_HP' % (niemejour)] = last7daysHP[clef]
+                    valeur= -1
+                    if ( clef in last7daysHP.keys()):
+                        valeur = last7daysHP[clef]
+                    status_counts['day_%s_HP' % (niemejour)] = valeur
                 last7daysHC = _myDataEnedis.get7DaysHC()
-                listeClef = list(last7daysHP.keys())
-                listeClef.reverse()
+                #listeClef = list(last7daysHP.keys())
+                #listeClef.reverse()
                 niemejour = 0
                 for clef in listeClef:
                     # print(clef, " ", last7daysHC[clef])
                     niemejour += 1
-                    status_counts['day_%s_HC' % (niemejour)] = last7daysHC[clef]
+                    valeur= -1
+                    if ( clef in last7daysHC.keys()):
+                        valeur = last7daysHC[clef]
+                    status_counts['day_%s_HC' % (niemejour)] = valeur
                 # gestion du cout par jour ....
 
                 niemejour = 0
                 cout = []
                 for clef in listeClef:
                     niemejour += 1
-                    cout.append(0.001 * _myDataEnedis.getHCCost(last7daysHC[clef]) +
-                                0.001 * _myDataEnedis.getHPCost(last7daysHP[clef]))
-                status_counts['dailyweek_cost'] = [("{:.2f}".format(day_cost))  for day_cost in cout]
+                    valeur = -1
+                    if ( clef in last7daysHC.keys() and clef in last7daysHP.keys()):
+                        valeur = 0.001 * _myDataEnedis.getHCCost(last7daysHC[clef]) + \
+                                0.001 * _myDataEnedis.getHPCost(last7daysHP[clef])
+                        valeur = "{:.2f}".format(valeur)
+                    cout.append(valeur)
+                status_counts['dailyweek_cost'] = cout
                 niemejour = 0
                 coutHC = []
                 for clef in listeClef:
                     niemejour += 1
-                    coutHC.append(
-                        0.001 * _myDataEnedis.getHCCost(last7daysHC[clef]))
-                status_counts['dailyweek_costHC'] = [("{:.2f}".format(day_cost))  for day_cost in coutHC]
+                    valeur = -1
+                    if ( clef in last7daysHC.keys()):
+                        valeur = 0.001 * _myDataEnedis.getHCCost(last7daysHC[clef])
+                        valeur = "{:.2f}".format(valeur)
+                    coutHC.append(valeur)
+                status_counts['dailyweek_costHC'] = coutHC
 
                 niemejour = 0
                 dailyHC = []
                 for clef in listeClef:
                     niemejour += 1
-                    dailyHC.append(last7daysHC[clef])
-                status_counts['dailyweek_HC'] = [("{:.3f}".format(0.001 * day_HC)) for day_HC in dailyHC]
+                    valeur = -1
+                    if ( clef in last7daysHC.keys()):
+                        valeur = "{:.3f}".format(0.001 * last7daysHC[clef])
+                    dailyHC.append(valeur)
+                status_counts['dailyweek_HC'] = dailyHC
 
                 status_counts['dailyweek'] = [(day) for day in listeClef]
                 niemejour = 0
                 coutHP = []
                 for clef in listeClef:
                     niemejour += 1
-                    coutHP.append(
-                        0.001 * _myDataEnedis.getHPCost(last7daysHP[clef]))
-                status_counts['dailyweek_costHP'] = [("{:.2f}".format(day_cost)) for day_cost in coutHP]
+                    valeur = -1
+                    if ( clef in last7daysHP.keys()):
+                        valeur = 0.001 * _myDataEnedis.getHPCost(last7daysHP[clef])
+                        valeur = "{:.2f}".format(valeur)
+                    coutHP.append(valeur)
+                status_counts['dailyweek_costHP'] = coutHP
                 #gestion du format : "{:.2f}".format(a)
 
                 niemejour = 0
                 dailyHP = []
                 for clef in listeClef:
                     niemejour += 1
-                    dailyHP.append(last7daysHP[clef])
-                status_counts['dailyweek_HP'] = [("{:.3f}".format(0.001 * day_HP)) for day_HP in dailyHP]
+                    valeur = -1
+                    if ( clef in last7daysHP.keys()):
+                        valeur = last7daysHP[clef]
+                        valeur = "{:.3f}".format(0.001 * valeur)
+                    dailyHP.append(valeur)
+                status_counts['dailyweek_HP'] = dailyHP
 
                 niemejour = 0
                 daily = []
                 for clef in listeClef:
                     niemejour += 1
-                    somme = last7daysHP[clef] + last7daysHC[clef]
+                    somme = -1
+                    if ( clef in last7daysHP.keys() and clef in last7daysHC.keys() ):
+                        somme = last7daysHP[clef] + last7daysHC[clef]
+                        somme = "{:.2f}".format(0.001 * somme)
                     status_counts['day_%s' %(niemejour)] = somme
                     daily.append(somme)
-                status_counts['daily'] = [("{:.2f}".format(0.001 * day)) for day in daily]
+                status_counts['daily'] = daily
 
                 status_counts["halfhourly"] = []
                 status_counts["offpeak_hours"] = _myDataEnedis.getYesterdayHC() * 0.001
@@ -128,12 +162,15 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
             elif( _myDataEnedis.isProduction()):
                 status_counts["yesterday_production"] = _myDataEnedis.getProductionYesterday()
                 status_counts['errorLastCall'] = _myDataEnedis.getErrorLastCall()
+                status_counts["lastSynchro"] = datetime.datetime.now()
+                status_counts["lastUpdate"] = _myDataEnedis.getLastUpdate()
+                status_counts["timeLastCall"] = _myDataEnedis.getTimeLastCall()
 
 
-        except:
+        """except:
             status_counts['errorLastCall'] = _myDataEnedis.getErrorLastCall()
             _LOGGER.warning( "errorLastCall : %s " %( _myDataEnedis.getErrorLastCall() ))
-
+        """
     return status_counts
 
 def logSensorState( status_counts ):

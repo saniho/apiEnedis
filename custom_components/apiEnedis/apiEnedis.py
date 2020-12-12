@@ -7,6 +7,7 @@ __nameMyEnedis__ = "apiEnedis"
 class apiEnedis:
     def __init__(self, token, PDL_ID, delai = 3600, heuresCreuses = None, \
                  heuresCreusesCost=0, heuresPleinesCost=0, log = None):
+        self._serverName = "https://enedisgateway.tech/api"
         self._token = token
         self._PDL_ID = PDL_ID
         self._lastMonth = None
@@ -31,8 +32,7 @@ class apiEnedis:
         self._heuresCreusesCost = heuresCreusesCost
         self._heuresPleinesCost = heuresPleinesCost
         self._contract = None #{'subscribed_power':"", 'offpeak_hours':""}
-        self._HC = 0
-        self._HP = 0
+        self._HC, self._HP = 0, 0
         self._interval_length = 1
         self._updateRealise = False
         self._niemeAppel = 0
@@ -49,7 +49,7 @@ class apiEnedis:
         pass
 
     def myLog(self, message):
-        #self._log.info(message)
+        self._log.info(message)
         #self._log.warning(message)
         pass
 
@@ -67,15 +67,8 @@ class apiEnedis:
             import logging
             import json
 
-            proxies = {
-              'http': 'http://localhost:8500',
-              'https': 'http://localhost:8500',
-            }
             session = requests.Session()
-            ##session.proxies.update(proxies)
             response = session.post(url, params=params, data=json.dumps(data), headers=headers)
-            #response = session.post(url, params=params, data=json.dumps(data), headers=headers, proxies=proxies,
-            #    verify='../../../hoverfly/cert.pem')
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as error:
@@ -98,7 +91,7 @@ class apiEnedis:
             'Authorization': self._token,
             'Content-Type': "application/json",
         }
-        dataAnswer = self.post_and_get_json("https://enedisgateway.tech/api", data=payload, headers=headers)
+        dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
         return dataAnswer
 
@@ -114,7 +107,7 @@ class apiEnedis:
             'Authorization': self._token,
             'Content-Type': "application/json",
         }
-        dataAnswer = self.post_and_get_json("https://enedisgateway.tech/api", data=payload, headers=headers)
+        dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
         return dataAnswer
 
@@ -129,7 +122,7 @@ class apiEnedis:
             'Authorization': self._token,
             'Content-Type': "application/json",
         }
-        dataAnswer = self.post_and_get_json("https://enedisgateway.tech/api", data=payload, headers=headers)
+        dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
         return dataAnswer
 
@@ -142,7 +135,7 @@ class apiEnedis:
             'Authorization': self._token,
             'Content-Type': "application/json",
         }
-        dataAnswer = self.post_and_get_json("https://enedisgateway.tech/api", data=payload, headers=headers)
+        dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
         return dataAnswer
 
@@ -187,6 +180,16 @@ class apiEnedis:
         start_date = today - datetime.timedelta(7)
         end_date = (datetime.date.today()).strftime("%Y-%m-%d")
         return self.getDataPeriodCLC( start_date, end_date)
+
+    def CallgetCurrentMonthDetails(self):
+        import datetime
+        today = datetime.date.today()
+        debCurrentMonth = today.strftime("%Y-%m-01")
+        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        if (debCurrentMonth != cejour):
+            return self.getDataPeriodCLC(debCurrentMonth, cejour)
+        else:
+            return 0
 
     def CallgetLastWeek(self):
         import datetime
@@ -389,8 +392,8 @@ class apiEnedis:
         return heurePleine
 
     def createMultiDaysHCHP(self, data):
-        self._joursHC={}
-        self._joursHP={}
+        joursHC={}
+        joursHP={}
         dateDuJour = (datetime.date.today()).strftime("%Y-%m-%d")
         for x in data["meter_reading"]["interval_reading"]:
             self._interval_length = x["interval_length"]
@@ -404,18 +407,19 @@ class apiEnedis:
             #    pass
             #else:
             if(1):
-                if date not in self._joursHC:self._joursHC[date] = 0
-                if date not in self._joursHP:self._joursHP[date] = 0
+                if date not in joursHC:joursHC[date] = 0
+                if date not in joursHP:joursHP[date] = 0
                 heurePleine = self._getHCHPfromHour( heure )
                 if (heurePleine):
-                    self._joursHP[date] += int(x["value"]) * self.getCoeffIntervalLength() # car c'est en heure
+                    joursHP[date] += int(x["value"]) * self.getCoeffIntervalLength() # car c'est en heure
                 else:
-                    self._joursHC[date] +=int(x["value"]) * self.getCoeffIntervalLength() # car c'est pas en heure
+                    joursHC[date] +=int(x["value"]) * self.getCoeffIntervalLength() # car c'est pas en heure
 
                 # if ( date == "2020-12-06" ):
                 #     print("ici", x["date"], heure, " ", heurePleine, ", ", x[ "value" ], \
                 #           self._joursHP[date], self._joursHC[date], self._joursHP[date] + self._joursHC[date])
 
+        return joursHC, joursHP
         #print(self._joursHC)
         #print(self._joursHP)
 
@@ -533,7 +537,7 @@ class apiEnedis:
         self.myLog("updateLast7DaysDetails : data %s" %(data))
         self.checkDataPeriod(data)
         # construction d'un dico utile ;)
-        self.createMultiDaysHCHP(data)
+        self._joursHC, self._joursHP =  self.createMultiDaysHCHP(data)
 
     def getCurrentWeek(self):
         return self._currentWeek
@@ -560,6 +564,7 @@ class apiEnedis:
             self._currentMonth = self.analyseValueAndAdd( data )
         else:
             self._currentMonth = data
+
     def getLastYear(self):
         return self._lastYear
     def updateLastYear(self, data=None):
@@ -626,12 +631,12 @@ class apiEnedis:
         if (( self.getTimeLastCall() == None ) or
             ( self.getStatusLastCall() == False) or
             ( self.getDelaiIsGood() )):
-            self.updateErrorLastCall( "")
-            self.updateLastMethodCall("")
             try:
-                self.setUpdateRealise( True )
                 self.myLogWarning( "myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
                                    % (self.get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
+                self.updateErrorLastCall( "")
+                self.updateLastMethodCall("")
+                self.setUpdateRealise( True )
                 if ( self.isConsommation()):
                     self._niemeAppel += 1
                     if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
@@ -659,8 +664,8 @@ class apiEnedis:
                                 self.updateDataYesterdayHCHP()
                             except Exception as inst:
                                 if ( inst.args[:3] == ('call', 'error', 'no_data_found')): # gestion que c'est pas une erreur de contrat trop recent ?
-                                    # si le service ne repond pas, l'erreur pas grave
-                                    self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
+                                    # si le service ne repond pas, l'erreur pas grave, c'est que pas encore remonté
+                                    self.updateErrorLastCall( "%s"%("no yesterday data"))
                                     pass
                                 else:
                                     raise Exception(inst)
@@ -687,6 +692,8 @@ class apiEnedis:
                 elif ( self.isProduction()):
                     if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
                         self.updateProductionYesterday()
+                    self.updateTimeLastCall()
+                    self.updateStatusLastCall(True)
 
             except Exception as inst:
                 if ( inst.args == ("call", None)):
