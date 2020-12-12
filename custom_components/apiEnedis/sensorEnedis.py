@@ -125,11 +125,12 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
                 status_counts['daily'] = daily
 
                 status_counts["halfhourly"] = []
-                status_counts["offpeak_hours"] = _myDataEnedis.getYesterdayHC() * 0.001
-                status_counts["peak_hours"] = _myDataEnedis.getYesterdayHP() * 0.001
+                status_counts["offpeak_hours"] = "{:.3f}".format(_myDataEnedis.getYesterdayHC() * 0.001 )
+                status_counts["peak_hours"] = "{:.3f}".format(_myDataEnedis.getYesterdayHP() * 0.001 )
                 if ((_myDataEnedis.getYesterdayHC() + _myDataEnedis.getYesterdayHP()) != 0):
-                    status_counts["peak_offpeak_percent"] = (_myDataEnedis.getYesterdayHP() * 100) / \
+                    valeur = (_myDataEnedis.getYesterdayHP() * 100) / \
                             ( _myDataEnedis.getYesterdayHC() + _myDataEnedis.getYesterdayHP())
+                    status_counts["peak_offpeak_percent"] = "{:.2f}".format(valeur)
                 else:
                     status_counts["peak_offpeak_percent"] = 0
                 status_counts["yesterday_HC_cost"] = \
@@ -142,18 +143,19 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
                                             )
                 status_counts["yesterday_HC"] = "{:.3f}".format(_myDataEnedis.getYesterdayHC() * 0.001 )
                 status_counts["yesterday_HP"] = "{:.3f}".format(_myDataEnedis.getYesterdayHP() * 0.001 )
-                status_counts['current_week'] = _myDataEnedis.getCurrentWeek() * 0.001
-                status_counts['last_month'] = _myDataEnedis.getLastMonth() * 0.001
-                status_counts['current_month'] = _myDataEnedis.getCurrentMonth() * 0.001
-                status_counts['last_year'] = _myDataEnedis.getLastYear() * 0.001
-                status_counts['current_year'] = _myDataEnedis.getCurrentYear() * 0.001
+                status_counts['current_week'] = "{:.3f}".format(_myDataEnedis.getCurrentWeek() * 0.001 )
+                status_counts['last_month'] = "{:.3f}".format(_myDataEnedis.getLastMonth() * 0.001 )
+                status_counts['current_month'] = "{:.3f}".format(_myDataEnedis.getCurrentMonth() * 0.001 )
+                status_counts['last_year'] = "{:.3f}".format(_myDataEnedis.getLastYear() * 0.001 )
+                status_counts['current_year'] = "{:.3f}".format(_myDataEnedis.getCurrentYear() * 0.001 )
                 status_counts['errorLastCall'] = _myDataEnedis.getErrorLastCall()
                 if ((_myDataEnedis.getLastMonthLastYear() is not None) and
                         (_myDataEnedis.getLastMonthLastYear() != 0) and
                         (_myDataEnedis.getLastMonth() is not None)):
-                    status_counts["monthly_evolution"] = \
+                    valeur = \
                         ((_myDataEnedis.getLastMonth() - _myDataEnedis.getLastMonthLastYear())
                          / _myDataEnedis.getLastMonthLastYear()) * 100
+                    status_counts["monthly_evolution"] = "{:.3f}".format(valeur)
                 else:
                     status_counts["monthly_evolution"] = 0
                 status_counts["subscribed_power"] = _myDataEnedis.getsubscribed_power()
