@@ -29,13 +29,11 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
                 listeClef = list(last7daysHP.keys())
                 listeClef.reverse()
 
-                print(listeClef)
                 today = datetime.date.today()
                 listeClef = []
                 for i in range( 7 ):
                     maDate = today - datetime.timedelta( i + 1)
                     listeClef.append(maDate.strftime("%Y-%m-%d"))
-                print(listeClef)
                 niemejour = 0
                 for clef in listeClef:
                     niemejour += 1

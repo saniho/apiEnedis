@@ -49,7 +49,7 @@ class apiEnedis:
         pass
 
     def myLog(self, message):
-        self._log.info(message)
+        #self._log.info(message)
         #self._log.warning(message)
         pass
 
