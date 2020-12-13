@@ -9,11 +9,9 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
         # si pas de mises à jour alors juste return !!
         return
     if (_myDataEnedis.getStatusLastCall()):  # update avec statut ok
-        if( 1 ): #
-        #try:
+        try:
             status_counts["typeCompteur"] = _myDataEnedis.getTypePDL()
             if ( _myDataEnedis.isConsommation()):
-                status_counts["lastSynchro"] = datetime.datetime.now()
                 status_counts["lastUpdate"] = _myDataEnedis.getLastUpdate()
                 status_counts["timeLastCall"] = _myDataEnedis.getTimeLastCall()
                 # à supprimer car doublon avec j_1
@@ -162,15 +160,14 @@ def manageSensorState( _myDataEnedis,_LOGGER = None, version = None ):
             elif( _myDataEnedis.isProduction()):
                 status_counts["yesterday_production"] = _myDataEnedis.getProductionYesterday()
                 status_counts['errorLastCall'] = _myDataEnedis.getErrorLastCall()
-                status_counts["lastSynchro"] = datetime.datetime.now()
                 status_counts["lastUpdate"] = _myDataEnedis.getLastUpdate()
                 status_counts["timeLastCall"] = _myDataEnedis.getTimeLastCall()
 
 
-        """except:
+        except:
             status_counts['errorLastCall'] = _myDataEnedis.getErrorLastCall()
             _LOGGER.warning( "errorLastCall : %s " %( _myDataEnedis.getErrorLastCall() ))
-        """
+
     return status_counts
 
 def logSensorState( status_counts ):

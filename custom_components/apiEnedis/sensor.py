@@ -31,7 +31,7 @@ DOMAIN = "saniho"
 
 ICON = "mdi:package-variant-closed"
 
-__VERSION__ = "1.0.5.4"
+__VERSION__ = "1.0.5.5a"
 
 SCAN_INTERVAL = timedelta(seconds=1800)# interrogation enedis ?
 DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
@@ -56,6 +56,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 from . import apiEnedis
 from . import sensorEnedis
+from . import  messages
 
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
@@ -148,9 +149,9 @@ class myEnedis(RestoreEntity):
                 self.setAttributesFromLastAttributes()
                 if ( inst.args[:2] == ("call", "error")): # gestion que c'est pas une erreur de contrat trop recent ?
                     _LOGGER.warning("Erreur call ERROR %s" %(inst))
-                    status_counts['errorLastCall'] = "erreur gateway : %s" %(inst.args[2])
+                    status_counts['errorLastCall'] = "%s" %(messages.getMessage( inst.args[2]))
                 else:
-                    status_counts['errorLastCall'] = "erreur inconnue"
+                    status_counts['errorLastCall'] = "%s - %s" %(messages.getMessage( inst.args[2]), "erreur inconnue" )
                 self._attributes.update(status_counts)
         # mise à jour du contrat
 

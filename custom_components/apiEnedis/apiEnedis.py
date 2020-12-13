@@ -2,6 +2,8 @@ import requests
 import datetime, time
 import json
 import logging
+from . import  messages
+
 
 __nameMyEnedis__ = "apiEnedis"
 class apiEnedis:
@@ -480,7 +482,7 @@ class apiEnedis:
 
     def checkDataContract(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
-            self.myLogWarning( "** %s" %(dataAnswer["error"]))
+            #self.myLogWarning( "** %s" %(dataAnswer["error"]))
             raise Exception( 'call' , "error", dataAnswer["error"] )
 
     def getLastMonth(self):
@@ -665,7 +667,7 @@ class apiEnedis:
                             except Exception as inst:
                                 if ( inst.args[:3] == ('call', 'error', 'no_data_found')): # gestion que c'est pas une erreur de contrat trop recent ?
                                     # si le service ne repond pas, l'erreur pas grave, c'est que pas encore remonté
-                                    self.updateErrorLastCall( "%s"%("no yesterday data"))
+                                    self.updateErrorLastCall( "%s"%( messages.getMessage( inst.args[2] ), " pour hier"))
                                     pass
                                 else:
                                     raise Exception(inst)
@@ -687,7 +689,7 @@ class apiEnedis:
                             # Erreur lors du call...
                             self.updateTimeLastCall()
                             self.updateStatusLastCall( False )
-                            self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
+                            self.updateErrorLastCall( "%s - %s"%(messages.getMessage( inst.args[2]), self.getLastAnswer()))
                             self.myLogWarning( "%s - last call : %s" %(self.get_PDL_ID(), self.getLastMethodCall()))
                 elif ( self.isProduction()):
                     if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
@@ -702,7 +704,7 @@ class apiEnedis:
                     # Erreur lors du call...
                     self.updateTimeLastCall()
                     self.updateStatusLastCall( False )
-                    self.updateErrorLastCall( "%s"%(self.getLastAnswer()))
+                    self.updateErrorLastCall( "%s - %s"%(messages.getMessage( inst.args[2]), self.getLastAnswer()))
                     self.myLogWarning( "%s - %s" %(self.get_PDL_ID(), self.getLastMethodCall()))
                 else:
                     self.myLogWarning("Erreur inconnue call ERROR %s" %(inst))
