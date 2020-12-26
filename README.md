@@ -1,4 +1,4 @@
-# apiEnedis
+# myEnedis
 
 exemple de configuration sensors.yaml
 

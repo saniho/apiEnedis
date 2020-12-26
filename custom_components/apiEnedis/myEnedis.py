@@ -1,25 +1,27 @@
 import requests
-import datetime, time
+import datetime, time, sys
 import json
 import logging
-from . import  messages
+try:
+    from . import  messages
+except:
+    import messages
 
-
-__nameMyEnedis__ = "apiEnedis"
-class apiEnedis:
+__nameMyEnedis__ = "myEnedis"
+class myEnedis:
     def __init__(self, token, PDL_ID, delai = 3600, heuresCreuses = None, \
                  heuresCreusesCost=0, heuresPleinesCost=0, log = None):
         self._serverName = "https://enedisgateway.tech/api"
         self._token = token
         self._PDL_ID = PDL_ID
         self._lastMonth = None
-        self._lastYear = None
+        self._lastYear = 0
         self._currentMonth = None
         self._currentYear = None
         self._lastWeek = None
         self._last7Days = []
         self._lastMonthLastYear = None
-        self._currentWeek = None
+        self._currentWeek = 0
         self._yesterday = None
         self._productionYesterday = None
         self._lastUpdate = None
@@ -47,7 +49,7 @@ class apiEnedis:
             #self._log.setLevel(logging.WARNING)
         else:
             self._log = log
-            self._log.setLevel(logging.DEBUG)
+            #self._log.setLevel(logging.DEBUG)
         pass
 
     def myLog(self, message):
@@ -70,10 +72,13 @@ class apiEnedis:
             import json
 
             session = requests.Session()
-            response = session.post(url, params=params, data=json.dumps(data), headers=headers)
+            #response = session.post(url, params=params, data=json.dumps(data), headers=headers)
+            response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
+            # async http ?
             return response.json()
         except requests.exceptions.HTTPError as error:
+            self.myLogWarning("Error JSON : %s "%(response.text))
             return response.json()
 
     def setLastAnswsr(self, lastanswer ):
@@ -92,6 +97,7 @@ class apiEnedis:
         headers = {
             'Authorization': self._token,
             'Content-Type': "application/json",
+            'call-service' :'home-assistant-myEnedis',
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
@@ -108,6 +114,7 @@ class apiEnedis:
         headers = {
             'Authorization': self._token,
             'Content-Type': "application/json",
+            'call-service' :'home-assistant-myEnedis',
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
@@ -123,6 +130,7 @@ class apiEnedis:
         headers = {
             'Authorization': self._token,
             'Content-Type': "application/json",
+            'call-service' :'home-assistant-myEnedis',
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
@@ -136,6 +144,7 @@ class apiEnedis:
         headers = {
             'Authorization': self._token,
             'Content-Type': "application/json",
+            'call-service' :'home-assistant-myEnedis',
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
@@ -339,6 +348,7 @@ class apiEnedis:
         if ( data == None ): data = self.CallgetDataContract()
         self.myLog("updateContract : data %s" %(data))
         self.checkDataContract( data )
+        self.myLog("updateContract(2) : data %s" %(data))
         self._contract = self.analyseValueContract( data )
 
     def updateHCHP(self, heuresCreuses=None):
@@ -433,6 +443,7 @@ class apiEnedis:
         if ( interval == "PT10M" ) : coeff = 1 * 10 / 60
         if ( interval == "PT20M" ) : coeff = 1 * 20 / 60
         if ( interval == "PT30M" ) : coeff = 1 * 30 / 60
+        if ( interval == "PT60M" ) : coeff = 1
         return coeff
 
     def createHCHP(self, data):
@@ -471,13 +482,13 @@ class apiEnedis:
 
     def checkData(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
-            if ( isinstance(dataAnswer['enedis_return'], str)):
-                dataAnswer['enedis_return'] = json.loads(dataAnswer['enedis_return'])
-            if ( dataAnswer['enedis_return']["error"] == "ADAM-DC-0008" ):
+            #if ( isinstance(dataAnswer['enedis_return'], str)):
+            #    dataAnswer['enedis_return'] = json.loads(dataAnswer['enedis_return'])
+            if ( dataAnswer["error"] == "ADAM-DC-0008" ):
                 #No consent can be found for this customer and this usage point
                 return False
             else:
-                raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
+                raise Exception( 'call' , "error", dataAnswer["error"] )
         return True
 
     def checkDataContract(self, dataAnswer ):
@@ -625,11 +636,12 @@ class apiEnedis:
     def getDelai(self):
         return self._delai
     def getDelaiIsGood(self):
-        self.myLogWarning("TimeLastCall : %s" %(self.getTimeLastCall()))
+        self.myLog("TimeLastCall : %s" %(self.getTimeLastCall()))
         ecartOk = ( datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelai()
         return ecartOk
 
     def update(self):
+
         if (( self.getTimeLastCall() == None ) or
             ( self.getStatusLastCall() == False) or
             ( self.getDelaiIsGood() )):
@@ -642,11 +654,6 @@ class apiEnedis:
                 if ( self.isConsommation()):
                     self._niemeAppel += 1
                     if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
-
-                        """if (self.get_PDL_ID() == "xxx") and \
-                                ( self._niemeAppel >= 2 ) and ( self._niemeAppel < 4 ):
-                            self.myLogWarning("*** TEST CRASH CONTRACT xxxx *** %s" %(self._niemeAppel))
-                            print(1/0)  # on crash pour voir la reprise ;) """
                         self.updateYesterday()
                     try:
                         if( self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
@@ -665,15 +672,13 @@ class apiEnedis:
                             try:
                                 self.updateDataYesterdayHCHP()
                             except Exception as inst:
+                                #print("inst :", inst)
                                 if ( inst.args[:3] == ('call', 'error', 'no_data_found')): # gestion que c'est pas une erreur de contrat trop recent ?
                                     # si le service ne repond pas, l'erreur pas grave, c'est que pas encore remonté
                                     self.updateErrorLastCall( "%s"%( messages.getMessage( inst.args[2] ), " pour hier"))
                                     pass
                                 else:
                                     raise Exception(inst)
-
-                        # if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateDataYesterdayHCHP"):
-                        #     self.updateDataYesterdayHCHP()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastYear"):
                             self.updateLastYear()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonthLastYear"):
@@ -691,6 +696,8 @@ class apiEnedis:
                             self.updateStatusLastCall( False )
                             self.updateErrorLastCall( "%s - %s"%(messages.getMessage( inst.args[2]), self.getLastAnswer()))
                             self.myLogWarning( "%s - last call : %s" %(self.get_PDL_ID(), self.getLastMethodCall()))
+                        else:
+                            raise Exception(inst)
                 elif ( self.isProduction()):
                     if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
                         self.updateProductionYesterday()
@@ -709,10 +716,13 @@ class apiEnedis:
                 else:
                     self.myLogWarning("Erreur inconnue call ERROR %s" %(inst))
                     self.myLogWarning("Erreur last answer %s" %(inst))
+                    self.myLogWarning("-" * 60)
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    self.myLogWarning(sys.exc_info())
                     self.updateStatusLastCall( False )
                     self.updateTimeLastCall()
                     self.updateErrorLastCall("%s" %(inst))
-                    self.myLogWarning(self.getLastMethodCall())
+                    self.myLogWarning( "LastMethodCall : %s" %(self.getLastMethodCall()))
 
         else:
             self.setUpdateRealise( False )

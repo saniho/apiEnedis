@@ -2,6 +2,7 @@
     "domain": "myEnedis",
     "name": "myEnedis sensor",
     "documentation": "",
+    "config_flow": true,
     "requirements": [
     ],
     "dependencies": [],

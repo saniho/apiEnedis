@@ -1,4 +1,4 @@
-import apiEnedis
+import myEnedis
 import messages
 
 def test(myDataEnedis):
@@ -74,7 +74,10 @@ def test3( myDateEnedis):
 def testComplet( myDataEnedis ):
     import sensorEnedis, time, logging
     logger = logging.getLogger("testEnedis")
-    status_counts = sensorEnedis.manageSensorState( myDataEnedis, logger )
+    mSS = sensorEnedis.manageSensorState()
+    mSS.init( myDataEnedis, logger )
+    mSS.updateManagerSensor()
+    status_counts, state = mSS.getStatus()
     if ( myDataEnedis.getStatusLastCall() == False ):
         sensorEnedis.logSensorState(status_counts)
         # on se met en attente 10 secondes, car Enedis HS
@@ -82,7 +85,7 @@ def testComplet( myDataEnedis ):
         myDataEnedis.updateLastMethodCallError( myDataEnedis.getLastMethodCall()) # on met l'etat precedent
         sensorEnedis.logSensorState(status_counts)
         time.sleep( 10 )
-        status_counts = sensorEnedis.manageSensorState(myDataEnedis, logger)
+        status_counts, state = mSS.getStatus()
     sensorEnedis.logSensorState(status_counts)
 
 def testMulti():
@@ -92,12 +95,12 @@ def testMulti():
     #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4"]:
     #for qui in ["ENEDIS","ENEDIS7"]:
     #for qui in ["ENEDIS9"]:
-    for qui in ["ENEDIS11"]:
+    for qui in ["ENEDIS"]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
-        print(token, PDL_ID)
+        print(qui , "*", token, PDL_ID)
         heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
-        myDataEnedis = apiEnedis.apiEnedis( token=token, PDL_ID=PDL_ID, delai=10, \
+        myDataEnedis = myEnedis.myEnedis( token=token, PDL_ID=PDL_ID, delai=10, \
             heuresCreuses=eval(heureCreusesCh), heuresCreusesCost=0.0797, heuresPleinesCost=0.1175 )
 
         # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
@@ -117,6 +120,7 @@ def testMulti():
         testComplet( myDataEnedis )
         print("***")
         print( myDataEnedis.getLastMethodCallError())
+        print( myDataEnedis.getLastAnswer())
 
 def testMono():
     import configparser
@@ -128,7 +132,7 @@ def testMono():
     print(token, PDL_ID)
 
     heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
-    myDataEnedis = apiEnedis.apiEnedis(token=token, PDL_ID=PDL_ID, delai=10, \
+    myDataEnedis = myEnedis.myEnedis(token=token, PDL_ID=PDL_ID, delai=10, \
                                        heuresCreuses=eval(heureCreusesCh),
                                        heuresCreusesCost=0.20,
                                        heuresPleinesCost=1.30)
@@ -141,7 +145,7 @@ def testMono():
     myDataEnedis.updateYesterday()
     retour = myDataEnedis.getYesterday()
     print("retour", retour)
-    # myDataEnedis = apiEnedis( token=token, PDL_ID=PDL_ID, delai = 10, \
+    # myDataEnedis = myEnedis( token=token, PDL_ID=PDL_ID, delai = 10, \
     #    heuresCreuses=[],
     #    heuresCreusesCost=0.20,
     #    heuresPleinesCost=1.30) # on fait un update 10 secondes après le dernier ok
