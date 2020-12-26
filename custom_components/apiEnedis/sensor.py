@@ -9,7 +9,6 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_NAME,
-    CONF_DELAY,
     CONF_SCAN_INTERVAL,
     ATTR_ATTRIBUTION,
 )
@@ -38,6 +37,7 @@ from .const import (
     HC_COST,
     HP_COST,
     DEFAULT_SCAN_INTERVAL,
+    CONF_DELAY,
     __VERSION__,
 )
 
@@ -50,8 +50,6 @@ DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
 DEFAUT_HEURES_CREUSES = "[]"
 DEFAUT_COST = "0.0"
 HEURES_CREUSES = "heures_creuses"
-#HC_COUT = "hc_cout"
-#HP_COUT = "hp_cout"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -193,9 +191,9 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
 
         if 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys(): # pas plutot la key à checker ??
             self._state = state.state
-            _LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
+            #_LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
             self._attributes = state.attributes
-            _LOGGER.warning("*** / / / \ \ \ *** mise a jour attributes precedent %s " %( self._attributes ))
+            #_LOGGER.warning("*** / / / \ \ \ *** mise a jour attributes precedent %s " %( self._attributes ))
             #on sauvegarde les elements pour les reprendre si errot
             self.setLastAttributes()
             self.setLastState()
@@ -206,7 +204,6 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
 
         #if self.coordinator.data:
         #    self._state = self.coordinator.data["ping"]
-        import random
         self._attributes = {ATTR_ATTRIBUTION: "" }
         status_counts, state = self._myDataEnedis.myEnedis.getStatus()
         self._attributes.update(status_counts)
@@ -275,7 +272,6 @@ class myEnedisSensor(RestoreEntity):
 
     def _update(self):
         """Update device state."""
-
         self._attributes = {ATTR_ATTRIBUTION: "" }
         self._myDataEnedis.updateManagerSensor()
         status_counts, state = self._myDataEnedis.getStatus()
@@ -303,9 +299,9 @@ class myEnedisSensor(RestoreEntity):
         # si la clef yesterday est disponible dans l'element courant, alors c'est que l'on a eut une mise à jour
         if 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys(): # pas plutot la key à checker ??
             self._state = state.state
-            _LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
+            #_LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
             self._attributes = state.attributes
-            _LOGGER.warning("*** / / / \ \ \ *** mise a jour attributes precedent %s " %( self._attributes ))
+            #_LOGGER.warning("*** / / / \ \ \ *** mise a jour attributes precedent %s " %( self._attributes ))
             #on sauvegarde les elements pour les reprendre si errot
             self.setLastAttributes()
             self.setLastState()

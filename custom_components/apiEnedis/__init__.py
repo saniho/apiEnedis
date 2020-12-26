@@ -8,10 +8,6 @@ from homeassistant.const import (
     CONF_SCAN_INTERVAL,
     EVENT_HOMEASSISTANT_STARTED,
 )
-#from integrationhelper.const import CC_STARTUP_VERSION
-
-VERSION="1.0"
-ISSUE_URL="https://github.com/saniho/apiEnedis"
 
 from homeassistant.core import CoreState, callback
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -28,8 +24,10 @@ from .const import (
     HP_COST,
     HC_COST,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_SENSOR_INTERVAL,
     myENEDIS_SERVICE,
     __VERSION__,
+    CONF_DELAY,
 )
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +50,8 @@ async def _async_setup_entry(hass, config_entry):
     async def _enable_scheduled_myEnedis(*_):
         """Activate the data update coordinator."""
         coordinator.update_interval = timedelta(
-            seconds=config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+            #seconds=config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+            seconds=DEFAULT_SCAN_INTERVAL
         )
         await coordinator.async_refresh()
 
@@ -157,8 +156,8 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
                 CONF_SCAN_INTERVAL: data.pop(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
                 CONF_TOKEN: data.pop(CONF_TOKEN, ""),
                 CONF_CODE: str(data.pop(CONF_CODE, "")),
-                HP_COST: str(data.pop(HP_COST, "")),
-                HC_COST: str(data.pop(HC_COST, "")),
+                HP_COST: str(data.pop(HP_COST, "0.0")),
+                HC_COST: str(data.pop(HC_COST, "0.0")),
             }
             self.hass.config_entries.async_update_entry(
                 self.config_entry, data=data, options=options
@@ -170,7 +169,7 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
         _LOGGER.info("update_MyEnedis")
         if (not self.myEnedis.getInit()):
             _LOGGER.info("getInit()")
-            delai_interval = 1800 # delai de rafraichissement de l'appel API
+            delai_interval = CONF_DELAY # delai de rafraichissement de l'appel API
             heuresCreusesCh = "[]"
             heuresCreuses = eval(heuresCreusesCh)
             HC_Cost_key = "hc_cout"
@@ -178,11 +177,11 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
             if (HC_Cost_key not in self.config_entry.options.keys()):
                 HCCost = float("0.0")
             else:
-                HCCost = float(self.config_entry.options[HC_Cost_key])
+                HCCost = float(self.config_entry.options.get(HC_Cost_key, "0.0"))
             if (HP_Cost_key not in self.config_entry.options.keys()):
                 HPCost = float("0.0")
             else:
-                HPCost = float(self.config_entry.options[HP_Cost_key])
+                HPCost = float(self.config_entry.options.get(HP_Cost_key, "0.0"))
             token, code = self.config_entry.options['token'], self.config_entry.options['code']
             _LOGGER.info("options - proc -- %s %s %s %s" %(token, code, HPCost, HCCost))
             myDataEnedis = myEnedis.myEnedis(token, code, delai_interval, \
@@ -224,7 +223,7 @@ async def options_updated_listener(hass, entry):
 
     _LOGGER.info("options_updated_listener ")
     hass.data[DOMAIN].update_interval = timedelta(
-        seconds=60#entry.options[CONF_SCAN_INTERVAL]
+        seconds=DEFAULT_SENSOR_INTERVAL
     )
     await hass.data[DOMAIN].async_request_refresh()
     _LOGGER.info("options_updated_listener - done -- ")

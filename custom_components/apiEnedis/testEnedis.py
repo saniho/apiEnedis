@@ -120,7 +120,7 @@ def testMulti():
         testComplet( myDataEnedis )
         print("***")
         print( myDataEnedis.getLastMethodCallError())
-        print( myDataEnedis.getLastAnswer())
+        #print( myDataEnedis.getLastAnswer())
 
 def testMono():
     import configparser

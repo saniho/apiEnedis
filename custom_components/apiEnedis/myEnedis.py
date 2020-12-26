@@ -35,7 +35,7 @@ class myEnedis:
         self._heuresCreuses = heuresCreuses
         self._heuresCreusesCost = heuresCreusesCost
         self._heuresPleinesCost = heuresPleinesCost
-        self._contract = None #{'subscribed_power':"", 'offpeak_hours':""}
+        self._contract = None
         self._HC, self._HP = 0, 0
         self._interval_length = 1
         self._updateRealise = False
@@ -46,10 +46,8 @@ class myEnedis:
         if ( log == None ):
             self._log = logging.getLogger(__nameMyEnedis__)
             self._log.setLevel(logging.DEBUG)
-            #self._log.setLevel(logging.WARNING)
         else:
             self._log = log
-            #self._log.setLevel(logging.DEBUG)
         pass
 
     def myLog(self, message):
@@ -75,7 +73,6 @@ class myEnedis:
             #response = session.post(url, params=params, data=json.dumps(data), headers=headers)
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
-            # async http ?
             return response.json()
         except requests.exceptions.HTTPError as error:
             self.myLogWarning("Error JSON : %s "%(response.text))
@@ -636,7 +633,7 @@ class myEnedis:
     def getDelai(self):
         return self._delai
     def getDelaiIsGood(self):
-        self.myLog("TimeLastCall : %s" %(self.getTimeLastCall()))
+        self.myLogWarning("TimeLastCall : %s" %(self.getTimeLastCall()))
         ecartOk = ( datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelai()
         return ecartOk
 

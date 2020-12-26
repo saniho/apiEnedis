@@ -125,14 +125,14 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Optional(
                     HC_COST,
                     default=self.config_entry.options.get(
-                        HC_COST, "0.08"
+                        HC_COST, "0.0"
                     ),
                 ): cv.string,
 
                 vol.Optional(
                     HP_COST,
                     default=self.config_entry.options.get(
-                        HP_COST, "0.01"
+                        HP_COST, "0.0"
                     ),
                 ): cv.string
             }

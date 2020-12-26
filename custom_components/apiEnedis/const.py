@@ -1,6 +1,7 @@
 """ Constants """
 
-#myENEDIS_SERVICE = "myenedisservice"
+
+ISSUE_URL="https://github.com/saniho/apiEnedis/issues"
 myENEDIS_SERVICE = "myEnedis"
 # nom du repertoire
 DOMAIN = "myEnedis"
@@ -12,13 +13,14 @@ PLATFORM = "sensor"
 # Configuration
 CONF_TOKEN = "token"
 CONF_CODE = "code"
-CONF_SCAN_INTERVAL = "conf_scan_interval"
+CONF_SCAN_INTERVAL = "conf_scan_interval" # 60 secondes verifications du coordinator
 
 HP_COST = "hp_cout"
 HC_COST = "hc_cout"
 
-#DEFAULT_SCAN_INTERVAL = 1800
-DEFAULT_SCAN_INTERVAL = 120
+CONF_DELAY = 60 * 60 * 6  # verification enedis toutes les 6 heures
+DEFAULT_SCAN_INTERVAL = 60*5  # verification enedis toutes les 5 minutes, si dernier ok, alors verif selon conf_delay
+DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
 
 
-__VERSION__ = "1.0.5.5c"
+__VERSION__ = "1.0.5.5d"
