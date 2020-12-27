@@ -38,10 +38,10 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is None:
             user_input = {}
-        token = ""
-        code = ""
-        val_hc_cost = "0.0"
-        val_hp_cost = "0.0"
+        token = "Token"
+        code = "P.D.L"
+        val_hc_cost = "Prix heures creuse"
+        val_hp_cost = "Prix heures pleine "
 
         data_schema = vol.Schema(
             {
