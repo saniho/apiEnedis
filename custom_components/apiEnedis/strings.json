@@ -1,0 +1,26 @@
+{
+  "config": {
+    "step": {
+      "init": {
+        "title": "Pick Hue bridge",
+        "data": {
+          "token": "Host"
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]",
+      "wrong_server_id": "Server ID is not valid"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "token": "Update frequency (minutes)",
+          "code": "Disable auto update"
+        }
+      }
+    }
+  }
+}

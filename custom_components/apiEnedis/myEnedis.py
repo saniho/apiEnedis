@@ -48,6 +48,8 @@ class myEnedis:
             self._log.setLevel(logging.DEBUG)
         else:
             self._log = log
+
+        self._log.exception("run myEnedis")
         pass
 
     def myLog(self, message):

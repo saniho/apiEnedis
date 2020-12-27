@@ -256,6 +256,11 @@ class myEnedisSensor(RestoreEntity):
             return {}
 
     @property
+    def unique_id(self):
+        "Return a unique_id for this entity."
+        return f"{self._myDataEnedis._myDataEnedis.get_PDL_ID()}".lower()
+    
+    @property
     def name(self):
         """Return the name of the sensor."""
         return "myEnedis.%s" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
