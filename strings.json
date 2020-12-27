@@ -1,0 +1,15 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration de MyEnedis",
+        "data": {
+          "CONF_TOKEN" = "token"
+          "CONF_CODE" = "code"
+          "HP_COST" = "hp_cout"
+          "HC_COST" = "hc_cout"
+        }
+      }
+    }
+} 
+} 
