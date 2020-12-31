@@ -23,4 +23,4 @@ DEFAULT_SCAN_INTERVAL = 60*5  # verification enedis toutes les 5 minutes, si der
 DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
 
 
-__VERSION__ = "1.1.0.0b"
+__VERSION__ = "1.1.0.0c"
