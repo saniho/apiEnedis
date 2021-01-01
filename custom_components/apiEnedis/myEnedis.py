@@ -441,7 +441,6 @@ class myEnedis:
 
     def getIntervalLength(self):
         return self._interval_length
-
     def getCoeffIntervalLength(self):
         interval = self.getIntervalLength()
         coeff = 1
@@ -473,7 +472,7 @@ class myEnedis:
         if (data == None): data = self.CallgetDataYesterdayHCHP()
         self.myLog("updateDataYesterdayHCHP : data %s" % (data))
         if ( self.checkData( data )):
-            self.createHCHP(data)
+            self.checkData(data)
         else:
             return
 
@@ -506,7 +505,6 @@ class myEnedis:
         if ("error" in dataAnswer.keys()):
             #self.myLogWarning( "** %s" %(dataAnswer["error"]))
             raise Exception( 'call' , "error", dataAnswer["error"] )
-        return True
 
     def getLastMonth(self):
         return self._lastMonth
