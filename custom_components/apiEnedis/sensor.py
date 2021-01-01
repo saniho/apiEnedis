@@ -80,7 +80,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     heuresCreuses = eval(heuresCreusesCh)
     HCCost = float(config.get(HC_COST))
     HPCost = float(config.get(HP_COST))
-    update_interval = config.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    update_interval = DEFAULT_SCAN_INTERVAL
     delai_interval = config.get(CONF_DELAY)
 
     try:
@@ -255,6 +255,11 @@ class myEnedisSensor(RestoreEntity):
         else:
             return {}
 
+    @property
+    def unique_id(self):
+        "Return a unique_id for this entity."
+        return f"{self._myDataEnedis._myDataEnedis.get_PDL_ID()}".lower()
+    
     @property
     def name(self):
         """Return the name of the sensor."""

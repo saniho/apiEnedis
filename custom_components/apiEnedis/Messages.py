@@ -8,6 +8,7 @@ listeMessages = \
     "Internal Server error": "Erreur Interne Enedis",
     "result_500": "Erreur interne Enedis(500)",
     "UNKERROR_001": "Erreur interne Enedis(001)",
+    "UNKERROR_002": "Erreur timeout",
 }
 
 def getMessage( codeMessage ):

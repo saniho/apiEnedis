@@ -48,6 +48,8 @@ class myEnedis:
             self._log.setLevel(logging.DEBUG)
         else:
             self._log = log
+
+        self._log.exception("run myEnedis")
         pass
 
     def myLog(self, message):
@@ -68,12 +70,14 @@ class myEnedis:
         try:
             import logging
             import json
-
             session = requests.Session()
             #response = session.post(url, params=params, data=json.dumps(data), headers=headers)
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
             return response.json()
+        except requests.exceptions.Timeout as error:
+            response = {"enedis_return":{"error":"UNKERROR_002"}}
+            return response
         except requests.exceptions.HTTPError as error:
             self.myLogWarning("Error JSON : %s "%(response.text))
             return response.json()
@@ -249,7 +253,10 @@ class myEnedis:
         today = datetime.date.today()
         debCurrentMonth = today.strftime("%Y-01-01")
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
-        return self.getDataPeriod( debCurrentMonth, cejour)
+        if ( debCurrentMonth != cejour ):
+            return self.getDataPeriod( debCurrentMonth, cejour)
+        else:
+            return 0
 
     def analyseValueAndAdd(self, data):
         if ( data == None ): #pas de valeur
@@ -468,10 +475,12 @@ class myEnedis:
         self.createHCHP(data)
 
     def checkDataPeriod(self, dataAnswer ):
-        if ("error" in dataAnswer.keys()):
+        if ("enedis_return" in dataAnswer.keys()):
             if ( dataAnswer['enedis_return']["error"] == "ADAM-ERR0123" ) :
                 return False
             elif ( dataAnswer['enedis_return']["error"] == "no_data_found" ) :
+                return False
+            elif ( dataAnswer['enedis_return']["error"] == "UNKERROR_002" ) :
                 return False
             else:
                 raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
@@ -481,7 +490,7 @@ class myEnedis:
         if ("error" in dataAnswer.keys()):
             #if ( isinstance(dataAnswer['enedis_return'], str)):
             #    dataAnswer['enedis_return'] = json.loads(dataAnswer['enedis_return'])
-            if ( dataAnswer["error"] == "ADAM-DC-0008" ):
+            if ( dataAnswer['enedis_return']["error"] == "ADAM-DC-0008" ):
                 #No consent can be found for this customer and this usage point
                 return False
             else:
@@ -594,10 +603,11 @@ class myEnedis:
         self.myLog("--updateCurrentYear --")
         if ( data == None ): data = self.CallgetCurrentYear()
         self.myLog("updateCurrentYear : data %s" %(data))
-        if ( self.checkDataPeriod(data)):
+        if ( data != 0 ):
+            self.checkDataPeriod(data)
             self._currentYear = self.analyseValueAndAdd( data )
         else:
-            self._currentYear = 0
+            self._currentYear = data
 
     def getLastUpdate(self):
         return self._lastUpdate
@@ -711,8 +721,10 @@ class myEnedis:
                     self.updateErrorLastCall( "%s - %s"%(messages.getMessage( inst.args[2]), self.getLastAnswer()))
                     self.myLogWarning( "%s - %s" %(self.get_PDL_ID(), self.getLastMethodCall()))
                 else:
+                    self.myLogWarning("-" * 60)
                     self.myLogWarning("Erreur inconnue call ERROR %s" %(inst))
                     self.myLogWarning("Erreur last answer %s" %(inst))
+                    self.myLogWarning("Erreur last call %s" %(self.getLastMethodCall()))
                     self.myLogWarning("-" * 60)
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     self.myLogWarning(sys.exc_info())

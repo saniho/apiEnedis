@@ -76,6 +76,7 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors or {},
         )
 
+    #async def async_step_init(self, user_input=None):   # pylint: disable=unused-argument
     async def async_step_user(self, user_input=None):   # pylint: disable=unused-argument
         self._errors = {}
         if user_input is None:

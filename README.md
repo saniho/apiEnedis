@@ -1,24 +1,48 @@
 # myEnedis
 
+Bienvenue ici sur une intégration de la gateway fournie par https://enedisgateway.tech/
+
+Pour pouvoir l'utiliser, vous devez d'abord avoir validé la partage de données avec cette gateway, mais également
+sur votre espace privé Enedis activé la remontée des informations de votre linky.
+
+Ensuite, via HACS, rajouté le github https://github.com/saniho/apiEnedis dans depot personnalisé
+
+![picture](img/hacsAddrepo.png)
+
+* si vous n'avez pas HACS, pour l'installer cela se passe ici : https://hacs.xyz/docs/installation/installation
+
+Ensuite deux choix, soit automatiquement : via le menu integration de votre HomeAssistant
+
+![picture](img/HAflow.png)
+
+ou sinon manuellement via le sensor
+
 exemple de configuration sensors.yaml
 
 ```
 # enedis
 - platform: myEnedis
   token: <<votreToken>>
-  code: <<votrecode>>  
-  heures_creuses: "[['00:30', '07:00'], ['10:00', '11:30']]"
+  code: <<votrecode>> 
   hc_cout: 0.1230
   hp_cout: 0.1580
   scan_interval: 3600
 ```
 
-![picture](img/sensor_v1_0_2_2.png)
+Ensuite vous aurez le sensor de disponible : 
 
 ![picture](img/sensor_v2.png)
 
+**Cette integration est compatible avec la card suivante : 
+
+https://github.com/saniho/content-card-linky**
+
 
 _**VERSION**_
+
+**1.1.0.0**
+
+nouvelle version, permettant l'integration via flow
 
 **1.0.4.0**
 
