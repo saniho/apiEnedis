@@ -471,8 +471,10 @@ class myEnedis:
         self.myLog("--updateDataYesterdayHCHP --")
         if (data == None): data = self.CallgetDataYesterdayHCHP()
         self.myLog("updateDataYesterdayHCHP : data %s" % (data))
-        self.checkData(data)
-        self.createHCHP(data)
+        if ( self.checkData( data )):
+            self.checkData(data)
+        else:
+            return
 
     def checkDataPeriod(self, dataAnswer ):
         if ("enedis_return" in dataAnswer.keys()):
@@ -487,11 +489,13 @@ class myEnedis:
         return True
 
     def checkData(self, dataAnswer ):
-        if ("error" in dataAnswer.keys()):
+        if ("enedis_return" in dataAnswer.keys()):
             #if ( isinstance(dataAnswer['enedis_return'], str)):
             #    dataAnswer['enedis_return'] = json.loads(dataAnswer['enedis_return'])
             if ( dataAnswer['enedis_return']["error"] == "ADAM-DC-0008" ):
                 #No consent can be found for this customer and this usage point
+                return False
+            elif ( dataAnswer['enedis_return']["error"] == "UNKERROR_002" ) :
                 return False
             else:
                 raise Exception( 'call' , "error", dataAnswer["error"] )
@@ -543,9 +547,11 @@ class myEnedis:
         self.myLog("--updateLast7Days --")
         if ( data == None ): data = self.CallgetLast7Days()
         self.myLog("updateLast7Days : data %s" %(data))
-        self.checkDataPeriod(data)
-        # construction d'un dico utile ;)
-        self._last7Days = self.analyseValueAndMadeDico( data )
+        if ( self.checkDataPeriod(data) ):
+            # construction d'un dico utile ;)
+            self._last7Days = self.analyseValueAndMadeDico( data )
+        else:
+            return
 
     def getLast7DaysDetails(self):
         return self._last7DaysDetails
@@ -554,9 +560,11 @@ class myEnedis:
         self.myLog("--updateLast7DaysDetails --")
         if ( data == None ): data = self.CallgetLast7DaysDetails()
         self.myLog("updateLast7DaysDetails : data %s" %(data))
-        self.checkDataPeriod(data)
-        # construction d'un dico utile ;)
-        self._joursHC, self._joursHP =  self.createMultiDaysHCHP(data)
+        if ( self.checkDataPeriod(data) ):
+            # construction d'un dico utile ;)
+            self._joursHC, self._joursHP =  self.createMultiDaysHCHP(data)
+        else:
+            return
 
     def getCurrentWeek(self):
         return self._currentWeek

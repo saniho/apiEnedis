@@ -98,6 +98,14 @@ L'intégration crée l'entité `sensor.myenedis_<<votrecode>>`
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/sensor_v2.png"/>
 
 
+**************
+
+N'hésitez pas à aller faire un tour sur ce forum ou vous trouverez pleins d'informations
+
+https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359 
+
+*************
+
 _**VERSION**_
 
 **1.1.0.0**
