@@ -38,6 +38,14 @@ Ensuite vous aurez le sensor de disponible :
 https://github.com/saniho/content-card-linky**
 
 
+**************
+
+N'hésitez pas à aller faire un tour sur ce forum ou vous trouverez pleins d'informations
+
+https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359 
+
+*************
+
 _**VERSION**_
 
 **1.1.0.0**

@@ -101,6 +101,7 @@ async def async_setup_entry(
     entities = []
     myEnedis_Cordinator = hass.data[DOMAIN]
     entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator))
+    entities.append(myEnedisSensorYesterdayCostCoordinator(myEnedis_Cordinator))
     async_add_entities(entities)
 
 class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
@@ -191,19 +192,12 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
 
         if 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys(): # pas plutot la key à checker ??
             self._state = state.state
-            #_LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
             self._attributes = state.attributes
-            #_LOGGER.warning("*** / / / \ \ \ *** mise a jour attributes precedent %s " %( self._attributes ))
-            #on sauvegarde les elements pour les reprendre si errot
             self.setLastAttributes()
             self.setLastState()
 
     def _update_state(self):
         """Update sensors state."""
-        # si pas encore à jour, alors return tout court ....
-
-        #if self.coordinator.data:
-        #    self._state = self.coordinator.data["ping"]
         self._attributes = {ATTR_ATTRIBUTION: "" }
         status_counts, state = self._myDataEnedis.myEnedis.getStatus()
         self._attributes.update(status_counts)
@@ -223,6 +217,101 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def icon(self):
         """Icon to use in the frontend."""
 
+class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
+    """."""
+
+    def __init__(self, coordinator):
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+        self._myDataEnedis = coordinator
+        self._attributes = {}
+        self._state = None
+        self._unit = "€"
+        interval = timedelta(seconds=120)
+        self.update = Throttle(interval)(self._update)
+        self._lastState = None
+
+    """
+    @property
+    def unique_id(self):
+        "Return a unique_id for this entity."
+        if self.forecast_day is not None:
+            return f"{self.coordinator.location_key}-{self.kind}-{self.forecast_day}".lower()
+        return f"{self.coordinator.location_key}-{self.kind}".lower()
+    """
+
+    def setLastState(self):
+        self._lastState = self._state
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return "myEnedis.cost.yesterday.%s" %(self._myDataEnedis.myEnedis._myDataEnedis.get_PDL_ID())
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement of this entity, if any."""
+        return self._unit
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        #if not self.coordinator.data:
+        #    return None
+        self._attributes = {
+            ATTR_ATTRIBUTION: "",
+        }
+        return self._attributes
+
+    async def async_added_to_hass(self):
+        """Handle entity which will be added."""
+        await super().async_added_to_hass()
+        state = await self.async_get_last_state()
+
+        @callback
+        def update():
+            """Update state."""
+            self._update_state()
+            self.async_write_ha_state()
+
+        self.async_on_remove(self.coordinator.async_add_listener(update))
+        self._update_state()
+        if not state:
+            return
+
+    def _update_state(self):
+        """Update sensors state."""
+        self._attributes = {ATTR_ATTRIBUTION: "" }
+        status_counts, state = self._myDataEnedis.myEnedis.getStatusYesterdayCost()
+        if ( state != "unavailable"):
+            if ( state != self._state ):
+                self._attributes.update(status_counts)
+                self._state = state
+            else:
+                # donnée identique au jour precedent ....# vior faire autrement avec la date ?
+                return
+        else:
+            # donnée non disponible
+            return
+
+    def _update(self):
+        """Update device state."""
+        self._attributes = {ATTR_ATTRIBUTION: ""}
+        self._state = "unavailable"
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        return self._attributes
+
+    @property
+    def icon(self):
+        """Icon to use in the frontend."""
 
 
 class myEnedisSensor(RestoreEntity):
