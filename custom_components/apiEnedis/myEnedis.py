@@ -253,7 +253,10 @@ class myEnedis:
         today = datetime.date.today()
         debCurrentMonth = today.strftime("%Y-01-01")
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
-        return self.getDataPeriod( debCurrentMonth, cejour)
+        if ( debCurrentMonth != cejour ):
+            return self.getDataPeriod( debCurrentMonth, cejour)
+        else:
+            return 0
 
     def analyseValueAndAdd(self, data):
         if ( data == None ): #pas de valeur
@@ -600,10 +603,11 @@ class myEnedis:
         self.myLog("--updateCurrentYear --")
         if ( data == None ): data = self.CallgetCurrentYear()
         self.myLog("updateCurrentYear : data %s" %(data))
-        if ( self.checkDataPeriod(data)):
+        if ( data != 0 ):
+            self.checkDataPeriod(data)
             self._currentYear = self.analyseValueAndAdd( data )
         else:
-            self._currentYear = 0
+            self._currentYear = data
 
     def getLastUpdate(self):
         return self._lastUpdate
