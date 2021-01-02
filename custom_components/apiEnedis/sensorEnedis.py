@@ -34,10 +34,8 @@ class manageSensorState:
         state = "unavailable"
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
-        self._LOGGER.info("getStatusYesterdayCost" )
-        if (self._myDataEnedis.getContract() != None):
-            if ( self._myDataEnedis.getStatusLastCall()):
-                status_counts["timeLastCall"] = datetime.datetime.now()
+        if self._myDataEnedis.getContract() != None:
+            if self._myDataEnedis.getStatusLastCall():
                 status_counts["yesterday_HC_cost"] = \
                     "{:.3f}".format(0.001 * self._myDataEnedis.getHCCost(self._myDataEnedis.getYesterdayHC()))
                 status_counts["yesterday_HP_cost"] = \
@@ -48,8 +46,6 @@ class manageSensorState:
                 )
                 status_counts["daily_cost"] = daily_cost
                 state = daily_cost
-        self._LOGGER.info("getStatusYesterdayCost - done" )
-
         return status_counts, state
 
     def getStatus(self):

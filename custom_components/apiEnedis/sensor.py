@@ -2,6 +2,7 @@
 import logging
 from collections import defaultdict
 from datetime import timedelta
+import datetime
 
 import voluptuous as vol
 
@@ -230,6 +231,7 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         interval = timedelta(seconds=120)
         self.update = Throttle(interval)(self._update)
         self._lastState = None
+        self._lastCall = None
 
     """
     @property
@@ -288,12 +290,15 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         """Update sensors state."""
         self._attributes = {ATTR_ATTRIBUTION: "" }
         status_counts, state = self._myDataEnedis.myEnedis.getStatusYesterdayCost()
-        if ( state != "unavailable"):
-            if ( state != self._state ):
+        if state != "unavailable":
+            today = datetime.datetime.now().strftime("%Y%m%d") # sans les heures et minutes ;)
+            if ( self._lastCall != today ):
+                status_counts["timeLastCall"] = today
                 self._attributes.update(status_counts)
                 self._state = state
+                self._lastCall = today
             else:
-                # donnée identique au jour precedent ....# vior faire autrement avec la date ?
+                # pas de nouvelle donnée
                 return
         else:
             # donnée non disponible
