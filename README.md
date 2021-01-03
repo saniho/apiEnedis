@@ -1,41 +1,101 @@
 # myEnedis
 
-Bienvenue ici sur une intégration de la gateway fournie par https://enedisgateway.tech/
+**Cette integration est compatible avec la carte : https://github.com/saniho/content-card-linky**
 
-Pour pouvoir l'utiliser, vous devez d'abord avoir validé la partage de données avec cette gateway, mais également
-sur votre espace privé Enedis activé la remontée des informations de votre linky.
+**Un question ? Un problème ? Une demande ? Venez en parler sur le [fil de discussion dédié](https://forum.hacf.fr/t/sensor-pour-enedis-apienedis/935) sur le [forum HACF](https://forum.hacf.fr/).**
 
-Ensuite, via HACS, rajouté le github https://github.com/saniho/apiEnedis dans depot personnalisé
+## Bienvenue !
 
-![picture](img/hacsAddrepo.png)
+Cette intégration fonctionne à l'aide de la passerelle fournie par https://enedisgateway.tech/.
 
-* si vous n'avez pas HACS, pour l'installer cela se passe ici : https://hacs.xyz/docs/installation/installation
+Avant de pouvoir utiliser cette intégration, assurez vous d' : 
+* Avoir validé la partage de données avec la [passerelle](https://enedisgateway.tech/),
+* Avoir activé sur votre [espace privé Enedis](https://mon-compte-client.enedis.fr/) la remontée des informations de votre linky.
 
-Ensuite deux choix, soit automatiquement : via le menu integration de votre HomeAssistant
+## Installer l'intégration
 
-![picture](img/HAflow.png)
+### Via HACS (mise à jour en un clic) : 
 
-ou sinon manuellement via le sensor
+*si vous n'avez pas HACS, pour l'installer cela se passe ici : [HACS : Ajoutez des modules et des cartes personnalisées](https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359)*
 
-exemple de configuration sensors.yaml
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_01.png" height="300"/>
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_02.png" width="600"/>
 
-```
+* Ajoutez le dépot personnalisé : `https://github.com/saniho/apiEnedis`
+
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_01.png" width="400"/>
+
+* Cliquez sur le bouton `Installer` de la carte correspondant à l'intégration
+
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_02.png" width="600"/>
+
+* Cliquez sur le bouton `Installer` de la popup
+
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_03.png" width="400"/>
+
+* La carte de l'intégration est maintenant rouge, signifiant qu'un redémarrage du serveur Home Assistant est nécessaire
+
+* Accédez à la vue `Contrôle du serveur` (`Configuration` -> `Contrôle du serveur`)
+
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_04.png" width="400"/>
+
+* Cliquez sur le bouton `Redémarrer` dans la zone `Gestion du serveur`
+
+### Manuellement (à faire à chaque mise à jour)
+
+* Copiez tout le contenu du dossier [custom_components](https://github.com/saniho/apiEnedis/tree/main/custom_components/apiEnedis) dans votre propre dossier `custom_components`, dans un dossier nommé `apiEnedis`
+
+* Redémarrez votre serveur Home Assistant
+
+## Ajouter l'intégration
+
+### Via l'interface graphique
+
+* Accédez à la vue `Intégrations` (`Configuration` -> `Intégration`)
+
+* Appuyez sur le bouton bleu `Ajouter l'intégration` en bas à droite de la vue
+
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_01.png" height="500"/>
+
+* Tapez dans le champ de recherche qui vient d'apparaître : `myenedis` et cliquez sur l'intégration
+
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_02.png" height="300"/>
+
+* Renseigner : 
+  * Votre `token`
+  * Votre `code` (PDL)
+  * Si vous disposez d'un contrat heures pleines/heures creuses : 
+    * Le prix des heures creuses
+    * Le prix des heures pleines
+    
+* Validez la saisie avec le bouton `Soumettre`
+
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_03.png" width="300"/>
+
+* Fermez la popup de confirmation en cliquant sur le bouton `Terminer`
+
+*Si vous ne voyez pas l'intégration dans la liste, effacer le cache de votre navigateur en faisant la combinaison de touche `CTRL+F5` ou `CTRL+SHIFT+R`*
+
+### Via YAML
+
+* Ajoutez dans votre fichier `sensors.yaml` la configuration suivante :
+
+```yaml
 # enedis
 - platform: myEnedis
   token: <<votreToken>>
   code: <<votrecode>> 
-  hc_cout: 0.1230
-  hp_cout: 0.1580
+  hc_cout: <<prixHeuresCreuses>>
+  hp_cout: <<prixHeuresPleines>>
   scan_interval: 3600
 ```
+* Redémarrer votre serveur Home Assistant
 
-Ensuite vous aurez le sensor de disponible : 
+## Entité disponible
 
-![picture](img/sensor_v2.png)
+L'intégration crée l'entité `sensor.myenedis_<<votrecode>>`
 
-**Cette integration est compatible avec la card suivante : 
-
-https://github.com/saniho/content-card-linky**
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/sensor_v2.png"/>
 
 
 **************
