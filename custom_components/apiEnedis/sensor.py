@@ -1,35 +1,21 @@
 """Sensor for my first"""
-import logging
-from collections import defaultdict
-from datetime import timedelta
 import datetime
-
-import voluptuous as vol
+import logging
+from datetime import timedelta
 
 import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_NAME,
-    CONF_SCAN_INTERVAL,
     ATTR_ATTRIBUTION,
 )
-
-from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.core import callback
 from homeassistant.helpers.restore_state import RestoreEntity
-from homeassistant.util import Throttle
-from homeassistant.util import slugify
-from homeassistant.util.dt import now, parse_date
-
 from homeassistant.helpers.typing import HomeAssistantType
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-
-from homeassistant.core import CoreState, callback
-
-import time
-
-_LOGGER = logging.getLogger(__name__)
-
+from homeassistant.util import Throttle
 
 from .const import (
     DOMAIN,
@@ -40,8 +26,10 @@ from .const import (
     DEFAULT_SCAN_INTERVAL,
     CONF_DELAY,
     __VERSION__,
+    __name__,
 )
 
+_LOGGER = logging.getLogger(__name__)
 
 ICON = "mdi:package-variant-closed"
 
@@ -66,8 +54,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 from . import myEnedis
 from . import sensorEnedis
-from . import sensorEnedis
-from . import  messages
 
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
@@ -89,7 +75,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     except :
         _LOGGER.exception("Could not run my First Extension")
         return False
-    myDataEnedis = myEnedis.myEnedis( token, code, delai_interval, \
+    myDataEnedis = myEnedis.myEnedis( token, code, delai_interval,
         heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER )
     mSS = sensorEnedis.manageSensorState()
     mSS.init( myDataEnedis, _LOGGER, __VERSION__)
@@ -288,11 +274,15 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
 
     def _update_state(self):
         """Update sensors state."""
-        self._attributes = {ATTR_ATTRIBUTION: "" }
-        status_counts, state = self._myDataEnedis.myEnedis.getStatusYesterdayCost()
-        if state != "unavailable":
+        dataAvailable, status_counts, state = self._myDataEnedis.myEnedis.getStatusYesterdayCost()
+        #_LOGGER.exception("yesteday sensor, _update_state" )
+        #_LOGGER.exception("state %s" %(state))
+        #_LOGGER.exception("status_counts %s"%(status_counts) )
+        if dataAvailable:
             yesterday = (datetime.datetime.now()- datetime.timedelta(days=1)).strftime("%Y%m%d")
+            #_LOGGER.exception("yesteday %s, lastYesterday %s" %(yesterday, self._lastYesterday ))
             if ( self._lastYesterday!= yesterday ):
+                self._attributes = {ATTR_ATTRIBUTION: "" }
                 status_counts["timeLastCall"] = datetime.datetime.now()
                 self._attributes.update(status_counts)
                 self._state = state

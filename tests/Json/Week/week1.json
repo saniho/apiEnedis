@@ -1,0 +1,44 @@
+{
+  "meter_reading": {
+    "usage_point_id": "myPDL",
+    "start": "2020-12-03",
+    "end": "2020-12-10",
+    "quality": "BRUT",
+    "reading_type": {
+      "unit": "Wh",
+      "measurement_kind": "energy",
+      "aggregate": "sum",
+      "measuring_period": "P1D"
+    },
+    "interval_reading": [
+      {
+        "value": "33665",
+        "date": "2020-12-03"
+      },
+      {
+        "value": "38633",
+        "date": "2020-12-04"
+      },
+      {
+        "value": "38623",
+        "date": "2020-12-05"
+      },
+      {
+        "value": "37753",
+        "date": "2020-12-06"
+      },
+      {
+        "value": "46092",
+        "date": "2020-12-07"
+      },
+      {
+        "value": "35992",
+        "date": "2020-12-08"
+      },
+      {
+        "value": "42951",
+        "date": "2020-12-09"
+      }
+    ]
+  }
+}
