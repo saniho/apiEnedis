@@ -40,6 +40,7 @@ class myEnedis:
         self._interval_length = 1
         self._updateRealise = False
         self._niemeAppel = 0
+        self._yesterdayDate = None
 
         self._joursHC={}
         self._joursHP={}
@@ -157,7 +158,7 @@ class myEnedis:
     def CallgetYesterday(self):
         hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
-        return self.getDataPeriod( hier, cejour )
+        return self.getDataPeriod( hier, cejour ), hier
 
     def CallgetProductionYesterday(self):
         hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
@@ -167,7 +168,7 @@ class myEnedis:
     def CallgetDataYesterdayHCHP(self):
         hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
         cejour = (datetime.date.today()).strftime("%Y-%m-%d")
-        return self.getDataPeriodCLC( hier, cejour )
+        return self.getDataPeriodCLC( hier, cejour ), hier
 
     def CallgetCurrentWeek(self):
         import datetime
@@ -366,10 +367,11 @@ class myEnedis:
     def updateYesterday(self, data=None):
         self.updateLastMethodCall("updateYesterday")
         self.myLog("--updateYesterday --")
-        if ( data == None ): data = self.CallgetYesterday()
+        if ( data == None ): data, yesterdayDate = self.CallgetYesterday()
         self.myLog("updateYesterday : data %s" %(data))
         if ( self.checkData( data )):
             self._yesterday = self.analyseValue( data )
+            self._yesterdayDate = yesterdayDate
         else:
             self._yesterday = 0
     def getProductionYesterday(self):
@@ -441,6 +443,7 @@ class myEnedis:
 
     def getIntervalLength(self):
         return self._interval_length
+
     def getCoeffIntervalLength(self):
         interval = self.getIntervalLength()
         coeff = 1
@@ -469,10 +472,11 @@ class myEnedis:
     def updateDataYesterdayHCHP(self, data=None):
         self.updateLastMethodCall("updateDataYesterdayHCHP")
         self.myLog("--updateDataYesterdayHCHP --")
-        if (data == None): data = self.CallgetDataYesterdayHCHP()
+        if (data == None): data, yesterdayDate = self.CallgetDataYesterdayHCHP()
         self.myLog("updateDataYesterdayHCHP : data %s" % (data))
         if ( self.checkData( data )):
-            self.checkData(data)
+            self.createHCHP(data)
+            self._yesterdayHCHPDate = yesterdayDate
         else:
             return
 
@@ -505,6 +509,7 @@ class myEnedis:
         if ("error" in dataAnswer.keys()):
             #self.myLogWarning( "** %s" %(dataAnswer["error"]))
             raise Exception( 'call' , "error", dataAnswer["error"] )
+        return True
 
     def getLastMonth(self):
         return self._lastMonth
