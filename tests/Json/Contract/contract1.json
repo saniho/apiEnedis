@@ -1,0 +1,24 @@
+{
+    "customer": {
+        "customer_id": "-1077068411",
+        "usage_points": [
+            {
+                "usage_point": {
+                    "usage_point_id": "myPDL",
+                    "usage_point_status": "com",
+                    "meter_type": "AMM"
+                },
+                "contracts": {
+                    "segment": "C5",
+                    "subscribed_power": "9 kVA",
+                    "distribution_tariff": "BTINFCUST",
+                    "last_activation_date": "2007-07-06+02:00",
+                    "offpeak_hours": "HC (23H30-7H30)",
+                    "contract_type": "Contrat GRD-F",
+                    "contract_status": "SERVC",
+                    "last_distribution_tariff_change_date": "2007-07-06+02:00"
+                }
+            }
+        ]
+    }
+}

@@ -1,18 +1,25 @@
 """my first component."""
 from datetime import timedelta
 import logging
+try:
+    from homeassistant.config_entries import SOURCE_IMPORT
+    from homeassistant.const import (
+        CONF_SCAN_INTERVAL,
+        EVENT_HOMEASSISTANT_STARTED,
+    )
+    from homeassistant.core import CoreState, callback
+    from homeassistant.exceptions import ConfigEntryNotReady
 
-from homeassistant.config_entries import SOURCE_IMPORT
+    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+except:
+    # si py test
+    class DataUpdateCoordinator:
+        def __init__(self):
+            pass
+    def callback( var1 ):
+        return
+    pass
 
-from homeassistant.const import (
-    CONF_SCAN_INTERVAL,
-    EVENT_HOMEASSISTANT_STARTED,
-)
-
-from homeassistant.core import CoreState, callback
-from homeassistant.exceptions import ConfigEntryNotReady
-
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from . import sensorEnedis
 from . import myEnedis
 
