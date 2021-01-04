@@ -274,19 +274,18 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
 
     def _update_state(self):
         """Update sensors state."""
-        dataAvailable, status_counts, state = self._myDataEnedis.myEnedis.getStatusYesterdayCost()
-        #_LOGGER.exception("yesteday sensor, _update_state" )
-        #_LOGGER.exception("state %s" %(state))
-        #_LOGGER.exception("status_counts %s"%(status_counts) )
+        dataAvailable, yesterdayDate, status_counts, state = self._myDataEnedis.myEnedis.getStatusYesterdayCost()
         if dataAvailable:
-            yesterday = (datetime.datetime.now()- datetime.timedelta(days=1)).strftime("%Y%m%d")
-            #_LOGGER.exception("yesteday %s, lastYesterday %s" %(yesterday, self._lastYesterday ))
-            if ( self._lastYesterday!= yesterday ):
+            _LOGGER.exception("yesteday %s, lastYesterday %s" %(yesterdayDate, self._lastYesterday ))
+            _LOGGER.exception("yesteday sensor, _update_state" )
+            _LOGGER.exception("state %s" %(state))
+            _LOGGER.exception("status_counts %s"%(status_counts) )
+            if ( self._lastYesterday != yesterdayDate ) and ( yesterdayDate != None ):
                 self._attributes = {ATTR_ATTRIBUTION: "" }
                 status_counts["timeLastCall"] = datetime.datetime.now()
                 self._attributes.update(status_counts)
                 self._state = state
-                self._lastYesterday = yesterday
+                self._lastYesterday = yesterdayDate
             else:
                 # pas de nouvelle donnée
                 return
