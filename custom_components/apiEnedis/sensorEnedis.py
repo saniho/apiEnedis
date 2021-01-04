@@ -35,6 +35,7 @@ class manageSensorState:
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
         dataAvailable = False
+        yesterdayDate = None
         if self._myDataEnedis.getContract() != None:
             if self._myDataEnedis.getYesterday() != 0: # on a eut des données
                 status_counts["yesterday_HC_cost"] = \
@@ -45,10 +46,11 @@ class manageSensorState:
                     0.001 * self._myDataEnedis.getHCCost(self._myDataEnedis.getYesterdayHC()) + \
                     0.001 * self._myDataEnedis.getHPCost(self._myDataEnedis.getYesterdayHP())
                 )
+                yesterdayDate = self._myDataEnedis.getYesterdayDate()
                 status_counts["daily_cost"] = daily_cost
                 state = daily_cost
                 dataAvailable = True
-        return dataAvailable, status_counts, state
+        return dataAvailable, yesterdayDate, status_counts, state
 
     def getStatus(self):
         state = "unavailable"

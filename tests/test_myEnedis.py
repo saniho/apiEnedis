@@ -23,5 +23,19 @@ def test_update_last7days():
     with open("./Json/Week/week1.json") as json_file:
         dataJson = json.load(json_file)
     myE.updateLast7Days(dataJson)
-    dataCompare = [{'date': '2020-12-09', 'niemejour': 1, 'value': 42951}, {'date': '2020-12-08', 'niemejour': 2, 'value': 35992}, {'date': '2020-12-07', 'niemejour': 3, 'value': 46092}, {'date': '2020-12-06', 'niemejour': 4, 'value': 37753}, {'date': '2020-12-05', 'niemejour': 5, 'value': 38623}, {'date': '2020-12-04', 'niemejour': 6, 'value': 38633}, {'date': '2020-12-03', 'niemejour': 7, 'value': 33665}]
+    dataCompare = [{'date': '2020-12-09', 'niemejour': 1, 'value': 42951},
+                   {'date': '2020-12-08', 'niemejour': 2, 'value': 35992},
+                   {'date': '2020-12-07', 'niemejour': 3, 'value': 46092},
+                   {'date': '2020-12-06', 'niemejour': 4, 'value': 37753},
+                   {'date': '2020-12-05', 'niemejour': 5, 'value': 38623},
+                   {'date': '2020-12-04', 'niemejour': 6, 'value': 38633},
+                   {'date': '2020-12-03', 'niemejour': 7, 'value': 33665}]
     assert myE.getLast7Days() == dataCompare, "Error last7Days"
+
+
+def test_update_last_month():
+    myE = myEnedis.myEnedis("myToken", "myPDL")
+    with open("./Json/Month/month1.json") as json_file:
+        dataJson = json.load(json_file)
+    myE.updateLastMonth(dataJson)
+    myE.getLastMonth() == 876699, "Error LastMonthData"

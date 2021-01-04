@@ -363,6 +363,8 @@ class myEnedis:
 
     def getYesterday(self):
         return self._yesterday
+    def getYesterdayDate(self):
+        return self._yesterdayDate
 
     def updateYesterday(self, data=None):
         self.updateLastMethodCall("updateYesterday")
