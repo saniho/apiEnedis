@@ -1,0 +1,8 @@
+{
+  "error": "result_500",
+  "enedis_return": {
+    "error": "Internal Server error",
+    "error_description": "Un problème a été rencontré lors du traitement.",
+    "error_uri": "https://bluecoder.enedis.fr/api-doc/consulter-souscrire"
+  }
+}

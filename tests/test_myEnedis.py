@@ -56,3 +56,12 @@ def test_update_yesterday():
     myE.updateYesterday(dataJson)
     assert myE.getYesterday() == 42951, "Erreur yesterday"
 
+def test_error():
+    myE = myEnedis.myEnedis("myToken", "myPDL")
+    with open("./Json/Error/error1.json") as json_file:
+        dataJson = json.load(json_file)
+    try:
+        myE.updateYesterday(dataJson)
+    except Exception as e:
+        assert e.args[2] == "UNKERROR_001", "Erreur UNKERROR_001"
+
