@@ -1,0 +1,44 @@
+{
+  "meter_reading": {
+    "usage_point_id": "09764109908394",
+    "start": "2020-11-30",
+    "end": "2020-12-07",
+    "quality": "BRUT",
+    "reading_type": {
+      "unit": "Wh",
+      "measurement_kind": "energy",
+      "aggregate": "sum",
+      "measuring_period": "P1D"
+    },
+    "interval_reading": [
+      {
+        "value": "43463",
+        "date": "2020-11-30"
+      },
+      {
+        "value": "21078",
+        "date": "2020-12-01"
+      },
+      {
+        "value": "29260",
+        "date": "2020-12-02"
+      },
+      {
+        "value": "33665",
+        "date": "2020-12-03"
+      },
+      {
+        "value": "38633",
+        "date": "2020-12-04"
+      },
+      {
+        "value": "38623",
+        "date": "2020-12-05"
+      },
+      {
+        "value": "37753",
+        "date": "2020-12-06"
+      }
+    ]
+  }
+}

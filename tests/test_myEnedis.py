@@ -38,4 +38,21 @@ def test_update_last_month():
     with open("./Json/Month/month1.json") as json_file:
         dataJson = json.load(json_file)
     myE.updateLastMonth(dataJson)
-    myE.getLastMonth() == 876699, "Error LastMonthData"
+    assert myE.getLastMonth() == 876699, "Error LastMonthData"
+
+
+def test_update_current_month():
+    myE = myEnedis.myEnedis("myToken", "myPDL")
+    with open("./Json/Month/currentMonth1.json") as json_file:
+        dataJson = json.load(json_file)
+    myE.updateCurrentMonth(dataJson)
+    assert myE.getCurrentMonth() == 242475, "Erreur currentMonth"
+
+
+def test_update_yesterday():
+    myE = myEnedis.myEnedis("myToken", "myPDL")
+    with open("./Json/Yesterday/yesterday1.json") as json_file:
+        dataJson = json.load(json_file)
+    myE.updateYesterday(dataJson)
+    assert myE.getYesterday() == 42951, "Erreur yesterday"
+

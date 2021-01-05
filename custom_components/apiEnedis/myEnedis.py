@@ -369,6 +369,7 @@ class myEnedis:
     def updateYesterday(self, data=None):
         self.updateLastMethodCall("updateYesterday")
         self.myLog("--updateYesterday --")
+        yesterdayDate = None
         if ( data == None ): data, yesterdayDate = self.CallgetYesterday()
         self.myLog("updateYesterday : data %s" %(data))
         if ( self.checkData( data )):
@@ -490,8 +491,17 @@ class myEnedis:
                 return False
             elif ( dataAnswer['enedis_return']["error"] == "UNKERROR_002" ) :
                 return False
+            if ( dataAnswer['enedis_return']["error"] == "Internal Server error" ):
+                #erreur interne enedis
+                raise Exception( 'call' , "error", "UNKERROR_001" )
             else:
                 raise Exception( 'call' , "error", dataAnswer['enedis_return']["error"] )
+        if ( "error" in dataAnswer.keys()):
+            if ( dataAnswer["error"] == "client_not_found" ):
+                #client inconnu
+                raise Exception( 'call' , "error", "UNKERROR_003" )
+            else:
+                raise Exception( 'call' , "error", dataAnswer["error"] )
         return True
 
     def checkData(self, dataAnswer ):
@@ -503,8 +513,18 @@ class myEnedis:
                 return False
             elif ( dataAnswer['enedis_return']["error"] == "UNKERROR_002" ) :
                 return False
+            if ( dataAnswer['enedis_return']["error"] == "Internal Server error" ):
+                #erreur interne enedis
+                raise Exception( 'call' , "error", "UNKERROR_001" )
             else:
                 raise Exception( 'call' , "error", dataAnswer["error"] )
+        if ( "error" in dataAnswer.keys()):
+            if ( dataAnswer["error"] == "client_not_found" ):
+                #client inconnu
+                raise Exception( 'call' , "error", "UNKERROR_003" )
+            else:
+                raise Exception( 'call' , "error", dataAnswer["error"] )
+
         return True
 
     def checkDataContract(self, dataAnswer ):
