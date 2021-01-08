@@ -55,11 +55,11 @@ _LOGGER = logging.getLogger(__name__)
 """
 async def async_setup(hass, config):
     """Import integration from config."""
-    #conf = config.get(DOMAIN)
-    #if not conf:
-    #    return True
-    #for enedisConf in conf:
-    #    _LOGGER.exception("run myEnedis for %s"( enedisConf ))
+    conf = config.get(DOMAIN)
+    if not conf:
+        return True
+    for enedisConf in conf:
+        _LOGGER.exception("run myEnedis for %s"( enedisConf ))
     if DOMAIN in config:
         hass.async_create_task(
             hass.config_entries.flow.async_init(
@@ -71,6 +71,7 @@ async def async_setup(hass, config):
 
 async def _async_setup_entry(hass, config_entry):
     "Set up this integration using UI."
+    _LOGGER.exception("run myEnedis for ??")
     coordinator = sensorEnedisCoordinator( hass, config_entry)
     await coordinator.async_setup()
 
