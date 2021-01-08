@@ -57,19 +57,19 @@ class manageSensorState:
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
 
-        if (self._myDataEnedis.getContract() != None):
+        if self._myDataEnedis.getContract() != None:
             status_counts["typeCompteur"] = self._myDataEnedis.getTypePDL()
-            if ( self._myDataEnedis.isConsommation()):
+            if self._myDataEnedis.isConsommation():
                 status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                 status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                 # à supprimer car doublon avec j_1
                 status_counts['yesterday'] = self._myDataEnedis.getYesterday()
                 status_counts['last_week'] = self._myDataEnedis.getLastWeek()
 
-            if ( self._myDataEnedis.getStatusLastCall()):  # update avec statut ok
+            if self._myDataEnedis.getStatusLastCall():  # update avec statut ok
                 try:
                     status_counts["typeCompteur"] = self._myDataEnedis.getTypePDL()
-                    if (self._myDataEnedis.isConsommation()):
+                    if self._myDataEnedis.isConsommation():
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                         # à supprimer car doublon avec j_1
@@ -94,7 +94,7 @@ class manageSensorState:
                         for clef in listeClef:
                             niemejour += 1
                             valeur = -1
-                            if (clef in last7daysHP.keys()):
+                            if clef in last7daysHP.keys():
                                 valeur = last7daysHP[clef]
                             status_counts['day_%s_HP' % (niemejour)] = valeur
                         last7daysHC = self._myDataEnedis.get7DaysHC()
@@ -148,7 +148,7 @@ class manageSensorState:
                         for clef in listeClef:
                             niemejour += 1
                             valeur = -1
-                            if (clef in last7daysHP.keys()):
+                            if clef in last7daysHP.keys():
                                 valeur = 0.001 * self._myDataEnedis.getHPCost(last7daysHP[clef])
                                 valeur = "{:.2f}".format(valeur)
                             coutHP.append(valeur)
@@ -181,7 +181,7 @@ class manageSensorState:
                         status_counts["halfhourly"] = []
                         status_counts["offpeak_hours"] = "{:.3f}".format(self._myDataEnedis.getYesterdayHC() * 0.001)
                         status_counts["peak_hours"] = "{:.3f}".format(self._myDataEnedis.getYesterdayHP() * 0.001)
-                        if ((self._myDataEnedis.getYesterdayHC() + self._myDataEnedis.getYesterdayHP()) != 0):
+                        if (self._myDataEnedis.getYesterdayHC() + self._myDataEnedis.getYesterdayHP()) != 0:
                             valeur = (self._myDataEnedis.getYesterdayHP() * 100) / \
                                      (self._myDataEnedis.getYesterdayHC() + self._myDataEnedis.getYesterdayHP())
                             status_counts["peak_offpeak_percent"] = "{:.2f}".format(valeur)
@@ -208,24 +208,24 @@ class manageSensorState:
                                 (self._myDataEnedis.getLastMonth() is not None)):
                             valeur = \
                                 ((self._myDataEnedis.getLastMonth() - self._myDataEnedis.getLastMonthLastYear())
-                                 /self. _myDataEnedis.getLastMonthLastYear()) * 100
+                                 / self._myDataEnedis.getLastMonthLastYear()) * 100
                             status_counts["monthly_evolution"] = "{:.3f}".format(valeur)
                         else:
                             status_counts["monthly_evolution"] = 0
                         status_counts["subscribed_power"] = self._myDataEnedis.getsubscribed_power()
                         status_counts["offpeak_hours_information"] = self._myDataEnedis.getoffpeak_hours()
                         # status_counts['yesterday'] = ""
-                    elif (self._myDataEnedis.isProduction()):
+                    elif self._myDataEnedis.isProduction():
                         status_counts["yesterday_production"] = self._myDataEnedis.getProductionYesterday()
                         status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
 
-                    if (self._myDataEnedis.isProduction()):
-                        state = status_counts['yesterday_production'] * 0.001
+                    if self._myDataEnedis.isProduction():
+                        valeurstate = status_counts['yesterday_production'] * 0.001
                     else:
-                        state = status_counts['yesterday'] * 0.001
-
+                        valeurstate = status_counts['yesterday'] * 0.001
+                    state = "{:.3f}".format(valeurstate)
 
                 except Exception:
                     status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()

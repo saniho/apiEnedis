@@ -49,7 +49,11 @@ class myEnedis:
             self._log.setLevel(logging.DEBUG)
         else:
             self._log = log
-
+        self._contentType = "application/json"
+        self._contentHedaerMyEnedis = 'home-assistant-myEnedis'
+        self._formatDateYmd = "%Y-%m-%d"
+        self._formatDateYm01 = "%Y-%m-01"
+        self._formatDateY0101 = "%Y-01-01"
         self._log.exception("run myEnedis")
         pass
 
@@ -98,8 +102,8 @@ class myEnedis:
         }
         headers = {
             'Authorization': self._token,
-            'Content-Type': "application/json",
-            'call-service' :'home-assistant-myEnedis',
+            'Content-Type': self._contentType,
+            'call-service' : self._contentHedaerMyEnedis,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
@@ -115,8 +119,8 @@ class myEnedis:
         }
         headers = {
             'Authorization': self._token,
-            'Content-Type': "application/json",
-            'call-service' :'home-assistant-myEnedis',
+            'Content-Type': self._contentType,
+            'call-service' : self._contentHedaerMyEnedis,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
@@ -131,8 +135,8 @@ class myEnedis:
         }
         headers = {
             'Authorization': self._token,
-            'Content-Type': "application/json",
-            'call-service' :'home-assistant-myEnedis',
+            'Content-Type': self._contentType,
+            'call-service' : self._contentHedaerMyEnedis,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
@@ -145,8 +149,8 @@ class myEnedis:
         }
         headers = {
             'Authorization': self._token,
-            'Content-Type': "application/json",
-            'call-service' :'home-assistant-myEnedis',
+            'Content-Type': self._contentType,
+            'call-service' : self._contentHedaerMyEnedis,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr( dataAnswer )
@@ -156,25 +160,25 @@ class myEnedis:
         return self.getDataContract()
 
     def CallgetYesterday(self):
-        hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
-        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        hier = (datetime.date.today()-datetime.timedelta(1)).strftime(self._formatDateYmd)
+        cejour = (datetime.date.today()).strftime(self._formatDateYmd)
         return self.getDataPeriod( hier, cejour ), hier
 
     def CallgetProductionYesterday(self):
-        hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
-        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        hier = (datetime.date.today()-datetime.timedelta(1)).strftime(self._formatDateYmd)
+        cejour = (datetime.date.today()).strftime(self._formatDateYmd)
         return self.getDataProductionPeriod( hier, cejour )
 
     def CallgetDataYesterdayHCHP(self):
-        hier = (datetime.date.today()-datetime.timedelta(1)).strftime("%Y-%m-%d")
-        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        hier = (datetime.date.today()-datetime.timedelta(1)).strftime(self._formatDateYmd)
+        cejour = (datetime.date.today()).strftime(self._formatDateYmd)
         return self.getDataPeriodCLC( hier, cejour ), hier
 
     def CallgetCurrentWeek(self):
         import datetime
         today = datetime.date.today()
-        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
-        firstdateofweek = (datetime.date.today()-datetime.timedelta(days=datetime.datetime.today().weekday() % 7)).strftime("%Y-%m-%d")
+        cejour = (datetime.date.today()).strftime(self._formatDateYmd)
+        firstdateofweek = (datetime.date.today()-datetime.timedelta(days=datetime.datetime.today().weekday() % 7)).strftime(self._formatDateYmd)
         if ( cejour == firstdateofweek ):
             return 0 # cas lundi = premier jour de la semaine et donc rien de dispo
         else:
@@ -184,21 +188,21 @@ class myEnedis:
         import datetime
         today = datetime.date.today()
         start_date = today - datetime.timedelta(7)
-        end_date = (datetime.date.today()).strftime("%Y-%m-%d")
+        end_date = (datetime.date.today()).strftime(self._formatDateYmd)
         return self.getDataPeriod( start_date, end_date)
 
     def CallgetLast7DaysDetails(self):
         import datetime
         today = datetime.date.today()
         start_date = today - datetime.timedelta(7)
-        end_date = (datetime.date.today()).strftime("%Y-%m-%d")
+        end_date = (datetime.date.today()).strftime(self._formatDateYmd)
         return self.getDataPeriodCLC( start_date, end_date)
 
     def CallgetCurrentMonthDetails(self):
         import datetime
         today = datetime.date.today()
-        debCurrentMonth = today.strftime("%Y-%m-01")
-        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        debCurrentMonth = today.strftime(self._formatDateYm01)
+        cejour = (datetime.date.today()).strftime(self._formatDateYmd)
         if (debCurrentMonth != cejour):
             return self.getDataPeriodCLC(debCurrentMonth, cejour)
         else:
@@ -216,8 +220,8 @@ class myEnedis:
         today = datetime.date.today()
         first = today.replace(day=1)
         lastMonth = first - datetime.timedelta(days=1)
-        debPreviousMonth = lastMonth.strftime("%Y-%m-01")
-        debCurrentMonth = first.strftime("%Y-%m-01")
+        debPreviousMonth = lastMonth.strftime(self._formatDateYm01)
+        debCurrentMonth = first.strftime(self._formatDateYm01)
         return self.getDataPeriod( debPreviousMonth, debCurrentMonth )
 
     def CallgetLastMonthLastYear(self):
@@ -225,8 +229,8 @@ class myEnedis:
         today = datetime.date.today()
         first = today.replace(day=1, year=today.year-1)
         lastMonthLastYear = first - datetime.timedelta(days=1)
-        debPreviousMonth = lastMonthLastYear.strftime("%Y-%m-01")
-        debCurrentMonth = first.strftime("%Y-%m-01")
+        debPreviousMonth = lastMonthLastYear.strftime(self._formatDateYm01)
+        debCurrentMonth = first.strftime(self._formatDateYm01)
         return self.getDataPeriod( debPreviousMonth, debCurrentMonth )
 
 
@@ -235,15 +239,15 @@ class myEnedis:
         today = datetime.date.today()
         first = today.replace(day=1, month=1)
         lastYear = first - datetime.timedelta(days=1)
-        debPreviousYear = lastYear.strftime("%Y-01-01")
-        debCurrentYear = today.strftime("%Y-01-01")
+        debPreviousYear = lastYear.strftime(self._formatDateY0101)
+        debCurrentYear = today.strftime(self._formatDateY0101)
         return self.getDataPeriod( debPreviousYear, debCurrentYear )
 
     def CallgetCurrentMonth(self):
         import datetime
         today = datetime.date.today()
-        debCurrentMonth = today.strftime("%Y-%m-01")
-        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        debCurrentMonth = today.strftime(self._formatDateYm01)
+        cejour = (datetime.date.today()).strftime(self._formatDateYmd)
         if ( debCurrentMonth != cejour ):
             return self.getDataPeriod( debCurrentMonth, cejour)
         else:
@@ -252,8 +256,8 @@ class myEnedis:
     def CallgetCurrentYear(self):
         import datetime
         today = datetime.date.today()
-        debCurrentMonth = today.strftime("%Y-01-01")
-        cejour = (datetime.date.today()).strftime("%Y-%m-%d")
+        debCurrentMonth = today.strftime(self._formatDateY0101)
+        cejour = (datetime.date.today()).strftime(self._formatDateYmd)
         if ( debCurrentMonth != cejour ):
             return self.getDataPeriod( debCurrentMonth, cejour)
         else:
@@ -288,26 +292,24 @@ class myEnedis:
             return None
         else:
             return int(data["meter_reading"]["interval_reading"][0]["value"])
+
     def analyseValueContract(self, data):
-        if ( data == None ): #pas de valeur
-            return None
-        else:
-            contract = None
+        contract = None
+        if data != None: #si une valeur
             for x in data['customer']['usage_points']:
-                if ( str(x["usage_point"]['usage_point_id']) == self._PDL_ID):
+                if str(x["usage_point"]['usage_point_id']) == self._PDL_ID:
                     contract = {}
                     contract['contracts'] = x["contracts"]
-                    if ( "subscribed_power" in x["contracts"]):
-                        contract['subscribed_power']= x["contracts"]["subscribed_power"]
+                    if "subscribed_power" in x["contracts"]:
+                        contract['subscribed_power'] = x["contracts"]["subscribed_power"]
                         contract["mode_PDL"] = "consommation"
                     else:
-                        contract["mode_PDL"] = "production"
                         contract['subscribed_power']= "???"
-                    if ( "offpeak_hours" in x["contracts"]):
+                        contract["mode_PDL"] = "production"
+                    contract['offpeak_hours']= None
+                    if "offpeak_hours" in x["contracts"]:
                         contract['offpeak_hours']= x["contracts"]["offpeak_hours"]
-                    else:
-                        contract['offpeak_hours']= None
-            return contract
+        return contract
 
     def getContract(self):
         return self._contract
@@ -415,13 +417,13 @@ class myEnedis:
     def createMultiDaysHCHP(self, data):
         joursHC={}
         joursHP={}
-        dateDuJour = (datetime.date.today()).strftime("%Y-%m-%d")
+        dateDuJour = (datetime.date.today()).strftime(self._formatDateYmd)
         for x in data["meter_reading"]["interval_reading"]:
             self._interval_length = x["interval_length"]
             date = x["date"][:10]
             heure = x["date"][11:16]
             if ( heure == "00:00" ): # alors sur la veille, var c'est la fin de la tranche du jour precedent
-                date = (datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(1) ).strftime("%Y-%m-%d")
+                date = (datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(1) ).strftime(self._formatDateYmd)
 
             #if ( date == dateDuJour ):
             #    print("ici", x["date"], x["value"])
@@ -717,7 +719,7 @@ class myEnedis:
                                 #print("inst :", inst)
                                 if ( inst.args[:3] == ('call', 'error', 'no_data_found')): # gestion que c'est pas une erreur de contrat trop recent ?
                                     # si le service ne repond pas, l'erreur pas grave, c'est que pas encore remonté
-                                    self.updateErrorLastCall( "%s"%( messages.getMessage( inst.args[2] ), " pour hier"))
+                                    self.updateErrorLastCall( "%s %s"%( messages.getMessage( inst.args[2] ), " pour hier"))
                                     pass
                                 else:
                                     raise Exception(inst)

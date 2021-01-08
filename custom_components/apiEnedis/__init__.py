@@ -15,10 +15,10 @@ except:
     # si py test
     class DataUpdateCoordinator:
         def __init__(self):
+            #nothing to do
             pass
     def callback( var1 ):
         return
-    pass
 
 from . import sensorEnedis
 from . import myEnedis
@@ -34,38 +34,23 @@ from .const import (
     DEFAULT_SENSOR_INTERVAL,
     myENEDIS_SERVICE,
     __VERSION__,
+    __name__,
     CONF_DELAY,
 )
 _LOGGER = logging.getLogger(__name__)
 
-"""async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
-    #Set up Meteo-France from legacy config file.
-    conf = config.get(DOMAIN)
-    if not conf:
-        return True
-
-    for city_conf in conf:
-        hass.async_create_task(
-            hass.config_entries.flow.async_init(
-                DOMAIN, context={"source": SOURCE_IMPORT}, data=city_conf
-            )
-        )
-
-    return True
-"""
 async def async_setup(hass, config):
     """Import integration from config."""
     conf = config.get(DOMAIN)
-    if not conf:
-        return True
-    for enedisConf in conf:
-        _LOGGER.exception("run myEnedis for %s"( enedisConf ))
-    if DOMAIN in config:
-        hass.async_create_task(
-            hass.config_entries.flow.async_init(
-                DOMAIN, context={"source": SOURCE_IMPORT}, data=config[DOMAIN]
+    if conf:
+        for enedisconf in conf:
+            _LOGGER.exception("run myEnedis for %s"%( enedisconf ))
+        if DOMAIN in config:
+            hass.async_create_task(
+                hass.config_entries.flow.async_init(
+                    DOMAIN, context={"source": SOURCE_IMPORT}, data=config[DOMAIN]
+                )
             )
-        )
     return True
 
 
