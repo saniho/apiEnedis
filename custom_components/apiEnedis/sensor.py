@@ -86,7 +86,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the myEnedis sensor platform."""
     entities = []
-    myEnedis_Cordinator = hass.data[DOMAIN]
+    myEnedis_Cordinator = hass.data[DOMAIN][entry.entry_id]
     entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator))
     entities.append(myEnedisSensorYesterdayCostCoordinator(myEnedis_Cordinator))
     async_add_entities(entities)

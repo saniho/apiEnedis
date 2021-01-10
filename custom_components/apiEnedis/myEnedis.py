@@ -4,7 +4,8 @@ import json
 import logging
 try:
     from . import  messages
-except:
+
+except ImportError:
     import messages
 
 __nameMyEnedis__ = "myEnedis"

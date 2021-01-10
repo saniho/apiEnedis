@@ -11,7 +11,7 @@ try:
     from homeassistant.exceptions import ConfigEntryNotReady
 
     from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-except:
+except ImportError:
     # si py test
     class DataUpdateCoordinator:
         def __init__(self):
@@ -41,6 +41,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup(hass, config):
     """Import integration from config."""
+    hass.data.setdefault(DOMAIN, {})
     conf = config.get(DOMAIN)
     if conf:
         for enedisconf in conf:
@@ -56,14 +57,13 @@ async def async_setup(hass, config):
 
 async def _async_setup_entry(hass, config_entry):
     "Set up this integration using UI."
-    _LOGGER.exception("run myEnedis for ??")
-    coordinator = sensorEnedisCoordinator( hass, config_entry)
+    _LOGGER.exception("run myEnedis for ?? ")
+    coordinator =  sensorEnedisCoordinator( hass, config_entry)
     await coordinator.async_setup()
 
     async def _enable_scheduled_myEnedis(*_):
         """Activate the data update coordinator."""
         coordinator.update_interval = timedelta(
-            #seconds=config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
             seconds=DEFAULT_SCAN_INTERVAL
         )
         await coordinator.async_refresh()
@@ -80,14 +80,14 @@ async def _async_setup_entry(hass, config_entry):
             EVENT_HOMEASSISTANT_STARTED, _enable_scheduled_myEnedis
         )
 
-    hass.data[DOMAIN] = coordinator
+    hass.data[DOMAIN][config_entry.entry_id] = coordinator
     hass.async_create_task(
         hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
     )
     return True
 
 async def async_setup_entry(hass, config_entry) -> bool:
-
+    _LOGGER.exception("run myEnedis - sensorEnedisCoordinator %s" %(config_entry.data))
     coordinator = sensorEnedisCoordinator( hass, config_entry)
     await coordinator.async_setup()
     async def _enable_scheduled_myEnedis(*_):
@@ -108,8 +108,9 @@ async def async_setup_entry(hass, config_entry) -> bool:
             EVENT_HOMEASSISTANT_STARTED, _enable_scheduled_myEnedis
         )
     undo_listener = config_entry.add_update_listener(update_listener)
-    hass.data[DOMAIN] = coordinator
+    hass.data[DOMAIN][config_entry.entry_id] = coordinator
     for component in [PLATFORM]:
+        _LOGGER.exception("run myEnedis - component %s" %(component))
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(config_entry, component)
         )
@@ -122,13 +123,9 @@ async def update_listener(hass, config_entry):
 async def async_unload_entry(hass, config_entry):
     """Unload myEnedis Entry from config_entry."""
     hass.services.async_remove(DOMAIN, myENEDIS_SERVICE)
-
-    hass.data[DOMAIN].async_unload()
-
+    hass.data[DOMAIN][config_entry.entry_id].async_unload()
     await hass.config_entries.async_forward_entry_unload(config_entry, "sensor")
-
     hass.data.pop(DOMAIN)
-
     return True
 
 class sensorEnedisCoordinator( DataUpdateCoordinator):
@@ -179,7 +176,7 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
         _LOGGER.info("async_set_options - proc -- done ")
 
     def update_MyEnedis(self):
-        _LOGGER.info("update_MyEnedis")
+        _LOGGER.info("update_MyEnedis pre-getini for %s"%(self.config_entry.options['token']))
         if (not self.myEnedis.getInit()):
             _LOGGER.info("getInit()")
             delai_interval = CONF_DELAY # delai de rafraichissement de l'appel API
@@ -233,10 +230,9 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
 
 async def options_updated_listener(hass, entry):
     """Handle options update."""
-
     _LOGGER.info("options_updated_listener ")
-    hass.data[DOMAIN].update_interval = timedelta(
+    hass.data[DOMAIN][entry.entry_id].update_interval = timedelta(
         seconds=DEFAULT_SENSOR_INTERVAL
     )
-    await hass.data[DOMAIN].async_request_refresh()
+    await hass.data[DOMAIN][entry.entry_id].async_request_refresh()
     _LOGGER.info("options_updated_listener - done -- ")
