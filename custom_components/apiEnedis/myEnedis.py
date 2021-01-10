@@ -77,7 +77,6 @@ class myEnedis:
             import logging
             import json
             session = requests.Session()
-            #response = session.post(url, params=params, data=json.dumps(data), headers=headers)
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
             return response.json()
@@ -438,14 +437,7 @@ class myEnedis:
                     joursHP[date] += int(x["value"]) * self.getCoeffIntervalLength() # car c'est en heure
                 else:
                     joursHC[date] +=int(x["value"]) * self.getCoeffIntervalLength() # car c'est pas en heure
-
-                # if ( date == "2020-12-06" ):
-                #     print("ici", x["date"], heure, " ", heurePleine, ", ", x[ "value" ], \
-                #           self._joursHP[date], self._joursHC[date], self._joursHP[date] + self._joursHC[date])
-
         return joursHC, joursHP
-        #print(self._joursHC)
-        #print(self._joursHP)
 
     def getIntervalLength(self):
         return self._interval_length
@@ -468,12 +460,8 @@ class myEnedis:
             heurePleine = self._getHCHPfromHour( heure )
             if ( heurePleine):
                 self._HP += int(x["value"]) * self.getCoeffIntervalLength()# car par transhce de 30 minutes
-                #print( heure, heurePleine, x[ "value" ], self._HP)
             else:
                 self._HC += int(x["value"]) * self.getCoeffIntervalLength()# car par transhce de 30 minutes
-            #print( heure, " ", heurePleine, ", ", x[ "value" ], self._HC, self._HP, self._HC + self._HP)
-        #print(self._HC)
-        #print(self._HP)
 
     def updateDataYesterdayHCHP(self, data=None):
         self.updateLastMethodCall("updateDataYesterdayHCHP")
@@ -488,11 +476,9 @@ class myEnedis:
 
     def checkDataPeriod(self, dataAnswer ):
         if ("enedis_return" in dataAnswer.keys()):
-            if ( dataAnswer['enedis_return']["error"] == "ADAM-ERR0123" ) :
-                return False
-            elif ( dataAnswer['enedis_return']["error"] == "no_data_found" ) :
-                return False
-            elif ( dataAnswer['enedis_return']["error"] == "UNKERROR_002" ) :
+            if ( dataAnswer['enedis_return']["error"] == "ADAM-ERR0123" ) or\
+                ( dataAnswer['enedis_return']["error"] == "no_data_found" ) or\
+                ( dataAnswer['enedis_return']["error"] == "UNKERROR_002" ) :
                 return False
             if ( dataAnswer['enedis_return']["error"] == "Internal Server error" ):
                 #erreur interne enedis
@@ -509,12 +495,9 @@ class myEnedis:
 
     def checkData(self, dataAnswer ):
         if ("enedis_return" in dataAnswer.keys()):
-            #if ( isinstance(dataAnswer['enedis_return'], str)):
-            #    dataAnswer['enedis_return'] = json.loads(dataAnswer['enedis_return'])
-            if ( dataAnswer['enedis_return']["error"] == "ADAM-DC-0008" ):
-                #No consent can be found for this customer and this usage point
-                return False
-            elif ( dataAnswer['enedis_return']["error"] == "UNKERROR_002" ) :
+            #No consent can be found for this customer and this usage point
+            if ( dataAnswer['enedis_return']["error"] == "ADAM-DC-0008" ) or\
+                ( dataAnswer['enedis_return']["error"] == "UNKERROR_002" ) :
                 return False
             if ( dataAnswer['enedis_return']["error"] == "Internal Server error" ):
                 #erreur interne enedis
@@ -532,7 +515,6 @@ class myEnedis:
 
     def checkDataContract(self, dataAnswer ):
         if ("error" in dataAnswer.keys()):
-            #self.myLogWarning( "** %s" %(dataAnswer["error"]))
             raise Exception( 'call' , "error", dataAnswer["error"] )
         return True
 

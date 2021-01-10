@@ -62,7 +62,6 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     name = config.get(CONF_NAME)
     token = config.get(CONF_TOKEN)
     code = config.get(CONF_CODE)
-    #[['00:30', '07:00'], ['10:00', "11:30"]]
     heuresCreusesCh = config.get(HEURES_CREUSES)
     heuresCreuses = eval(heuresCreusesCh)
     HCCost = float(config.get(HC_COST))

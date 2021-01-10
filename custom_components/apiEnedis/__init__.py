@@ -213,9 +213,6 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
             await self.async_request_refresh()
         await self.async_set_options()
         await self.hass.async_add_executor_job(self.update_MyEnedis)
-        #_LOGGER.exception("async_add_executor_job -  ")
-        #self.hass.services.async_register(DOMAIN, myENEDIS_SERVICE, request_update)
-        #_LOGGER.exception("async_add_executor_job - done -- ")
         self._unsub_update_listener = self.config_entry.add_update_listener(
             options_updated_listener
         )
