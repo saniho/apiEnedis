@@ -1,6 +1,7 @@
 """my first component."""
 from datetime import timedelta
 import logging
+
 try:
     from homeassistant.config_entries import SOURCE_IMPORT
     from homeassistant.const import (
@@ -15,9 +16,10 @@ except ImportError:
     # si py test
     class DataUpdateCoordinator:
         def __init__(self):
-            #nothing to do
+            # nothing to do
             pass
-    def callback( var1 ):
+
+    def callback(var1):
         return
 
 from . import sensorEnedis
@@ -37,7 +39,9 @@ from .const import (
     __name__,
     CONF_DELAY,
 )
+
 _LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup(hass, config):
     """Import integration from config."""
@@ -45,7 +49,7 @@ async def async_setup(hass, config):
     conf = config.get(DOMAIN)
     if conf:
         for enedisconf in conf:
-            _LOGGER.exception("run myEnedis for %s"%( enedisconf ))
+            _LOGGER.exception("run myEnedis for %s" % enedisconf)
         if DOMAIN in config:
             hass.async_create_task(
                 hass.config_entries.flow.async_init(
@@ -56,9 +60,9 @@ async def async_setup(hass, config):
 
 
 async def _async_setup_entry(hass, config_entry):
-    "Set up this integration using UI."
+    """Set up this integration using UI."""
     _LOGGER.exception("run myEnedis for ?? ")
-    coordinator =  sensorEnedisCoordinator( hass, config_entry)
+    coordinator = sensorEnedisCoordinator(hass, config_entry)
     await coordinator.async_setup()
 
     async def _enable_scheduled_myEnedis(*_):
@@ -86,16 +90,19 @@ async def _async_setup_entry(hass, config_entry):
     )
     return True
 
+
 async def async_setup_entry(hass, config_entry) -> bool:
-    _LOGGER.exception("run myEnedis - sensorEnedisCoordinator %s" %(config_entry.data))
-    coordinator = sensorEnedisCoordinator( hass, config_entry)
+    _LOGGER.exception("run myEnedis - sensorEnedisCoordinator %s" % config_entry.data)
+    coordinator = sensorEnedisCoordinator(hass, config_entry)
     await coordinator.async_setup()
+
     async def _enable_scheduled_myEnedis(*_):
         """Activate the data update coordinator."""
         coordinator.update_interval = timedelta(
             seconds=config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
         )
         await coordinator.async_refresh()
+
     if hass.state == CoreState.running:
         await _enable_scheduled_myEnedis()
         if not coordinator.last_update_success:
@@ -110,15 +117,17 @@ async def async_setup_entry(hass, config_entry) -> bool:
     undo_listener = config_entry.add_update_listener(update_listener)
     hass.data[DOMAIN][config_entry.entry_id] = coordinator
     for component in [PLATFORM]:
-        _LOGGER.exception("run myEnedis - component %s" %(component))
+        _LOGGER.exception("run myEnedis - component %s" % component)
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(config_entry, component)
         )
     return True
 
+
 async def update_listener(hass, config_entry):
     """Update listener."""
     await hass.config_entries.async_reload(config_entry.entry_id)
+
 
 async def async_unload_entry(hass, config_entry):
     """Unload myEnedis Entry from config_entry."""
@@ -128,7 +137,8 @@ async def async_unload_entry(hass, config_entry):
     hass.data.pop(DOMAIN)
     return True
 
-class sensorEnedisCoordinator( DataUpdateCoordinator):
+
+class sensorEnedisCoordinator(DataUpdateCoordinator):
 
     def __init__(self, hass, config_entry):
         """Initialize the data object."""
@@ -158,7 +168,7 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
 
     async def async_set_options(self):
         """Set options for entry."""
-        _LOGGER.info("async_set_options - proc -- %s" %(self.config_entry.options))
+        _LOGGER.info("async_set_options - proc -- %s" % self.config_entry.options)
         if not self.config_entry.options:
             _LOGGER.info(".config_entry.options()")
             data = {**self.config_entry.data}
@@ -176,28 +186,27 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
         _LOGGER.info("async_set_options - proc -- done ")
 
     def update_MyEnedis(self):
-        _LOGGER.info("update_MyEnedis pre-getini for %s"%(self.config_entry.options['token']))
-        if (not self.myEnedis.getInit()):
+        _LOGGER.info("update_MyEnedis pre-getini for %s" % (self.config_entry.options['token']))
+        if not self.myEnedis.getInit():
             _LOGGER.info("getInit()")
-            delai_interval = CONF_DELAY # delai de rafraichissement de l'appel API
-            heuresCreusesCh = "[]"
-            heuresCreuses = eval(heuresCreusesCh)
-            HC_Cost_key = "hc_cout"
-            HP_Cost_key = "hp_cout"
-            if (HC_Cost_key not in self.config_entry.options.keys()):
-                HCCost = float("0.0")
+            delai_interval = CONF_DELAY  # delai de rafraichissement de l'appel API
+            heures_creuses = []
+            hc_cost_key = "hc_cout"
+            hp_cost_key = "hp_cout"
+            if hc_cost_key not in self.config_entry.options.keys():
+                hc_cost = float("0.0")
             else:
-                HCCost = float(self.config_entry.options.get(HC_Cost_key, "0.0"))
-            if (HP_Cost_key not in self.config_entry.options.keys()):
-                HPCost = float("0.0")
+                hc_cost = float(self.config_entry.options.get(hc_cost_key, "0.0"))
+            if hp_cost_key not in self.config_entry.options.keys():
+                hp_cost = float("0.0")
             else:
-                HPCost = float(self.config_entry.options.get(HP_Cost_key, "0.0"))
+                hp_cost = float(self.config_entry.options.get(hp_cost_key, "0.0"))
             token, code = self.config_entry.options['token'], self.config_entry.options['code']
-            _LOGGER.info("options - proc -- %s %s %s %s" %(token, code, HPCost, HCCost))
-            myDataEnedis = myEnedis.myEnedis(token, code, delai_interval, \
-                                               heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost,
-                                               heuresPleinesCost=HPCost, log=_LOGGER)
-            self.myEnedis.init(myDataEnedis, _LOGGER, __VERSION__)
+            _LOGGER.info("options - proc -- %s %s %s %s" % (token, code, hp_cost, hc_cost))
+            my_data_enedis = myEnedis.myEnedis(token, code, delai_interval,
+                                               heuresCreuses=heures_creuses, heuresCreusesCost=hc_cost,
+                                               heuresPleinesCost=hp_cost, log=_LOGGER)
+            self.myEnedis.init(my_data_enedis, _LOGGER, __VERSION__)
 
     async def async_setup(self):
         """Set up myEnedis."""
@@ -206,16 +215,18 @@ class sensorEnedisCoordinator( DataUpdateCoordinator):
             self.myEnedis = await self.hass.async_add_executor_job(sensorEnedis.manageSensorState)
             _LOGGER.info("run my First Extension - done -- ")
         except Exception as inst:
-            raise Exception( inst )
+            raise Exception(inst)
 
         async def request_update(call):
             """Request update."""
             await self.async_request_refresh()
+
         await self.async_set_options()
         await self.hass.async_add_executor_job(self.update_MyEnedis)
         self._unsub_update_listener = self.config_entry.add_update_listener(
             options_updated_listener
         )
+
     @callback
     def async_unload(self):
         """Unload the coordinator."""
