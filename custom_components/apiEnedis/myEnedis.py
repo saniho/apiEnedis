@@ -589,8 +589,7 @@ class myEnedis:
         self.myLog("--updateCurrentWeek --")
         if ( data == None ): data = self.CallgetCurrentWeek()
         self.myLog("updateCurrentWeek : data %s" %(data))
-        if ( data != 0 ):
-            self.checkDataPeriod(data)
+        if ( self.checkDataPeriod(data) ):
             self._currentWeek = self.analyseValueAndAdd( data )
         else:
             self._currentWeek = data
@@ -602,8 +601,7 @@ class myEnedis:
         self.myLog("--updateCurrentMonth --")
         if ( data == None ): data = self.CallgetCurrentMonth()
         self.myLog("updateCurrentMonth : data %s" %(data))
-        if ( data != 0 ):
-            self.checkDataPeriod(data)
+        if ( self.checkDataPeriod(data) ):
             self._currentMonth = self.analyseValueAndAdd( data )
         else:
             self._currentMonth = data
@@ -627,8 +625,7 @@ class myEnedis:
         self.myLog("--updateCurrentYear --")
         if ( data == None ): data = self.CallgetCurrentYear()
         self.myLog("updateCurrentYear : data %s" %(data))
-        if ( data != 0 ):
-            self.checkDataPeriod(data)
+        if ( self.checkDataPeriod(data) ):
             self._currentYear = self.analyseValueAndAdd( data )
         else:
             self._currentYear = data
