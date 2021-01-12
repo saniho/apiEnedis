@@ -59,7 +59,7 @@ class myEnedis:
         pass
 
     def myLog(self, message):
-        #self._log.info(message)
+        self._log.info(message)
         #self._log.warning(message)
         pass
 
@@ -359,9 +359,13 @@ class myEnedis:
         self._contract = self.analyseValueContract( data )
 
     def updateHCHP(self, heuresCreuses=None):
+        opcnew = self.getcleanoffpeak_hours()
         if ( heuresCreuses != None ): self._heuresCreuses = heuresCreuses
+        elif( opcnew != []):
+            self._heuresCreuses = opcnew
         else:
-            self._heuresCreuses = self.getcleanoffpeak_hours()
+            # on garde les heures creueses déja définie....
+            pass
 
     def getYesterday(self):
         return self._yesterday

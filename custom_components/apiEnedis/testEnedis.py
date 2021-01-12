@@ -98,7 +98,7 @@ def testMulti():
     #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4","ENEDIS15"]:
     #for qui in ["ENEDIS18"]:
     #for qui in ["ENEDIS19"]:
-    for qui in ["ENEDIS20"]:
+    for qui in ["ENEDIS"]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         print(qui , "*", token, PDL_ID)
@@ -107,7 +107,6 @@ def testMulti():
             heuresCreuses=eval(heureCreusesCh), heuresCreusesCost=0.0797, heuresPleinesCost=0.1175 )
         myDataEnedis.updateContract()
         print(myDataEnedis.getContract())
-        print(1/0)
         #myDataEnedis.updateLastYear()
 
         # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver

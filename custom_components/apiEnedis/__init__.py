@@ -115,6 +115,8 @@ async def async_setup_entry(hass, config_entry) -> bool:
             EVENT_HOMEASSISTANT_STARTED, _enable_scheduled_myEnedis
         )
     undo_listener = config_entry.add_update_listener(update_listener)
+    if DOMAIN not in hass.data.keys():
+        hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = coordinator
     for component in [PLATFORM]:
         _LOGGER.exception("run myEnedis - component %s" % component)
