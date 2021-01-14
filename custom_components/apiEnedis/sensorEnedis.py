@@ -66,7 +66,7 @@ class manageSensorState:
                 status_counts['yesterday'] = self._myDataEnedis.getYesterday()
                 status_counts['last_week'] = self._myDataEnedis.getLastWeek()
 
-            if self._myDataEnedis.getStatusLastCall():  # update avec statut ok
+            if (1):#self._myDataEnedis.getStatusLastCall():  # update avec statut ok
                 try:
                     status_counts["typeCompteur"] = self._myDataEnedis.getTypePDL()
                     if self._myDataEnedis.isConsommation():
@@ -75,12 +75,6 @@ class manageSensorState:
                         # à supprimer car doublon avec j_1
                         status_counts['yesterday'] = self._myDataEnedis.getYesterday()
                         status_counts['last_week'] = self._myDataEnedis.getLastWeek()
-
-                        # last7days = _myDataEnedis.getLast7Days()
-                        # for day in last7days:
-                        #    status_counts['day_%s' % (day["niemejour"])] = day["value"]
-                        # status_counts['daily'] = [("{:.2f}".format(day["value"] * 0.001)) for day in last7days]
-
                         last7daysHP = self._myDataEnedis.get7DaysHP()
                         listeClef = list(last7daysHP.keys())
                         listeClef.reverse()
@@ -98,11 +92,8 @@ class manageSensorState:
                                 valeur = last7daysHP[clef]
                             status_counts['day_%s_HP' % (niemejour)] = valeur
                         last7daysHC = self._myDataEnedis.get7DaysHC()
-                        # listeClef = list(last7daysHP.keys())
-                        # listeClef.reverse()
                         niemejour = 0
                         for clef in listeClef:
-                            # print(clef, " ", last7daysHC[clef])
                             niemejour += 1
                             valeur = -1
                             if (clef in last7daysHC.keys()):
@@ -213,7 +204,8 @@ class manageSensorState:
                         else:
                             status_counts["monthly_evolution"] = 0
                         status_counts["subscribed_power"] = self._myDataEnedis.getsubscribed_power()
-                        status_counts["offpeak_hours_information"] = self._myDataEnedis.getoffpeak_hours()
+                        status_counts["offpeak_hours_enedis"] = self._myDataEnedis.getoffpeak_hours()
+                        status_counts["offpeak_hours"] = self._myDataEnedis.getHeuresCreuses()
                         # status_counts['yesterday'] = ""
                     elif self._myDataEnedis.isProduction():
                         status_counts["yesterday_production"] = self._myDataEnedis.getProductionYesterday()
@@ -237,6 +229,8 @@ class manageSensorState:
 
                     self._LOGGER.warning(msg)
                     self._LOGGER.warning("errorLastCall : %s " % (self._myDataEnedis.getErrorLastCall()))
+            else:
+                status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
 
         return status_counts, state
 

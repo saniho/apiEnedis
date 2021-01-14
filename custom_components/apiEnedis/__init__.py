@@ -192,7 +192,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         if not self.myEnedis.getInit():
             _LOGGER.info("getInit()")
             delai_interval = CONF_DELAY  # delai de rafraichissement de l'appel API
-            heures_creuses = []
+            heures_creuses = None
             hc_cost_key = "hc_cout"
             hp_cost_key = "hp_cout"
             if hc_cost_key not in self.config_entry.options.keys():
