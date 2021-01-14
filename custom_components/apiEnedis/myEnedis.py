@@ -776,12 +776,6 @@ class myEnedis:
                             self.updateLastWeek()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7Days"):
                             self.updateLast7Days()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentMonth"):
-                            self.updateCurrentMonth()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonth"):
-                            self.updateLastMonth()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentYear"):
-                            self.updateCurrentYear()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateDataYesterdayHCHP"):
                             try:
                                 self.updateDataYesterdayHCHP()
@@ -795,12 +789,18 @@ class myEnedis:
                                     pass
                                 else:
                                     raise Exception(inst)
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7DaysDetails"):
+                            self.updateLast7DaysDetails()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentMonth"):
+                            self.updateCurrentMonth()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonth"):
+                            self.updateLastMonth()
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentYear"):
+                            self.updateCurrentYear()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastYear"):
                             self.updateLastYear()
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonthLastYear"):
                             self.updateLastMonthLastYear()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7DaysDetails"):
-                            self.updateLast7DaysDetails()
                         self.updateTimeLastCall()
                         self.updateStatusLastCall(True)
                         self.myLogWarning("mise à jour effectuee")
