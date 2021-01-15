@@ -47,11 +47,8 @@ class myEnedis:
 
         self._joursHC = {}
         self._joursHP = {}
-        if (log == None):
-            self._log = logging.getLogger(__nameMyEnedis__)
-            self._log.setLevel(logging.DEBUG)
-        else:
-            self._log = log
+        self._log = logging.getLogger(__nameMyEnedis__)
+
         self._contentType = "application/json"
         self._contentHedaerMyEnedis = 'home-assistant-myEnedis'
         self._formatDateYmd = "%Y-%m-%d"
@@ -83,9 +80,10 @@ class myEnedis:
 
     def post_and_get_json(self, url, params=None, data=None, headers=None):
         try:
-            import logging
             import json
             session = requests.Session()
+            #self.myLogWarning("params : %s " % (params))
+            #self.myLogWarning("data : %s " % (json.dumps(data)))
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
             return response.json()
