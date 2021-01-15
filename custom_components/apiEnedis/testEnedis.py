@@ -1,6 +1,8 @@
 import myEnedis
 import messages
 
+__version__ = "test_saniho"
+
 def test(myDataEnedis):
     myDataEnedis.updateCurrentWeek()
     myDataEnedis.updateCurrentWeek()
@@ -102,7 +104,8 @@ def testMulti():
         heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
         #heureCreusesCh = "[]"
         myDataEnedis = myEnedis.myEnedis( token=token, PDL_ID=PDL_ID, delai=10, \
-            heuresCreuses=eval(heureCreusesCh), heuresCreusesCost=0.0797, heuresPleinesCost=0.1175 )
+            heuresCreuses=eval(heureCreusesCh), heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
+            version = __version__)
         myDataEnedis.updateContract()
         myDataEnedis.updateHCHP()
         #print(myDataEnedis.getContract())
@@ -129,7 +132,8 @@ def testMono():
     myDataEnedis = myEnedis.myEnedis(token=token, PDL_ID=PDL_ID, delai=10, \
                                        heuresCreuses=eval(heureCreusesCh),
                                        heuresCreusesCost=0.20,
-                                       heuresPleinesCost=1.30)
+                                       heuresPleinesCost=1.30,
+                                       version = __version__)
     myDataEnedis.updateContract()
     myDataEnedis.updateHCHP()
     print(myDataEnedis.getContract())

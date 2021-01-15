@@ -55,15 +55,12 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_CODE, code
                     )
                 ): str,
-                vol.Optional(
-                    HC_COST,
+                vol.Optional(HC_COST,
                     default=user_input.get(
                         HC_COST, val_hc_cost
                     )
                 ): cv.string,
-
-                vol.Optional(
-                    HP_COST,
+                vol.Optional(HP_COST,
                     default=user_input.get(
                         HP_COST, val_hp_cost
                     )
@@ -76,7 +73,6 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors or {},
         )
 
-    #async def async_step_init(self, user_input=None):   # pylint: disable=unused-argument
     async def async_step_user(self, user_input=None):   # pylint: disable=unused-argument
         self._errors = {}
         if user_input is None:
@@ -84,6 +80,8 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         token = user_input[CONF_TOKEN]  # Might be a city name or a postal code
         code = user_input.get(CONF_CODE)
+        hc_cost = user_input.get(HC_COST)
+        hp_cost = user_input.get(HP_COST)
 
         # Check if already configured
         await self.async_set_unique_id(f"{code}")
@@ -91,7 +89,7 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_create_entry(
             title=code,
-            data={CONF_TOKEN: token, CONF_CODE: code},
+            data={CONF_TOKEN: token, CONF_CODE: code, HC_COST: hc_cost, HP_COST: hp_cost},
         )
 
     async def async_step_import(self, user_input):
@@ -123,15 +121,12 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
                         CONF_CODE, code
                     )
                 ): str,
-                vol.Optional(
-                    HC_COST,
+                vol.Optional(HC_COST,
                     default=self.config_entry.options.get(
                         HC_COST, "0.0"
                     ),
                 ): cv.string,
-
-                vol.Optional(
-                    HP_COST,
+                vol.Optional(HP_COST,
                     default=self.config_entry.options.get(
                         HP_COST, "0.0"
                     ),

@@ -13,7 +13,7 @@ __nameMyEnedis__ = "myEnedis"
 
 class myEnedis:
     def __init__(self, token, PDL_ID, delai=3600, heuresCreuses=None, \
-                 heuresCreusesCost=0, heuresPleinesCost=0, log=None):
+                 heuresCreusesCost=0, heuresPleinesCost=0, log=None, version="0.0.0"):
         self._serverName = "https://enedisgateway.tech/api"
         self._token = token
         self._PDL_ID = PDL_ID
@@ -44,6 +44,7 @@ class myEnedis:
         self._updateRealise = False
         self._niemeAppel = 0
         self._yesterdayDate = None
+        self._version = version
 
         self._joursHC = {}
         self._joursHP = {}
@@ -112,6 +113,7 @@ class myEnedis:
             'Authorization': self._token,
             'Content-Type': self._contentType,
             'call-service': self._contentHedaerMyEnedis,
+            'version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr(dataAnswer)
@@ -129,6 +131,7 @@ class myEnedis:
             'Authorization': self._token,
             'Content-Type': self._contentType,
             'call-service': self._contentHedaerMyEnedis,
+            'version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr(dataAnswer)
@@ -145,6 +148,7 @@ class myEnedis:
             'Authorization': self._token,
             'Content-Type': self._contentType,
             'call-service': self._contentHedaerMyEnedis,
+            'version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr(dataAnswer)
@@ -159,6 +163,7 @@ class myEnedis:
             'Authorization': self._token,
             'Content-Type': self._contentType,
             'call-service': self._contentHedaerMyEnedis,
+            'version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr(dataAnswer)

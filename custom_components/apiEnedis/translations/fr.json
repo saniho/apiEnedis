@@ -2,7 +2,7 @@
     "title": "MyEnedis",
     "config": {
         "step": {
-            "init": {
+            "user": {
                 "data": {
                     "token": "Votre Token",
                     "code": "Votre Code",

@@ -75,7 +75,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         _LOGGER.exception("Could not run my First Extension")
         return False
     myDataEnedis = myEnedis.myEnedis( token, code, delai_interval,
-        heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER )
+        heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER,
+        version = __VERSION__
+    )
     mSS = sensorEnedis.manageSensorState()
     mSS.init( myDataEnedis, _LOGGER, __VERSION__)
     add_entities([myEnedisSensor(session, name, update_interval, mSS )], True)

@@ -58,39 +58,6 @@ async def async_setup(hass, config):
             )
     return True
 
-
-async def _async_setup_entry(hass, config_entry):
-    """Set up this integration using UI."""
-    _LOGGER.exception("run myEnedis for ?? ")
-    coordinator = sensorEnedisCoordinator(hass, config_entry)
-    await coordinator.async_setup()
-
-    async def _enable_scheduled_myEnedis(*_):
-        """Activate the data update coordinator."""
-        coordinator.update_interval = timedelta(
-            seconds=DEFAULT_SCAN_INTERVAL
-        )
-        await coordinator.async_refresh()
-
-    if hass.state == CoreState.running:
-        await _enable_scheduled_myEnedis()
-        if not coordinator.last_update_success:
-            raise ConfigEntryNotReady
-    else:
-        # Running a speed test during startup can prevent
-        # integrations from being able to setup because it
-        # can saturate the network interface.
-        hass.bus.async_listen_once(
-            EVENT_HOMEASSISTANT_STARTED, _enable_scheduled_myEnedis
-        )
-
-    hass.data[DOMAIN][config_entry.entry_id] = coordinator
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
-    )
-    return True
-
-
 async def async_setup_entry(hass, config_entry) -> bool:
     _LOGGER.exception("run myEnedis - sensorEnedisCoordinator %s" % config_entry.data)
     coordinator = sensorEnedisCoordinator(hass, config_entry)
@@ -204,10 +171,11 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             else:
                 hp_cost = float(self.config_entry.options.get(hp_cost_key, "0.0"))
             token, code = self.config_entry.options['token'], self.config_entry.options['code']
-            _LOGGER.info("options - proc -- %s %s %s %s" % (token, code, hp_cost, hc_cost))
+            _LOGGER.info("options - proc -- %s %s %s %s" % (token, code, hc_cost, hp_cost))
             my_data_enedis = myEnedis.myEnedis(token, code, delai_interval,
                                                heuresCreuses=heures_creuses, heuresCreusesCost=hc_cost,
-                                               heuresPleinesCost=hp_cost, log=_LOGGER)
+                                               heuresPleinesCost=hp_cost, log=_LOGGER,
+                                               version = __VERSION__)
             self.myEnedis.init(my_data_enedis, _LOGGER, __VERSION__)
 
     async def async_setup(self):
