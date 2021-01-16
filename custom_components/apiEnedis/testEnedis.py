@@ -97,7 +97,8 @@ def testMulti():
     #for qui in ["ENEDIS18"]:
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
-    for qui in ["ENEDIS20"]:
+    #for qui in ["ENEDIS21"]:
+    for qui in ["ENEDIS23"]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         #print(qui , "*", token, PDL_ID)

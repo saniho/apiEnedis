@@ -547,6 +547,10 @@ class myEnedis:
         return True
 
     def checkData(self, dataAnswer):
+        if ("enedis_return" in dataAnswer.keys() and "error" in dataAnswer.keys()):
+            #erreur 500
+            if ( dataAnswer["error"] == "result_500"):
+                return
         if ("enedis_return" in dataAnswer.keys()):
             if ("error" in dataAnswer['enedis_return']):
                 # No consent can be found for this customer and this usage point
@@ -566,7 +570,6 @@ class myEnedis:
                 raise Exception('call', "error", "UNKERROR_003")
             else:
                 raise Exception('call', "error", dataAnswer["error"])
-
         return True
 
     def checkDataContract(self, dataAnswer):
@@ -759,6 +762,8 @@ class myEnedis:
         return ecartOk
 
     def update(self):
+        self.myLogWarning("myEnedis ...%s yesterday data %s %s" \
+            %( self.getYesterdayDate(), self.getYesterdayHC(), self.getYesterdayHC()))
         if ((self.getTimeLastCall() == None) or
                 (self.getStatusLastCall() == False) or
                 (self.getDelaiIsGood())):
@@ -808,8 +813,7 @@ class myEnedis:
                         self.updateStatusLastCall(True)
                         self.myLogWarning("mise à jour effectuee")
                     except Exception as inst:
-                        if (inst.args[:2] == (
-                        "call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
+                        if (inst.args[:2] == ("call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
                             self.myLogWarning("%s - Erreur call ERROR %s" % (self.get_PDL_ID(), inst))
                             # Erreur lors du call...
                             self.updateTimeLastCall()
