@@ -8,7 +8,7 @@ def loadJsonFile( filename ):
 
 def test_update_contract():
     myE = myEnedis.myEnedis("myToken", "myPDL")
-    dataJson = loadJsonFile("./Json/Contract/contract1.json")
+    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
     myE.updateContract(dataJson)
     assert myE.getsubscribed_power() == "9 kVA", "bad subscribed"
     assert myE.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
@@ -21,7 +21,7 @@ def test_update_contract():
 
 def test_update_last7days():
     myE = myEnedis.myEnedis("myToken", "myPDL")
-    dataJson = loadJsonFile("./Json/Week/week1.json")
+    dataJson = loadJsonFile("tests/Json/Week/week1.json")
     myE.updateLast7Days(dataJson)
     dataCompare = [{'date': '2020-12-09', 'niemejour': 1, 'value': 42951},
                    {'date': '2020-12-08', 'niemejour': 2, 'value': 35992},
@@ -34,7 +34,7 @@ def test_update_last7days():
 
 def test_update_last_month():
     myE = myEnedis.myEnedis("myToken", "myPDL")
-    dataJson = loadJsonFile("./Json/Month/month1.json")
+    dataJson = loadJsonFile("tests/Json/Month/month1.json")
     myE.updateLastMonth(dataJson)
     assert myE.getLastMonth() == 876699, "Error LastMonthData"
 
@@ -46,10 +46,10 @@ def call_update_current_month( fileName ):
     return myE
 
 def test_update_current_month():
-    myE = call_update_current_month("./Json/Month/currentMonth1.json")
+    myE = call_update_current_month("tests/Json/Month/currentMonth1.json")
     assert myE.getCurrentMonth() == 242475, "Erreur currentMonth"
     try:
-        myE = call_update_current_month("./Json/Month/currentMonthError1.json")
+        myE = call_update_current_month("tests/Json/Month/currentMonthError1.json")
     except Exception as e:
         assert e.args[2] == "UNKERROR_001", "Erreur UNKERROR_001"
 
@@ -60,12 +60,12 @@ def call_update_yesterday( filename ):
     return myE
 
 def test_update_yesterday():
-    myE = call_update_yesterday( "Json/Yesterday/yesterday1.json" )
+    myE = call_update_yesterday( "tests/Json/Yesterday/yesterday1.json" )
     assert myE.getYesterday() == 42951, "Erreur yesterday"
 
 def test_update_yesterday_error():
     myE = myEnedis.myEnedis("myToken", "myPDL")
-    dataJson = loadJsonFile("./Json/Error/error1.json")
+    dataJson = loadJsonFile("tests/Json/Error/error1.json")
     try:
         myE.updateYesterday(dataJson)
     except Exception as e:
@@ -73,15 +73,16 @@ def test_update_yesterday_error():
 
 def test_updateProductionYesterday():
     myE = myEnedis.myEnedis("myToken", "myPDL")
-    dataJson = loadJsonFile("./Json/Production/error1.json")
+    dataJson = loadJsonFile("tests/Json/Production/error1.json")
     myE.updateProductionYesterday( dataJson )
     assert myE.getProductionYesterday() == 0, "Erreur production Value"
 
 def test_horaire_surcharge():
     hc = [['23:30', '23:59'], ['00:00', '07:35']]
     myE = myEnedis.myEnedis("myToken", "myPDL", heuresCreuses = hc)
-    dataJson = loadJsonFile("./Json/Contract/contract1.json")
+    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
     myE.updateContract(dataJson)
     myE.updateHCHP()
     dataCompare = hc
     assert myE._heuresCreuses == dataCompare, "erreur format HC/HP"
+
