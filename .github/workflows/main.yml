@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.x', '3.6', '3.7', 'pypy3' ]
+        python: ['3.x', '3.7', 'pypy3' ]
         os: ['ubuntu-latest']
     steps:
       - uses: actions/checkout@master
@@ -22,6 +22,6 @@ jobs:
           python-version: ${{ matrix.python }}
           architecture: x64
       - name: Pip install
-        run: pip install -r requirements.txt
-      - name: Run tests
-        run: nosetests .
+        run: pip install -r requirements.txt && pytest test/unit
+      - name: Test with pytest
+        run: pytest test_myEnedis.py
