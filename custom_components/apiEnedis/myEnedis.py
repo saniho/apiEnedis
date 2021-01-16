@@ -51,7 +51,7 @@ class myEnedis:
         self._log = logging.getLogger(__nameMyEnedis__)
 
         self._contentType = "application/json"
-        self._contentHedaerMyEnedis = 'home-assistant-myEnedis'
+        self._contentHeaderMyEnedis = 'home-assistant-myEnedis'
         self._formatDateYmd = "%Y-%m-%d"
         self._formatDateYm01 = "%Y-%m-01"
         self._formatDateY0101 = "%Y-01-01"
@@ -92,6 +92,9 @@ class myEnedis:
             response = {"enedis_return": {"error": "UNKERROR_002"}}
             return response
         except requests.exceptions.HTTPError as error:
+            self.myLogWarning("*" * 60)
+            self.myLogWarning("header : %s " % (headers))
+            self.myLogWarning("data : %s " % (json.dumps(data)))
             self.myLogWarning("Error JSON : %s " % (response.text))
             return response.json()
 
@@ -112,8 +115,8 @@ class myEnedis:
         headers = {
             'Authorization': self._token,
             'Content-Type': self._contentType,
-            'call-service': self._contentHedaerMyEnedis,
-            'version':self._version,
+            'call-service': self._contentHeaderMyEnedis,
+            'ha_sensor_myenedis_version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr(dataAnswer)
@@ -130,8 +133,8 @@ class myEnedis:
         headers = {
             'Authorization': self._token,
             'Content-Type': self._contentType,
-            'call-service': self._contentHedaerMyEnedis,
-            'version':self._version,
+            'call-service': self._contentHeaderMyEnedis,
+            'ha_sensor_myenedis_version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr(dataAnswer)
@@ -147,8 +150,8 @@ class myEnedis:
         headers = {
             'Authorization': self._token,
             'Content-Type': self._contentType,
-            'call-service': self._contentHedaerMyEnedis,
-            'version':self._version,
+            'call-service': self._contentHeaderMyEnedis,
+            'ha_sensor_myenedis_version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr(dataAnswer)
@@ -162,8 +165,8 @@ class myEnedis:
         headers = {
             'Authorization': self._token,
             'Content-Type': self._contentType,
-            'call-service': self._contentHedaerMyEnedis,
-            'version':self._version,
+            'call-service': self._contentHeaderMyEnedis,
+            'ha_sensor_myenedis_version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
         self.setLastAnswsr(dataAnswer)
@@ -525,6 +528,10 @@ class myEnedis:
             return
 
     def checkDataPeriod(self, dataAnswer):
+        if ("enedis_return" in dataAnswer.keys() and "error" in dataAnswer.keys()):
+            #erreur 500
+            if ( dataAnswer["error"] == "result_500"):
+                return
         if ("enedis_return" in dataAnswer.keys()):
             if ("error" in dataAnswer['enedis_return']):
                 if (dataAnswer['enedis_return']["error"] == "ADAM-ERR0123") or \
@@ -762,8 +769,8 @@ class myEnedis:
         return ecartOk
 
     def update(self):
-        self.myLogWarning("myEnedis ...%s yesterday data %s %s" \
-            %( self.getYesterdayDate(), self.getYesterdayHC(), self.getYesterdayHC()))
+        #self.myLogWarning("myEnedis ...%s yesterday data %s %s" \
+        #    %( self.getYesterdayDate(), self.getYesterdayHC(), self.getYesterdayHC()))
         if ((self.getTimeLastCall() == None) or
                 (self.getStatusLastCall() == False) or
                 (self.getDelaiIsGood())):
@@ -852,5 +859,5 @@ class myEnedis:
 
         else:
             self.setUpdateRealise(False)
-            self.myLogWarning("%s pas d'update trop tot !!!" % (self.get_PDL_ID()))
+            self.myLog("%s pas d'update trop tot !!!" % (self.get_PDL_ID()))
         self.updateLastUpdate()
