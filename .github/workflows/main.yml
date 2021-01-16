@@ -21,7 +21,10 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           architecture: x64
-      - name: Pip install
-        run: pip install -r requirements.txt && pytest test/unit
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Test with pytest
         run: pytest test_myEnedis.py
