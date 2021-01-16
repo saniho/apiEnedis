@@ -15,7 +15,7 @@ jobs:
         python: ['3.x', '3.7', 'pypy3' ]
         os: ['ubuntu-latest']
     steps:
-      - uses: actions/checkout@v1.1.2.0.RC1
+      - uses: actions/checkout@v2
       - name: Setup python
         uses: actions/setup-python@v1
         with:
