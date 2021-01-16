@@ -27,4 +27,4 @@ jobs:
           pip install pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Test with pytest
-        run: pytest test_myEnedis.py
+        run: pytest tests/test_myEnedis.py
