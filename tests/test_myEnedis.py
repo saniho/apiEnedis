@@ -60,7 +60,7 @@ def call_update_yesterday( filename ):
     return myE
 
 def test_update_yesterday():
-    myE = call_update_yesterday( "./Json/Yesterday/yesterday1.json" )
+    myE = call_update_yesterday( "Json/Yesterday/yesterday1.json" )
     assert myE.getYesterday() == 42951, "Erreur yesterday"
 
 def test_update_yesterday_error():
