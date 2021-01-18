@@ -670,11 +670,14 @@ class myEnedis:
         self.myLog("--updateCurrentWeek --")
         if (data == None): data = self.CallgetCurrentWeek()
         self.myLog("updateCurrentWeek : data %s" % (data))
-        if (self.checkDataPeriod(data)):
-            self._currentWeek = self.analyseValueAndAdd(data)
-            self.setfunction('currentWeek', True )
+        if ( data != 0 ):
+            if (self.checkDataPeriod(data)):
+                self._currentWeek = self.analyseValueAndAdd(data)
+                self.setfunction('currentWeek', True )
+            else:
+                self._currentWeek = 0
         else:
-            self._currentWeek = 0
+            self._currentWeek = data
 
     def getCurrentMonth(self):
         return self._currentMonth
@@ -685,11 +688,14 @@ class myEnedis:
         self.myLog("--updateCurrentMonth --")
         if (data == None): data = self.CallgetCurrentMonth()
         self.myLog("updateCurrentMonth : data %s" % (data))
-        if (self.checkDataPeriod(data)):
-            self._currentMonth = self.analyseValueAndAdd(data)
-            self.setfunction('currentMonth', True )
+        if( data != 0 ):
+            if (self.checkDataPeriod(data)):
+                self._currentMonth = self.analyseValueAndAdd(data)
+                self.setfunction('currentMonth', True )
+            else:
+                self._currentMonth = 0
         else:
-            self._currentMonth = 0
+            self._currentMonth = data
 
     def getLastYear(self):
         return self._lastYear
@@ -715,9 +721,12 @@ class myEnedis:
         self.myLog("--updateCurrentYear --")
         if (data == None): data = self.CallgetCurrentYear()
         self.myLog("updateCurrentYear : data %s" % (data))
-        if (self.checkDataPeriod(data)):
-            self._currentYear = self.analyseValueAndAdd(data)
-            self.setfunction('currentYear', True )
+        if( data != 0 ):
+            if (self.checkDataPeriod(data)):
+                self._currentYear = self.analyseValueAndAdd(data)
+                self.setfunction('currentYear', True )
+            else:
+                self._currentYear = 0
         else:
             self._currentYear = 0
 
