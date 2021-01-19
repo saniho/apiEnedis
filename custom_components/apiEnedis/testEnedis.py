@@ -107,7 +107,7 @@ def testMulti():
         heuresCreusesON = True
         myDataEnedis = myEnedis.myEnedis( token=token, PDL_ID=PDL_ID, delai=10,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
-            version = __version__, heuresCreusesON=heuresCreusesON)
+            version = __version__, heuresCreusesON=heuresCreusesON )
         myDataEnedis.updateContract()
         myDataEnedis.updateHCHP()
         print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
