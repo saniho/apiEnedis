@@ -25,6 +25,7 @@ from .const import (
     HP_COST,
     DEFAULT_SCAN_INTERVAL,
     CONF_DELAY,
+    HEURESCREUSES_ON,
     __VERSION__,
     __name__,
 )
@@ -39,6 +40,7 @@ DEFAUT_DELAI_INTERVAL = 7200 # interrogation faite toutes 2 les heures
 DEFAUT_HEURES_CREUSES = "[]"
 DEFAUT_COST = "0.0"
 HEURES_CREUSES = "heures_creuses"
+DEFAUT_HEURES_CREUSES_ON = True
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -49,6 +51,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_DELAY, default=DEFAUT_DELAI_INTERVAL): cv.positive_int,
         vol.Optional(HC_COST, default=DEFAUT_COST): cv.string,
         vol.Optional(HP_COST, default=DEFAUT_COST): cv.string,
+        vol.Optional(HEURESCREUSES_ON, default=DEFAUT_HEURES_CREUSES_ON): cv.boolean,
     }
 )
 
@@ -66,6 +69,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     heuresCreuses = eval(heuresCreusesCh)
     HCCost = float(config.get(HC_COST))
     HPCost = float(config.get(HP_COST))
+    heuresCreusesON = config.get(HEURESCREUSES_ON)
     update_interval = DEFAULT_SCAN_INTERVAL
     delai_interval = config.get(CONF_DELAY)
 
@@ -76,7 +80,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         return False
     myDataEnedis = myEnedis.myEnedis( token, code, delai_interval,
         heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER,
-        version = __VERSION__
+        version = __VERSION__, heuresCreusesON = heuresCreusesON
     )
     mSS = sensorEnedis.manageSensorState()
     mSS.init( myDataEnedis, _LOGGER, __VERSION__)

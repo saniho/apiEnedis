@@ -7,7 +7,8 @@
                     "token": "Votre Token",
                     "code": "Votre Code",
                     "hc_cout": "prix HC ( ex : 0.01 )",
-                    "hp_cout": "prix HP ( ex : 0.01 )"
+                    "hp_cout": "prix HP ( ex : 0.01 )",
+                    "heuresCreusesON": "Cocher si vous avez des heures creuses"
                 },
                 "title": "MyEnedis configuration"
             }
@@ -20,7 +21,8 @@
                     "token": "Votre Token",
                     "code": "Votre Code",
                     "hc_cout": "prix HC ( ex : 0.01 )",
-                    "hp_cout": "prix HP ( ex : 0.01 )"
+                    "hp_cout": "prix HP ( ex : 0.01 )",
+                    "heuresCreusesON": "Cocher si vous avez des heures creuses"
                 },
                 "title": "MyEnedis Options"
             }

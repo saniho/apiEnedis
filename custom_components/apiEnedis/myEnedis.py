@@ -13,7 +13,8 @@ __nameMyEnedis__ = "myEnedis"
 
 class myEnedis:
     def __init__(self, token, PDL_ID, delai=3600, heuresCreuses=None, \
-                 heuresCreusesCost=0, heuresPleinesCost=0, log=None, version="0.0.0"):
+                 heuresCreusesCost=0, heuresPleinesCost=0, log=None, version="0.0.0",
+                 heuresCreusesON=True):
         self._serverName = "https://enedisgateway.tech/api"
         self._token = token
         self._PDL_ID = PDL_ID
@@ -46,6 +47,7 @@ class myEnedis:
         self._yesterdayDate = None
         self._version = version
 
+        self._heuresCreusesON = heuresCreusesON
         self._joursHC = {}
         self._joursHP = {}
         self._log = logging.getLogger(__nameMyEnedis__)
@@ -327,6 +329,8 @@ class myEnedis:
                     contract['offpeak_hours'] = None
                     if "offpeak_hours" in x["contracts"]:
                         contract['offpeak_hours'] = x["contracts"]["offpeak_hours"]
+                    else:
+                        contract['offpeak_hours'] = []
         return contract
 
     def getContract(self):
@@ -352,7 +356,7 @@ class myEnedis:
 
     def getcleanoffpeak_hours(self, offpeak=None):
         if (offpeak == None): offpeak = self._contract['offpeak_hours']
-        if (offpeak != None):
+        if (offpeak != None) and (offpeak != []):
             offpeakClean1 = offpeak.split("(")[1].replace(")", "").replace("H", ":").replace(";", "-").split("-")
             opcnew = []
             deb = ""
@@ -386,17 +390,21 @@ class myEnedis:
         self._contract = self.analyseValueContract(data)
 
     def updateHCHP(self, heuresCreuses=None):
-        opcnew = self.getcleanoffpeak_hours()
-        if (heuresCreuses != None):
-            self._heuresCreuses = heuresCreuses
-        elif (self._heuresCreuses != None) and ( self._heuresCreuses != []):
-            # on garde les heures creueses déja définie....
-            # self._heuresCreuses = .....
-            pass
-        elif (opcnew != []):
-            self._heuresCreuses = opcnew
+        if ( self._heuresCreusesON ):
+            opcnew = self.getcleanoffpeak_hours()
+            if (heuresCreuses != None):
+                self._heuresCreuses = heuresCreuses
+            elif (self._heuresCreuses != None) and ( self._heuresCreuses != []):
+                # on garde les heures creueses déja définie....
+                # self._heuresCreuses = .....
+                pass
+            elif (opcnew != []):
+                self._heuresCreuses = opcnew
+            else:
+                pass
         else:
-            pass
+            #pas d'heures creuses
+            self._heuresCreuses = []
 
     def getYesterday(self):
         return self._yesterday
@@ -453,14 +461,15 @@ class myEnedis:
 
     def _getHCHPfromHour(self, heure):
         heurePleine = True
-        for heureCreuse in self._heuresCreuses:
-            try:  # gestion du 00:00 en heure de fin de creneau
-                if (heure == {"24:00": "00:00"}[heureCreuse[1]]):
+        if ( self._heuresCreuses is not None ):
+            for heureCreuse in self._heuresCreuses:
+                try:  # gestion du 00:00 en heure de fin de creneau
+                    if (heure == {"24:00": "00:00"}[heureCreuse[1]]):
+                        heurePleine = False
+                except:
+                    pass
+                if (heureCreuse[0] < heure) and (heure <= heureCreuse[1]):
                     heurePleine = False
-            except:
-                pass
-            if (heureCreuse[0] < heure) and (heure <= heureCreuse[1]):
-                heurePleine = False
         return heurePleine
 
     def createMultiDaysHCHP(self, data):
@@ -812,6 +821,8 @@ class myEnedis:
                                         "%s %s" % (messages.getMessage(inst.args[2]), " pour hier"))
                                     pass
                                 else:
+                                    self.myLogWarning("Err !! lastanswer %s"%self.getLastAnswer())
+                                    self.myLogWarning("Err !! self._heuresCreuses %s"%self._heuresCreuses)
                                     raise Exception(inst)
                         if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7DaysDetails"):
                             self.updateLast7DaysDetails()

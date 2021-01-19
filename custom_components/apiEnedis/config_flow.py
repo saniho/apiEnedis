@@ -13,6 +13,7 @@ from .const import (
     CONF_CODE,
     HC_COST,
     HP_COST,
+    HEURESCREUSES_ON,
 )
 
 import logging
@@ -42,6 +43,7 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         code = ""
         val_hc_cost = "0.0"
         val_hp_cost = "0.0"
+        val_heurescreuses_on = True
 
         data_schema = vol.Schema(
             {
@@ -64,7 +66,12 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     default=user_input.get(
                         HP_COST, val_hp_cost
                     )
-                ): cv.string
+                ): cv.string,
+                vol.Optional(HEURESCREUSES_ON,
+                    default=user_input.get(
+                        HEURESCREUSES_ON, val_heurescreuses_on
+                    )
+                ): cv.boolean
             }
         )
         return self.async_show_form(
@@ -82,6 +89,7 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         code = user_input.get(CONF_CODE)
         hc_cost = user_input.get(HC_COST)
         hp_cost = user_input.get(HP_COST)
+        heures_creuses_on = user_input.get(HEURESCREUSES_ON)
 
         # Check if already configured
         await self.async_set_unique_id(f"{code}")
@@ -89,7 +97,9 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_create_entry(
             title=code,
-            data={CONF_TOKEN: token, CONF_CODE: code, HC_COST: hc_cost, HP_COST: hp_cost},
+            data={CONF_TOKEN: token, CONF_CODE: code,
+                  HC_COST: hc_cost, HP_COST: hp_cost,
+                  HEURESCREUSES_ON : heures_creuses_on},
         )
 
     async def async_step_import(self, user_input):
@@ -130,7 +140,12 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
                     default=self.config_entry.options.get(
                         HP_COST, "0.0"
                     ),
-                ): cv.string
+                ): cv.string,
+                vol.Optional(HEURESCREUSES_ON,
+                    default=self.config_entry.options.get(
+                        HEURESCREUSES_ON, True
+                    ),
+                ): cv.boolean
             }
         )
         return self.async_show_form(step_id="init", data_schema=data_schema)

@@ -22,6 +22,6 @@ CONF_DELAY = 60 * 60 * 6  # verification enedis toutes les 6 heures
 DEFAULT_SCAN_INTERVAL = 60*5  # verification enedis toutes les 5 minutes, si dernier ok, alors verifie selon conf_delay
 DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
 
-
-__VERSION__ = "1.1.2.1"
+HEURESCREUSES_ON = "heuresCreusesON"
+__VERSION__ = "1.1.2.2RC"
 __name__ = "myEnedis"

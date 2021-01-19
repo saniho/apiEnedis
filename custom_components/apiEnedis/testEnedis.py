@@ -98,24 +98,26 @@ def testMulti():
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
     #for qui in ["ENEDIS21"]:
-    for qui in ["ENEDIS"]:
+    for qui in ["ENEDIS24"]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         #print(qui , "*", token, PDL_ID)
-        heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
-        #heureCreusesCh = "[]"
-        myDataEnedis = myEnedis.myEnedis( token=token, PDL_ID=PDL_ID, delai=10, \
-            heuresCreuses=eval(heureCreusesCh), heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
-            version = __version__)
+        heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
+        #heureCreusesCh = None
+        heuresCreusesON = True
+        myDataEnedis = myEnedis.myEnedis( token=token, PDL_ID=PDL_ID, delai=10,
+            heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
+            version = __version__, heuresCreusesON=heuresCreusesON)
         myDataEnedis.updateContract()
         myDataEnedis.updateHCHP()
-        #print(myDataEnedis.getContract())
-        #print(myDataEnedis.getHeuresCreuses())
+        print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
+        print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
         #myDataEnedis.updateLastYear()
 
         # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
         # myDataEnedis._serverName = "http://localhost:5501" # pour record
-        testComplet( myDataEnedis )
+        myDataEnedis.updateDataYesterdayHCHP()
+        #testComplet( myDataEnedis )
         print("***")
         print( myDataEnedis.getLastMethodCallError())
         print( myDataEnedis.getLastAnswer())

@@ -38,6 +38,7 @@ from .const import (
     __VERSION__,
     __name__,
     CONF_DELAY,
+    HEURESCREUSES_ON,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -147,6 +148,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
                 CONF_CODE: str(data.pop(CONF_CODE, "")),
                 HP_COST: str(data.pop(HP_COST, "0.0")),
                 HC_COST: str(data.pop(HC_COST, "0.0")),
+                HEURESCREUSES_ON: bool(data.pop(HEURESCREUSES_ON, True)),
             }
             self.hass.config_entries.async_update_entry(
                 self.config_entry, data=data, options=options
@@ -162,6 +164,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             heures_creuses = None
             hc_cost_key = "hc_cout"
             hp_cost_key = "hp_cout"
+            heurescreusesON_key = "heuresCreusesON"
             if hc_cost_key not in self.config_entry.options.keys():
                 hc_cost = float("0.0")
             else:
@@ -171,11 +174,15 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             else:
                 hp_cost = float(self.config_entry.options.get(hp_cost_key, "0.0"))
             token, code = self.config_entry.options['token'], self.config_entry.options['code']
-            _LOGGER.info("options - proc -- %s %s %s %s" % (token, code, hc_cost, hp_cost))
+            if heurescreusesON_key not in self.config_entry.options.keys():
+                heures_creusesON = True
+            else:
+                heures_creusesON = self.config_entry.options[heurescreusesON_key]
+            _LOGGER.info("options - proc -- %s %s %s %s %s" % (token, code, hc_cost, hp_cost, heures_creusesON))
             my_data_enedis = myEnedis.myEnedis(token, code, delai_interval,
                                                heuresCreuses=heures_creuses, heuresCreusesCost=hc_cost,
                                                heuresPleinesCost=hp_cost, log=_LOGGER,
-                                               version = __VERSION__)
+                                               version = __VERSION__, heuresCreusesON = heures_creusesON)
             self.myEnedis.init(my_data_enedis, _LOGGER, __VERSION__)
 
     async def async_setup(self):
