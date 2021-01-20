@@ -105,6 +105,7 @@ def testMulti():
         heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
         #heureCreusesCh = None
         heuresCreusesON = True
+        #heuresCreusesON = False
         myDataEnedis = myEnedis.myEnedis( token=token, PDL_ID=PDL_ID, delai=10,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )

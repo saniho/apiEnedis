@@ -87,6 +87,8 @@ Avant de pouvoir utiliser cette intégration, assurez vous d' :
   code: <<votrecode>> 
   hc_cout: <<prixHeuresCreuses>>
   hp_cout: <<prixHeuresPleines>>
+  heures_creuses: "[['00:30', '07:00'], ['10:00', '11:30']]"
+  heuresCreusesON: true
   scan_interval: 3600
 ```
 * Redémarrer votre serveur Home Assistant
@@ -107,6 +109,17 @@ https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/35
 *************
 
 _**VERSION**_
+
+**1.1.2.2**
+possibilité de forcer ses propres horaires dans le yaml( differentes de celles de enedis)
+
+tag heures_creuses
+
+Possibilité de forcer l'absence de HC/HP, meme si Enedis en fournit
+
+tag heuresCreusesON
+
+dans l'integration via flow, possibilité de forcer l'absence de HC/HP
 
 **1.1.0.0**
 

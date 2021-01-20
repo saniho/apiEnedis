@@ -46,6 +46,7 @@ class myEnedis:
         self._niemeAppel = 0
         self._yesterdayDate = None
         self._version = version
+        self._minActivation = None
 
         self._heuresCreusesON = heuresCreusesON
         self._joursHC = {}
@@ -105,6 +106,13 @@ class myEnedis:
 
     def getLastAnswer(self):
         return self._lastAnswer
+
+    def minDateContract(self, datePeriod):
+        minDate = self.getLastActivationDate()
+        if ( minDate is not None ) and ( minDate > "%s"%datePeriod ):
+            return minDate
+        else:
+            return datePeriod
 
     def getDataPeriod(self, deb, fin):
         self.myLog("--get dataPeriod : %s => %s --" % (deb, fin))
@@ -313,6 +321,12 @@ class myEnedis:
         else:
             return int(data["meter_reading"]["interval_reading"][0]["value"])
 
+    def getContractData(self, contract, clef, defaultValue):
+        if clef in contract:
+            return contract[ clef ]
+        else:
+            return defaultValue
+
     def analyseValueContract(self, data):
         contract = None
         if data != None:  # si une valeur
@@ -320,17 +334,13 @@ class myEnedis:
                 if str(x["usage_point"]['usage_point_id']) == self._PDL_ID:
                     contract = {}
                     contract['contracts'] = x["contracts"]
+                    contract['subscribed_power'] = self.getContractData(x["contracts"], "subscribed_power", "???")
                     if "subscribed_power" in x["contracts"]:
-                        contract['subscribed_power'] = x["contracts"]["subscribed_power"]
                         contract["mode_PDL"] = "consommation"
                     else:
-                        contract['subscribed_power'] = "???"
                         contract["mode_PDL"] = "production"
-                    contract['offpeak_hours'] = None
-                    if "offpeak_hours" in x["contracts"]:
-                        contract['offpeak_hours'] = x["contracts"]["offpeak_hours"]
-                    else:
-                        contract['offpeak_hours'] = []
+                    contract['offpeak_hours'] = self.getContractData(x["contracts"], "offpeak_hours", [])
+                    contract['last_activation_date'] = self.getContractData(x["contracts"], "last_activation_date", None)[:10]
         return contract
 
     def getContract(self):
@@ -341,6 +351,9 @@ class myEnedis:
 
     def getoffpeak_hours(self):
         return self._contract['offpeak_hours']
+
+    def getLastActivationDate(self):
+        return self._contract['last_activation_date']
 
     def getHeuresCreuses(self):
         return self._heuresCreuses
@@ -817,8 +830,8 @@ class myEnedis:
                                 if (inst.args[:3] == ('call', 'error',
                                                       'no_data_found')):  # gestion que c'est pas une erreur de contrat trop recent ?
                                     # si le service ne repond pas, l'erreur pas grave, c'est que pas encore remonté
-                                    self.updateErrorLastCall(
-                                        "%s %s" % (messages.getMessage(inst.args[2]), " pour hier"))
+                                    message = "%s %s" % (messages.getMessage(inst.args[2]), " pour hier")
+                                    self.updateErrorLastCall(message)
                                     pass
                                 else:
                                     self.myLogWarning("Err !! lastanswer %s"%self.getLastAnswer())
@@ -862,7 +875,8 @@ class myEnedis:
                     self.myLogWarning("%s - Erreur call" % (self.get_PDL_ID(),))
                     self.updateTimeLastCall()
                     self.updateStatusLastCall(False)
-                    self.updateErrorLastCall("%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer()))
+                    message = "%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer())
+                    self.updateErrorLastCall(message)
                     self.myLogWarning("%s - %s" % (self.get_PDL_ID(), self.getLastMethodCall()))
                 else:
                     self.myLogWarning("-" * 60)
