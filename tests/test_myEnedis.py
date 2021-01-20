@@ -14,10 +14,32 @@ def test_update_contract():
     assert myE.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
     assert myE.isProduction() == False, "bad type production"
     assert myE.isConsommation() == True, "bad type consommation"
+    assert myE.getLastActivationDate() == "2007-07-06", "bad date activation"
     dataCompare = [['23:30', '23:59'], ['00:00', '07:30']]
     assert myE.getcleanoffpeak_hours() == dataCompare, "erreur format HC/HP"
-    # print( myContract)
-    # assert False
+
+def test_heures_creuses():
+    myE = myEnedis.myEnedis("myToken", "myPDL")
+    heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
+    heuresCreusesON = True
+    myE = myEnedis.myEnedis("myToken", "myPDL", heuresCreuses=heureCreusesCh,
+                                     heuresCreusesON=heuresCreusesON)
+    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJson)
+    myE.updateHCHP()
+    dataCompare = [['00:00', '05:00'], ['22:00', '24:00']]
+    assert myE.getHeuresCreuses() == dataCompare, "erreur format HC/HP 1"
+    #***********
+    heureCreusesCh = None
+    heuresCreusesON = False
+    myE = myEnedis.myEnedis("myToken", "myPDL", heuresCreuses=heureCreusesCh,
+                                     heuresCreusesON=heuresCreusesON)
+    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJson)
+    myE.updateHCHP()
+    dataCompare = []
+    assert myE.getHeuresCreuses() == dataCompare, "erreur format HC/HP 2"
+
 
 def test_update_last7days():
     myE = myEnedis.myEnedis("myToken", "myPDL")
