@@ -98,7 +98,7 @@ def testMulti():
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
     #for qui in ["ENEDIS21"]:
-    for qui in ["ENEDIS22"]:
+    for qui in ["ENEDIS25","ENEDIS", ]:
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         #print(qui , "*", token, PDL_ID)
@@ -113,12 +113,17 @@ def testMulti():
         myDataEnedis.updateHCHP()
         print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
         print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
+
+        myDataEnedis.updateYesterday()
+        print("cnosommation : %s" %myDataEnedis.getYesterday() )
+        myDataEnedis.updateProductionYesterday()
+        print("production : %s" %myDataEnedis.getProductionYesterday() )
         #myDataEnedis.updateLastYear()
 
         # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
         # myDataEnedis._serverName = "http://localhost:5501" # pour record
-        myDataEnedis.updateDataYesterdayHCHP()
-        testComplet( myDataEnedis )
+        #myDataEnedis.updateDataYesterdayHCHP()
+        #testComplet( myDataEnedis )
         print("***")
         print( myDataEnedis.getLastMethodCallError())
         print( myDataEnedis.getLastAnswer())

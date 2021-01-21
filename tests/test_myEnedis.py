@@ -108,3 +108,11 @@ def test_horaire_surcharge():
     dataCompare = hc
     assert myE._heuresCreuses == dataCompare, "erreur format HC/HP"
 
+def test_get_message():
+    pass
+    #assert False == False, "message errone"
+
+def test_get_init():
+    from custom_components.apiEnedis import sensorEnedis
+    se = sensorEnedis.manageSensorState()
+    assert se.getInit() == False, "not False !! "

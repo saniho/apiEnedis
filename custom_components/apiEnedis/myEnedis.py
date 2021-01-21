@@ -329,6 +329,8 @@ class myEnedis:
 
     def analyseValueContract(self, data):
         contract = None
+        print(data)
+        print("***")
         if data != None:  # si une valeur
             for x in data['customer']['usage_points']:
                 if str(x["usage_point"]['usage_point_id']) == self._PDL_ID:
