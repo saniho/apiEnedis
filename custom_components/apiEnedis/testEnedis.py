@@ -98,7 +98,8 @@ def testMulti():
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
     #for qui in ["ENEDIS21"]:
-    for qui in ["ENEDIS25","ENEDIS", ]:
+    for qui in ["ENEDIS21","ENEDIS25","ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4" ]:
+        print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         #print(qui , "*", token, PDL_ID)
@@ -112,21 +113,23 @@ def testMulti():
         myDataEnedis.updateContract()
         myDataEnedis.updateHCHP()
         print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
-        print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
+        print("myDataEnedis.getContract() : ", myDataEnedis.getContract()['usage_point_status'])
+        #print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getLastActivationDate())
+        #print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
 
-        myDataEnedis.updateYesterday()
-        print("cnosommation : %s" %myDataEnedis.getYesterday() )
-        myDataEnedis.updateProductionYesterday()
-        print("production : %s" %myDataEnedis.getProductionYesterday() )
+        #myDataEnedis.updateYesterday()
+        #print("cnosommation : %s" %myDataEnedis.getYesterday() )
+        #myDataEnedis.updateProductionYesterday()
+        #print("production : %s" %myDataEnedis.getProductionYesterday() )
         #myDataEnedis.updateLastYear()
 
         # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
         # myDataEnedis._serverName = "http://localhost:5501" # pour record
         #myDataEnedis.updateDataYesterdayHCHP()
         #testComplet( myDataEnedis )
-        print("***")
-        print( myDataEnedis.getLastMethodCallError())
-        print( myDataEnedis.getLastAnswer())
+        #print("***")
+        #print( myDataEnedis.getLastMethodCallError())
+        #print( myDataEnedis.getLastAnswer())
 
 def testMono():
     import configparser
