@@ -74,7 +74,7 @@ def testComplet( myDataEnedis ):
     mSS = sensorEnedis.manageSensorState()
     mSS.init( myDataEnedis, logger )
     mSS.updateManagerSensor()
-    status_counts, state = mSS.getStatus()
+    status_counts, state = mSS.getStatus("production") # selon le type du sensor cree
     if ( myDataEnedis.getStatusLastCall() == False ):
         sensorEnedis.logSensorState(status_counts)
         # on se met en attente 10 secondes, car Enedis HS
@@ -98,7 +98,7 @@ def testMulti():
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
     #for qui in ["ENEDIS21"]:
-    for qui in ["ENEDIS21","ENEDIS25","ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4" ]:
+    for qui in ["ENEDIS21","ENEDIS25"]:
         print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
@@ -114,6 +114,7 @@ def testMulti():
         myDataEnedis.updateHCHP()
         print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
         print("myDataEnedis.getContract() : ", myDataEnedis.getContract()['usage_point_status'])
+        print("myDataEnedis.getContract() : ", myDataEnedis.getTypePDL())
         #print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getLastActivationDate())
         #print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
 
@@ -126,7 +127,7 @@ def testMulti():
         # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
         # myDataEnedis._serverName = "http://localhost:5501" # pour record
         #myDataEnedis.updateDataYesterdayHCHP()
-        #testComplet( myDataEnedis )
+        testComplet( myDataEnedis )
         #print("***")
         #print( myDataEnedis.getLastMethodCallError())
         #print( myDataEnedis.getLastAnswer())

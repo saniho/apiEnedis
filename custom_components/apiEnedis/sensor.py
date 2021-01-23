@@ -82,8 +82,15 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         heuresCreuses=heuresCreuses, heuresCreusesCost=HCCost, heuresPleinesCost=HPCost, log=_LOGGER,
         version = __VERSION__, heuresCreusesON = heuresCreusesON
     )
+    # faire lupdate contract ...si pas fait
     mSS = sensorEnedis.manageSensorState()
     mSS.init( myDataEnedis, _LOGGER, __VERSION__)
+    _LOGGER.exception("***===>(1a) on setup entry %s" % myDataEnedis.get_PDL_ID())
+    mSS.initUpdate()
+    _LOGGER.exception( "***===>(1b) on setup entry %s / type pdl %s"
+        %(myDataEnedis.get_PDL_ID(),
+          myDataEnedis.getTypePDL()))
+    _LOGGER.exception("***===>(1c) on setup entry %s" % myDataEnedis.get_PDL_ID())
     add_entities([myEnedisSensor(session, name, update_interval, mSS )], True)
 
 async def async_setup_entry(
@@ -92,6 +99,13 @@ async def async_setup_entry(
     """Set up the myEnedis sensor platform."""
     entities = []
     myEnedis_Cordinator = hass.data[DOMAIN][entry.entry_id]
+    _LOGGER.exception( "***===>(2a) on setup entry %s" %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
+    myEnedis_Cordinator.myEnedis.initUpdate()
+    _LOGGER.exception( "***===>(2b) on setup entry %s / type pdl %s"
+        %(myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID(),
+          myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL()))
+    _LOGGER.exception( "***===>(2c) on setup entry %s" %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
+    # faire lupdate contract ...si pas fait
     entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator))
     entities.append(myEnedisSensorYesterdayCostCoordinator(myEnedis_Cordinator))
     async_add_entities(entities)

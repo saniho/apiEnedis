@@ -124,6 +124,11 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             update_method=self.async_update,
         )
 
+    def init_update_data(self):
+        """Get the latest data from myEnedis."""
+        self.myEnedis.initUpdate()
+        return True
+
     def update_data(self):
         """Get the latest data from myEnedis."""
         self.myEnedis.updateManagerSensor()

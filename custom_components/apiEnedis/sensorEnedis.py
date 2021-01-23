@@ -18,16 +18,19 @@ class manageSensorState:
         self.setInit(True)
         pass
 
-    def updateManagerSensor(self):
+    def initUpdate(self):
         if (self._myDataEnedis.getContract() == None):
-            self._LOGGER.info("contract ?" )
+            self._LOGGER.info("contract ? %s" %self._myDataEnedis.get_PDL_ID())
             try:
                 self._myDataEnedis.updateContract()
                 self._myDataEnedis.updateHCHP()
             except Exception as inst:
                 self._LOGGER.warning("myEnedis err %s" % (inst))
+
+    def updateManagerSensor(self):
+        self.initUpdate()
         self._myDataEnedis.update()
-        self._LOGGER.info("updateManagerSensor - done" )
+        self._LOGGER.info("updateManagerSensor - done - %s" %self._myDataEnedis.get_PDL_ID())
         pass
 
     def getStatusYesterdayCost(self):
@@ -52,7 +55,7 @@ class manageSensorState:
                 dataAvailable = True
         return dataAvailable, yesterdayDate, status_counts, state
 
-    def getStatus(self):
+    def getStatus(self, typeSensor="consommation"):
         state = "unavailable"
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
@@ -60,7 +63,7 @@ class manageSensorState:
         if self._myDataEnedis.getContract() != None:
             status_counts["typeCompteur"] = self._myDataEnedis.getTypePDL()
             status_counts["activationDate"] = self._myDataEnedis.getLastActivationDate()
-            if self._myDataEnedis.isConsommation():
+            if typeSensor=="consommation":#self._myDataEnedis.isConsommation():
                 status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                 status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                 # à supprimer car doublon avec j_1
@@ -70,7 +73,7 @@ class manageSensorState:
             if (1):#self._myDataEnedis.getStatusLastCall():  # update avec statut ok
                 try:
                     status_counts["typeCompteur"] = self._myDataEnedis.getTypePDL()
-                    if self._myDataEnedis.isConsommation():
+                    if typeSensor=="consommation":#self._myDataEnedis.isConsommation():
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                         # à supprimer car doublon avec j_1
@@ -208,16 +211,16 @@ class manageSensorState:
                         status_counts["offpeak_hours_enedis"] = self._myDataEnedis.getoffpeak_hours()
                         status_counts["offpeak_hours"] = self._myDataEnedis.getHeuresCreuses()
                         # status_counts['yesterday'] = ""
-                    elif self._myDataEnedis.isProduction():
+                    if self._myDataEnedis.isProduction():
                         status_counts["yesterday_production"] = self._myDataEnedis.getProductionYesterday()
                         status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
 
-                    if self._myDataEnedis.isProduction():
-                        valeurstate = status_counts['yesterday_production'] * 0.001
-                    else:
+                    if typeSensor=="consommation":#self._myDataEnedis.isConsommation():
                         valeurstate = status_counts['yesterday'] * 0.001
+                    else:
+                        valeurstate = status_counts['yesterday_production'] * 0.001
                     state = "{:.3f}".format(valeurstate)
 
                 except Exception:
