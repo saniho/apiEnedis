@@ -3,6 +3,10 @@ import datetime, time, sys
 import json
 import logging
 
+from .const import (
+    _consommation,
+    _production
+)
 try:
     from . import messages
 
@@ -355,11 +359,11 @@ class myEnedis:
                     contract['subscribed_power'] = self.getContractData(x["contracts"], "subscribed_power", "???")
                     contract["mode_PDL"] = []
                     if "subscribed_power" in x["contracts"]:
-                        contract["mode_PDL"].append("consommation")
+                        contract["mode_PDL"].append(_consommation)
                         if( contract['usage_point_status'] == "no com" ):
-                            contract["mode_PDL"].append("production")
+                            contract["mode_PDL"].append(_production)
                     else:
-                        contract["mode_PDL"].append("production")
+                        contract["mode_PDL"].append(_production)
                     contract['offpeak_hours'] = self.getContractData(x["contracts"], "offpeak_hours", [])
                     contract['last_activation_date'] = self.getContractData(x["contracts"], "last_activation_date", None)[:10]
         return contract
@@ -383,12 +387,10 @@ class myEnedis:
         return self._contract["mode_PDL"]
 
     def isConsommation(self):
-        #return self._contract["mode_PDL"] == "consommation"
-        return "consommation" in self._contract["mode_PDL"]
+        return _consommation in self._contract["mode_PDL"]
 
     def isProduction(self):
-        #return self._contract["mode_PDL"] == "production"
-        return "production" in self._contract["mode_PDL"]
+        return _production in self._contract["mode_PDL"]
 
     def getcleanoffpeak_hours(self, offpeak=None):
         if (offpeak == None): offpeak = self._contract['offpeak_hours']
@@ -454,6 +456,7 @@ class myEnedis:
         self.myLog("--updateYesterday --")
         yesterdayDate = None
         if (data == None): data, callDone, yesterdayDate = self.CallgetYesterday()
+        else: callDone = True
         self.myLog("updateYesterday : data %s" % (data))
         if (callDone ) and (self.checkData(data)):
             self._yesterday = self.analyseValue(data)
@@ -470,6 +473,7 @@ class myEnedis:
         self.updateLastMethodCall("updateProductionYesterday")
         self.myLog("--updateProductionYesterday --")
         if (data == None): data = self.CallgetProductionYesterday()
+        else: callDone = True
         self.myLog("updateProductionYesterday : data %s" % (data))
         if (self.checkData(data)):
             self._productionYesterday = self.analyseValue(data)
@@ -637,6 +641,7 @@ class myEnedis:
         self.updateLastMethodCall("updateLastMonth")
         self.myLog("--updateLastMonth --")
         if (data == None): data, callDone = self.CallgetLastMonth()
+        else: callDone = True
         self.myLog("updateLastMonth : data %s" % (data))
         if (callDone ) and (self.checkDataPeriod(data)):
             self._lastMonth = self.analyseValueAndAdd(data)
@@ -652,6 +657,7 @@ class myEnedis:
         self.updateLastMethodCall("updateLastMonthLastYear")
         self.myLog("--updateLastMonthLastYear --")
         if (data == None): data, callDone = self.CallgetLastMonthLastYear()
+        else: callDone = True
         self.myLog("updateLastMonthLastYear : data %s" % (data))
         if (callDone) and (self.checkDataPeriod(data)):
             self._lastMonthLastYear = self.analyseValueAndAdd(data)
@@ -667,6 +673,7 @@ class myEnedis:
         self.updateLastMethodCall("updateLastWeek")
         self.myLog("--updateLastWeek --")
         if (data == None): data, callDone = self.CallgetLastWeek()
+        else: callDone = True
         self.myLog("updateLastWeek : data %s" % (data))
         if (callDone) and ( self.checkDataPeriod(data)):
             self._lastWeek = self.analyseValueAndAdd(data)
@@ -682,6 +689,7 @@ class myEnedis:
         self.updateLastMethodCall("updateLast7Days")
         self.myLog("--updateLast7Days --")
         if (data == None): data, callDone = self.CallgetLast7Days()
+        else: callDone = True
         self.myLog("updateLast7Days : data %s" % (data))
         if (callDone) and (self.checkDataPeriod(data)):
             # construction d'un dico utile ;)
@@ -714,6 +722,7 @@ class myEnedis:
         self.updateLastMethodCall("updateCurrentWeek")
         self.myLog("--updateCurrentWeek --")
         if (data == None): data, callDone = self.CallgetCurrentWeek()
+        else: callDone = True
         self.myLog("updateCurrentWeek : data %s" % (data))
         if ( callDone ) and ( data != 0 ):
             if (self.checkDataPeriod(data)):
@@ -732,6 +741,7 @@ class myEnedis:
         self.updateLastMethodCall("updateCurrentMonth")
         self.myLog("--updateCurrentMonth --")
         if (data == None): data, callDone = self.CallgetCurrentMonth()
+        else: callDone = True
         self.myLog("updateCurrentMonth : data %s" % (data))
         if (callDone) and ( data != 0 ):
             if (self.checkDataPeriod(data)):
@@ -750,6 +760,7 @@ class myEnedis:
         self.updateLastMethodCall("updateLastYear")
         self.myLog("--updateLastYear --")
         if (data == None): data, callDone = self.CallgetLastYear()
+        else: callDone = True
         self.myLog("updateLastYear : data %s" % (data))
         if (callDone ) and ( self.checkDataPeriod(data)):
             self._lastYear = self.analyseValueAndAdd(data)
@@ -765,6 +776,7 @@ class myEnedis:
         self.updateLastMethodCall("updateCurrentYear")
         self.myLog("--updateCurrentYear --")
         if (data == None): data, callDone = self.CallgetCurrentYear()
+        else: callDone = True
         self.myLog("updateCurrentYear : data %s" % (data))
         if (callDone ) and ( data != 0 ):
             if (self.checkDataPeriod(data)):

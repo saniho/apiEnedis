@@ -23,5 +23,8 @@ DEFAULT_SCAN_INTERVAL = 60*5  # verification enedis toutes les 5 minutes, si der
 DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
 
 HEURESCREUSES_ON = "heuresCreusesON"
-__VERSION__ = "1.1.2.2RC"
+__VERSION__ = "1.1.2.2RC2"
 __name__ = "myEnedis"
+
+_consommation = "consommation"
+_production = "production"

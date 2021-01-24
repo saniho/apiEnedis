@@ -28,6 +28,8 @@ from .const import (
     HEURESCREUSES_ON,
     __VERSION__,
     __name__,
+    _consommation,
+    _production
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -85,13 +87,13 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     # faire lupdate contract ...si pas fait
     mSS = sensorEnedis.manageSensorState()
     mSS.init( myDataEnedis, _LOGGER, __VERSION__)
-    _LOGGER.exception("***===>(1a) on setup entry %s" % myDataEnedis.get_PDL_ID())
     mSS.initUpdate()
-    _LOGGER.exception( "***===>(1b) on setup entry %s / type pdl %s"
-        %(myDataEnedis.get_PDL_ID(),
-          myDataEnedis.getTypePDL()))
-    _LOGGER.exception("***===>(1c) on setup entry %s" % myDataEnedis.get_PDL_ID())
     add_entities([myEnedisSensor(session, name, update_interval, mSS )], True)
+    if (myDataEnedis.getContract() != None):
+        # si on a  eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
+        if ( _production in myDataEnedis.getTypePDL() ):
+            if ( _consommation in myDataEnedis.getTypePDL() ):
+                add_entities([myEnedisSensor(session, name, update_interval, mSS, _production )], True)
 
 async def async_setup_entry(
     hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
@@ -99,25 +101,20 @@ async def async_setup_entry(
     """Set up the myEnedis sensor platform."""
     entities = []
     myEnedis_Cordinator = hass.data[DOMAIN][entry.entry_id]
-    _LOGGER.exception( "***===>(2a) on setup entry %s" %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
     myEnedis_Cordinator.myEnedis.initUpdate()
-    if (myEnedis_Cordinator.myEnedis._myDataEnedis.getContract() != None):
-        _LOGGER.exception( "***===>(2b) on setup entry %s / type pdl %s"
-            %(myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID(),
-              myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL()))
-        _LOGGER.exception( "***===>(2c) on setup entry %s" %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
-    else:
-        _LOGGER.exception( "***===>(2b) setup impossible entry %s "
-            %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
-    # faire lupdate contract ...si pas fait
     entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator))
     entities.append(myEnedisSensorYesterdayCostCoordinator(myEnedis_Cordinator))
+    if (myEnedis_Cordinator.myEnedis._myDataEnedis.getContract() != None):
+        # si on a  eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
+        if ( _production in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
+            if ( _consommation in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
+                entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator, _production))
     async_add_entities(entities)
 
 class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     """."""
 
-    def __init__(self, coordinator):
+    def __init__(self, coordinator, typeSensor = _consommation):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataEnedis = coordinator
@@ -129,6 +126,7 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         self.update = Throttle(interval)(self._update)
         self._lastState = None
         self._lastAttributes = None
+        self._typeSensor = typeSensor
 
     """
     @property
@@ -157,7 +155,11 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "myEnedis.%s" %(self._myDataEnedis.myEnedis._myDataEnedis.get_PDL_ID())
+        if ( self._typeSensor == _production):
+            name = "myEnedis.%s.production" %(self._myDataEnedis.myEnedis._myDataEnedis.get_PDL_ID())
+        else:
+            name = "myEnedis.%s" %(self._myDataEnedis.myEnedis._myDataEnedis.get_PDL_ID())
+        return name
 
     @property
     def state(self):
@@ -178,7 +180,7 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
             ATTR_ATTRIBUTION: "",
             "ATTR_test": "test",
         }
-        status_counts = self._myDataEnedis.myEnedis.getStatus()
+        status_counts = self._myDataEnedis.myEnedis.getStatus( self._typeSensor )
         self._attributes.update(status_counts)
         return self._attributes
 
@@ -209,7 +211,11 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def _update_state(self):
         """Update sensors state."""
         self._attributes = {ATTR_ATTRIBUTION: "" }
-        status_counts, state = self._myDataEnedis.myEnedis.getStatus()
+        if ( self._typeSensor not in self._myDataEnedis.myEnedis._myDataEnedis.getTypePDL()):
+            # si quand on a cree le sensor, le contrat n'était pas dispo,
+            # alors on a pas créé le bon de type de sensor
+            self._typeSensor = self._myDataEnedis.myEnedis._myDataEnedis.getTypePDL()
+        status_counts, state = self._myDataEnedis.myEnedis.getStatus(self._typeSensor)
         self._attributes.update(status_counts)
         self._state = state
 
@@ -334,7 +340,7 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
 class myEnedisSensor(RestoreEntity):
     """."""
 
-    def __init__(self, session, name, interval, myDataEnedis):
+    def __init__(self, session, name, interval, myDataEnedis, typeSensor = _consommation):
         """Initialize the sensor."""
         self._session = session
         self._name = name
@@ -345,6 +351,7 @@ class myEnedisSensor(RestoreEntity):
         self.update = Throttle( timedelta(seconds=interval))(self._update)
         self._lastState = None
         self._lastAttributes = None
+        self._typeSensor = typeSensor
 
     def setLastState(self):
         self._lastState = self._state

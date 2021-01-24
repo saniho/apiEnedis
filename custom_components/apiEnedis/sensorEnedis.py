@@ -2,6 +2,11 @@ from collections import defaultdict
 import datetime
 import sys, traceback
 
+from .const import (
+    _consommation,
+    _production
+)
+
 class manageSensorState:
     def __init__(self ):
         self._init = False
@@ -55,13 +60,14 @@ class manageSensorState:
                 dataAvailable = True
         return dataAvailable, yesterdayDate, status_counts, state
 
-    def getStatus(self):
+    def getStatus(self, typeSensor = _consommation):
         state = "unavailable"
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
 
         if self._myDataEnedis.getContract() != None:
-            status_counts["typeCompteur"] = ','.join(self._myDataEnedis.getTypePDL())
+            status_counts["typeCompteurPDL"] = ','.join(self._myDataEnedis.getTypePDL())
+            status_counts["typeCompteur"] = typeSensor
             status_counts["activationDate"] = self._myDataEnedis.getLastActivationDate()
             if self._myDataEnedis.isConsommation():
                 status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
@@ -72,9 +78,8 @@ class manageSensorState:
 
             if (1):#self._myDataEnedis.getStatusLastCall():  # update avec statut ok
                 try:
-                    status_counts["typeCompteur"] = ','.join(self._myDataEnedis.getTypePDL())
                     # typesensor ... fonction de  ?
-                    if self._myDataEnedis.isConsommation():
+                    if typeSensor == _consommation: #self._myDataEnedis.isConsommation():
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                         # à supprimer car doublon avec j_1
@@ -212,13 +217,13 @@ class manageSensorState:
                         status_counts["offpeak_hours_enedis"] = self._myDataEnedis.getoffpeak_hours()
                         status_counts["offpeak_hours"] = self._myDataEnedis.getHeuresCreuses()
                         # status_counts['yesterday'] = ""
-                    if self._myDataEnedis.isProduction():
+                    if typeSensor == _production: #self._myDataEnedis.isProduction():
                         status_counts["yesterday_production"] = self._myDataEnedis.getProductionYesterday()
                         status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
 
-                    if self._myDataEnedis.isConsommation():
+                    if typeSensor == _consommation: #self._myDataEnedis.isConsommation():
                         valeurstate = status_counts['yesterday'] * 0.001
                     else:
                         valeurstate = status_counts['yesterday_production'] * 0.001
