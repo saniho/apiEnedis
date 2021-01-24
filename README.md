@@ -119,7 +119,9 @@ Possibilité de forcer l'absence de HC/HP, meme si Enedis en fournit
 
 tag heuresCreusesON
 
-dans l'integration via flow, possibilité de forcer l'absence de HC/HP
+dans l'integration yaml et via flow, possibilité de forcer l'absence de HC/HP
+
+``heuresCreusesON: False``
 
 **1.1.0.0**
 
