@@ -101,10 +101,14 @@ async def async_setup_entry(
     myEnedis_Cordinator = hass.data[DOMAIN][entry.entry_id]
     _LOGGER.exception( "***===>(2a) on setup entry %s" %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
     myEnedis_Cordinator.myEnedis.initUpdate()
-    _LOGGER.exception( "***===>(2b) on setup entry %s / type pdl %s"
-        %(myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID(),
-          myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL()))
-    _LOGGER.exception( "***===>(2c) on setup entry %s" %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
+    if (myEnedis_Cordinator.myEnedis._myDataEnedis.getContract() != None):
+        _LOGGER.exception( "***===>(2b) on setup entry %s / type pdl %s"
+            %(myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID(),
+              myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL()))
+        _LOGGER.exception( "***===>(2c) on setup entry %s" %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
+    else:
+        _LOGGER.exception( "***===>(2b) setup impossible entry %s "
+            %myEnedis_Cordinator.myEnedis._myDataEnedis.get_PDL_ID())
     # faire lupdate contract ...si pas fait
     entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator))
     entities.append(myEnedisSensorYesterdayCostCoordinator(myEnedis_Cordinator))

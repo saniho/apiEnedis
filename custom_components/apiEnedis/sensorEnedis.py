@@ -55,15 +55,15 @@ class manageSensorState:
                 dataAvailable = True
         return dataAvailable, yesterdayDate, status_counts, state
 
-    def getStatus(self, typeSensor="consommation"):
+    def getStatus(self):
         state = "unavailable"
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
 
         if self._myDataEnedis.getContract() != None:
-            status_counts["typeCompteur"] = self._myDataEnedis.getTypePDL()
+            status_counts["typeCompteur"] = ','.join(self._myDataEnedis.getTypePDL())
             status_counts["activationDate"] = self._myDataEnedis.getLastActivationDate()
-            if typeSensor=="consommation":#self._myDataEnedis.isConsommation():
+            if self._myDataEnedis.isConsommation():
                 status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                 status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                 # à supprimer car doublon avec j_1
@@ -72,8 +72,9 @@ class manageSensorState:
 
             if (1):#self._myDataEnedis.getStatusLastCall():  # update avec statut ok
                 try:
-                    status_counts["typeCompteur"] = self._myDataEnedis.getTypePDL()
-                    if typeSensor=="consommation":#self._myDataEnedis.isConsommation():
+                    status_counts["typeCompteur"] = ','.join(self._myDataEnedis.getTypePDL())
+                    # typesensor ... fonction de  ?
+                    if self._myDataEnedis.isConsommation():
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                         # à supprimer car doublon avec j_1
@@ -217,7 +218,7 @@ class manageSensorState:
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
 
-                    if typeSensor=="consommation":#self._myDataEnedis.isConsommation():
+                    if self._myDataEnedis.isConsommation():
                         valeurstate = status_counts['yesterday'] * 0.001
                     else:
                         valeurstate = status_counts['yesterday_production'] * 0.001
