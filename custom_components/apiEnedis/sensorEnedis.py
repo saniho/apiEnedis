@@ -2,10 +2,18 @@ from collections import defaultdict
 import datetime
 import sys, traceback
 
-from .const import (
-    _consommation,
-    _production
-)
+try:
+    from .const import (
+        _consommation,
+        _production
+    )
+
+except ImportError:
+    from const import (
+        _consommation,
+        _production
+    )
+
 
 class manageSensorState:
     def __init__(self ):

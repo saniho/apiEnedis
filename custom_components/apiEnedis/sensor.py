@@ -305,10 +305,6 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         """Update sensors state."""
         dataAvailable, yesterdayDate, status_counts, state = self._myDataEnedis.myEnedis.getStatusYesterdayCost()
         if dataAvailable:
-            #_LOGGER.exception("yesteday %s, lastYesterday %s" %(yesterdayDate, self._lastYesterday ))
-            #_LOGGER.exception("yesteday sensor, _update_state" )
-            #_LOGGER.exception("state %s" %(state))
-            #_LOGGER.exception("status_counts %s"%(status_counts) )
             if ( self._lastYesterday != yesterdayDate ) and ( yesterdayDate != None ):
                 self._attributes = {ATTR_ATTRIBUTION: "" }
                 status_counts["timeLastCall"] = datetime.datetime.now()

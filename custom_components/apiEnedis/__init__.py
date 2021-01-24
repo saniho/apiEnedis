@@ -50,7 +50,7 @@ async def async_setup(hass, config):
     conf = config.get(DOMAIN)
     if conf:
         for enedisconf in conf:
-            _LOGGER.exception("run myEnedis for %s" % enedisconf)
+            _LOGGER.info("run myEnedis for %s" % enedisconf)
         if DOMAIN in config:
             hass.async_create_task(
                 hass.config_entries.flow.async_init(
@@ -60,7 +60,7 @@ async def async_setup(hass, config):
     return True
 
 async def async_setup_entry(hass, config_entry) -> bool:
-    _LOGGER.exception("run myEnedis - sensorEnedisCoordinator %s" % config_entry.data)
+    _LOGGER.info("run myEnedis - sensorEnedisCoordinator %s" % config_entry.data)
     coordinator = sensorEnedisCoordinator(hass, config_entry)
     await coordinator.async_setup()
 
@@ -87,7 +87,7 @@ async def async_setup_entry(hass, config_entry) -> bool:
         hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = coordinator
     for component in [PLATFORM]:
-        _LOGGER.exception("run myEnedis - component %s" % component)
+        _LOGGER.info("run myEnedis - component %s" % component)
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(config_entry, component)
         )

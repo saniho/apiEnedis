@@ -3,15 +3,19 @@ import datetime, time, sys
 import json
 import logging
 
-from .const import (
-    _consommation,
-    _production
-)
 try:
+    from .const import (
+        _consommation,
+        _production
+    )
     from . import messages
 
 except ImportError:
     import messages
+    from const import (
+        _consommation,
+        _production
+    )
 
 __nameMyEnedis__ = "myEnedis"
 
@@ -61,7 +65,7 @@ class myEnedis:
         self._formatDateYmd = "%Y-%m-%d"
         self._formatDateYm01 = "%Y-%m-01"
         self._formatDateY0101 = "%Y-01-01"
-        self._log.exception("run myEnedis")
+        self._log.info("run myEnedis")
         self._function = {}
         pass
 
