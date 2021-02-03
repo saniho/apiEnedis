@@ -24,6 +24,7 @@ from .const import (
     HC_COST,
     HP_COST,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_SCAN_INTERVAL_HISTORIQUE,
     CONF_DELAY,
     HEURESCREUSES_ON,
     __VERSION__,
@@ -73,6 +74,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     HPCost = float(config.get(HP_COST))
     heuresCreusesON = config.get(HEURESCREUSES_ON)
     update_interval = DEFAULT_SCAN_INTERVAL
+    update_interval_historique = DEFAULT_SCAN_INTERVAL_HISTORIQUE
     delai_interval = config.get(CONF_DELAY)
 
     try:
@@ -90,10 +92,14 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     mSS.initUpdate()
     add_entities([myEnedisSensor(session, name, update_interval, mSS )], True)
     if (myDataEnedis.getContract() != None):
-        # si on a  eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
+        # si on a eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
         if ( _production in myDataEnedis.getTypePDL() ):
             if ( _consommation in myDataEnedis.getTypePDL() ):
                 add_entities([myEnedisSensor(session, name, update_interval, mSS, _production )], True)
+    # gestion historique
+    add_entities([myEnedisSensorHistory(session, name, update_interval_historique, mSS, "ALL" )], True)
+    add_entities([myEnedisSensorHistory(session, name, update_interval_historique, mSS, "HC" )], True)
+    add_entities([myEnedisSensorHistory(session, name, update_interval_historique, mSS, "HP" )], True)
 
 async def async_setup_entry(
     hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
@@ -109,6 +115,9 @@ async def async_setup_entry(
         if ( _production in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
             if ( _consommation in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
                 entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator, _production))
+    entities.append(myEnedisSensorCoordinatorHistory(myEnedis_Cordinator, detail = "ALL" ))
+    entities.append(myEnedisSensorCoordinatorHistory(myEnedis_Cordinator, detail = "HC" ))
+    entities.append(myEnedisSensorCoordinatorHistory(myEnedis_Cordinator, detail = "HP" ))
     async_add_entities(entities)
 
 class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
@@ -233,6 +242,106 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def icon(self):
         """Icon to use in the frontend."""
 
+class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
+    """."""
+
+    def __init__(self, coordinator, typeSensor = _consommation, detail = "ALL"):
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+        self._myDataEnedis = coordinator
+        self._attributes = {}
+        self._state = None
+        self._unit = "kWh"
+        #TEST
+        interval = timedelta(seconds=120)
+        self.update = Throttle(interval)(self._update)
+        self._lastState = None
+        self._lastAttributes = None
+        self._typeSensor = typeSensor
+        self._detail = detail
+
+    @property
+    def unique_id(self):
+        "Return a unique_id for this entity."
+        return f"{self._myDataEnedis.myEnedis._myDataEnedis.get_PDL_ID()}_history_{self._detail}".lower()
+
+    def setLastState(self):
+        self._lastState = self._state
+    def setLastAttributes(self):
+        self._lastAttributes = self._attributes.copy()
+
+    def setStateFromLastState(self):
+        if ( self._lastState != None ) :
+            self._state = self._lastState
+    def setAttributesFromLastAttributes(self):
+        if ( self._lastAttributes != None ) :
+            self._attributes = self._lastAttributes.copy()
+            return self._attributes
+        else:
+            return {}
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return "myEnedis.history.%s.%s" % (self._myDataEnedis.myEnedis._myDataEnedis.get_PDL_ID(), self._detail)
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement of this entity, if any."""
+        return self._unit
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        return self._attributes
+
+    async def async_added_to_hass(self):
+        """Handle entity which will be added."""
+        await super().async_added_to_hass()
+        state = await self.async_get_last_state()
+        if state:
+            self._state = state.state
+
+        @callback
+        def update():
+            """Update state."""
+            self._update_state()
+            self.async_write_ha_state()
+
+        self.async_on_remove(self.coordinator.async_add_listener(update))
+        self._update_state()
+        if not state:
+            return
+
+    def _update_state(self):
+        """Update sensors state."""
+        self._attributes = {ATTR_ATTRIBUTION: "" }
+        laDate = datetime.datetime.today() - datetime.timedelta(2)
+        # on fait 2 jours, car les données de la veille ne sont pas encore disponible
+        status_counts, state = self._myDataEnedis.myEnedis.getStatusHistory( laDate, self._detail )
+        status_counts["lastUpdate"] = datetime.datetime.today().strftime("%Y-%m-%d %H:%M" )
+        self._attributes.update(status_counts)
+        self._state = state
+
+    def _update(self):
+        """Update device state."""
+        self._attributes = {ATTR_ATTRIBUTION: ""}
+        self._state = "unavailable"
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        return self._attributes
+
+    @property
+    def icon(self):
+        """Icon to use in the frontend."""
+
 class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
     """."""
 
@@ -333,10 +442,10 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         """Icon to use in the frontend."""
 
 
-class myEnedisSensor(RestoreEntity):
+class myEnedisSensorHistory(RestoreEntity):
     """."""
 
-    def __init__(self, session, name, interval, myDataEnedis, typeSensor = _consommation):
+    def __init__(self, session, name, interval, myDataEnedis, detail):
         """Initialize the sensor."""
         self._session = session
         self._name = name
@@ -347,7 +456,7 @@ class myEnedisSensor(RestoreEntity):
         self.update = Throttle( timedelta(seconds=interval))(self._update)
         self._lastState = None
         self._lastAttributes = None
-        self._typeSensor = typeSensor
+        self._detail = detail
 
     def setLastState(self):
         self._lastState = self._state
@@ -367,12 +476,12 @@ class myEnedisSensor(RestoreEntity):
     @property
     def unique_id(self):
         "Return a unique_id for this entity."
-        return f"{self._myDataEnedis._myDataEnedis.get_PDL_ID()}".lower()
+        return f"{self._myDataEnedis._myDataEnedis.get_PDL_ID()}_history_{self._detail}".lower()
     
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "myEnedis.%s" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
+        return "myEnedis.history.%s.%s" %(self._myDataEnedis._myDataEnedis.get_PDL_ID(), self._detail)
 
     @property
     def state(self):
@@ -387,6 +496,85 @@ class myEnedisSensor(RestoreEntity):
     def _update(self):
         """Update device state."""
         self._attributes = {ATTR_ATTRIBUTION: "" }
+        laDate = datetime.datetime.today() - datetime.timedelta(2)
+        # on fait 2 jours, car les données de la veille ne sont pas encore disponible
+        status_counts, state = self._myDataEnedis.getStatusHistory( laDate, self._detail )
+        status_counts["lastUpdate"] = datetime.datetime.today().strftime("%Y-%m-%d %H:%M" )
+        self._attributes.update(status_counts)
+        self._state = state
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        return self._attributes
+
+    @property
+    def icon(self):
+        """Icon to use in the frontend."""
+
+    async def async_added_to_hass(self) -> None:
+        """Handle entity which will be added."""
+        await super().async_added_to_hass()
+        state = await self.async_get_last_state()
+        if not state:
+            return
+
+class myEnedisSensor(RestoreEntity):
+    """."""
+
+    def __init__(self, session, name, interval, myDataEnedis, typeSensor=_consommation):
+        """Initialize the sensor."""
+        self._session = session
+        self._name = name
+        self._myDataEnedis = myDataEnedis
+        self._attributes = {}
+        self._state = None
+        self._unit = "kWh"
+        self.update = Throttle(timedelta(seconds=interval))(self._update)
+        self._lastState = None
+        self._lastAttributes = None
+        self._typeSensor = typeSensor
+
+    def setLastState(self):
+        self._lastState = self._state
+
+    def setLastAttributes(self):
+        self._lastAttributes = self._attributes.copy()
+
+    def setStateFromLastState(self):
+        if (self._lastState != None):
+            self._state = self._lastState
+
+    def setAttributesFromLastAttributes(self):
+        if (self._lastAttributes != None):
+            self._attributes = self._lastAttributes.copy()
+            return self._attributes
+        else:
+            return {}
+
+    @property
+    def unique_id(self):
+        "Return a unique_id for this entity."
+        return f"{self._myDataEnedis._myDataEnedis.get_PDL_ID()}".lower()
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return "myEnedis.%s" % (self._myDataEnedis._myDataEnedis.get_PDL_ID())
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement of this entity, if any."""
+        return self._unit
+
+    def _update(self):
+        """Update device state."""
+        self._attributes = {ATTR_ATTRIBUTION: ""}
         self._myDataEnedis.updateManagerSensor()
         status_counts, state = self._myDataEnedis.getStatus()
         self._attributes.update(status_counts)
@@ -411,11 +599,11 @@ class myEnedisSensor(RestoreEntity):
         # ADDED CODE HERE
         # si seulement pas eut de mise à jour !!
         # si la clef yesterday est disponible dans l'element courant, alors c'est que l'on a eut une mise à jour
-        if 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys(): # pas plutot la key à checker ??
+        if 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys():  # pas plutot la key à checker ??
             self._state = state.state
-            #_LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
+            # _LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
             self._attributes = state.attributes
-            #_LOGGER.warning("*** / / / \ \ \ *** mise a jour attributes precedent %s " %( self._attributes ))
-            #on sauvegarde les elements pour les reprendre si errot
+            # _LOGGER.warning("*** / / / \ \ \ *** mise a jour attributes precedent %s " %( self._attributes ))
+            # on sauvegarde les elements pour les reprendre si errot
             self.setLastAttributes()
             self.setLastState()

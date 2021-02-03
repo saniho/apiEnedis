@@ -1,3 +1,5 @@
+import datetime
+
 import myEnedis
 import messages
 
@@ -74,7 +76,7 @@ def testComplet( myDataEnedis ):
     mSS = sensorEnedis.manageSensorState()
     mSS.init( myDataEnedis, logger )
     mSS.updateManagerSensor()
-    status_counts, state = mSS.getStatus("production") # selon le type du sensor cree
+    status_counts, state = mSS.getStatus("consommation") # selon le type du sensor cree
     if ( myDataEnedis.getStatusLastCall() == False ):
         sensorEnedis.logSensorState(status_counts)
         # on se met en attente 10 secondes, car Enedis HS
@@ -85,6 +87,9 @@ def testComplet( myDataEnedis ):
         mSS.updateManagerSensor()
         status_counts, state = mSS.getStatus()
     sensorEnedis.logSensorState(status_counts)
+
+    laDate = datetime.date.today() - datetime.timedelta(1)
+    mSS.getStatusHistory(laDate)
 
 def testMulti():
     import configparser
@@ -98,7 +103,7 @@ def testMulti():
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
     #for qui in ["ENEDIS21"]:
-    for qui in ["ENEDIS21","ENEDIS25"]:
+    for qui in ["ENEDIS"]:
         print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
@@ -131,6 +136,7 @@ def testMulti():
         #print("***")
         #print( myDataEnedis.getLastMethodCallError())
         #print( myDataEnedis.getLastAnswer())
+
 
 def testMono():
     import configparser

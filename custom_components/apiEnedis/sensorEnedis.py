@@ -68,6 +68,26 @@ class manageSensorState:
                 dataAvailable = True
         return dataAvailable, yesterdayDate, status_counts, state
 
+    def getStatusHistory(self, laDate, detail = "ALL", typeSensor = _consommation):
+        state = "unavailable"
+        status_counts = defaultdict(int)
+        status_counts["version"] = self.version
+        clefDate = laDate.strftime("%Y-%m-%d %H" )
+        status_counts["DateHeure"] = clefDate
+        status_counts["detail"] = detail
+        if self._myDataEnedis.getContract() != None:
+            if self._myDataEnedis.isConsommation():
+                state = 0
+                if ( detail == "ALL"):
+                    DateHeureDetail = self._myDataEnedis.getDateHeureDetail()
+                if ( detail == "HP"):
+                    DateHeureDetail = self._myDataEnedis.getDateHeureDetailHP()
+                if ( detail == "HC"):
+                    DateHeureDetail = self._myDataEnedis.getDateHeureDetailHC()
+                if ( clefDate in DateHeureDetail.keys()):
+                    state = DateHeureDetail[clefDate]
+        return status_counts, state
+
     def getStatus(self, typeSensor = _consommation):
         state = "unavailable"
         status_counts = defaultdict(int)

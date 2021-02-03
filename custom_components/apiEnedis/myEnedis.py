@@ -54,6 +54,9 @@ class myEnedis:
         self._niemeAppel = 0
         self._yesterdayDate = None
         self._version = version
+        self._dateHeureDetail = {}
+        self._dateHeureDetailHC = {}
+        self._dateHeureDetailHP = {}
 
         self._heuresCreusesON = heuresCreusesON
         self._joursHC = {}
@@ -497,6 +500,15 @@ class myEnedis:
     def get7DaysHC(self):
         return self._joursHC
 
+    def getDateHeureDetail(self):
+        return self._dateHeureDetail
+
+    def getDateHeureDetailHC(self):
+        return self._dateHeureDetailHC
+
+    def getDateHeureDetailHP(self):
+        return self._dateHeureDetailHP
+
     def getHCCost(self, val):
         return val * self._heuresCreusesCost  # car à l'heure et non à la demi-heure
 
@@ -536,10 +548,21 @@ class myEnedis:
                 if date not in joursHC: joursHC[date] = 0
                 if date not in joursHP: joursHP[date] = 0
                 heurePleine = self._getHCHPfromHour(heure)
+                clef = x["date"][:13]
+                if (clef not in self._dateHeureDetail.keys()):
+                    self._dateHeureDetail[clef] = 0
+                self._dateHeureDetail[clef] += int(x["value"]) * self.getCoeffIntervalLength()
                 if (heurePleine):
                     joursHP[date] += int(x["value"]) * self.getCoeffIntervalLength()  # car c'est en heure
+                    if (clef not in self._dateHeureDetailHP.keys()):
+                        self._dateHeureDetailHP[clef] = 0
+                    self._dateHeureDetailHP[clef] += int(x["value"]) * self.getCoeffIntervalLength()
                 else:
                     joursHC[date] += int(x["value"]) * self.getCoeffIntervalLength()  # car c'est pas en heure
+                    if (clef not in self._dateHeureDetailHC.keys()):
+                        self._dateHeureDetailHC[clef] = 0
+                    self._dateHeureDetailHC[clef] += int(x["value"]) * self.getCoeffIntervalLength()
+
         return joursHC, joursHP
 
     def getIntervalLength(self):
@@ -567,10 +590,11 @@ class myEnedis:
             else:
                 self._HC += int(x["value"]) * self.getCoeffIntervalLength()  # car par transhce de 30 minutes
 
-    def updateDataYesterdayHCHP(self, data=None):
+    def updateDataYesterdayHCHP(self, data=None, _yesterdayDate=None):
         self.setfunction('yesterdayHCHP')
         self.updateLastMethodCall("updateDataYesterdayHCHP")
         self.myLog("--updateDataYesterdayHCHP --")
+        if (_yesterdayDate != None): yesterdayDate = _yesterdayDate
         if (data == None): data, yesterdayDate = self.CallgetDataYesterdayHCHP()
         self.myLog("updateDataYesterdayHCHP : data %s" % (data))
         if (self.checkData(data)):

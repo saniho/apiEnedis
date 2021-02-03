@@ -1,5 +1,8 @@
 import json
+import datetime
+
 from custom_components.apiEnedis import myEnedis
+from custom_components.apiEnedis import sensorEnedis
 
 def loadJsonFile( filename ):
     with open(filename) as json_file:
@@ -81,9 +84,25 @@ def call_update_yesterday( filename ):
     myE.updateYesterday(dataJson)
     return myE
 
+def call_update_yesterdayHCHP( filename ):
+    myE = myEnedis.myEnedis("myToken", "myPDL")
+    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJson)
+    dataJson = loadJsonFile( filename )
+    yesterdayDate = (datetime.date.today() - datetime.timedelta(1)).strftime("%Y-%m-%d")
+    myE.updateDataYesterdayHCHP(dataJson, yesterdayDate)
+    return myE
+
 def test_update_yesterday():
     myE = call_update_yesterday( "tests/Json/Yesterday/yesterday1.json" )
     assert myE.getYesterday() == 42951, "Erreur yesterday"
+
+def test_update_yesterdayHCHP():
+    myE = call_update_yesterdayHCHP( "tests/Json/Yesterday/yesterdayDetail1.json" )
+    mSS = sensorEnedis.manageSensorState()
+    mSS.init( myE)
+    laDate = datetime.date.today() - datetime.timedelta(60)
+    mSS.getStatusHistory(laDate)
 
 def test_update_yesterday_error():
     myE = myEnedis.myEnedis("myToken", "myPDL")

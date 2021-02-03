@@ -21,9 +21,10 @@ HC_COST = "hc_cout"
 CONF_DELAY = 60 * 60 * 6  # verification enedis toutes les 6 heures
 DEFAULT_SCAN_INTERVAL = 60*5  # verification enedis toutes les 5 minutes, si dernier ok, alors verifie selon conf_delay
 DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
+DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60*10 # 1 fois toutes les 10 minutes
 
 HEURESCREUSES_ON = "heuresCreusesON"
-__VERSION__ = "1.1.2.2"
+__VERSION__ = "1.1.3.0RC"
 __name__ = "myEnedis"
 
 _consommation = "consommation"
