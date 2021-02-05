@@ -91,11 +91,12 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     mSS.init( myDataEnedis, _LOGGER, __VERSION__)
     mSS.initUpdate()
     add_entities([myEnedisSensor(session, name, update_interval, mSS )], True)
-    if (myDataEnedis.getContract() != None):
-        # si on a eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
-        if ( _production in myDataEnedis.getTypePDL() ):
-            if ( _consommation in myDataEnedis.getTypePDL() ):
-                add_entities([myEnedisSensor(session, name, update_interval, mSS, _production )], True)
+    #if (myDataEnedis.getContract() != None):
+    #    # si on a eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
+    #    if ( _production in myDataEnedis.getTypePDL() ):
+    #        if ( _consommation in myDataEnedis.getTypePDL() ):
+    #            add_entities([myEnedisSensor(session, name, update_interval, mSS, _production )], True)
+    add_entities([myEnedisSensor(session, name, update_interval, mSS, _production )], True)
     # gestion historique
     add_entities([myEnedisSensorHistory(session, name, update_interval_historique, mSS, "ALL" )], True)
     add_entities([myEnedisSensorHistory(session, name, update_interval_historique, mSS, "HC" )], True)
@@ -110,11 +111,12 @@ async def async_setup_entry(
     myEnedis_Cordinator.myEnedis.initUpdate()
     entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator))
     entities.append(myEnedisSensorYesterdayCostCoordinator(myEnedis_Cordinator))
-    if (myEnedis_Cordinator.myEnedis._myDataEnedis.getContract() != None):
-        # si on a  eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
-        if ( _production in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
-            if ( _consommation in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
-                entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator, _production))
+    #if (myEnedis_Cordinator.myEnedis._myDataEnedis.getContract() != None):
+    #    # si on a  eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
+    #    if ( _production in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
+    #        if ( _consommation in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
+    #            entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator, _production))
+    entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator, _production))
     entities.append(myEnedisSensorCoordinatorHistory(myEnedis_Cordinator, detail = "ALL" ))
     entities.append(myEnedisSensorCoordinatorHistory(myEnedis_Cordinator, detail = "HC" ))
     entities.append(myEnedisSensorCoordinatorHistory(myEnedis_Cordinator, detail = "HP" ))
@@ -137,15 +139,6 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         self._lastAttributes = None
         self._typeSensor = typeSensor
 
-    """
-    @property
-    def unique_id(self):
-        "Return a unique_id for this entity."
-        if self.forecast_day is not None:
-            return f"{self.coordinator.location_key}-{self.kind}-{self.forecast_day}".lower()
-        return f"{self.coordinator.location_key}-{self.kind}".lower()
-    """
-
     def setLastState(self):
         self._lastState = self._state
     def setLastAttributes(self):
@@ -160,6 +153,16 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
             return self._attributes
         else:
             return {}
+
+    @property
+    def unique_id(self):
+        "Return a unique_id for this entity."
+        if ( self._typeSensor == _production):
+            name = "myEnedis.%s.production" %(self._myDataEnedis.myEnedis._myDataEnedis.get_PDL_ID())
+        else:
+            name = "myEnedis.%s" %(self._myDataEnedis.myEnedis._myDataEnedis.get_PDL_ID())
+        return name
+        #return f"{self._myDataEnedis._myDataEnedis.get_PDL_ID()}".lower()
 
     @property
     def name(self):
@@ -357,14 +360,6 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         self._lastState = None
         self._lastYesterday = None
 
-    """
-    @property
-    def unique_id(self):
-        "Return a unique_id for this entity."
-        if self.forecast_day is not None:
-            return f"{self.coordinator.location_key}-{self.kind}-{self.forecast_day}".lower()
-        return f"{self.coordinator.location_key}-{self.kind}".lower()
-    """
 
     def setLastState(self):
         self._lastState = self._state
@@ -555,12 +550,24 @@ class myEnedisSensor(RestoreEntity):
     @property
     def unique_id(self):
         "Return a unique_id for this entity."
-        return f"{self._myDataEnedis._myDataEnedis.get_PDL_ID()}".lower()
+        if ( self._typeSensor == _production):
+            name = "myEnedis.%s.production" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
+        else:
+            name = "myEnedis.%s" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
+        return name
+        #return f"{self._myDataEnedis._myDataEnedis.get_PDL_ID()}".lower()
+
+
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "myEnedis.%s" % (self._myDataEnedis._myDataEnedis.get_PDL_ID())
+        if ( self._typeSensor == _production):
+            name = "myEnedis.%s.production" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
+        else:
+            name = "myEnedis.%s" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
+        return name
+
 
     @property
     def state(self):

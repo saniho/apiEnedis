@@ -364,13 +364,13 @@ class myEnedis:
                     contract['contracts'] = x["contracts"]
                     contract['usage_point_status'] = x["usage_point"]["usage_point_status"]
                     contract['subscribed_power'] = self.getContractData(x["contracts"], "subscribed_power", "???")
-                    contract["mode_PDL"] = []
-                    if "subscribed_power" in x["contracts"]:
-                        contract["mode_PDL"].append(_consommation)
-                        if( contract['usage_point_status'] == "no com" ):
-                            contract["mode_PDL"].append(_production)
-                    else:
-                        contract["mode_PDL"].append(_production)
+                    contract["mode_PDL"] = [ _consommation, _production ]
+                    #if "subscribed_power" in x["contracts"]:
+                    #    contract["mode_PDL"].append(_consommation)
+                    #    if( contract['usage_point_status'] == "no com" ):
+                    #        contract["mode_PDL"].append(_production)
+                    #else:
+                    #    contract["mode_PDL"].append(_production)
                     contract['offpeak_hours'] = self.getContractData(x["contracts"], "offpeak_hours", [])
                     contract['last_activation_date'] = self.getContractData(x["contracts"], "last_activation_date", None)[:10]
         return contract
@@ -394,10 +394,10 @@ class myEnedis:
         return self._contract["mode_PDL"]
 
     def isConsommation(self):
-        return _consommation in self._contract["mode_PDL"]
+        return True #_consommation in self._contract["mode_PDL"]
 
     def isProduction(self):
-        return _production in self._contract["mode_PDL"]
+        return True #_production in self._contract["mode_PDL"]
 
     def getcleanoffpeak_hours(self, offpeak=None):
         if (offpeak == None): offpeak = self._contract['offpeak_hours']

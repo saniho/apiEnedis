@@ -103,7 +103,7 @@ def testMulti():
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
     #for qui in ["ENEDIS21"]:
-    for qui in ["ENEDIS"]:
+    for qui in ["ENEDIS27"]:
         print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
@@ -123,10 +123,10 @@ def testMulti():
         #print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getLastActivationDate())
         #print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
 
-        #myDataEnedis.updateYesterday()
-        #print("cnosommation : %s" %myDataEnedis.getYesterday() )
-        #myDataEnedis.updateProductionYesterday()
-        #print("production : %s" %myDataEnedis.getProductionYesterday() )
+        myDataEnedis.updateYesterday()
+        print("cnosommation : %s" %myDataEnedis.getYesterday() )
+        myDataEnedis.updateProductionYesterday()
+        print("production : %s" %myDataEnedis.getProductionYesterday() )
         #myDataEnedis.updateLastYear()
 
         # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
