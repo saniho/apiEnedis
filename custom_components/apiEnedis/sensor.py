@@ -90,12 +90,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     mSS = sensorEnedis.manageSensorState()
     mSS.init( myDataEnedis, _LOGGER, __VERSION__)
     mSS.initUpdate()
-    add_entities([myEnedisSensor(session, name, update_interval, mSS )], True)
-    #if (myDataEnedis.getContract() != None):
-    #    # si on a eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
-    #    if ( _production in myDataEnedis.getTypePDL() ):
-    #        if ( _consommation in myDataEnedis.getTypePDL() ):
-    #            add_entities([myEnedisSensor(session, name, update_interval, mSS, _production )], True)
+    add_entities([myEnedisSensor(session, name, update_interval, mSS, _consommation )], True)
     add_entities([myEnedisSensor(session, name, update_interval, mSS, _production )], True)
     # gestion historique
     add_entities([myEnedisSensorHistory(session, name, update_interval_historique, mSS, "ALL" )], True)
@@ -517,7 +512,7 @@ class myEnedisSensorHistory(RestoreEntity):
 class myEnedisSensor(RestoreEntity):
     """."""
 
-    def __init__(self, session, name, interval, myDataEnedis, typeSensor=_consommation):
+    def __init__(self, session, name, interval, myDataEnedis, typeSensor):
         """Initialize the sensor."""
         self._session = session
         self._name = name
@@ -550,7 +545,7 @@ class myEnedisSensor(RestoreEntity):
     @property
     def unique_id(self):
         "Return a unique_id for this entity."
-        if ( self._typeSensor == _production):
+        if self._typeSensor == _production:
             name = "myEnedis.%s.production" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
         else:
             name = "myEnedis.%s" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
@@ -562,7 +557,7 @@ class myEnedisSensor(RestoreEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        if ( self._typeSensor == _production):
+        if self._typeSensor == _production:
             name = "myEnedis.%s.production" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
         else:
             name = "myEnedis.%s" %(self._myDataEnedis._myDataEnedis.get_PDL_ID())
@@ -583,7 +578,7 @@ class myEnedisSensor(RestoreEntity):
         """Update device state."""
         self._attributes = {ATTR_ATTRIBUTION: ""}
         self._myDataEnedis.updateManagerSensor()
-        status_counts, state = self._myDataEnedis.getStatus()
+        status_counts, state = self._myDataEnedis.getStatus( self._typeSensor)
         self._attributes.update(status_counts)
         self._state = state
 
