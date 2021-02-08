@@ -15,8 +15,6 @@ def test_update_contract():
     myE.updateContract(dataJson)
     assert myE.getsubscribed_power() == "9 kVA", "bad subscribed"
     assert myE.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
-    assert myE.isProduction() == False, "bad type production"
-    assert myE.isConsommation() == True, "bad type consommation"
     assert myE.getLastActivationDate() == "2007-07-06", "bad date activation"
     dataCompare = [['23:30', '23:59'], ['00:00', '07:30']]
     assert myE.getcleanoffpeak_hours() == dataCompare, "erreur format HC/HP"
