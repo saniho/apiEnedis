@@ -105,10 +105,11 @@ class myEnedis:
             response = {"enedis_return": {"error": "UNKERROR_002"}}
             return response
         except requests.exceptions.HTTPError as error:
-            self.myLogWarning("*" * 60)
-            self.myLogWarning("header : %s " % (headers))
-            self.myLogWarning("data : %s " % (json.dumps(data)))
-            self.myLogWarning("Error JSON : %s " % (response.text))
+            if ( "ADAM-ERR0069" not in response.text ):
+                self.myLogWarning("*" * 60)
+                self.myLogWarning("header : %s " % (headers))
+                self.myLogWarning("data : %s " % (json.dumps(data)))
+                self.myLogWarning("Error JSON : %s " % (response.text))
             return response.json()
 
     def setLastAnswsr(self, lastanswer):
@@ -613,6 +614,7 @@ class myEnedis:
             if ("error" in dataAnswer['enedis_return']):
                 if (dataAnswer['enedis_return']["error"] == "ADAM-ERR0123") or \
                         (dataAnswer['enedis_return']["error"] == "no_data_found") or \
+                        (dataAnswer['enedis_return']["error"] == "ADAM-ERR0069") or \
                         (dataAnswer['enedis_return']["error"] == "UNKERROR_002"):
                     return False
                 if (dataAnswer['enedis_return']["error"] == "Internal Server error"):
@@ -639,6 +641,7 @@ class myEnedis:
             if ("error" in dataAnswer['enedis_return']):
                 # No consent can be found for this customer and this usage point
                 if (dataAnswer['enedis_return']["error"] == "ADAM-DC-0008") or \
+                        (dataAnswer['enedis_return']["error"] == "ADAM-ERR0069") or \
                         (dataAnswer['enedis_return']["error"] == "UNKERROR_002"):
                     return False
                 if (dataAnswer['enedis_return']["error"] == "Internal Server error"):
