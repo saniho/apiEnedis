@@ -85,7 +85,7 @@ class manageSensorState:
                 if ( detail == "HC"):
                     DateHeureDetail = self._myDataEnedis.getDateHeureDetailHC()
                 if ( clefDate in DateHeureDetail.keys()):
-                    state = DateHeureDetail[clefDate]
+                    state = DateHeureDetail[clefDate] * 0.001
         return status_counts, state
 
     def getStatus(self, typeSensor = _consommation):
