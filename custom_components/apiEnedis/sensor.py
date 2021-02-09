@@ -106,11 +106,6 @@ async def async_setup_entry(
     myEnedis_Cordinator.myEnedis.initUpdate()
     entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator))
     entities.append(myEnedisSensorYesterdayCostCoordinator(myEnedis_Cordinator))
-    #if (myEnedis_Cordinator.myEnedis._myDataEnedis.getContract() != None):
-    #    # si on a  eut le contrat et que le type du PDL est multiple, alors on fait un 2ème sensor
-    #    if ( _production in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
-    #        if ( _consommation in myEnedis_Cordinator.myEnedis._myDataEnedis.getTypePDL() ):
-    #            entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator, _production))
     entities.append(myEnedisSensorCoordinator(myEnedis_Cordinator, _production))
     entities.append(myEnedisSensorCoordinatorHistory(myEnedis_Cordinator, detail = "ALL" ))
     entities.append(myEnedisSensorCoordinatorHistory(myEnedis_Cordinator, detail = "HC" ))
@@ -218,10 +213,6 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def _update_state(self):
         """Update sensors state."""
         self._attributes = {ATTR_ATTRIBUTION: "" }
-        if ( self._typeSensor not in self._myDataEnedis.myEnedis._myDataEnedis.getTypePDL()):
-            # si quand on a cree le sensor, le contrat n'était pas dispo,
-            # alors on a pas créé le bon de type de sensor
-            self._typeSensor = self._myDataEnedis.myEnedis._myDataEnedis.getTypePDL()
         status_counts, state = self._myDataEnedis.myEnedis.getStatus(self._typeSensor)
         self._attributes.update(status_counts)
         self._state = state
