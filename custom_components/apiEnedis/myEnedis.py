@@ -105,7 +105,8 @@ class myEnedis:
             response = {"enedis_return": {"error": "UNKERROR_002"}}
             return response
         except requests.exceptions.HTTPError as error:
-            if ( "ADAM-ERR0069" not in response.text ):
+            if ( "ADAM-ERR0069" not in response.text ) and \
+                ( "token_refresh_401" not in response.text ):
                 self.myLogWarning("*" * 60)
                 self.myLogWarning("header : %s " % (headers))
                 self.myLogWarning("data : %s " % (json.dumps(data)))
@@ -427,13 +428,21 @@ class myEnedis:
         return opcnew
 
     def updateContract(self, data=None):
-        self.updateLastMethodCall("updateContract")
-        self.myLog("--updateContract --")
-        if (data == None): data = self.CallgetDataContract()
-        self.myLog("updateContract : data %s" % (data))
-        self.checkDataContract(data)
-        self.myLog("updateContract(2) : data %s" % (data))
-        self._contract = self.analyseValueContract(data)
+        try:
+            self.updateLastMethodCall("updateContract")
+            self.myLog("--updateContract --")
+            if (data == None): data = self.CallgetDataContract()
+            self.myLog("updateContract : data %s" % (data))
+            self.checkDataContract(data)
+            self.myLog("updateContract(2) : data %s" % (data))
+            self._contract = self.analyseValueContract(data)
+        except Exception as inst:
+            if (inst.args[:2] == ("call", "error")):
+                message = "%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer())
+                self.updateErrorLastCall(message)
+                raise Exception(inst)
+            else:
+                raise Exception(inst)
 
     def updateHCHP(self, heuresCreuses=None):
         if ( self._heuresCreusesON ):
@@ -868,96 +877,100 @@ class myEnedis:
     def update(self):
         #self.myLogWarning("myEnedis ...%s yesterday data %s %s" \
         #    %( self.getYesterdayDate(), self.getYesterdayHC(), self.getYesterdayHC()))
-        if ((self.getTimeLastCall() == None) or
+        if (self.getContract() != None):
+            if ((self.getTimeLastCall() == None) or
                 (self.getStatusLastCall() == False) or
                 (self.getDelaiIsGood())):
-            try:
-                self.myLogWarning("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
-                                  % (self.get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
-                self.updateErrorLastCall("")
-                self.updateLastMethodCall("")
-                self.setUpdateRealise(True)
-                if (self.isConsommation()):
-                    self._niemeAppel += 1
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
-                        self.updateYesterday()
-                    try:
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
-                            self.updateCurrentWeek()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastWeek"):
-                            self.updateLastWeek()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7Days"):
-                            self.updateLast7Days()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateDataYesterdayHCHP"):
-                            try:
-                                self.updateDataYesterdayHCHP()
-                            except Exception as inst:
-                                # print("inst :", inst)
-                                if (inst.args[:3] == ('call', 'error',
-                                                      'no_data_found')):  # gestion que c'est pas une erreur de contrat trop recent ?
-                                    # si le service ne repond pas, l'erreur pas grave, c'est que pas encore remonté
-                                    message = "%s %s" % (messages.getMessage(inst.args[2]), " pour hier")
-                                    self.updateErrorLastCall(message)
-                                    pass
-                                else:
-                                    self.myLogWarning("Err !! lastanswer %s"%self.getLastAnswer())
-                                    self.myLogWarning("Err !! self._heuresCreuses %s"%self._heuresCreuses)
-                                    raise Exception(inst)
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7DaysDetails"):
-                            self.updateLast7DaysDetails()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentMonth"):
-                            self.updateCurrentMonth()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonth"):
-                            self.updateLastMonth()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentYear"):
-                            self.updateCurrentYear()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastYear"):
-                            self.updateLastYear()
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonthLastYear"):
-                            self.updateLastMonthLastYear()
+                try:
+                    self.myLogWarning("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
+                                      % (self.get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
+                    self.updateErrorLastCall("")
+                    self.updateLastMethodCall("")
+                    self.setUpdateRealise(True)
+                    if (self.isConsommation()):
+                        self._niemeAppel += 1
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
+                            self.updateYesterday()
+                        try:
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
+                                self.updateCurrentWeek()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastWeek"):
+                                self.updateLastWeek()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7Days"):
+                                self.updateLast7Days()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateDataYesterdayHCHP"):
+                                try:
+                                    self.updateDataYesterdayHCHP()
+                                except Exception as inst:
+                                    # print("inst :", inst)
+                                    if (inst.args[:3] == ('call', 'error',
+                                                          'no_data_found')):  # gestion que c'est pas une erreur de contrat trop recent ?
+                                        # si le service ne repond pas, l'erreur pas grave, c'est que pas encore remonté
+                                        message = "%s %s" % (messages.getMessage(inst.args[2]), " pour hier")
+                                        self.updateErrorLastCall(message)
+                                        pass
+                                    else:
+                                        self.myLogWarning("Err !! lastanswer %s"%self.getLastAnswer())
+                                        self.myLogWarning("Err !! self._heuresCreuses %s"%self._heuresCreuses)
+                                        raise Exception(inst)
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7DaysDetails"):
+                                self.updateLast7DaysDetails()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentMonth"):
+                                self.updateCurrentMonth()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonth"):
+                                self.updateLastMonth()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentYear"):
+                                self.updateCurrentYear()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastYear"):
+                                self.updateLastYear()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonthLastYear"):
+                                self.updateLastMonthLastYear()
+                            self.updateTimeLastCall()
+                            self.updateStatusLastCall(True)
+                            self.myLogWarning("mise à jour effectuee")
+                        except Exception as inst:
+                            if (inst.args[:2] == ("call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
+                                self.myLogWarning("%s - Erreur call ERROR %s" % (self.get_PDL_ID(), inst))
+                                # Erreur lors du call...
+                                self.updateTimeLastCall()
+                                self.updateStatusLastCall(False)
+                                self.updateErrorLastCall(
+                                    "%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer()))
+                                self.myLogWarning("%s - last call : %s" % (self.get_PDL_ID(), self.getLastMethodCall()))
+                            else:
+                                raise Exception(inst)
+                    if (self.isProduction()):
+                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
+                            self.updateProductionYesterday()
                         self.updateTimeLastCall()
                         self.updateStatusLastCall(True)
-                        self.myLogWarning("mise à jour effectuee")
-                    except Exception as inst:
-                        if (inst.args[:2] == ("call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
-                            self.myLogWarning("%s - Erreur call ERROR %s" % (self.get_PDL_ID(), inst))
-                            # Erreur lors du call...
-                            self.updateTimeLastCall()
-                            self.updateStatusLastCall(False)
-                            self.updateErrorLastCall(
-                                "%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer()))
-                            self.myLogWarning("%s - last call : %s" % (self.get_PDL_ID(), self.getLastMethodCall()))
-                        else:
-                            raise Exception(inst)
-                if (self.isProduction()):
-                    if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
-                        self.updateProductionYesterday()
-                    self.updateTimeLastCall()
-                    self.updateStatusLastCall(True)
 
-            except Exception as inst:
-                if (inst.args == ("call", None)):
-                    self.myLogWarning("*" * 60)
-                    self.myLogWarning("%s - Erreur call" % (self.get_PDL_ID(),))
-                    self.updateTimeLastCall()
-                    self.updateStatusLastCall(False)
-                    message = "%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer())
-                    self.updateErrorLastCall(message)
-                    self.myLogWarning("%s - %s" % (self.get_PDL_ID(), self.getLastMethodCall()))
-                else:
-                    self.myLogWarning("-" * 60)
-                    self.myLogWarning("Erreur inconnue call ERROR %s" % (inst))
-                    self.myLogWarning("Erreur last answer %s" % (inst))
-                    self.myLogWarning("Erreur last call %s" % (self.getLastMethodCall()))
-                    self.myLogWarning("-" * 60)
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    self.myLogWarning(sys.exc_info())
-                    self.updateStatusLastCall(False)
-                    self.updateTimeLastCall()
-                    self.updateErrorLastCall("%s" % (inst))
-                    self.myLogWarning("LastMethodCall : %s" % (self.getLastMethodCall()))
+                except Exception as inst:
+                    if (inst.args == ("call", None)):
+                        self.myLogWarning("*" * 60)
+                        self.myLogWarning("%s - Erreur call" % (self.get_PDL_ID(),))
+                        self.updateTimeLastCall()
+                        self.updateStatusLastCall(False)
+                        message = "%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer())
+                        self.updateErrorLastCall(message)
+                        self.myLogWarning("%s - %s" % (self.get_PDL_ID(), self.getLastMethodCall()))
+                    else:
+                        self.myLogWarning("-" * 60)
+                        self.myLogWarning("Erreur inconnue call ERROR %s" % (inst))
+                        self.myLogWarning("Erreur last answer %s" % (inst))
+                        self.myLogWarning("Erreur last call %s" % (self.getLastMethodCall()))
+                        self.myLogWarning("-" * 60)
+                        exc_type, exc_value, exc_traceback = sys.exc_info()
+                        self.myLogWarning(sys.exc_info())
+                        self.updateStatusLastCall(False)
+                        self.updateTimeLastCall()
+                        self.updateErrorLastCall("%s" % (inst))
+                        self.myLogWarning("LastMethodCall : %s" % (self.getLastMethodCall()))
 
+            else:
+                self.setUpdateRealise(False)
+                self.myLog("%s pas d'update trop tot !!!" % (self.get_PDL_ID()))
         else:
             self.setUpdateRealise(False)
-            self.myLog("%s pas d'update trop tot !!!" % (self.get_PDL_ID()))
+            self.myLog("%s update impossible contrat non trouve!!!" % (self.get_PDL_ID()))
         self.updateLastUpdate()

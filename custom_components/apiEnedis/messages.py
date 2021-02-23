@@ -1,7 +1,7 @@
 listeMessages = \
 {
     "ERR_001" : "",
-    "token_refresh_401" : "Erreur de token",
+    "token_refresh_401" : "Erreur de token - Merci de renouveller vos consentements.",
     "no_data_found" : "Donnees non disponible",
     "client_not_found": "Client inconnu",
     "Invalid_request": "Erreur requete",

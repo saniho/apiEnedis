@@ -270,6 +270,8 @@ class manageSensorState:
                     self._LOGGER.warning("errorLastCall : %s " % (self._myDataEnedis.getErrorLastCall()))
             else:
                 status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
+        else:
+            status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
 
         return status_counts, state
 
