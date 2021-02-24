@@ -36,6 +36,7 @@ class myEnedis:
         self._currentWeek = 0
         self._yesterday = 0
         self._productionYesterday = 0
+        self._yesterdayConsumptionMaxPower = 0
         self._lastUpdate = None
         self._timeLastUpdate = None
         self._statusLastCall = True
@@ -53,6 +54,7 @@ class myEnedis:
         self._updateRealise = False
         self._niemeAppel = 0
         self._yesterdayDate = None
+        self._yesterdayDateConsumptionMaxPower = None
         self._version = version
         self._dateHeureDetail = {}
         self._dateHeureDetailHC = {}
@@ -161,6 +163,35 @@ class myEnedis:
         self.setLastAnswsr(dataAnswer)
         return dataAnswer, callDone
 
+    def getDataPeriodConsumptionMaxPower(self, deb, fin):
+        #self.myLogWarning("-(-get dataPeriod : %s => %s --" % (deb, fin))
+        deb = self.minCompareDateContract( deb )
+        fin = self.maxCompareDateContract( fin )
+        #self.myLogWarning("-c-get dataPeriod : %s => %s --" % (deb, fin))
+        #self.myLogWarning("--------------------------")
+        if ( fin is not None ):
+            self.myLog("--get dataPeriod : %s => %s --" % (deb, fin))
+            payload = {
+                'type': 'daily_consumption_max_power',
+                'usage_point_id': self._PDL_ID,
+                'start': '%s' % (deb),
+                'end': '%s' % (fin),
+            }
+            headers = {
+                'Authorization': self._token,
+                'Content-Type': self._contentType,
+                'call-service': self._contentHeaderMyEnedis,
+                'ha_sensor_myenedis_version':self._version,
+            }
+            dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
+            callDone = True
+        else:
+            # pas de donnée
+            callDone = False
+            dataAnswer = ""
+        self.setLastAnswsr(dataAnswer)
+        return dataAnswer, callDone
+
     def getDataProductionPeriod(self, deb, fin):
         self.myLog("--get ProductionPeriod : %s => %s --" % (deb, fin))
         payload = {
@@ -218,6 +249,12 @@ class myEnedis:
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(self._formatDateYmd)
         cejour = (datetime.date.today()).strftime(self._formatDateYmd)
         val1, val2 = self.getDataPeriod(hier, cejour)
+        return val1, val2, hier
+
+    def CallgetYesterdayConsumptionMaxPower(self):
+        hier = (datetime.date.today() - datetime.timedelta(1)).strftime(self._formatDateYmd)
+        cejour = (datetime.date.today()).strftime(self._formatDateYmd)
+        val1, val2 = self.getDataPeriodConsumptionMaxPower(hier, cejour)
         return val1, val2, hier
 
     def CallgetProductionYesterday(self):
@@ -481,6 +518,27 @@ class myEnedis:
             self.setfunction('yesterday', True)
         else:
             self._yesterday = 0
+
+    def getYesterdayConsumptionMaxPower(self):
+        return self._yesterdayConsumptionMaxPower
+
+    def getYesterdayDateConsumptionMaxPower(self):
+        return self._yesterdayConsumptionMaxPowerDate
+
+    def updateYesterdayConsumptionMaxPower(self, data=None):
+        self.setfunction('yesterdayConsumptionMaxPower')
+        self.updateLastMethodCall("updateYesterdayConsumptionMaxPower")
+        self.myLog("--updateYesterdayConsumptionMaxPower --")
+        yesterdayDate = None
+        if (data == None): data, callDone, _yesterdayDateConsumptionMaxPower = self.CallgetYesterdayConsumptionMaxPower()
+        else: callDone = True
+        self.myLog("updateYesterdayConsumptionMaxPower : data %s" % (data))
+        if (callDone ) and (self.checkData(data)):
+            self._yesterdayConsumptionMaxPower = self.analyseValue(data)
+            self._yesterdayDateConsumptionMaxPower = _yesterdayDateConsumptionMaxPower
+            self.setfunction('yesterdayConsumptionMaxPower', True)
+        else:
+            self._yesterdayConsumptionMaxPower = 0
 
     def getProductionYesterday(self):
         return self._productionYesterday
@@ -925,6 +983,8 @@ class myEnedis:
                                 self.updateLastYear()
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastMonthLastYear"):
                                 self.updateLastMonthLastYear()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterdayConsumptionMaxPower"):
+                                self.updateYesterdayConsumptionMaxPower()
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(True)
                             self.myLogWarning("mise à jour effectuee")

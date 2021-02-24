@@ -103,6 +103,7 @@ class manageSensorState:
                 status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                 # à supprimer car doublon avec j_1
                 status_counts['yesterday'] = self._myDataEnedis.getYesterday()
+                status_counts['yesterdayConsumptionMaxPower'] = self._myDataEnedis.getYesterdayConsumptionMaxPower()
                 status_counts['last_week'] = self._myDataEnedis.getLastWeek()
 
             if (1):#self._myDataEnedis.getStatusLastCall():  # update avec statut ok
