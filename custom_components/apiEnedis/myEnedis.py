@@ -85,6 +85,9 @@ class myEnedis:
     def myLogWarning(self, message):
         self._log.warning(message)
 
+    def myLogError(self, message):
+        self._log.error(message)
+
     def setUpdateRealise(self, value):
         self._updateRealise = value
 
