@@ -112,10 +112,10 @@ class myEnedis:
         except requests.exceptions.HTTPError as error:
             if ( "ADAM-ERR0069" not in response.text ) and \
                 ( "token_refresh_401" not in response.text ):
-                self.myLogWarning("*" * 60)
-                self.myLogWarning("header : %s " % (headers))
-                self.myLogWarning("data : %s " % (json.dumps(data)))
-                self.myLogWarning("Error JSON : %s " % (response.text))
+                self.myLogError("*" * 60)
+                self.myLogError("header : %s " % (headers))
+                self.myLogError("data : %s " % (json.dumps(data)))
+                self.myLogError("Error JSON : %s " % (response.text))
             return response.json()
 
     def setLastAnswsr(self, lastanswer):
