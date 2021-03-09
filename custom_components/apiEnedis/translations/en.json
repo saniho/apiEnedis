@@ -1,0 +1,31 @@
+{
+  "title": "MyEnedis",
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "token": "Your Token",
+          "code": "Your Code",
+          "hc_cout": "Off-peak hours price (ex: 0.01)",
+          "hp_cout": "Peak hours price (ex: 0.01)",
+          "heuresCreusesON": "Check if you have a peak & off-peak hours based contract"
+        },
+        "title": "MyEnedis configuration"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "token": "Your Token",
+          "code": "Your Code",
+          "hc_cout": "Off-peak hours price (ex: 0.01)",
+          "hp_cout": "Peak hours price (ex: 0.01)",
+          "heuresCreusesON": "Check if you have a peak & off-peak hours based contract"
+        },
+        "title": "MyEnedis Options"
+      }
+    }
+  }
+}
