@@ -1,7 +1,7 @@
 {
     "domain": "myEnedis",
     "name": "myEnedis sensor",
-    "version": "v1.1.3.2RC5",
+    "version": "v1.1.3.2",
     "documentation": "https://github.com/saniho/apiEnedis/",
     "config_flow": true,
     "requirements": [
