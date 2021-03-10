@@ -204,7 +204,8 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         if not state:
             return
 
-        if 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys(): # pas plutot la key à checker ??
+        if ( 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys() )\
+                or ( self._attributes['yesterday'] != "-1" ): # pas plutot la key à checker ??
             self._state = state.state
             self._attributes = state.attributes
             self.setLastAttributes()
@@ -592,7 +593,8 @@ class myEnedisSensor(RestoreEntity):
         # ADDED CODE HERE
         # si seulement pas eut de mise à jour !!
         # si la clef yesterday est disponible dans l'element courant, alors c'est que l'on a eut une mise à jour
-        if 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys():  # pas plutot la key à checker ??
+        if ( 'yesterday' not in self._attributes.keys() and 'yesterday_production' not in self._attributes.keys() )\
+                or ( self._attributes['yesterday'] != "-1" ): # pas plutot la key à checker ??
             self._state = state.state
             # _LOGGER.warning("*** / / / \ \ \ *** mise a jour state precedent %s " % (self._state))
             self._attributes = state.attributes

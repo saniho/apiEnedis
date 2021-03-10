@@ -109,10 +109,12 @@ class manageSensorState:
                 try:
                     # typesensor ... fonction de  ?
                     if typeSensor == _consommation: #self._myDataEnedis.isConsommation():
+
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                         # à supprimer car doublon avec j_1
                         status_counts['yesterday'] = self._myDataEnedis.getYesterday()
+                        status_counts['yesterdayConsumptionMaxPower'] = self._myDataEnedis.getYesterdayConsumptionMaxPower()
                         status_counts['last_week'] = self._myDataEnedis.getLastWeek()
                         last7daysHP = self._myDataEnedis.get7DaysHP()
                         listeClef = list(last7daysHP.keys())
