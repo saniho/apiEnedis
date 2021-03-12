@@ -426,6 +426,8 @@ class myEnedis:
 
     def getContract(self):
         return self._contract
+    def setContract(self, contract= None):
+        self._contract = contract
 
     def getsubscribed_power(self):
         return self._contract['subscribed_power']
