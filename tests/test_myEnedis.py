@@ -141,4 +141,4 @@ def test_error_contract():
     try:
         myE.updateContract(dataJson)
     except:
-        print( myE.getErrorLastCall())
+        print(myE.getErrorLastCall())
