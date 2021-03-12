@@ -234,7 +234,8 @@ class manageSensorState:
                         status_counts['current_month'] = "{:.3f}".format(self._myDataEnedis.getCurrentMonth() * 0.001)
                         status_counts['last_year'] = "{:.3f}".format(self._myDataEnedis.getLastYear() * 0.001)
                         status_counts['current_year'] = "{:.3f}".format(self._myDataEnedis.getCurrentYear() * 0.001)
-                        status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
+                        status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
+                        status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()
                         if ((self._myDataEnedis.getLastMonthLastYear() is not None) and
                                 (self._myDataEnedis.getLastMonthLastYear() != 0) and
                                 (self._myDataEnedis.getLastMonth() is not None)):
@@ -250,7 +251,8 @@ class manageSensorState:
                         # status_counts['yesterday'] = ""
                     if typeSensor == _production: #self._myDataEnedis.isProduction():
                         status_counts["yesterday_production"] = self._myDataEnedis.getProductionYesterday()
-                        status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
+                        status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
+                        status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
 
@@ -261,7 +263,8 @@ class manageSensorState:
                     state = "{:.3f}".format(valeurstate)
 
                 except Exception:
-                    status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
+                    status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
+                    status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()
                     self._LOGGER.warning("-" * 60)
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     self._LOGGER.warning(sys.exc_info())
@@ -271,9 +274,11 @@ class manageSensorState:
                     self._LOGGER.warning(msg)
                     self._LOGGER.warning("errorLastCall : %s " % (self._myDataEnedis.getErrorLastCall()))
             else:
-                status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
+                status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
+                status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()
         else:
-            status_counts['errorLastCall'] = self._myDataEnedis.getErrorLastCall()
+            status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
+            status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()
 
         return status_counts, state
 

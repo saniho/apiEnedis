@@ -111,11 +111,14 @@ class myEnedis:
             return response
         except requests.exceptions.HTTPError as error:
             if ( "ADAM-ERR0069" not in response.text ) and \
-                ( "token_refresh_401" not in response.text ):
+                ( "__token_refresh_401" not in response.text ):
                 self.myLogError("*" * 60)
                 self.myLogError("header : %s " % (headers))
                 self.myLogError("data : %s " % (json.dumps(data)))
                 self.myLogError("Error JSON : %s " % (response.text))
+            #with open('error.json', 'w') as outfile:
+            #    json.dump(response.json(), outfile)
+
             return response.json()
 
     def setLastAnswsr(self, lastanswer):
@@ -242,6 +245,10 @@ class myEnedis:
             'ha_sensor_myenedis_version':self._version,
         }
         dataAnswer = self.post_and_get_json(self._serverName, data=payload, headers=headers)
+        #dataAnswer = {"usage_point_id": "09764109908394", "error": "token_refresh_401",
+        #        "description": "Une erreur est survenue, merci de renouveller vos consentements.", "user_alert": True}
+        #dataAnswer = {"usage_point_id": "09764109908394", "error": "token_refresh_401",
+        #        "description": "Une erreur est survenue, merci de renouveller vos consentements.", "user_alert": False}
         self.setLastAnswsr(dataAnswer)
         return dataAnswer
 
@@ -478,8 +485,13 @@ class myEnedis:
             self._contract = self.analyseValueContract(data)
         except Exception as inst:
             if (inst.args[:2] == ("call", "error")):
+                self.myLogWarning("*" * 60)
+                self.myLogWarning("%s - Erreur call" % (self.get_PDL_ID(),))
+                self.updateTimeLastCall()
+                self.updateStatusLastCall(False)
                 message = "%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer())
                 self.updateErrorLastCall(message)
+                self.myLogWarning("%s - %s" % (self.get_PDL_ID(), self.getLastMethodCall()))
                 raise Exception(inst)
             else:
                 raise Exception(inst)
@@ -908,6 +920,19 @@ class myEnedis:
 
     def getErrorLastCall(self):
         return self._errorLastCall
+
+    def getCardErrorLastCall(self):
+        if ( "user_alert" in self.getLastAnswer()):
+            if ( self.getLastAnswer()["user_alert"]):
+                if ( "description" in self.getLastAnswer()
+                    and "error" in self.getLastAnswer()):
+                    return "%s (%s)" %(self.getLastAnswer()["description"], self.getLastAnswer()["error"])
+                else:
+                    return self.getErrorLastCall()
+            else:
+                return ""
+        else:
+            return self.getErrorLastCall()
 
     def getLastMethodCall(self):
         return self._errorLastMethodCall

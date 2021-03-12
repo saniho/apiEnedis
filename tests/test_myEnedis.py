@@ -133,3 +133,12 @@ def test_get_init():
     from custom_components.apiEnedis import sensorEnedis
     se = sensorEnedis.manageSensorState()
     assert se.getInit() == False, "not False !! "
+
+
+def test_error_contract():
+    myE = myEnedis.myEnedis("myToken", "myPDL")
+    dataJson = loadJsonFile("tests/Json/Error/error.json")
+    try:
+        myE.updateContract(dataJson)
+    except:
+        print( myE.getErrorLastCall())
