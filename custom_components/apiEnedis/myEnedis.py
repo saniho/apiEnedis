@@ -78,7 +78,7 @@ class myEnedis:
         self._function[name] = val
 
     def myLog(self, message):
-        # self._log.info(message)
+        self._log.info(message)
         # self._log.warning(message)
         pass
 
@@ -967,8 +967,13 @@ class myEnedis:
         return ecartOk
 
     def getAppelAEffectuer(self):
-        self.myLog("TimeLastCall : %s" % (self.getTimeLastCall().hour))
-        horairePossible = ( self.getTimeLastCall().hour < 12 ) # si inferieur à 12h
+        hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(hour=23,minute=0)
+        hourLastCall = self.getTimeLastCall().hour
+        hourNow = datetime.datetime.now().hour
+        self.myLog("TimeLastCall : %s" % (hourLastCall))
+        self.myLog("now : %s" % (hourNow))
+        # si le dernier appel à eut lieu avant hier 23h et que maintenant il est plus que 10h, alors
+        horairePossible = ( hourLastCall < hier ) and ( hourNow > 10)
         self.myLog("horairePossible : %s" % (horairePossible))
         return horairePossible
 
