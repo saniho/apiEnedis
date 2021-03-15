@@ -718,6 +718,9 @@ class myEnedis:
         return True
 
     def checkData(self, dataAnswer):
+        # new version de la réponse
+        if ( dataAnswer.get("error_code",200) == 500):
+            return
         if ("enedis_return" in dataAnswer.keys() and "error" in dataAnswer.keys()):
             #erreur 500
             if ( dataAnswer["error"] == "result_500"):
@@ -745,8 +748,8 @@ class myEnedis:
         return True
 
     def checkDataContract(self, dataAnswer):
-        if ("error" in dataAnswer.keys()):
-            raise Exception('call', "error", dataAnswer["error"])
+        if (dataAnswer.get("error_code",200) != 200 ):
+            raise Exception('call', "error", dataAnswer["tag"])
         return True
 
     def getLastMonth(self):
@@ -928,8 +931,8 @@ class myEnedis:
         if ( "alert_user" in self.getLastAnswer()):
             if ( self.getLastAnswer()["alert_user"]):
                 if ( "description" in self.getLastAnswer()
-                    and "error" in self.getLastAnswer()):
-                    return "%s (%s)" %(self.getLastAnswer()["description"], self.getLastAnswer()["error"])
+                    and "tag" in self.getLastAnswer()):
+                    return "%s (%s-%s)" %(self.getLastAnswer()["description"], self.getLastAnswer()["error_code"], self.getLastAnswer()["tag"])
                 else:
                     return self.getErrorLastCall()
             else:
