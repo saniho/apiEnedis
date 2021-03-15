@@ -105,6 +105,7 @@ class myEnedis:
             #self.myLogWarning("data : %s " % (json.dumps(data)))
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
+            #print(response.json())
             return response.json()
         except requests.exceptions.Timeout as error:
             response = {"enedis_return": {"error": "UNKERROR_002"}}
@@ -924,8 +925,8 @@ class myEnedis:
         return self._errorLastCall
 
     def getCardErrorLastCall(self):
-        if ( "user_alert" in self.getLastAnswer()):
-            if ( self.getLastAnswer()["user_alert"]):
+        if ( "alert_user" in self.getLastAnswer()):
+            if ( self.getLastAnswer()["alert_user"]):
                 if ( "description" in self.getLastAnswer()
                     and "error" in self.getLastAnswer()):
                     return "%s (%s)" %(self.getLastAnswer()["description"], self.getLastAnswer()["error"])
@@ -954,21 +955,30 @@ class myEnedis:
     def updateErrorLastCall(self, errorMessage):
         self._errorLastCall = errorMessage
 
-    def getDelai(self):
+    def setErrorLastCall(self, errorMessage):
+        self._errorLastCall = errorMessage
+
+    def getDelaiError(self):
         return self._delai
 
-    def getDelaiIsGood(self):
+    def getDelaiIsGoodAfterError(self):
         self.myLog("TimeLastCall : %s" % (self.getTimeLastCall()))
-        ecartOk = (datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelai()
+        ecartOk = (datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelaiError()
         return ecartOk
+
+    def getAppelAEffectuer(self):
+        self.myLog("TimeLastCall : %s" % (self.getTimeLastCall().hour))
+        horairePossible = ( self.getTimeLastCall().hour < 12 ) # si inferieur à 12h
+        self.myLog("horairePossible : %s" % (horairePossible))
+        return horairePossible
 
     def update(self):
         #self.myLogWarning("myEnedis ...%s yesterday data %s %s" \
         #    %( self.getYesterdayDate(), self.getYesterdayHC(), self.getYesterdayHC()))
         if (self.getContract() != None):
             if ((self.getTimeLastCall() == None) or
-                (self.getStatusLastCall() == False) or
-                (self.getDelaiIsGood())):
+                (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()) or
+                (self.getAppelAEffectuer())):
                 try:
                     self.myLogWarning("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
                                       % (self.get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
