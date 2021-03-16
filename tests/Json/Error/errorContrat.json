@@ -1,0 +1,5 @@
+{
+  'error': 'usage_point_id_bad_formatted',
+  'description': 'Ton point de livraison est mal formaté',
+  'alert_user': True
+}

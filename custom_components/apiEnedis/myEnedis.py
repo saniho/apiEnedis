@@ -105,7 +105,7 @@ class myEnedis:
             #self.myLogWarning("data : %s " % (json.dumps(data)))
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
-            #print(response.json())
+            print(response.json())
             return response.json()
         except requests.exceptions.Timeout as error:
             response = {"enedis_return": {"error": "UNKERROR_002"}}
@@ -691,10 +691,8 @@ class myEnedis:
             return
 
     def checkDataPeriod(self, dataAnswer):
-        if ("enedis_return" in dataAnswer.keys() and "error" in dataAnswer.keys()):
-            #erreur 500
-            if ( dataAnswer["error"] == "result_500"):
-                return
+        if (dataAnswer.get("error_code", 200) == 500):
+            return False
         if ("enedis_return" in dataAnswer.keys()):
             if ("error" in dataAnswer['enedis_return']):
                 if (dataAnswer['enedis_return']["error"] == "ADAM-ERR0123") or \
@@ -709,22 +707,24 @@ class myEnedis:
                     raise Exception('call', "error", dataAnswer['enedis_return']["error"])
             else:
                 raise Exception('call', "error", "UNKERROR_001")
-        if ("error" in dataAnswer.keys()):
-            if (dataAnswer["error"] == "client_not_found"):
-                # client inconnu
-                raise Exception('call', "error", "UNKERROR_003")
-            else:
-                raise Exception('call', "error", dataAnswer["error"])
+        #if ("error" in dataAnswer.keys()):
+        #    if (dataAnswer["error"] == "client_not_found"):
+        #        # client inconnu
+        #        raise Exception('call', "error", "UNKERROR_003")
+        #    else:
+        #        raise Exception('call', "error", dataAnswer["error"])
         return True
 
     def checkData(self, dataAnswer):
+        if ("enedis_return" in dataAnswer.keys()):
+            if ("error" in dataAnswer['enedis_return']):
+                # point dans le mauais sens de lecture
+                if (dataAnswer['enedis_return']["error"] == "ADAM-ERR0069"):
+                    return
         # new version de la réponse
+        # si erreur 500
         if ( dataAnswer.get("error_code",200) == 500):
-            return
-        if ("enedis_return" in dataAnswer.keys() and "error" in dataAnswer.keys()):
-            #erreur 500
-            if ( dataAnswer["error"] == "result_500"):
-                return
+            return False
         if ("enedis_return" in dataAnswer.keys()):
             if ("error" in dataAnswer['enedis_return']):
                 # No consent can be found for this customer and this usage point
@@ -739,12 +739,12 @@ class myEnedis:
                     raise Exception('call', "error", dataAnswer["error"])
             else:
                 raise Exception('call', "error", "UNKERROR_001")
-        if ("error" in dataAnswer.keys()):
-            if (dataAnswer["error"] == "client_not_found"):
-                # client inconnu
-                raise Exception('call', "error", "UNKERROR_003")
-            else:
-                raise Exception('call', "error", dataAnswer["error"])
+        #if ("error" in dataAnswer.keys()):
+        #    if (dataAnswer["error"] == "client_not_found"):
+        #        # client inconnu
+        #        raise Exception('call', "error", "UNKERROR_003")
+        #    else:
+        #        raise Exception('call', "error", dataAnswer["error"])
         return True
 
     def checkDataContract(self, dataAnswer):
@@ -970,13 +970,14 @@ class myEnedis:
         return ecartOk
 
     def getAppelAEffectuer(self):
+        # hier 23h
         hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(hour=23,minute=0)
-        hourLastCall = self.getTimeLastCall().hour
+        lastCall = self.getTimeLastCall()
         hourNow = datetime.datetime.now().hour
-        self.myLog("TimeLastCall : %s" % (hourLastCall))
+        self.myLog("TimeLastCall : %s" % (lastCall))
         self.myLog("now : %s" % (hourNow))
         # si le dernier appel à eut lieu avant hier 23h et que maintenant il est plus que 10h, alors
-        horairePossible = ( hourLastCall < hier ) and ( hourNow > 10)
+        horairePossible = ( lastCall < hier ) and ( hourNow >= 9 )
         self.myLog("horairePossible : %s" % (horairePossible))
         return horairePossible
 

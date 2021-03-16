@@ -116,6 +116,12 @@ def test_updateProductionYesterday():
     myE.updateProductionYesterday( dataJson )
     assert myE.getProductionYesterday() == 0, "Erreur production Value"
 
+def test_updateProductionYesterday2():
+    myE = myEnedis.myEnedis("myToken", "myPDL")
+    dataJson = loadJsonFile("tests/Json/Production/error2.json")
+    myE.updateProductionYesterday( dataJson )
+    assert myE.getProductionYesterday() == 0, "Erreur production Value"
+
 def test_horaire_surcharge():
     hc = [['23:30', '23:59'], ['00:00', '07:35']]
     myE = myEnedis.myEnedis("myToken", "myPDL", heuresCreuses = hc)

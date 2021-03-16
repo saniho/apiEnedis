@@ -1,0 +1,8 @@
+{
+  "tag": "client_not_found",
+  "error_code": 404,
+  "description": "Client inconnu, veuillez valider vos consentements avant d'utiliser nos services.",
+  "alert_user": "True",
+  "support": "https://discord.gg/DfVJZme",
+  "enedis_return": "False"
+}

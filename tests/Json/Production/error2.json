@@ -1,0 +1,15 @@
+{
+  "tag": "enedis_return_ko",
+  "error_code": 500,
+  "description": "Les API d'Enedis sont indisponible.",
+  "alert_user": "True",
+  "support": "https://discord.gg/DfVJZme",
+  "enedis_return": {
+    "error": "result_400",
+    "enedis_return": {
+      "error": "ADAM-ERR0069",
+      "error_description": "Le sens de la mesure ne correspond pas pour le PRM demandé",
+      "error_uri": "https://bluecoder.enedis.fr/api-doc/consulter-souscrire"
+    }
+  }
+}

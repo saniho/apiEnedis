@@ -107,6 +107,7 @@ def testMulti():
         print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
+        PDL_ID = "09764109908395"
         #print(qui , "*", token, PDL_ID)
         heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
         #heureCreusesCh = None

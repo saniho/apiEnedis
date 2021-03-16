@@ -1,5 +1,9 @@
 {
-  "error": "result_500",
+  "tag": "enedis_return_ko",
+  "error_code": 500,
+  "description": "Les API d'Enedis sont indisponible.",
+  "alert_user": "True",
+  "support": "https://discord.gg/DfVJZme",
   "enedis_return": {
     "error": "Internal Server error",
     "error_description": "Un problème a été rencontré lors du traitement.",
