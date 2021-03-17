@@ -79,7 +79,7 @@ class myEnedis:
 
     def myLog(self, message):
         self._log.info(message)
-        # self._log.warning(message)
+        #self._log.warning(message)
         pass
 
     def myLogWarning(self, message):
@@ -105,7 +105,7 @@ class myEnedis:
             #self.myLogWarning("data : %s " % (json.dumps(data)))
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
-            print(response.json())
+            #print(response.json())
             return response.json()
         except requests.exceptions.Timeout as error:
             response = {"enedis_return": {"error": "UNKERROR_002"}}
@@ -693,58 +693,36 @@ class myEnedis:
     def checkDataPeriod(self, dataAnswer):
         if (dataAnswer.get("error_code", 200) == 500):
             return False
-        if ("enedis_return" in dataAnswer.keys()):
-            if ("error" in dataAnswer['enedis_return']):
-                if (dataAnswer['enedis_return']["error"] == "ADAM-ERR0123") or \
-                        (dataAnswer['enedis_return']["error"] == "no_data_found") or \
-                        (dataAnswer['enedis_return']["error"] == "ADAM-ERR0069") or \
-                        (dataAnswer['enedis_return']["error"] == "UNKERROR_002"):
-                    return False
-                if (dataAnswer['enedis_return']["error"] == "Internal Server error"):
-                    # erreur interne enedis
-                    raise Exception('call', "error", "UNKERROR_001")
-                else:
-                    raise Exception('call', "error", dataAnswer['enedis_return']["error"])
-            else:
+        if ("error_code" in dataAnswer.keys()):
+            if (dataAnswer["error_code"] == "ADAM-ERR0123") or \
+                    (dataAnswer["error_code"] == "no_data_found") or \
+                    (dataAnswer["error_code"] == "ADAM-ERR0069") or \
+                    (dataAnswer["error_code"] == "UNKERROR_002"):
+                return False
+            if (dataAnswer["error_code"] == "Internal Server error"):
+                # erreur interne enedis
                 raise Exception('call', "error", "UNKERROR_001")
-        #if ("error" in dataAnswer.keys()):
-        #    if (dataAnswer["error"] == "client_not_found"):
-        #        # client inconnu
-        #        raise Exception('call', "error", "UNKERROR_003")
-        #    else:
-        #        raise Exception('call', "error", dataAnswer["error"])
+            else:
+                raise Exception('call', "error", dataAnswer["error_code"])
         return True
 
     def checkData(self, dataAnswer):
-        if ("enedis_return" in dataAnswer.keys()):
-            if ("error" in dataAnswer['enedis_return']):
-                # point dans le mauais sens de lecture
-                if (dataAnswer['enedis_return']["error"] == "ADAM-ERR0069"):
-                    return
         # new version de la réponse
         # si erreur 500
         if ( dataAnswer.get("error_code",200) == 500):
             return False
-        if ("enedis_return" in dataAnswer.keys()):
-            if ("error" in dataAnswer['enedis_return']):
-                # No consent can be found for this customer and this usage point
-                if (dataAnswer['enedis_return']["error"] == "ADAM-DC-0008") or \
-                        (dataAnswer['enedis_return']["error"] == "ADAM-ERR0069") or \
-                        (dataAnswer['enedis_return']["error"] == "UNKERROR_002"):
-                    return False
-                if (dataAnswer['enedis_return']["error"] == "Internal Server error"):
-                    # erreur interne enedis
-                    raise Exception('call', "error", "UNKERROR_001")
-                else:
-                    raise Exception('call', "error", dataAnswer["error"])
-            else:
+        if ("error_code" in dataAnswer.keys()):
+            # point dans le mauvais sens de lecture
+            if (dataAnswer["error_code"] == "ADAM-ERR0069"):
+                return False
+            # No consent can be found for this customer and this usage point
+            if dataAnswer["error_code"] in ["ADAM-DC-0008", "ADAM-ERR0069",  "UNKERROR_002"]:
+                return False
+            if (dataAnswer["error_code"] == "Internal Server error"):
+                # erreur interne enedis
                 raise Exception('call', "error", "UNKERROR_001")
-        #if ("error" in dataAnswer.keys()):
-        #    if (dataAnswer["error"] == "client_not_found"):
-        #        # client inconnu
-        #        raise Exception('call', "error", "UNKERROR_003")
-        #    else:
-        #        raise Exception('call', "error", dataAnswer["error"])
+            else:
+                raise Exception('call', "error", dataAnswer["error_code"])
         return True
 
     def checkDataContract(self, dataAnswer):
@@ -932,7 +910,11 @@ class myEnedis:
             if ( self.getLastAnswer()["alert_user"]):
                 if ( "description" in self.getLastAnswer()
                     and "tag" in self.getLastAnswer()):
-                    return "%s (%s-%s)" %(self.getLastAnswer()["description"], self.getLastAnswer()["error_code"], self.getLastAnswer()["tag"])
+                    # si erreur autre que mauvais sens de lecture...
+                    if ( self.getLastAnswer()["error_code"] != "ADAM-ERR0069" ):
+                        return "%s (%s-%s)" %(self.getLastAnswer()["description"], self.getLastAnswer()["error_code"], self.getLastAnswer()["tag"])
+                    else:
+                        return ""
                 else:
                     return self.getErrorLastCall()
             else:

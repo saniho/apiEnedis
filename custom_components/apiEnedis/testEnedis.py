@@ -88,6 +88,9 @@ def testComplet( myDataEnedis ):
         status_counts, state = mSS.getStatus()
     sensorEnedis.logSensorState(status_counts)
 
+    #print( myDataEnedis.getLastMethodCallError())
+    #print( myDataEnedis.getLastAnswer())
+
     laDate = datetime.date.today() - datetime.timedelta(1)
     mSS.getStatusHistory(laDate)
 
@@ -107,7 +110,7 @@ def testMulti():
         print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
-        PDL_ID = "09764109908395"
+        #PDL_ID = "09764109908395"
         #print(qui , "*", token, PDL_ID)
         heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
         #heureCreusesCh = None
@@ -133,6 +136,7 @@ def testMulti():
         # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
         # myDataEnedis._serverName = "http://localhost:5501" # pour record
         #myDataEnedis.updateDataYesterdayHCHP()
+
         testComplet( myDataEnedis )
         #print("***")
         #print( myDataEnedis.getLastMethodCallError())
