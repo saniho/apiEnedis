@@ -967,9 +967,9 @@ class myEnedis:
         #self.myLogWarning("myEnedis ...%s yesterday data %s %s" \
         #    %( self.getYesterdayDate(), self.getYesterdayHC(), self.getYesterdayHC()))
         if (self.getContract() != None):
-            if ((self.getTimeLastCall() == None) or
-                (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()) or
-                (self.getAppelAEffectuer())):
+            if ((self.getTimeLastCall() == None)  or
+                (self.getAppelAEffectuer()) or
+                (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError())):
                 try:
                     self.myLogWarning("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
                                       % (self.get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
