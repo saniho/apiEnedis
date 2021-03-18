@@ -1,0 +1,6 @@
+{
+  "usage_point_id": "09764109908394",
+  "error": "token_refresh_401",
+  "description": "Une erreur est survenue, merci de renouveller vos consentements.",
+  "user_alert": true
+}
