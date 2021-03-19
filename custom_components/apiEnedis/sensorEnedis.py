@@ -114,6 +114,7 @@ class manageSensorState:
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                         # à supprimer car doublon avec j_1
                         status_counts['yesterday'] = self._myDataEnedis.getYesterday()
+                        status_counts['yesterdayLastYear'] = self._myDataEnedis.getYesterdayLastYear()
                         status_counts['yesterdayConsumptionMaxPower'] = self._myDataEnedis.getYesterdayConsumptionMaxPower()
                         status_counts['last_week'] = self._myDataEnedis.getLastWeek()
                         last7daysHP = self._myDataEnedis.get7DaysHP()
@@ -230,6 +231,7 @@ class manageSensorState:
                         status_counts["yesterday_HC"] = "{:.3f}".format(self._myDataEnedis.getYesterdayHC() * 0.001)
                         status_counts["yesterday_HP"] = "{:.3f}".format(self._myDataEnedis.getYesterdayHP() * 0.001)
                         status_counts['current_week'] = "{:.3f}".format(self._myDataEnedis.getCurrentWeek() * 0.001)
+                        status_counts['current_week_last_year'] = "{:.3f}".format(self._myDataEnedis.getCurrentWeekLastYear() * 0.001)
                         status_counts['last_month'] = "{:.3f}".format(self._myDataEnedis.getLastMonth() * 0.001)
                         status_counts['current_month'] = "{:.3f}".format(self._myDataEnedis.getCurrentMonth() * 0.001)
                         status_counts['last_year'] = "{:.3f}".format(self._myDataEnedis.getLastYear() * 0.001)
@@ -245,6 +247,24 @@ class manageSensorState:
                             status_counts["monthly_evolution"] = "{:.3f}".format(valeur)
                         else:
                             status_counts["monthly_evolution"] = 0
+                        if ((self._myDataEnedis.getCurrentWeekLastYear() is not None) and
+                                (self._myDataEnedis.getCurrentWeekLastYear() != 0) and
+                                (self._myDataEnedis.getCurrentWeek() is not None)):
+                            valeur = \
+                                ((self._myDataEnedis.getCurrentWeek() - self._myDataEnedis.getCurrentWeekLastYear())
+                                 / self._myDataEnedis.getCurrentWeekLastYear()) * 100
+                            status_counts["current_week_evolution"] = "{:.3f}".format(valeur)
+                        else:
+                            status_counts["current_week_evolution"] = 0
+                        if ((self._myDataEnedis.getYesterdayLastYear() is not None) and
+                                (self._myDataEnedis.getYesterdayLastYear() != 0) and
+                                (self._myDataEnedis.getYesterday() is not None)):
+                            valeur = \
+                                ((self._myDataEnedis.getYesterday() - self._myDataEnedis.getYesterdayLastYear())
+                                 / self._myDataEnedis.getYesterdayLastYear()) * 100
+                            status_counts["yesterday_evolution"] = "{:.3f}".format(valeur)
+                        else:
+                            status_counts["yesterday_evolution"] = 0
                         status_counts["subscribed_power"] = self._myDataEnedis.getsubscribed_power()
                         status_counts["offpeak_hours_enedis"] = self._myDataEnedis.getoffpeak_hours()
                         status_counts["offpeak_hours"] = self._myDataEnedis.getHeuresCreuses()

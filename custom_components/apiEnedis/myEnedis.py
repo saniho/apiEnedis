@@ -34,6 +34,7 @@ class myEnedis:
         self._last7Days = []
         self._lastMonthLastYear = 0
         self._currentWeek = 0
+        self._currentWeekLastYear = 0
         self._yesterday = 0
         self._productionYesterday = 0
         self._yesterdayConsumptionMaxPower = 0
@@ -262,6 +263,17 @@ class myEnedis:
         val1, val2 = self.getDataPeriod(hier, cejour)
         return val1, val2, hier
 
+    def CallgetYesterdayLastYear(self):
+        try:
+            today = datetime.date.today()
+            todayLastYear = today.replace(year=today.year - 1)
+            hier = (todayLastYear - datetime.timedelta(1)).strftime(self._formatDateYmd)
+            cejour = (todayLastYear).strftime(self._formatDateYmd)
+            val1, val2 = self.getDataPeriod(hier, cejour)
+        except: # si date n'existe pas .. genre le 28/02
+            val1, val2, hier = "", None, None
+        return val1, val2, hier
+
     def CallgetYesterdayConsumptionMaxPower(self):
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(self._formatDateYmd)
         cejour = (datetime.date.today()).strftime(self._formatDateYmd)
@@ -286,6 +298,20 @@ class myEnedis:
                     datetime.date.today() - datetime.timedelta(days=datetime.datetime.today().weekday() % 7)).strftime(
             self._formatDateYmd)
         if (cejour == firstdateofweek):
+            return 0, False  # cas lundi = premier jour de la semaine et donc rien de dispo
+        else:
+            return self.getDataPeriod(firstdateofweek, cejour)
+
+    def CallgetCurrentWeekLastYear(self):
+        import datetime
+        today = datetime.date.today()
+        numWeek = today.isocalendar()[1] # numero de la semaine
+        d = '2020-W%s'%numWeek
+        rfirstdateofweek = datetime.datetime.strptime(d + '-1', '%G-W%V-%u')
+        r = rfirstdateofweek + datetime.timedelta(days=datetime.datetime.today().weekday() - 1 ) # car on a pas les données du jour...
+        cejour = r.strftime(self._formatDateYmd)
+        firstdateofweek = rfirstdateofweek.strftime(self._formatDateYmd)
+        if (cejour == firstdateofweek) or ( firstdateofweek > cejour ):
             return 0, False  # cas lundi = premier jour de la semaine et donc rien de dispo
         else:
             return self.getDataPeriod(firstdateofweek, cejour)
@@ -536,6 +562,26 @@ class myEnedis:
             self.setfunction('yesterday', True)
         else:
             self._yesterday = 0
+    def getYesterdayLastYear(self):
+        return self._yesterdayLastYear
+
+    def getYesterdayDateLastYear(self):
+        return self._yesterdayLastYearDate
+
+    def updateYesterdayLastYear(self, data=None):
+        self.setfunction('yesterdayLastYear')
+        self.updateLastMethodCall("updateYesterdayLastYear")
+        self.myLog("--updateYesterdayLastYear --")
+        yesterdayLastYearDate = None
+        if (data == None): data, callDone, yesterdayLastYearDate = self.CallgetYesterdayLastYear()
+        else: callDone = True
+        self.myLog("updateYesterdayLastYear : data %s" % (data))
+        if (callDone ) and (self.checkData(data)):
+            self._yesterdayLastYear = self.analyseValue(data)
+            self._yesterdayLastYearDate = yesterdayLastYearDate
+            self.setfunction('yesterdayLastYear', True)
+        else:
+            self._yesterdayLastYear = 0
 
     def getYesterdayConsumptionMaxPower(self):
         return self._yesterdayConsumptionMaxPower
@@ -830,6 +876,27 @@ class myEnedis:
         else:
             self._currentWeek = data
 
+    def getCurrentWeekLastYear(self):
+        return self._currentWeekLastYear
+
+    def updateCurrentWeekLastYear(self, data=None):
+        self.setfunction('currentWeekLastYear')
+        self.updateLastMethodCall("updateCurrentWeekLastYear")
+        self.myLog("--updateCurrentWeekLastYear --")
+        if (data == None):
+            data, callDone = self.CallgetCurrentWeekLastYear()
+        else:
+            callDone = True
+        self.myLog("updateCurrentWeekLastYear : data %s" % (data))
+        if (callDone) and (data != 0):
+            if (self.checkDataPeriod(data)):
+                self._currentWeekLastYear = self.analyseValueAndAdd(data)
+                self.setfunction('currentWeekLastYear', True)
+            else:
+                self._currentWeekLastYear = 0
+        else:
+            self._currentWeekLastYear = data
+
     def getCurrentMonth(self):
         return self._currentMonth
 
@@ -1016,6 +1083,11 @@ class myEnedis:
                                 self.updateLastMonthLastYear()
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterdayConsumptionMaxPower"):
                                 self.updateYesterdayConsumptionMaxPower()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterdayLastYear"):
+                                self.updateYesterdayLastYear()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeekLastYear"):
+                                self.updateCurrentWeekLastYear()
+
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(True)
                             self.myLogWarning("mise à jour effectuee")
