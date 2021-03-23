@@ -36,6 +36,7 @@ class myEnedis:
         self._currentWeek = 0
         self._currentWeekLastYear = 0
         self._yesterday = 0
+        self._yesterdayLastYear = 0
         self._productionYesterday = 0
         self._yesterdayConsumptionMaxPower = 0
         self._lastUpdate = None
@@ -55,6 +56,7 @@ class myEnedis:
         self._updateRealise = False
         self._niemeAppel = 0
         self._yesterdayDate = None
+        self._yesterdayLastYearDate = None
         self._yesterdayDateConsumptionMaxPower = None
         self._version = version
         self._dateHeureDetail = {}
@@ -73,6 +75,7 @@ class myEnedis:
         self._formatDateY0101 = "%Y-01-01"
         self._log.info("run myEnedis")
         self._function = {}
+        self._waitCall = 1 # 1 secondes
         pass
 
     def setfunction(self, name, val = False):
@@ -100,6 +103,8 @@ class myEnedis:
 
     def post_and_get_json(self, url, params=None, data=None, headers=None):
         try:
+            import time
+            time.sleep( self._waitCall )
             import json
             session = requests.Session()
             #self.myLogWarning("params : %s " % (params))
@@ -745,6 +750,9 @@ class myEnedis:
                     (dataAnswer["error_code"] == "ADAM-ERR0069") or \
                     (dataAnswer["error_code"] == "UNKERROR_002"):
                 return False
+            # collecte horaire non activée
+            if (dataAnswer["error_code"] == "ADAM-ERR0075"):
+                return False
             if (dataAnswer["error_code"] == "Internal Server error"):
                 # erreur interne enedis
                 raise Exception('call', "error", "UNKERROR_001")
@@ -760,6 +768,9 @@ class myEnedis:
         if ("error_code" in dataAnswer.keys()):
             # point dans le mauvais sens de lecture
             if (dataAnswer["error_code"] == "ADAM-ERR0069"):
+                return False
+            # collecte horaire non activée
+            if (dataAnswer["error_code"] == "ADAM-ERR0075"):
                 return False
             # No consent can be found for this customer and this usage point
             if dataAnswer["error_code"] in ["ADAM-DC-0008", "ADAM-ERR0069",  "UNKERROR_002"]:
