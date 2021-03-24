@@ -311,15 +311,21 @@ class myEnedis:
         import datetime
         today = datetime.date.today()
         numWeek = today.isocalendar()[1] # numero de la semaine
-        d = '2020-W%s'%numWeek
+        previousYear = datetime.datetime.today().year - 1
+        d = '%s-W%s'%(previousYear,numWeek)
         rfirstdateofweek = datetime.datetime.strptime(d + '-1', '%G-W%V-%u')
-        r = rfirstdateofweek + datetime.timedelta(days=datetime.datetime.today().weekday() - 1 ) # car on a pas les données du jour...
+        r = rfirstdateofweek + datetime.timedelta(days=datetime.datetime.today().weekday() ) # car on a pas les données du jour...
         cejour = r.strftime(self._formatDateYmd)
+        # on recule d'un jour, car on a pas les données du jours, vs on a celle de l'an passé
+        r = rfirstdateofweek + datetime.timedelta(
+            days=datetime.datetime.today().weekday())  # car on a pas les données du jour...
+        cejourmoins1 = r.strftime(self._formatDateYmd)
+
         firstdateofweek = rfirstdateofweek.strftime(self._formatDateYmd)
         if (cejour == firstdateofweek) or ( firstdateofweek > cejour ):
             return 0, False  # cas lundi = premier jour de la semaine et donc rien de dispo
         else:
-            return self.getDataPeriod(firstdateofweek, cejour)
+            return self.getDataPeriod(firstdateofweek, cejourmoins1)
 
     def CallgetLast7Days(self):
         import datetime
