@@ -92,6 +92,7 @@ class manageSensorState:
         state = "unavailable"
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
+        status_counts["versionGit"] = self._myDataEnedis.getGitVersion()
 
         if self._myDataEnedis.getContract() != None:
             # pas necessaire en visu

@@ -76,6 +76,7 @@ class myEnedis:
         self._log.info("run myEnedis")
         self._function = {}
         self._waitCall = 1 # 1 secondes
+        self._gitVersion = None
         pass
 
     def setfunction(self, name, val = False):
@@ -1047,6 +1048,15 @@ class myEnedis:
         self.myLog("horairePossible : %s" % (horairePossible))
         return horairePossible
 
+    def updateGitVersion(self):
+        import gitinformation
+        gitInfo = gitinformation.gitInformation("saniho/apiEnedis")
+        gitInfo.getInformation()
+        self._gitVersion = gitInfo.getVersion()
+
+    def getGitVersion(self):
+        return self._gitVersion
+
     def update(self):
         #self.myLogWarning("myEnedis ...%s yesterday data %s %s" \
         #    %( self.getYesterdayDate(), self.getYesterdayHC(), self.getYesterdayHC()))
@@ -1057,6 +1067,7 @@ class myEnedis:
                 try:
                     self.myLogWarning("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
                                       % (self.get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
+                    self.updateGitVersion()
                     self.updateErrorLastCall("")
                     self.updateLastMethodCall("")
                     self.setUpdateRealise(True)

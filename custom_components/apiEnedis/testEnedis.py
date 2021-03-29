@@ -168,8 +168,15 @@ def testMono():
     retour = myDataEnedis.getYesterday()
     print("retour", retour)
 
+def testGitInformation():
+    import gitinformation
+    git = gitinformation.gitInformation( "saniho/apiEnedis" )
+    git.getInformation()
+    print(git.getVersion())
+
 def main():
     testMulti()
+    testGitInformation()
     #testMono()
 
 if __name__ == '__main__':
