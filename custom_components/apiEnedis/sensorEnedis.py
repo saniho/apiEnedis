@@ -88,11 +88,21 @@ class manageSensorState:
                     state = DateHeureDetail[clefDate] * 0.001
         return status_counts, state
 
+    def getExistsRecentVersion(self, versionCurrent, versionGit):
+        if ( versionCurrent[0] != "v" ):
+            return False
+        elif ( versionCurrent < versionGit):
+            return True
+        else:
+            return False
+
     def getStatus(self, typeSensor = _consommation):
         state = "unavailable"
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
         status_counts["versionGit"] = self._myDataEnedis.getGitVersion()
+        status_counts["versionUpdateAvailable"] = \
+            self.getExistsRecentVersion( self.version, self._myDataEnedis.getGitVersion() )
 
         if self._myDataEnedis.getContract() != None:
             # pas necessaire en visu

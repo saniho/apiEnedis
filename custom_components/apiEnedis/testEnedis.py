@@ -74,7 +74,7 @@ def testComplet( myDataEnedis ):
     import sensorEnedis, time, logging
     logger = logging.getLogger("testEnedis")
     mSS = sensorEnedis.manageSensorState()
-    mSS.init( myDataEnedis, logger )
+    mSS.init( myDataEnedis, logger, __version__ )
     mSS.updateManagerSensor()
     status_counts, state = mSS.getStatus("consommation") # selon le type du sensor cree
     if ( myDataEnedis.getStatusLastCall() == False ):
