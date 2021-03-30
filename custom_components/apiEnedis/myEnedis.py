@@ -9,6 +9,7 @@ try:
         _production
     )
     from . import messages
+    from . import gitinformation
 
 except ImportError:
     import messages
@@ -16,6 +17,8 @@ except ImportError:
         _consommation,
         _production
     )
+
+    import gitinformation
 
 __nameMyEnedis__ = "myEnedis"
 
@@ -1049,8 +1052,7 @@ class myEnedis:
         return horairePossible
 
     def updateGitVersion(self):
-        import gitinformation
-        gitInfo = gitinformation.gitInformation("saniho/apiEnedis")
+        gitInfo = gitinformation.gitinformation("saniho/apiEnedis")
         gitInfo.getInformation()
         self._gitVersion = gitInfo.getVersion()
 
