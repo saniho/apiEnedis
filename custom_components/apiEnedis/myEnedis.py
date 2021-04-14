@@ -782,6 +782,9 @@ class myEnedis:
             # collecte horaire non activée
             if (dataAnswer["error_code"] == "ADAM-ERR0075"):
                 return False
+            # no_data_found
+            if (dataAnswer["error_code"] == "no_data_found"):
+                return False
             # No consent can be found for this customer and this usage point
             if dataAnswer["error_code"] in ["ADAM-DC-0008", "ADAM-ERR0069",  "UNKERROR_002"]:
                 return False
@@ -994,21 +997,24 @@ class myEnedis:
         return self._errorLastCall
 
     def getCardErrorLastCall(self):
-        if ( "alert_user" in self.getLastAnswer()):
-            if ( self.getLastAnswer()["alert_user"]):
-                if ( "description" in self.getLastAnswer()
-                    and "tag" in self.getLastAnswer()):
-                    # si erreur autre que mauvais sens de lecture...
-                    if ( self.getLastAnswer()["error_code"] != "ADAM-ERR0069" ):
-                        return "%s (%s-%s)" %(self.getLastAnswer()["description"], self.getLastAnswer()["error_code"], self.getLastAnswer()["tag"])
+        if ( self.getLastAnswer() != None):
+            if ( "alert_user" in self.getLastAnswer()):
+                if ( self.getLastAnswer()["alert_user"]):
+                    if ( "description" in self.getLastAnswer()
+                        and "tag" in self.getLastAnswer()):
+                        # si erreur autre que mauvais sens de lecture...
+                        if ( self.getLastAnswer()["error_code"] != "ADAM-ERR0069" ):
+                            return "%s (%s-%s)" %(self.getLastAnswer()["description"], self.getLastAnswer()["error_code"], self.getLastAnswer()["tag"])
+                        else:
+                            return ""
                     else:
-                        return ""
+                        return self.getErrorLastCall()
                 else:
-                    return self.getErrorLastCall()
+                    return ""
             else:
-                return ""
+                return self.getErrorLastCall()
         else:
-            return self.getErrorLastCall()
+            return ""
 
     def getLastMethodCall(self):
         return self._errorLastMethodCall

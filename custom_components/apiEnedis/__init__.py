@@ -46,6 +46,8 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup(hass, config):
     """Import integration from config."""
+
+
     hass.data.setdefault(DOMAIN, {})
     conf = config.get(DOMAIN)
     if conf:
