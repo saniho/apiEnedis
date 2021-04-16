@@ -246,6 +246,7 @@ class manageSensorState:
                         status_counts['last_month'] = "{:.3f}".format(self._myDataEnedis.getLastMonth() * 0.001)
                         status_counts['last_month_last_year'] = "{:.3f}".format(self._myDataEnedis.getLastMonthLastYear() * 0.001)
                         status_counts['current_month'] = "{:.3f}".format(self._myDataEnedis.getCurrentMonth() * 0.001)
+                        status_counts['current_month_last_year'] = "{:.3f}".format(self._myDataEnedis.getCurrentMonthLastYear() * 0.001)
                         status_counts['last_year'] = "{:.3f}".format(self._myDataEnedis.getLastYear() * 0.001)
                         status_counts['current_year'] = "{:.3f}".format(self._myDataEnedis.getCurrentYear() * 0.001)
                         status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
@@ -268,6 +269,15 @@ class manageSensorState:
                             status_counts["current_week_evolution"] = "{:.3f}".format(valeur)
                         else:
                             status_counts["current_week_evolution"] = 0
+                        if ((self._myDataEnedis.getCurrentMonthLastYear() is not None) and
+                                (self._myDataEnedis.getCurrentMonthLastYear() != 0) and
+                                (self._myDataEnedis.getCurrentMonth() is not None)):
+                            valeur = \
+                                ((self._myDataEnedis.getCurrentMonth() - self._myDataEnedis.getCurrentMonthLastYear())
+                                 / self._myDataEnedis.getCurrentMonthLastYear()) * 100
+                            status_counts["current_month_evolution"] = "{:.3f}".format(valeur)
+                        else:
+                            status_counts["current_month_evolution"] = 0
                         if ((self._myDataEnedis.getYesterdayLastYear() is not None) and
                                 (self._myDataEnedis.getYesterdayLastYear() != 0) and
                                 (self._myDataEnedis.getYesterday() is not None)):

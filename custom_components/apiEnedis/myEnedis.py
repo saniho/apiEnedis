@@ -30,6 +30,7 @@ class myEnedis:
         self._lastMonth = 0
         self._lastYear = 0
         self._currentMonth = 0
+        self._currentMonthLastYear = 0
         self._currentYear = 0
         self._lastWeek = 0
         self._last7Days = []
@@ -316,9 +317,9 @@ class myEnedis:
         previousYear = datetime.datetime.today().year - 1
         d = '%s-W%s'%(previousYear,numWeek)
         rfirstdateofweek = datetime.datetime.strptime(d + '-1', '%G-W%V-%u')
+        # on recule d'un jour, car on a pas les données du jours, vs on a celle de l'an passé
         r = rfirstdateofweek + datetime.timedelta(days=datetime.datetime.today().weekday() ) # car on a pas les données du jour...
         cejour = r.strftime(self._formatDateYmd)
-        # on recule d'un jour, car on a pas les données du jours, vs on a celle de l'an passé
         r = rfirstdateofweek + datetime.timedelta(
             days=datetime.datetime.today().weekday())  # car on a pas les données du jour...
         cejourmoins1 = r.strftime(self._formatDateYmd)
@@ -396,6 +397,17 @@ class myEnedis:
             return self.getDataPeriod(debCurrentMonth, cejour)
         else:
             return 0, False
+
+    def CallgetCurrentMonthLastYear(self):
+        import datetime
+        today = datetime.date.today()
+        today = today.replace( year = datetime.date.today().year - 1 )
+        debCurrentMonthPreviousYear = today.strftime(self._formatDateYm01)
+        cejourPreviousYear = datetime.date.today()
+        cejourPreviousYear = cejourPreviousYear.replace( year = datetime.date.today().year - 1 )
+        cejourPreviousYear = cejourPreviousYear - datetime.timedelta(1)
+        cejourPreviousYear = cejourPreviousYear.strftime(self._formatDateYmd)
+        return self.getDataPeriod(debCurrentMonthPreviousYear, cejourPreviousYear)
 
     def CallgetCurrentYear(self):
         import datetime
@@ -919,6 +931,27 @@ class myEnedis:
         else:
             self._currentWeekLastYear = data
 
+    def getCurrentMonthLastYear(self):
+        return self._currentMonthLastYear
+
+    def updateCurrentMonthLastYear(self, data=None):
+        self.setfunction('currentMonthLastYear')
+        self.updateLastMethodCall("updateCurrentMonthLastYear")
+        self.myLog("--updateCurrentMonthLastYear --")
+        if (data == None):
+            data, callDone = self.CallgetCurrentMonthLastYear()
+        else:
+            callDone = True
+        self.myLog("updateCurrentMonthLastYear : data %s" % (data))
+        if (callDone) and (data != 0):
+            if (self.checkDataPeriod(data)):
+                self._currentMonthLastYear = self.analyseValueAndAdd(data)
+                self.setfunction('currentWeekLastYear', True)
+            else:
+                self._currentMonthLastYear = 0
+        else:
+            self._currentMonthLastYear = data
+
     def getCurrentMonth(self):
         return self._currentMonth
 
@@ -1121,6 +1154,8 @@ class myEnedis:
                                 self.updateYesterdayLastYear()
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeekLastYear"):
                                 self.updateCurrentWeekLastYear()
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentMonthLastYear"):
+                                self.updateCurrentMonthLastYear()
 
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(True)
