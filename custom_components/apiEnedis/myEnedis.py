@@ -1,6 +1,4 @@
-import requests
-import datetime, time, sys
-import json
+import datetime, sys
 import logging
 
 try:
@@ -109,24 +107,24 @@ class myEnedis:
         try:
             import time
             time.sleep( self._waitCall )
-            import json
+            import json, requests
             session = requests.Session()
-            #self.myLogWarning("params : %s " % (params))
-            #self.myLogWarning("data : %s " % (json.dumps(data)))
+            session.verify = True
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
-            #print(response.json())
             return response.json()
         except requests.exceptions.Timeout as error:
             response = {"enedis_return": {"error": "UNKERROR_002"}}
             return response
         except requests.exceptions.HTTPError as error:
             if ( "ADAM-ERR0069" not in response.text ) and \
-                ( "__token_refresh_401" not in response.text ):
+                    ( "__token_refresh_401" not in response.text ):
                 self.myLogError("*" * 60)
                 self.myLogError("header : %s " % (headers))
+                self.myLogError("params : %s " % (params))
                 self.myLogError("data : %s " % (json.dumps(data)))
                 self.myLogError("Error JSON : %s " % (response.text))
+                self.myLogError("*" * 60)
             #with open('error.json', 'w') as outfile:
             #    json.dump(response.json(), outfile)
 
@@ -524,9 +522,9 @@ class myEnedis:
             self.myLog("--updateContract --")
             if (data == None): data = self.CallgetDataContract()
             self.myLog("updateContract : data %s" % (data))
-            self.checkDataContract(data)
-            self.myLog("updateContract(2) : data %s" % (data))
-            self._contract = self.analyseValueContract(data)
+            if ( self.checkDataContract(data) ):
+                self.myLog("updateContract(2) : data %s" % (data))
+                self._contract = self.analyseValueContract(data)
         except Exception as inst:
             if (inst.args[:2] == ("call", "error")):
                 self.myLogWarning("*" * 60)

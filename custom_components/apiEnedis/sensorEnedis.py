@@ -244,6 +244,7 @@ class manageSensorState:
                         status_counts['current_week'] = "{:.3f}".format(self._myDataEnedis.getCurrentWeek() * 0.001)
                         status_counts['current_week_last_year'] = "{:.3f}".format(self._myDataEnedis.getCurrentWeekLastYear() * 0.001)
                         status_counts['last_month'] = "{:.3f}".format(self._myDataEnedis.getLastMonth() * 0.001)
+                        status_counts['last_month_last_year'] = "{:.3f}".format(self._myDataEnedis.getLastMonthLastYear() * 0.001)
                         status_counts['current_month'] = "{:.3f}".format(self._myDataEnedis.getCurrentMonth() * 0.001)
                         status_counts['last_year'] = "{:.3f}".format(self._myDataEnedis.getLastYear() * 0.001)
                         status_counts['current_year'] = "{:.3f}".format(self._myDataEnedis.getCurrentYear() * 0.001)
