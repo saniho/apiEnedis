@@ -25,7 +25,7 @@ DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
 DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60*10 # 1 fois toutes les 10 minutes
 
 HEURESCREUSES_ON = "heuresCreusesON"
-__VERSION__ = "1.1.4.3RC2e" # attention updater aussi manifest.json
+__VERSION__ = "1.1.4.3RC2f" # attention updater aussi manifest.json
 __name__ = "myEnedis"
 
 _consommation = "consommation"

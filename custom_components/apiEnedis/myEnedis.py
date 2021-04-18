@@ -1078,13 +1078,14 @@ class myEnedis:
 
     def getAppelAEffectuer(self):
         # hier 23h
-        hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(hour=23,minute=40)
-        lastCall = self.getTimeLastCall()
+        #hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(hour=23,minute=40)
+        #lastCall = self.getTimeLastCall()
         hourNow = datetime.datetime.now().hour
-        self.myLog("TimeLastCall : %s" % (lastCall))
-        self.myLog("now : %s" % (hourNow))
-        # si le dernier appel à eut lieu avant hier 23h et que maintenant il est plus que 10h, alors
-        horairePossible = ( lastCall < hier ) and ( hourNow >= 10 )
+        #self.myLog("TimeLastCall : %s" % (lastCall))
+        #self.myLog("now : %s" % (hourNow))
+        ## si le dernier appel à eut lieu avant hier 23h et que maintenant il est plus que 10h, alors
+        #horairePossible = ( lastCall < hier ) and ( hourNow >= 10 )
+        horairePossible = ( hourNow >= 10 ) and ( hourNow < 23 )
         self.myLog("horairePossible : %s" % (horairePossible))
         return horairePossible
 
