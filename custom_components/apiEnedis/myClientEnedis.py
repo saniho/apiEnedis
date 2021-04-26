@@ -20,7 +20,7 @@ except ImportError:
 
 __nameMyEnedis__ = "myEnedis"
 
-class myEnedis:
+class myClientEnedis:
     def __init__(self, token, PDL_ID, delai=3600, heuresCreuses=None, \
                  heuresCreusesCost=0, heuresPleinesCost=0, log=None, version="0.0.0",
                  heuresCreusesON=True):
@@ -85,7 +85,7 @@ class myEnedis:
         self._function[name] = val
 
     def myLog(self, message):
-        #self._log.info(message)
+        self._log.info(message)
         #self._log.warning(message)
         pass
 
@@ -130,6 +130,22 @@ class myEnedis:
             #    json.dump(response.json(), outfile)
 
             return response.json()
+
+    def getData(self):
+        if (self.getContract() == None):
+            self.myLog("contract ? %s" %self.get_PDL_ID())
+            self.updateContract()
+            self.updateHCHP()
+            try:
+                self.updateContract()
+                self.updateHCHP()
+                self.myLog("contract ?(end) %s" %self.get_PDL_ID())
+            except Exception as inst:
+                self.myLogError("myEnedis err %s" % (inst))
+
+        if (self.getContract() != None):
+            self.update()
+        return True
 
     def setLastAnswsr(self, lastanswer):
         self._lastAnswer = lastanswer

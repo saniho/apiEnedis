@@ -31,20 +31,8 @@ class manageSensorState:
         self.setInit(True)
         pass
 
-    def initUpdate(self):
-        if (self._myDataEnedis.getContract() == None):
-            self._LOGGER.info("contract ? %s" %self._myDataEnedis.get_PDL_ID())
-            try:
-                self._myDataEnedis.updateContract()
-                self._myDataEnedis.updateHCHP()
-            except Exception as inst:
-                self._LOGGER.warning("myEnedis err %s" % (inst))
-
-    def updateManagerSensor(self):
-        self.initUpdate()
-        self._myDataEnedis.update()
-        self._LOGGER.info("updateManagerSensor - done - %s" %self._myDataEnedis.get_PDL_ID())
-        pass
+    def get_PDL_ID(self):
+        return self._myDataEnedis.get_PDL_ID()
 
     def getStatusYesterdayCost(self):
         state = "unavailable"
@@ -89,7 +77,7 @@ class manageSensorState:
         return status_counts, state
 
     def getExistsRecentVersion(self, versionCurrent, versionGit):
-        if ( versionCurrent[0] != "v" ):
+        if ( versionCurrent is None ) or ( versionGit is None ):
             return False
         elif ( versionCurrent < versionGit):
             return True
@@ -307,14 +295,14 @@ class manageSensorState:
                 except Exception:
                     status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
                     status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()
-                    self._LOGGER.warning("-" * 60)
+                    self._LOGGER.error("-" * 60)
                     exc_type, exc_value, exc_traceback = sys.exc_info()
-                    self._LOGGER.warning(sys.exc_info())
+                    self._LOGGER.error(sys.exc_info())
                     msg = repr(traceback.format_exception(exc_type, exc_value,
                                                           exc_traceback))
 
-                    self._LOGGER.warning(msg)
-                    self._LOGGER.warning("errorLastCall : %s " % (self._myDataEnedis.getErrorLastCall()))
+                    self._LOGGER.error(msg)
+                    self._LOGGER.error("errorLastCall : %s " % (self._myDataEnedis.getErrorLastCall()))
             else:
                 status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
                 status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()
