@@ -52,15 +52,16 @@ def testMulti():
         #heuresCreusesON = False
 
         # Lecture fichier Json de sortie
-        dataJson = {} #readDataJson()
+        dataJson = readDataJson()
+        dataJson = {}
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=10,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON, dataJson= dataJson )
-        myDataEnedis.getData()
+        #myDataEnedis.getData()
 
-        #myDataEnedis.updateContract()
-        #myDataEnedis.updateHCHP()
-        #myDataEnedis.updateYesterday()
+        myDataEnedis.updateContract()
+        myDataEnedis.updateHCHP()
+        myDataEnedis.updateYesterday()
         #print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
         #print("myDataEnedis.getContract() : ", myDataEnedis.getContract()['usage_point_status'])
         #print("myDataEnedis.getContract() : ", myDataEnedis.getTypePDL())
