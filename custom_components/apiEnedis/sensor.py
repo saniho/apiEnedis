@@ -29,6 +29,7 @@ except ImportError:
 
 from .const import (
     DOMAIN,
+    __VERSION__,
     __name__,
     _consommation,
     _production,
@@ -40,6 +41,10 @@ from .sensorEnedis import manageSensorState
 
 ICON = "mdi:package-variant-closed"
 
+from .myEnedisSensorCoordinator import myEnedisSensorCoordinator
+from .myEnedisSensorCoordinatorHistory import myEnedisSensorCoordinatorHistory
+from .myEnedisSensorYesterdayCostCoordinator import myEnedisSensorYesterdayCostCoordinator
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ) -> None:
@@ -48,8 +53,17 @@ async def async_setup_entry(
 
     entities = []
     for sensor_type in SENSOR_TYPES:
+        mysensor = SENSOR_TYPES[sensor_type]
         if sensor_type == "principal":
-            entities.append(myEnedisSensorCoordinator(sensor_type, coordinator_enedis))
+            entities.append(myEnedisSensorCoordinator(mysensor, coordinator_enedis))
+        elif sensor_type == "history_all":
+            entities.append(myEnedisSensorCoordinatorHistory(mysensor, coordinator_enedis, detail="ALL"))
+        elif sensor_type == "history_hc":
+            entities.append(myEnedisSensorCoordinatorHistory(mysensor, coordinator_enedis, detail="HC"))
+        elif sensor_type == "history_hp":
+            entities.append(myEnedisSensorCoordinatorHistory(mysensor, coordinator_enedis, detail="HP"))
+        elif sensor_type == "yesterdayCost":
+            entities.append(myEnedisSensorYesterdayCostCoordinator(mysensor, coordinator_enedis))
         else:
             pass
             #entities.append(MeteoFranceSensor(sensor_type, coordinator_enedis))
@@ -58,61 +72,3 @@ async def async_setup_entry(
         entities,
         False,
     )
-
-class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
-    """."""
-
-    def __init__(self, sensor_type: str, coordinator: DataUpdateCoordinator, typeSensor = _consommation):
-        """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER)
-        self._attributes = {}
-        self._state = None
-        self._unit = "kWh"
-        self._lastState = None
-        self._lastAttributes = None
-        self._typeSensor = typeSensor
-
-    @property
-    def unique_id(self):
-        "Return a unique_id for this entity."
-        if self._typeSensor == _production:
-            name = "myEnedis.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
-        else:
-            name = "myEnedis.%s" %(self._myDataSensorEnedis.get_PDL_ID())
-        return name
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        if ( self._typeSensor == _production):
-            name = "myEnedis.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
-        else:
-            name = "myEnedis.%s" %(self._myDataSensorEnedis.get_PDL_ID())
-        return name
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return self._unit
-
-    @property
-    def device_state_attributes(self):
-        """Return the state attributes."""
-        self._attributes = {
-            ATTR_ATTRIBUTION: "",
-        }
-        status_counts, state = self._myDataSensorEnedis.getStatus( self._typeSensor )
-        self._attributes.update(status_counts)
-        self._state = state
-        return self._attributes
-
-    @property
-    def icon(self):
-        """Icon to use in the frontend."""

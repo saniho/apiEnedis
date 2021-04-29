@@ -69,7 +69,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = timedelta(minutes=15)
+SCAN_INTERVAL = timedelta(hours=3, minutes=00) # delai de lancement pour savoir si update à faire
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up Enedis from legacy config file."""
@@ -93,17 +93,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up an Enedis account from a config entry."""
     hass.data.setdefault(DOMAIN, {})
 
+    heurescreuses = None
     delai_interval = entry.options.get(SCAN_INTERVAL)
     token = entry.options.get(CONF_TOKEN, "")
     code = str(entry.options.get(CONF_CODE, ""))
-    hpcost = str(entry.options.get(HP_COST, "0.0"))
-    hccost = str(entry.options.get(HC_COST, "0.0"))
-    heurescreuses = bool(entry.options.get(HEURESCREUSES_ON, True)),
+    hpcost = float(entry.options.get(HP_COST, "0.0"))
+    hccost = float(entry.options.get(HC_COST, "0.0"))
+    heurescreusesON = bool(entry.options.get(HEURESCREUSES_ON, True)),
 
     client = myClientEnedis.myClientEnedis(token, code, delai_interval,
                                        heuresCreuses=heurescreuses, heuresCreusesCost=hccost,
-                                       heuresPleinesCost=hpcost, log=_LOGGER,
-                                       version=__VERSION__, heuresCreusesON=heurescreuses)
+                                       heuresPleinesCost=hpcost,
+                                       version=__VERSION__, heuresCreusesON=heurescreusesON)
 
     coordinator_enedis = sensorEnedisCoordinator(hass, entry, client)
     # Fetch initial data so we have data when entities subscribe

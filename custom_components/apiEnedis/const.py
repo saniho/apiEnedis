@@ -1,5 +1,8 @@
 """ Constants """
 
+__VERSION__ = "1.1.4.4rc3" # attention updater aussi manifest.json
+__name__ = "myEnedis"
+
 try:
     from homeassistant.const import (
         CONF_NAME,
@@ -38,8 +41,6 @@ DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60*10 # 1 fois toutes les 10 minutes
 HEURESCREUSES_ON = "heuresCreusesON"
 UNDO_UPDATE_LISTENER = "undo_update_listener"
 COORDINATOR_ENEDIS = "coordinator_enedis"
-__VERSION__ = "1.1.4.4rc2" # attention updater aussi manifest.json
-__name__ = "myEnedis"
 
 _consommation = "consommation"
 _production = "production"
@@ -47,19 +48,27 @@ _production = "production"
 PLATFORMS = ["sensor"]
 
 ENTITY_NAME = "name"
-ENTITY_UNIT = "unit"
-ENTITY_ICON = "icon"
-ENTITY_DEVICE_CLASS = "device_class"
-ENTITY_ENABLE = "enable"
-ENTITY_API_DATA_PATH = "data_path"
+ENTITY_DELAI = "delai"
 
 SENSOR_TYPES = {
     "principal": {
         ENTITY_NAME: "principal",
-        ENTITY_UNIT: "PRESSURE_HPA",
-        ENTITY_ICON: None,
-        ENTITY_DEVICE_CLASS: "DEVICE_CLASS_PRESSURE",
-        ENTITY_ENABLE: False,
-        ENTITY_API_DATA_PATH: "current_forecast:sea_level",
-    }
+        ENTITY_DELAI: 60,
+    },
+    "history_all": {
+        ENTITY_NAME: "history_all",
+        ENTITY_DELAI: 60,
+    },
+    "history_hp": {
+        ENTITY_NAME: "history_hp",
+        ENTITY_DELAI: 60,
+    },
+    "history_hc": {
+        ENTITY_NAME: "history_hc",
+        ENTITY_DELAI: 60,
+    },
+    "yesterdayCost": {
+        ENTITY_NAME: "yesterdayCost",
+        ENTITY_DELAI: 60,
+    },
 }

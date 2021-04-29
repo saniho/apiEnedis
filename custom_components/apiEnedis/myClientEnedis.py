@@ -22,8 +22,8 @@ __nameMyEnedis__ = "myEnedis"
 
 class myClientEnedis:
     def __init__(self, token, PDL_ID, delai=3600, heuresCreuses=None, \
-                 heuresCreusesCost=0, heuresPleinesCost=0, log=None, version="0.0.0",
-                 heuresCreusesON=True):
+                 heuresCreusesCost=0, heuresPleinesCost=0, version="0.0.0",
+                 heuresCreusesON=True, dataJson={}):
         self._serverName = "https://enedisgateway.tech/api"
         self._token = token
         self._PDL_ID = PDL_ID
@@ -79,13 +79,16 @@ class myClientEnedis:
         self._function = {}
         self._waitCall = 1 # 1 secondes
         self._gitVersion = None
+        self._dataJson = dataJson
         pass
 
     def setfunction(self, name, val = False):
         self._function[name] = val
 
     def myLog(self, message):
-        self._log.info(message)
+        #print("LOG//", message)
+        #chaineMessage = "%s - %s" %( self.get_PDL_ID(), message)
+        #self._log.info(chaineMessage)
         #self._log.warning(message)
         pass
 
@@ -134,8 +137,6 @@ class myClientEnedis:
     def getData(self):
         if (self.getContract() == None):
             self.myLog("contract ? %s" %self.get_PDL_ID())
-            self.updateContract()
-            self.updateHCHP()
             try:
                 self.updateContract()
                 self.updateHCHP()
@@ -544,12 +545,24 @@ class myClientEnedis:
             opcnew = []
         return opcnew
 
+    def setDataJson(self, quoi, valeur ):
+        self._dataJson[ quoi ] = valeur
+
+    def getDataJson(self, quoi):
+        return self._dataJson.get(quoi, None)
+
+    def getDataJsonKey(self):
+        return self._dataJson.keys()
+
     def updateContract(self, data=None):
         try:
-            self.updateLastMethodCall("updateContract")
+            clefFunction = "updateContract"
+            self.updateLastMethodCall(clefFunction)
             self.myLog("--updateContract --")
+            if (data == None): data = self.getDataJson(clefFunction)
             if (data == None): data = self.CallgetDataContract()
             self.myLog("updateContract : data %s" % (data))
+            self.setDataJson( clefFunction, data )
             if ( self.checkDataContract(data) ):
                 self.myLog("updateContract(2) : data %s" % (data))
                 self._contract = self.analyseValueContract(data)
@@ -590,13 +603,16 @@ class myClientEnedis:
         return self._yesterdayDate
 
     def updateYesterday(self, data=None):
+        clefFunction = "updateYesterday"
         self.setfunction('yesterday')
-        self.updateLastMethodCall("updateYesterday")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateYesterday --")
         yesterdayDate = None
+        if (data == None): data, callDone, yesterdayDate = self.getDataJson(clefFunction), True, None
         if (data == None): data, callDone, yesterdayDate = self.CallgetYesterday()
         else: callDone = True
         self.myLog("updateYesterday : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone ) and (self.checkData(data)):
             self._yesterday = self.analyseValue(data)
             self._yesterdayDate = yesterdayDate
@@ -610,13 +626,16 @@ class myClientEnedis:
         return self._yesterdayLastYearDate
 
     def updateYesterdayLastYear(self, data=None):
+        clefFunction = "updateYesterdayLastYear"
         self.setfunction('yesterdayLastYear')
-        self.updateLastMethodCall("updateYesterdayLastYear")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateYesterdayLastYear --")
         yesterdayLastYearDate = None
+        if (data == None): data, callDone, yesterdayLastYearDate = self.getDataJson(clefFunction), True, None
         if (data == None): data, callDone, yesterdayLastYearDate = self.CallgetYesterdayLastYear()
         else: callDone = True
         self.myLog("updateYesterdayLastYear : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone ) and (self.checkData(data)):
             self._yesterdayLastYear = self.analyseValue(data)
             self._yesterdayLastYearDate = yesterdayLastYearDate
@@ -631,13 +650,16 @@ class myClientEnedis:
         return self._yesterdayConsumptionMaxPowerDate
 
     def updateYesterdayConsumptionMaxPower(self, data=None):
+        clefFunction = "updateYesterdayConsumptionMaxPower"
         self.setfunction('yesterdayConsumptionMaxPower')
-        self.updateLastMethodCall("updateYesterdayConsumptionMaxPower")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateYesterdayConsumptionMaxPower --")
         yesterdayDate = None
+        if (data == None): data, callDone, _yesterdayDateConsumptionMaxPower = self.getDataJson(clefFunction), True, None
         if (data == None): data, callDone, _yesterdayDateConsumptionMaxPower = self.CallgetYesterdayConsumptionMaxPower()
         else: callDone = True
         self.myLog("updateYesterdayConsumptionMaxPower : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone ) and (self.checkData(data)):
             self._yesterdayConsumptionMaxPower = self.analyseValue(data)
             self._yesterdayDateConsumptionMaxPower = _yesterdayDateConsumptionMaxPower
@@ -649,12 +671,15 @@ class myClientEnedis:
         return self._productionYesterday
 
     def updateProductionYesterday(self, data=None):
+        clefFunction = "updateProductionYesterday"
         self.setfunction('productionYesterday' )
-        self.updateLastMethodCall("updateProductionYesterday")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateProductionYesterday --")
+        if (data == None): data = self.getDataJson(clefFunction)
         if (data == None): data = self.CallgetProductionYesterday()
         else: callDone = True
         self.myLog("updateProductionYesterday : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (self.checkData(data)):
             self._productionYesterday = self.analyseValue(data)
             self.setfunction('productionYesterday', True )
@@ -764,12 +789,15 @@ class myClientEnedis:
                 self._HC += int(x["value"]) * self.getCoeffIntervalLength()  # car par transhce de 30 minutes
 
     def updateDataYesterdayHCHP(self, data=None, _yesterdayDate=None):
+        clefFunction = "updateDataYesterdayHCHP"
         self.setfunction('yesterdayHCHP')
-        self.updateLastMethodCall("updateDataYesterdayHCHP")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateDataYesterdayHCHP --")
         if (_yesterdayDate != None): yesterdayDate = _yesterdayDate
+        if (data == None): data, yesterdayDate = self.getDataJson(clefFunction), None
         if (data == None): data, yesterdayDate = self.CallgetDataYesterdayHCHP()
         self.myLog("updateDataYesterdayHCHP : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (self.checkData(data)):
             self.createHCHP(data)
             self._yesterdayHCHPDate = yesterdayDate
@@ -830,12 +858,15 @@ class myClientEnedis:
         return self._lastMonth
 
     def updateLastMonth(self, data=None):
+        clefFunction = "updateLastMonth"
         self.setfunction('lastMonth')
-        self.updateLastMethodCall("updateLastMonth")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateLastMonth --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None): data, callDone = self.CallgetLastMonth()
         else: callDone = True
         self.myLog("updateLastMonth : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone ) and (self.checkDataPeriod(data)):
             self._lastMonth = self.analyseValueAndAdd(data)
             self.setfunction('lastMonth', True )
@@ -846,12 +877,15 @@ class myClientEnedis:
         return self._lastMonthLastYear
 
     def updateLastMonthLastYear(self, data=None, callDone=None):
+        clefFunction = "updateLastMonthLastYear"
         self.setfunction('lastMonthLastYear')
-        self.updateLastMethodCall("updateLastMonthLastYear")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateLastMonthLastYear --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None): data, callDone = self.CallgetLastMonthLastYear()
         else: callDone = True
         self.myLog("updateLastMonthLastYear : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone) and (self.checkDataPeriod(data)):
             self._lastMonthLastYear = self.analyseValueAndAdd(data)
             self.setfunction('lastMonthLastYear', True )
@@ -862,12 +896,15 @@ class myClientEnedis:
         return self._lastWeek
 
     def updateLastWeek(self, data=None):
+        clefFunction = "updateLastWeek"
         self.setfunction('lastweek' )
-        self.updateLastMethodCall("updateLastWeek")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateLastWeek --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None): data, callDone = self.CallgetLastWeek()
         else: callDone = True
         self.myLog("updateLastWeek : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone) and ( self.checkDataPeriod(data)):
             self._lastWeek = self.analyseValueAndAdd(data)
             self.setfunction('lastWeek', True )
@@ -878,12 +915,15 @@ class myClientEnedis:
         return self._last7Days
 
     def updateLast7Days(self, data=None):
+        clefFunction = "updateLast7Days"
         self.setfunction('last7Days')
-        self.updateLastMethodCall("updateLast7Days")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateLast7Days --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None): data, callDone = self.CallgetLast7Days()
         else: callDone = True
         self.myLog("updateLast7Days : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone) and (self.checkDataPeriod(data)):
             # construction d'un dico utile ;)
             self._last7Days = self.analyseValueAndMadeDico(data)
@@ -895,11 +935,14 @@ class myClientEnedis:
         return self._last7DaysDetails
 
     def updateLast7DaysDetails(self, data=None):
+        clefFunction = "updateLast7DaysDetails"
         self.setfunction('last7DaysDetails' )
-        self.updateLastMethodCall("updateLast7DaysDetails")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateLast7DaysDetails --")
+        if (data == None): data = self.getDataJson(clefFunction)
         if (data == None): data = self.CallgetLast7DaysDetails()
         self.myLog("updateLast7DaysDetails : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (self.checkDataPeriod(data)):
             # construction d'un dico utile ;)
             self._joursHC, self._joursHP = self.createMultiDaysHCHP(data)
@@ -911,12 +954,15 @@ class myClientEnedis:
         return self._currentWeek
 
     def updateCurrentWeek(self, data=None):
+        clefFunction = "updateCurrentWeek"
         self.setfunction('currentWeek' )
-        self.updateLastMethodCall("updateCurrentWeek")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateCurrentWeek --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None): data, callDone = self.CallgetCurrentWeek()
         else: callDone = True
         self.myLog("updateCurrentWeek : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if ( callDone ) and ( data != 0 ):
             if (self.checkDataPeriod(data)):
                 self._currentWeek = self.analyseValueAndAdd(data)
@@ -930,14 +976,17 @@ class myClientEnedis:
         return self._currentWeekLastYear
 
     def updateCurrentWeekLastYear(self, data=None):
+        clefFunction = "updateCurrentWeekLastYear"
         self.setfunction('currentWeekLastYear')
-        self.updateLastMethodCall("updateCurrentWeekLastYear")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateCurrentWeekLastYear --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None):
             data, callDone = self.CallgetCurrentWeekLastYear()
         else:
             callDone = True
         self.myLog("updateCurrentWeekLastYear : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone) and (data != 0):
             if (self.checkDataPeriod(data)):
                 self._currentWeekLastYear = self.analyseValueAndAdd(data)
@@ -951,14 +1000,17 @@ class myClientEnedis:
         return self._currentMonthLastYear
 
     def updateCurrentMonthLastYear(self, data=None):
+        clefFunction = "updateCurrentMonthLastYear"
         self.setfunction('currentMonthLastYear')
-        self.updateLastMethodCall("updateCurrentMonthLastYear")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateCurrentMonthLastYear --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None):
             data, callDone = self.CallgetCurrentMonthLastYear()
         else:
             callDone = True
         self.myLog("updateCurrentMonthLastYear : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone) and (data != 0):
             if (self.checkDataPeriod(data)):
                 self._currentMonthLastYear = self.analyseValueAndAdd(data)
@@ -972,12 +1024,15 @@ class myClientEnedis:
         return self._currentMonth
 
     def updateCurrentMonth(self, data=None):
+        clefFunction="updateCurrentMonth"
         self.setfunction('currentMonth')
-        self.updateLastMethodCall("updateCurrentMonth")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateCurrentMonth --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None): data, callDone = self.CallgetCurrentMonth()
         else: callDone = True
         self.myLog("updateCurrentMonth : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone) and ( data != 0 ):
             if (self.checkDataPeriod(data)):
                 self._currentMonth = self.analyseValueAndAdd(data)
@@ -991,12 +1046,15 @@ class myClientEnedis:
         return self._lastYear
 
     def updateLastYear(self, data=None):
+        clefFunction = "updateLastYear"
         self.setfunction('lastYear')
-        self.updateLastMethodCall("updateLastYear")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateLastYear --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None): data, callDone = self.CallgetLastYear()
         else: callDone = True
         self.myLog("updateLastYear : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone ) and ( self.checkDataPeriod(data)):
             self._lastYear = self.analyseValueAndAdd(data)
             self.setfunction('lastYear', True )
@@ -1007,12 +1065,15 @@ class myClientEnedis:
         return self._currentYear
 
     def updateCurrentYear(self, data=None):
+        clefFunction = "updateCurrentYear"
         self.setfunction('currentYear')
-        self.updateLastMethodCall("updateCurrentYear")
+        self.updateLastMethodCall(clefFunction)
         self.myLog("--updateCurrentYear --")
+        if (data == None): data, callDone = self.getDataJson(clefFunction), True
         if (data == None): data, callDone = self.CallgetCurrentYear()
         else: callDone = True
         self.myLog("updateCurrentYear : data %s" % (data))
+        self.setDataJson( clefFunction, data )
         if (callDone ) and ( data != 0 ):
             if (self.checkDataPeriod(data)):
                 self._currentYear = self.analyseValueAndAdd(data)
