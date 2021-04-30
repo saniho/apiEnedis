@@ -10,7 +10,7 @@ from custom_components.apiEnedis.const import (
 )
 
 def writeDataJson( myDataEnedis ):
-    directory = "../myCredential/20210428/"
+    directory = "../myCredential/20210429/"
     for clef in myDataEnedis.getDataJsonKey():
         nomfichier = directory+clef+".json"
         data = myDataEnedis.getDataJson(clef)
@@ -62,13 +62,13 @@ def testMulti():
         myDataEnedis.updateContract()
         myDataEnedis.updateHCHP()
         myDataEnedis.updateYesterday()
-        #print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
-        #print("myDataEnedis.getContract() : ", myDataEnedis.getContract()['usage_point_status'])
-        #print("myDataEnedis.getContract() : ", myDataEnedis.getTypePDL())
-        #print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getLastActivationDate())
-        #print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
+        print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
+        print("myDataEnedis.getContract() : ", myDataEnedis.getContract()['usage_point_status'])
+        print("myDataEnedis.getContract() : ", myDataEnedis.getTypePDL())
+        print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getLastActivationDate())
+        print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
 
-        #print("cnosommation : %s" %myDataEnedis.getYesterday() )
+        print("cnosommation : %s" %myDataEnedis.getYesterday() )
         #myDataEnedis.updateProductionYesterday()
         #print("production : %s" %myDataEnedis.getProductionYesterday() )
         #myDataEnedis.updateLastYear()
