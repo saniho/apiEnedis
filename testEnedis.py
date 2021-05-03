@@ -9,8 +9,9 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
+dateRepertoire = "20210503"
 def writeDataJson( myDataEnedis ):
-    directory = "../myCredential/20210429/"
+    directory = "../myCredential/%s/" %(dateRepertoire)
     for clef in myDataEnedis.getDataJsonKey():
         nomfichier = directory+clef+".json"
         data = myDataEnedis.getDataJson(clef)
@@ -20,7 +21,7 @@ def writeDataJson( myDataEnedis ):
 def readDataJson():
     import glob, os
     data = {}
-    directory = "../myCredential/20210428/*.json"
+    directory = "../myCredential/%s/*.json" %(dateRepertoire)
     listeFile = glob.glob(directory)
     for nomFichier in listeFile:
         with open(nomFichier) as json_file:
@@ -53,22 +54,22 @@ def testMulti():
 
         # Lecture fichier Json de sortie
         dataJson = readDataJson()
-        dataJson = {}
+        #dataJson = {}
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=10,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON, dataJson= dataJson )
-        #myDataEnedis.getData()
+        myDataEnedis.getData()
 
-        myDataEnedis.updateContract()
-        myDataEnedis.updateHCHP()
-        myDataEnedis.updateYesterday()
+        #myDataEnedis.updateContract()
+        #myDataEnedis.getContract().updateHCHP()
+        #myDataEnedis.updateYesterday()
         print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
-        print("myDataEnedis.getContract() : ", myDataEnedis.getContract()['usage_point_status'])
-        print("myDataEnedis.getContract() : ", myDataEnedis.getTypePDL())
-        print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getLastActivationDate())
-        print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getHeuresCreuses())
+        print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getUsagePointStatus())
+        print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getTypePDL())
+        print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getContract().getLastActivationDate())
+        print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getContract().getHeuresCreuses())
 
-        print("cnosommation : %s" %myDataEnedis.getYesterday() )
+        print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
         #myDataEnedis.updateProductionYesterday()
         #print("production : %s" %myDataEnedis.getProductionYesterday() )
         #myDataEnedis.updateLastYear()
@@ -79,7 +80,7 @@ def testMulti():
 
 
         # SORTIE OUTPUT
-        #writeDataJson( myDataEnedis )
+        writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************
@@ -89,11 +90,28 @@ def testMulti():
         status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
         print("****")
         print(status_counts)
+        for clef in status_counts.keys():
+            print( "%s = %s" %(clef, status_counts[clef]))
 
-        laDate = datetime.datetime.today() - datetime.timedelta(2)
-        status_counts, state = myDataSensorEnedis.getStatusHistory(laDate, "ALL")
+        typeSensor = _production
+        status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
         print("****")
-        print(status_counts, "/", state)
+        print(status_counts)
+        for clef in status_counts.keys():
+            print( "%s = %s" %(clef, status_counts[clef]))
+
+        typeSensor = _consommation
+        laDate = datetime.datetime.today() - datetime.timedelta(3)
+        status_counts, state = myDataSensorEnedis.getStatusHistory( laDate, detail = "ALL" )
+        print("**** : ", state)
+        print(status_counts)
+        for clef in status_counts.keys():
+            print( "%s = %s" %(clef, status_counts[clef]))
+
+        #laDate = datetime.datetime.today() - datetime.timedelta(2)
+        #status_counts, state = myDataSensorEnedis.getStatusHistory(laDate, "ALL")
+        #print("****")
+        #print(status_counts, "/", state)
 
 
 def testMono():

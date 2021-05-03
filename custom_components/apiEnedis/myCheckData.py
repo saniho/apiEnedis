@@ -58,3 +58,23 @@ class myCheckData:
             else:
                 raise Exception('call', "error", dataAnswer["error_code"])
         return True
+
+
+    def checkDataPeriod(self, dataAnswer):
+        if (dataAnswer.get("error_code", 200) == 500):
+            return False
+        if ("error_code" in dataAnswer.keys()):
+            if (dataAnswer["error_code"] == "ADAM-ERR0123") or \
+                    (dataAnswer["error_code"] == "no_data_found") or \
+                    (dataAnswer["error_code"] == "ADAM-ERR0069") or \
+                    (dataAnswer["error_code"] == "UNKERROR_002"):
+                return False
+            # collecte horaire non activée
+            if (dataAnswer["error_code"] == "ADAM-ERR0075"):
+                return False
+            if (dataAnswer["error_code"] == "Internal Server error"):
+                # erreur interne enedis
+                raise Exception('call', "error", "UNKERROR_001")
+            else:
+                raise Exception('call', "error", dataAnswer["error_code"])
+        return True
