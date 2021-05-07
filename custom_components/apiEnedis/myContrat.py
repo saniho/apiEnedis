@@ -22,7 +22,7 @@ except ImportError:
 import datetime, logging
 log = logging.getLogger(__nameMyEnedis__)
 
-from .myCheckData import myCheckData
+from . import messages
 
 class myContrat():
     def __init__(self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses):
@@ -87,15 +87,16 @@ class myContrat():
     def analyseValueContract(self, data):
         contract = None
         if data != None:  # si une valeur
-            for x in data['customer']['usage_points']:
-                if str(x["usage_point"]['usage_point_id']) == self._PDL_ID:
-                    contract = {}
-                    contract['contracts'] = x["contracts"]
-                    contract['usage_point_status'] = x["usage_point"]["usage_point_status"]
-                    contract['subscribed_power'] = self.getContractData(x["contracts"], "subscribed_power", "???")
-                    contract["mode_PDL"] = [ _consommation, _production ]
-                    contract['offpeak_hours'] = self.getContractData(x["contracts"], "offpeak_hours", [])
-                    contract['last_activation_date'] = self.getContractData(x["contracts"], "last_activation_date", None)[:10]
+            if ( 'customer' in data.keys()):
+                for x in data['customer']['usage_points']:
+                    if str(x["usage_point"]['usage_point_id']) == self._PDL_ID:
+                        contract = {}
+                        contract['contracts'] = x["contracts"]
+                        contract['usage_point_status'] = x["usage_point"]["usage_point_status"]
+                        contract['subscribed_power'] = self.getContractData(x["contracts"], "subscribed_power", "???")
+                        contract["mode_PDL"] = [ _consommation, _production ]
+                        contract['offpeak_hours'] = self.getContractData(x["contracts"], "offpeak_hours", [])
+                        contract['last_activation_date'] = self.getContractData(x["contracts"], "last_activation_date", None)[:10]
         return contract
 
     def getValue(self):

@@ -8,7 +8,8 @@
                     "code": "Votre Code",
                     "hc_cout": "prix HC ( ex : 0.01 )",
                     "hp_cout": "prix HP ( ex : 0.01 )",
-                    "heuresCreusesON": "Cocher si vous avez des heures creuses"
+                    "heuresCreusesON": "Cocher si vous avez des heures creuses",
+                    "heures_creuses": "heures creuses, exemple : [['00:00','05:00'], ['22:00', '24:00']]"
                 },
                 "title": "MyEnedis configuration"
             }
@@ -22,7 +23,8 @@
                     "code": "Votre Code",
                     "hc_cout": "prix HC ( ex : 0.01 )",
                     "hp_cout": "prix HP ( ex : 0.01 )",
-                    "heuresCreusesON": "Cocher si vous avez des heures creuses"
+                    "heuresCreusesON": "Cocher si vous avez des heures creuses",
+                    "heures_creuses": "heures creuses, exemple : [['00:00','05:00'], ['22:00', '24:00']]"
                 },
                 "title": "MyEnedis Options"
             }

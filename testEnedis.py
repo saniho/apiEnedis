@@ -9,7 +9,7 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
-dateRepertoire = "20210503"
+dateRepertoire = "20210506"
 def writeDataJson( myDataEnedis ):
     directory = "../myCredential/%s/" %(dateRepertoire)
     for clef in myDataEnedis.getDataJsonKey():
@@ -57,27 +57,21 @@ def testMulti():
         #dataJson = {}
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=10,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
-            version = __version__, heuresCreusesON=heuresCreusesON, dataJson= dataJson )
+            version = __version__, heuresCreusesON=heuresCreusesON )
+        myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
+        print("** on tente une maj ??")
         myDataEnedis.getData()
+        myDataEnedis.getCallPossible()
+        print("** on tente une maj ??")
+        myDataEnedis.getData()
+        myDataEnedis.getCallPossible()
+        #print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
+        #print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getUsagePointStatus())
+        #print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getTypePDL())
+        #print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getContract().getLastActivationDate())
+        #print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getContract().getHeuresCreuses())
 
-        #myDataEnedis.updateContract()
-        #myDataEnedis.getContract().updateHCHP()
-        #myDataEnedis.updateYesterday()
-        print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
-        print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getUsagePointStatus())
-        print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getTypePDL())
-        print("myDataEnedis.getLastActivationDate() : ", myDataEnedis.getContract().getLastActivationDate())
-        print("myDataEnedis.getHeuresCreuses() : ", myDataEnedis.getContract().getHeuresCreuses())
-
-        print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
-        #myDataEnedis.updateProductionYesterday()
-        #print("production : %s" %myDataEnedis.getProductionYesterday() )
-        #myDataEnedis.updateLastYear()
-
-        # myDataEnedis._serverName = "http://localhost:5500" # pour mockserver
-        # myDataEnedis._serverName = "http://localhost:5501" # pour record
-        #myDataEnedis.updateDataYesterdayHCHP()
-
+        #print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
 
         # SORTIE OUTPUT
         writeDataJson( myDataEnedis )

@@ -8,6 +8,7 @@ try:
     from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
     from homeassistant.const import (
         CONF_SCAN_INTERVAL,
+        EVENT_HOMEASSISTANT_STARTED,
     )
     from homeassistant.core import CoreState, callback
     from homeassistant.exceptions import ConfigEntryNotReady
@@ -62,9 +63,11 @@ from .const import (
     __name__,
     CONF_DELAY,
     HEURESCREUSES_ON,
+    HEURES_CREUSES,
     UNDO_UPDATE_LISTENER,
     COORDINATOR_ENEDIS,
     PLATFORMS,
+    DEFAULT_REPRISE_ERR,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -93,7 +96,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up an Enedis account from a config entry."""
     hass.data.setdefault(DOMAIN, {})
 
-    heurescreuses = None
+    heurescreuses = entry.options.get(HEURES_CREUSES, None)
+    if ( heurescreuses == "" ): heurescreuses = None
+    _LOGGER.info("**enedis**_conf heurescreuses *%s*" % heurescreuses)
+    #heurescreuses = None
     delai_interval = entry.options.get(SCAN_INTERVAL)
     token = entry.options.get(CONF_TOKEN, "")
     code = str(entry.options.get(CONF_CODE, ""))
@@ -101,16 +107,31 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hccost = float(entry.options.get(HC_COST, "0.0"))
     heurescreusesON = bool(entry.options.get(HEURESCREUSES_ON, True)),
 
-    client = myClientEnedis.myClientEnedis(token, code, delai_interval,
+    client = myClientEnedis.myClientEnedis(token, code, delai=DEFAULT_REPRISE_ERR,
                                        heuresCreuses=heurescreuses, heuresCreusesCost=hccost,
                                        heuresPleinesCost=hpcost,
                                        version=__VERSION__, heuresCreusesON=heurescreusesON)
 
     coordinator_enedis = sensorEnedisCoordinator(hass, entry, client)
-    # Fetch initial data so we have data when entities subscribe
-    await coordinator_enedis.async_refresh()
-    if not coordinator_enedis.last_update_success:
-        raise ConfigEntryNotReady
+
+    await coordinator_enedis.async_setup()
+    async def _enable_scheduled_myEnedis(*_):
+        """Activate the data update coordinator."""
+        coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL        )
+        await coordinator_enedis.async_refresh()
+
+    if hass.state == CoreState.running:
+        await _enable_scheduled_myEnedis()
+        if not coordinator_enedis.last_update_success:
+            raise ConfigEntryNotReady
+
+    else:
+        # Running a speed test during startup can prevent
+        # integrations from being able to setup
+        hass.bus.async_listen_once(
+            EVENT_HOMEASSISTANT_STARTED, _enable_scheduled_myEnedis
+        )
+
     undo_listener = entry.add_update_listener(_async_update_listener)
     hass.data[DOMAIN][entry.entry_id] = {
         COORDINATOR_ENEDIS: coordinator_enedis,
@@ -167,3 +188,70 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             update_method=_async_update_data_enedis,
             update_interval=SCAN_INTERVAL,
         )
+
+    async def async_set_options(self):
+        """Set options for entry."""
+        _LOGGER.info("async_set_options - proc -- %s" % self.entry.options)
+        if not self.entry.options:
+            _LOGGER.info(".config_entry.options()")
+            data = {**self.entry.data}
+            options = {
+                CONF_SCAN_INTERVAL: data.pop(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                CONF_TOKEN: data.pop(CONF_TOKEN, ""),
+                CONF_CODE: str(data.pop(CONF_CODE, "")),
+                HP_COST: str(data.pop(HP_COST, "0.0")),
+                HC_COST: str(data.pop(HC_COST, "0.0")),
+                HEURESCREUSES_ON: bool(data.pop(HEURESCREUSES_ON, True)),
+                HEURES_CREUSES: str(data.pop(HEURES_CREUSES, "")),
+            }
+            self.hass.config_entries.async_update_entry(
+                self.entry, data=data, options=options
+            )
+            _LOGGER.info(".config_entry.options() - done")
+        _LOGGER.info("async_set_options - proc -- done ")
+
+    def update_OptionsMyEnedis(self):
+        _LOGGER.info("update_MyEnedis pre-getini for %s" % (self.entry.options['token']))
+        _LOGGER.info("getInit()")
+        hccost = float(self.entry.options.get(HC_COST, "0.0"))
+        hpcost = float(self.entry.options.get(HP_COST, "0.0"))
+        token, code = self.entry.options[CONF_TOKEN], self.entry.options[CONF_CODE]
+        heurescreusesON = self.entry.options[HEURESCREUSES_ON]
+        heurescreuses = eval(self.entry.options[HEURES_CREUSES])
+        _LOGGER.info("options - proc -- %s %s %s %s %s %s" % (token, code, hccost, hpcost, heurescreusesON, heurescreuses))
+
+        self.clientEnedis = myClientEnedis.myClientEnedis(token, code, delai=DEFAULT_REPRISE_ERR,
+                                           heuresCreuses=heurescreuses, heuresCreusesCost=hccost,
+                                           heuresPleinesCost=hpcost,
+                                           version=__VERSION__, heuresCreusesON=heurescreusesON)
+
+    async def async_setup(self):
+        #Set up myEnedis.
+        try:
+            _LOGGER.info("run my First Extension")
+            # ne sert plus normalement ...
+            # self.myEnedis = await self.hass.async_add_executor_job(self.clientEnedis.getData)
+            _LOGGER.info("run my First Extension - done -- ")
+        except Exception as inst:
+            raise Exception(inst)
+
+        async def request_update(call):
+            # Request update.
+            await self.async_request_refresh()
+
+        #await self.async_set_options()
+        #await self.hass.async_add_executor_job(self.clientEnedis.getData)
+        await self.async_set_options()
+        await self.hass.async_add_executor_job(self.update_OptionsMyEnedis)
+        self._unsub_update_listener = self.entry.add_update_listener(
+            options_updated_listener
+        )
+        """ """
+
+
+async def options_updated_listener(hass, entry):
+    """Handle options update. suite modification options"""
+    _LOGGER.info("options_updated_listener ")
+    #hass.data[DOMAIN][entry.entry_id].update_interval = timedelta(seconds=DEFAULT_SENSOR_INTERVAL)
+    #await hass.data[DOMAIN][entry.entry_id].async_request_refresh()
+    _LOGGER.info("options_updated_listener - done -- ")

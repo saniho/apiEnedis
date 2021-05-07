@@ -48,7 +48,8 @@ class myCall:
             response.raise_for_status()
             dataAnswer = response.json()
             self.setLastAnswer(dataAnswer)
-            print("ici", params, headers, data)
+            #print("ici", params, headers, data)
+            #raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
             return dataAnswer
         except requests.exceptions.Timeout as error:
             response = {"enedis_return": {"error": "UNKERROR_002"}}

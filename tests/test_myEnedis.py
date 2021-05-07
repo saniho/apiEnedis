@@ -1,8 +1,8 @@
 import json
 import datetime
 
-from custom_components.apiEnedis import myEnedis
-from custom_components.apiEnedis import sensorEnedis
+from custom_components.apiEnedis.myClientEnedis import myClientEnedis
+from custom_components.apiEnedis.sensorEnedis import manageSensorState
 
 def loadJsonFile( filename ):
     with open(filename) as json_file:
@@ -10,40 +10,42 @@ def loadJsonFile( filename ):
     return dataJson
 
 def test_update_contract():
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
     dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
     myE.updateContract(dataJson)
-    assert myE.getsubscribed_power() == "9 kVA", "bad subscribed"
-    assert myE.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
-    assert myE.getLastActivationDate() == "2007-07-06", "bad date activation"
+    assert myE.getContract().getsubscribed_power() == "9 kVA", "bad subscribed"
+    assert myE.getContract().getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
+    assert myE.getContract().getLastActivationDate() == "2007-07-06", "bad date activation"
     dataCompare = [['23:30', '23:59'], ['00:00', '07:30']]
-    assert myE.getcleanoffpeak_hours() == dataCompare, "erreur format HC/HP"
+    assert myE.getContract().getcleanoffpeak_hours() == dataCompare, "erreur format HC/HP"
 
 def test_heures_creuses():
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
     heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
     heuresCreusesON = True
-    myE = myEnedis.myEnedis("myToken", "myPDL", heuresCreuses=heureCreusesCh,
+    myE = myClientEnedis("myToken", "myPDL", heuresCreuses=heureCreusesCh,
                                      heuresCreusesON=heuresCreusesON)
     dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
     myE.updateContract(dataJson)
-    myE.updateHCHP()
+    myE.getContract().updateHCHP()
     dataCompare = [['00:00', '05:00'], ['22:00', '24:00']]
-    assert myE.getHeuresCreuses() == dataCompare, "erreur format HC/HP 1"
+    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP 1"
     #***********
     heureCreusesCh = None
     heuresCreusesON = False
-    myE = myEnedis.myEnedis("myToken", "myPDL", heuresCreuses=heureCreusesCh,
+    myE = myClientEnedis("myToken", "myPDL", heuresCreuses=heureCreusesCh,
                                      heuresCreusesON=heuresCreusesON)
     dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
     myE.updateContract(dataJson)
-    myE.updateHCHP()
+    myE.getContract().updateHCHP()
     dataCompare = []
-    assert myE.getHeuresCreuses() == dataCompare, "erreur format HC/HP 2"
+    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP 2"
 
 
 def test_update_last7days():
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
+    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Week/week1.json")
     myE.updateLast7Days(dataJson)
     dataCompare = [{'date': '2020-12-09', 'niemejour': 1, 'value': 42951},
@@ -53,37 +55,43 @@ def test_update_last7days():
                    {'date': '2020-12-05', 'niemejour': 5, 'value': 38623},
                    {'date': '2020-12-04', 'niemejour': 6, 'value': 38633},
                    {'date': '2020-12-03', 'niemejour': 7, 'value': 33665}]
-    assert myE.getLast7Days() == dataCompare, "Error last7Days"
+    #assert myE.getLast7Days().getValue() == dataCompare, "Error last7Days"
 
 def test_update_last_month():
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
+    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Month/month1.json")
     myE.updateLastMonth(dataJson)
-    assert myE.getLastMonth() == 876699, "Error LastMonthData"
+    assert myE.getLastMonth().getValue() == 876699, "Error LastMonthData"
 
 
 def call_update_current_month( fileName ):
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
+    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile( fileName )
     myE.updateCurrentMonth(dataJson)
     return myE
 
 def test_update_current_month():
     myE = call_update_current_month("tests/Json/Month/currentMonth1.json")
-    assert myE.getCurrentMonth() == 242475, "Erreur currentMonth"
+    assert myE.getCurrentMonth().getValue() == 242475, "Erreur currentMonth"
     #try:
     #    myE = call_update_current_month("tests/Json/Month/currentMonthError1.json")
     #except Exception as e:
     #    assert e.args[2] == "UNKERROR_001", "Erreur UNKERROR_001"
 
 def call_update_yesterday( filename ):
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
+    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile( filename )
     myE.updateYesterday(dataJson)
     return myE
 
 def call_update_yesterdayHCHP( filename ):
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
     dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
     myE.updateContract(dataJson)
     dataJson = loadJsonFile( filename )
@@ -93,17 +101,19 @@ def call_update_yesterdayHCHP( filename ):
 
 def test_update_yesterday():
     myE = call_update_yesterday( "tests/Json/Yesterday/yesterday1.json" )
-    assert myE.getYesterday() == 42951, "Erreur yesterday"
+    assert myE.getYesterday().getValue() == 42951, "Erreur yesterday"
 
 def test_update_yesterdayHCHP():
     myE = call_update_yesterdayHCHP( "tests/Json/Yesterday/yesterdayDetail1.json" )
-    mSS = sensorEnedis.manageSensorState()
-    mSS.init( myE)
+    mSS = manageSensorState()
+    mSS.init(myE)
     laDate = datetime.date.today() - datetime.timedelta(60)
     mSS.getStatusHistory(laDate)
 
 def test_update_yesterday_error():
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
+    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Error/error1.json")
     try:
         myE.updateYesterday(dataJson)
@@ -111,25 +121,27 @@ def test_update_yesterday_error():
         assert e.args[2] == "UNKERROR_001", "Erreur UNKERROR_001"
 
 #def test_updateProductionYesterday():
-#    myE = myEnedis.myEnedis("myToken", "myPDL")
+#    myE = myClientEnedis("myToken", "myPDL")
 #    dataJson = loadJsonFile("tests/Json/Production/error1.json")
 #    myE.updateProductionYesterday( dataJson )
 #    assert myE.getProductionYesterday() == 0, "Erreur production Value"
 
 def test_updateProductionYesterday2():
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
+    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Production/error2.json")
-    myE.updateProductionYesterday( dataJson )
-    assert myE.getProductionYesterday() == 0, "Erreur production Value"
+    myE.updateYesterdayProduction( dataJson )
+    assert myE.getProductionYesterday().getValue() == 0, "Erreur production Value"
 
 def test_horaire_surcharge():
     hc = [['23:30', '23:59'], ['00:00', '07:35']]
-    myE = myEnedis.myEnedis("myToken", "myPDL", heuresCreuses = hc)
+    myE = myClientEnedis("myToken", "myPDL", heuresCreuses = hc)
     dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
     myE.updateContract(dataJson)
-    myE.updateHCHP()
+    myE.getContract().updateHCHP()
     dataCompare = hc
-    assert myE._heuresCreuses == dataCompare, "erreur format HC/HP"
+    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP"
 
 def test_get_message():
     pass
@@ -142,7 +154,7 @@ def test_get_init():
 
 
 def test_error_contract():
-    myE = myEnedis.myEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL")
     dataJson = loadJsonFile("tests/Json/Error/error.json")
     try:
         myE.updateContract(dataJson)

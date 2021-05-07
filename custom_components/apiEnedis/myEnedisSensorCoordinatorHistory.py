@@ -50,8 +50,10 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
         self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__ )
+        # ajout interval dans le sensor
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
+        _LOGGER.info("frequence mise à jour en seconde : %s" %(interval))
         self._attributes = {}
         self._state = None
         self._unit = "kWh"
@@ -114,10 +116,12 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
         status_counts["lastUpdate"] = datetime.datetime.today().strftime("%Y-%m-%d %H:%M" )
         self._attributes.update(status_counts)
         self._state = state
+
     def _update(self):
         """Update device state."""
         self._attributes = {ATTR_ATTRIBUTION: ""}
         self._state = "unavailable"
+        #self._update_state()
 
     @property
     def device_state_attributes(self):

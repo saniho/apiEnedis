@@ -1,6 +1,6 @@
 """ Constants """
 
-__VERSION__ = "1.1.4.4rc3" # attention updater aussi manifest.json
+__VERSION__ = "1.2.0.0rc1" # attention updater aussi manifest.json
 __name__ = "myEnedis"
 
 try:
@@ -31,10 +31,12 @@ CONF_SCAN_INTERVAL = "conf_scan_interval" # 60 secondes verifications du coordin
 
 HP_COST = "hp_cout"
 HC_COST = "hc_cout"
+HEURES_CREUSES = "heures_creuses"
 
 CONF_DELAY = 60 * 60 * 6  # verification enedis toutes les 6 heures
-DEFAULT_SCAN_INTERVAL = 60*30  # verification enedis toutes les 30 minutes, si dernier ok, alors verifie selon conf_delay
-#DEFAULT_SCAN_INTERVAL = 60*2  # verification enedis toutes les 30 minutes, si dernier ok, alors verifie selon conf_delay
+DEFAULT_SCAN_INTERVAL = 60 * 30  # verification enedis toutes les 30 minutes
+DEFAULT_REPRISE_ERR = 60 * 60  # verification enedis toutes les heures
+#DEFAULT_SCAN_INTERVAL = 60  # verification enedis toutes les 60 secondes
 DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
 DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60*10 # 1 fois toutes les 10 minutes
 

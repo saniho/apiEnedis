@@ -8,7 +8,8 @@
           "code": "Your Code",
           "hc_cout": "Off-peak hours price (ex: 0.01)",
           "hp_cout": "Peak hours price (ex: 0.01)",
-          "heuresCreusesON": "Check if you have a peak & off-peak hours based contract"
+          "heuresCreusesON": "Check if you have a peak & off-peak hours based contract",
+          "heures_creuses": "off-peak hours : [['00:00','05:00'], ['22:00', '24:00']]"
         },
         "title": "MyEnedis configuration"
       }
@@ -22,7 +23,8 @@
           "code": "Your Code",
           "hc_cout": "Off-peak hours price (ex: 0.01)",
           "hp_cout": "Peak hours price (ex: 0.01)",
-          "heuresCreusesON": "Check if you have a peak & off-peak hours based contract"
+          "heuresCreusesON": "Check if you have a peak & off-peak hours based contract",
+          "heures_creuses": "off-peak hours : [['00:00','05:00'], ['22:00', '24:00']]"
         },
         "title": "MyEnedis Options"
       }

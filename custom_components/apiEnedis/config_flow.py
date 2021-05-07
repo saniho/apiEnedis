@@ -14,6 +14,7 @@ from .const import (
     HC_COST,
     HP_COST,
     HEURESCREUSES_ON,
+    HEURES_CREUSES
 )
 
 import logging
@@ -43,6 +44,7 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         code = ""
         val_hc_cost = "0.0"
         val_hp_cost = "0.0"
+        val_heures_creuses = ""
         val_heurescreuses_on = True
 
         data_schema = vol.Schema(
@@ -71,7 +73,12 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     default=user_input.get(
                         HEURESCREUSES_ON, val_heurescreuses_on
                     )
-                ): cv.boolean
+                ): cv.boolean,
+                vol.Optional(HEURES_CREUSES,
+                    default=user_input.get(
+                        HEURES_CREUSES, val_heures_creuses
+                    )
+                ): cv.string,
             }
         )
         return self.async_show_form(
@@ -90,6 +97,7 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         hc_cost = user_input.get(HC_COST)
         hp_cost = user_input.get(HP_COST)
         heures_creuses_on = user_input.get(HEURESCREUSES_ON)
+        heures_creuses = user_input.get(HEURES_CREUSES)
 
         # Check if already configured
         await self.async_set_unique_id(f"{code}")
@@ -99,7 +107,8 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             title=code,
             data={CONF_TOKEN: token, CONF_CODE: code,
                   HC_COST: hc_cost, HP_COST: hp_cost,
-                  HEURESCREUSES_ON : heures_creuses_on},
+                  HEURESCREUSES_ON : heures_creuses_on,
+                  HEURES_CREUSES : heures_creuses},
         )
 
     async def async_step_import(self, user_input):
@@ -119,6 +128,7 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
         token = "monToken"
         code = "monCode"
+        val_heures_creuses = ""
         data_schema = vol.Schema(
             {
                 vol.Required(CONF_TOKEN,
@@ -145,7 +155,12 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
                     default=self.config_entry.options.get(
                         HEURESCREUSES_ON, True
                     ),
-                ): cv.boolean
+                ): cv.boolean,
+                vol.Optional(HEURES_CREUSES,
+                    default=self.config_entry.options.get(
+                        HEURES_CREUSES, val_heures_creuses
+                    )
+                ): cv.string,
             }
         )
         return self.async_show_form(step_id="init", data_schema=data_schema)

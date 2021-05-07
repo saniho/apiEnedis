@@ -100,7 +100,8 @@ class manageSensorState:
         status_counts["versionUpdateAvailable"] = \
             self.getExistsRecentVersion( self.version, self._myDataEnedis.getGitVersion() )
 
-        if self._myDataEnedis.getContract() != None:
+        #if self._myDataEnedis.getContract() != None:
+        if self._myDataEnedis.getTimeLastCall() != None:
             # pas necessaire en visu
             #status_counts["typeCompteurPDL"] = ','.join(self._myDataEnedis.getTypePDL())
             status_counts["typeCompteur"] = typeSensor

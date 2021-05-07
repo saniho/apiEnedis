@@ -1,5 +1,5 @@
 import datetime, sys
-import logging
+import logging, traceback
 
 try:
     from .const import (
@@ -41,7 +41,7 @@ log = logging.getLogger(__nameMyEnedis__)
 class myClientEnedis:
     def __init__(self, token, PDL_ID, delai=3600, heuresCreuses=None, \
                  heuresCreusesCost=0, heuresPleinesCost=0, version="0.0.0",
-                 heuresCreusesON=True, dataJson={}):
+                 heuresCreusesON=True):
         self._token = token
         self._PDL_ID = PDL_ID
         self._lastUpdate = None
@@ -79,7 +79,8 @@ class myClientEnedis:
         self._yesterdayConsumptionMaxPower = myDataEnedisMaxPower( myCalli, self._token, self._version, self._contract)
         log.info("run myEnedis")
         self._gitVersion = None
-        self._dataJson = dataJson
+        self._dataJsonDefault = {}
+        self._dataJson = {}
         pass
 
     def setUpdateRealise(self, value):
@@ -88,15 +89,23 @@ class myClientEnedis:
     def getUpdateRealise(self):
         return self._updateRealise
 
+    def setDataJsonDefault(self, dataJsonDefault):
+        self._dataJsonDefault = dataJsonDefault
+
     def getData(self):
+        self._dataJson = self._dataJsonDefault.copy()
+        log.info(" >>>> getData, self._dataJson ? %s" %self._dataJson)
         if (self.getContract().getValue() == None):
             log.info("contract ? %s" %self.getContract().get_PDL_ID())
             try:
                 self.updateContract()
-                self.getContract().updateHCHP()
+                if ( self.getContract().getValue() != None ):
+                    self.getContract().updateHCHP()
                 log.info("contract ?(end) %s" %self.getContract().get_PDL_ID())
             except Exception as inst:
                 log.error("myEnedis err %s" % (inst))
+                log.error(traceback.format_exc())
+                log.error("-" * 60)
 
         if (self.getContract().getValue() != None):
             self.update()
@@ -493,19 +502,24 @@ class myClientEnedis:
 
     def getDelaiIsGoodAfterError(self):
         log.info("TimeLastCall : %s" % (self.getTimeLastCall()))
-        ecartOk = (datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelaiError()
+        ecartOk = True
+        if ( self.getTimeLastCall() != None ):
+            ecartOk = (datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelaiError()
         return ecartOk
 
     def getAppelAEffectuer(self):
         # hier 23h
-        #hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(hour=23,minute=40)
-        #lastCall = self.getTimeLastCall()
         hourNow = datetime.datetime.now().hour
-        #log.info("TimeLastCall : %s" % (lastCall))
-        #log.info("now : %s" % (hourNow))
-        ## si le dernier appel à eut lieu avant hier 23h et que maintenant il est plus que 10h, alors
-        #horairePossible = ( lastCall < hier ) and ( hourNow >= 10 )
-        horairePossible = ( hourNow >= 10 ) and ( hourNow < 23 )
+        if ( self.getTimeLastCall() != None ):
+            hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(hour=23,minute=40)
+            lastCall = self.getTimeLastCall()
+            #log.info("TimeLastCall : %s" % (lastCall))
+            #log.info("now : %s" % (hourNow))
+            ## si le dernier appel à eut lieu avant hier 23h et que maintenant il est plus que 10h, alors
+            #horairePossible = ( lastCall < hier ) and ( hourNow >= 10 )
+            horairePossible = ( lastCall < hier ) and ( hourNow >= 10 ) and ( hourNow < 23 )
+        else:
+            horairePossible = ( hourNow >= 10 ) and ( hourNow < 23 )
         log.info("horairePossible : %s" % (horairePossible))
         return horairePossible
 
@@ -514,18 +528,34 @@ class myClientEnedis:
         gitInfo.getInformation()
         self._gitVersion = gitInfo.getVersion()
 
+    def getCallPossible(self):
+        log.info("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
+        log.info("myEnedis ...new update self.getAppelAEffectuer() : %s ??" %self.getAppelAEffectuer())
+        log.info("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
+        log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
+        print("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
+        print("myEnedis ...new update self.getAppelAEffectuer() : %s ??" %self.getAppelAEffectuer())
+        print("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
+        print("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
+        #callpossible = ((self.getTimeLastCall() == None) or
+        # (self.getAppelAEffectuer()) or
+        # (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()))
+        callpossible = ( self.getAppelAEffectuer() ) and \
+                        ((self.getTimeLastCall() == None) or
+                        (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()))
+        print("myEnedis ...callpossible : %s??" %callpossible)
+        return callpossible
+
     def getGitVersion(self):
         return self._gitVersion
 
     def update(self):
-        #log.warning("myEnedis ...%s yesterday data %s %s" \
-        #    %( self.getYesterdayDate(), self.getYesterdayHC(), self.getYesterdayHC()))
-        if (self.getContract() != None):
-            if ((self.getTimeLastCall() == None)  or
-                (self.getAppelAEffectuer()) or
-                (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError())):
+        log.info("myEnedis ...new update ??" )
+
+        if (self.getContract().getValue() != None):
+            if self.getCallPossible():
                 try:
-                    log.warning("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
+                    log.info("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
                                       % (self.getContract().get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
                     self.updateGitVersion()
                     self.updateErrorLastCall("")
@@ -538,6 +568,7 @@ class myClientEnedis:
                         try:
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
                                 self.updateCurrentWeek()
+
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastWeek"):
                                 self.updateLastWeek()
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7Days"):
@@ -564,10 +595,10 @@ class myClientEnedis:
                                 self.updateYesterdayConsumptionMaxPower()
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentMonthLastYear"):
                                 self.updateCurrentMonthLastYear()
-                        
+
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(True)
-                            log.warning("mise à jour effectuee")
+                            log.info("mise à jour effectuee")
                         except Exception as inst:
                             if (inst.args[:2] == ("call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
                                 log.warning("%s - Erreur call ERROR %s" % (self.getContract().get_PDL_ID(), inst))
@@ -600,6 +631,7 @@ class myClientEnedis:
                         log.warning("Erreur inconnue call ERROR %s" % (inst))
                         log.warning("Erreur last answer %s" % (inst))
                         log.warning("Erreur last call %s" % (self.getLastMethodCall()))
+                        log.warning(traceback.format_exc())
                         log.warning("-" * 60)
                         exc_type, exc_value, exc_traceback = sys.exc_info()
                         log.warning(sys.exc_info())
@@ -609,8 +641,8 @@ class myClientEnedis:
                         log.warning("LastMethodCall : %s" % (self.getLastMethodCall()))
             else:
                 self.setUpdateRealise(False)
-                log.info("%s pas d'update trop tot !!!" % (self.get_PDL_ID()))
+                log.info("%s pas d'update trop tot !!!" % (self.getContract().get_PDL_ID()))
         else:
             self.setUpdateRealise(False)
-            log.info("%s update impossible contrat non trouve!!!" % (self.get_PDL_ID()))
+            log.info("%s update impossible contrat non trouve!!!" % (self.getContract().get_PDL_ID()))
         self.updateLastUpdate()
