@@ -217,7 +217,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         hpcost = float(self.entry.options.get(HP_COST, "0.0"))
         token, code = self.entry.options[CONF_TOKEN], self.entry.options[CONF_CODE]
         heurescreusesON = self.entry.options[HEURESCREUSES_ON]
-        heurescreuses = eval(self.entry.options[HEURES_CREUSES])
+        heurescreuses = eval(self.entry.options.get(HEURES_CREUSES, ""))
         _LOGGER.info("options - proc -- %s %s %s %s %s %s" % (token, code, hccost, hpcost, heurescreusesON, heurescreuses))
 
         self.clientEnedis = myClientEnedis.myClientEnedis(token, code, delai=DEFAULT_REPRISE_ERR,

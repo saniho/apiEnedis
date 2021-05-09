@@ -507,7 +507,7 @@ class myClientEnedis:
             ecartOk = (datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelaiError()
         return ecartOk
 
-    def getAppelAEffectuer(self):
+    def getHorairePossible(self):
         # hier 23h
         hourNow = datetime.datetime.now().hour
         if ( self.getTimeLastCall() != None ):
@@ -519,7 +519,7 @@ class myClientEnedis:
             #horairePossible = ( lastCall < hier ) and ( hourNow >= 10 )
             horairePossible = ( lastCall < hier ) and ( hourNow >= 10 ) and ( hourNow < 23 )
         else:
-            horairePossible = ( hourNow >= 10 ) and ( hourNow < 23 )
+            horairePossible = False
         log.info("horairePossible : %s" % (horairePossible))
         return horairePossible
 
@@ -529,18 +529,18 @@ class myClientEnedis:
         self._gitVersion = gitInfo.getVersion()
 
     def getCallPossible(self):
+        log.info("myEnedis ...new update self.getHorairePossible() : %s ??" %self.getHorairePossible())
         log.info("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
-        log.info("myEnedis ...new update self.getAppelAEffectuer() : %s ??" %self.getAppelAEffectuer())
         log.info("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
         log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
-        print("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
-        print("myEnedis ...new update self.getAppelAEffectuer() : %s ??" %self.getAppelAEffectuer())
-        print("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
-        print("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
+        #print("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
+        #print("myEnedis ...new update self.getAppelAEffectuer() : %s ??" %self.getAppelAEffectuer())
+        #print("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
+        #print("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
         #callpossible = ((self.getTimeLastCall() == None) or
         # (self.getAppelAEffectuer()) or
         # (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()))
-        callpossible = ( self.getAppelAEffectuer() ) and \
+        callpossible = ( self.getHorairePossible() ) or \
                         ((self.getTimeLastCall() == None) or
                         (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()))
         print("myEnedis ...callpossible : %s??" %callpossible)
