@@ -47,6 +47,8 @@ except ImportError:
             # nothing to do
             pass
 
+
+
 from . import myClientEnedis
 
 from .const import (
@@ -69,6 +71,7 @@ from .const import (
     PLATFORMS,
     DEFAULT_REPRISE_ERR,
 )
+
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -9,7 +9,7 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
-dateRepertoire = "20210506"
+dateRepertoire = "20210517"
 def writeDataJson( myDataEnedis ):
     directory = "../myCredential/%s/" %(dateRepertoire)
     for clef in myDataEnedis.getDataJsonKey():
@@ -41,7 +41,7 @@ def testMulti():
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
     #for qui in ["ENEDIS21"]:
-    for qui in ["ENEDIS"]:
+    for qui in ["ENEDIS29"]:
         print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
