@@ -44,8 +44,6 @@ class myDataEnedis():
         self._dateDeb = dateDeb
         self._dateFin = dateFin
         log.info("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
-        print("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
-        print("--updateData data %s--" %( data))
         if (data == None):
             if (dateDeb == dateFin):
                 self._value = 0
@@ -62,10 +60,4 @@ class myDataEnedis():
             else:
                 self._value = 0
         log.info("updateData : data %s" % (data))
-        #print("--updateData : data %s" % (data))
-        #
-        #if (callDone ) and (myCheckData().checkData(data)):
-        #    self._value = myCheckData().analyseValue(data)
-        #else:
-        #    self._value = 0
         return data

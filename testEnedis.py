@@ -9,7 +9,7 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
-dateRepertoire = "20210517"
+dateRepertoire = "20210524"
 def writeDataJson( myDataEnedis ):
     directory = "../myCredential/%s/" %(dateRepertoire)
     for clef in myDataEnedis.getDataJsonKey():
@@ -41,7 +41,7 @@ def testMulti():
     #for qui in ["ENEDIS19"]:
     #for qui in ["ENEDIS"]:
     #for qui in ["ENEDIS21"]:
-    for qui in ["ENEDIS29"]:
+    for qui in ["ENEDIS"]:
         print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
@@ -54,7 +54,7 @@ def testMulti():
 
         # Lecture fichier Json de sortie
         dataJson = readDataJson()
-        #dataJson = {}
+        dataJson = {}
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=10,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
@@ -74,7 +74,7 @@ def testMulti():
         #print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
 
         # SORTIE OUTPUT
-        writeDataJson( myDataEnedis )
+        #writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************

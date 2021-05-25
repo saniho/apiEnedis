@@ -347,7 +347,7 @@ class myClientEnedis:
         cejour = (datetime.date.today()).strftime(_formatDateYmd)
         deb = self.getContract().minCompareDateContract(hier)
         fin = self.getContract().maxCompareDateContract(cejour)
-        print("data :", data)
+        #print("data :", data)
         data = self._yesterday.updateData(clefFunction, data, deb, fin)
         self.setDataJson( clefFunction, data )
 
@@ -513,10 +513,9 @@ class myClientEnedis:
         if ( self.getTimeLastCall() != None ):
             hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(hour=23,minute=40)
             lastCall = self.getTimeLastCall()
-            #log.info("TimeLastCall : %s" % (lastCall))
-            #log.info("now : %s" % (hourNow))
+            log.info("TimeLastCall : %s" % (lastCall))
+            log.info("now : %s" % (hourNow))
             ## si le dernier appel à eut lieu avant hier 23h et que maintenant il est plus que 10h, alors
-            #horairePossible = ( lastCall < hier ) and ( hourNow >= 10 )
             horairePossible = ( lastCall < hier ) and ( hourNow >= 10 ) and ( hourNow < 23 )
         else:
             horairePossible = False
@@ -537,13 +536,9 @@ class myClientEnedis:
         #print("myEnedis ...new update self.getAppelAEffectuer() : %s ??" %self.getAppelAEffectuer())
         #print("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
         #print("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
-        #callpossible = ((self.getTimeLastCall() == None) or
-        # (self.getAppelAEffectuer()) or
-        # (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()))
         callpossible = ( self.getHorairePossible() ) or \
                         ((self.getTimeLastCall() == None) or
                         (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()))
-        print("myEnedis ...callpossible : %s??" %callpossible)
         return callpossible
 
     def getGitVersion(self):
@@ -555,7 +550,7 @@ class myClientEnedis:
         if (self.getContract().getValue() != None):
             if self.getCallPossible():
                 try:
-                    log.info("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
+                    log.error("myEnedis ...%s update lancé, status precedent : %s, lastCall :%s" \
                                       % (self.getContract().get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
                     self.updateGitVersion()
                     self.updateErrorLastCall("")

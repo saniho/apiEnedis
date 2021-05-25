@@ -67,6 +67,9 @@ Avant de pouvoir utiliser cette intégration, assurez vous d' :
   * Si vous disposez d'un contrat heures pleines/heures creuses : 
     * Le prix des heures creuses
     * Le prix des heures pleines
+  * cocher la case heures creuses si votre contrat comporte des heures creuses  
+  * vos heures creuses si différentes de celles proposées par enedis
+    exemple de format : ``[['00:00','05:00'], ['22:00', '24:00']]``
     
 * Validez la saisie avec le bouton `Soumettre`
 
@@ -76,22 +79,9 @@ Avant de pouvoir utiliser cette intégration, assurez vous d' :
 
 *Si vous ne voyez pas l'intégration dans la liste, effacer le cache de votre navigateur en faisant la combinaison de touche `CTRL+F5` ou `CTRL+SHIFT+R`*
 
-### Via YAML
+### Via YAML << DEPRECIATED >>
 
-* Ajoutez dans votre fichier `sensors.yaml` la configuration suivante :
-
-```yaml
-# enedis
-- platform: myEnedis
-  token: <<votreToken>>
-  code: <<votrecode>> 
-  hc_cout: <<prixHeuresCreuses>>
-  hp_cout: <<prixHeuresPleines>>
-  heures_creuses: "[['00:30', '07:00'], ['10:00', '11:30']]"
-  heuresCreusesON: true
-  scan_interval: 3600
-```
-* Redémarrer votre serveur Home Assistant
+### Redémarrer votre serveur Home Assistant
 
 ## Entité disponible
 
@@ -109,6 +99,14 @@ https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/35
 *************
 
 _**VERSION**_
+
+
+**1.2.0.0**
+refactoring du code
+
+**suppression de la configuration possible par le fichier yaml, uniquement possible via l'integration**
+
+heures creuses disponible dans l'interface de l'integration
 
 **1.1.2.2**
 possibilité de forcer ses propres horaires dans le yaml( differentes de celles de enedis)
