@@ -49,6 +49,10 @@ class myContrat():
             return defaultValue
 
     def checkDataContract(self, dataAnswer):
+        if ("error_code" in dataAnswer.keys()):
+            if (dataAnswer["error_code"] == "UNKERROR_001"):
+                return False
+            raise Exception('call', "error", dataAnswer)
         if (dataAnswer.get("error_code",200) != 200 ):
             raise Exception('call', "error", dataAnswer["tag"])
         return True
@@ -63,26 +67,14 @@ class myContrat():
         return self._contract["mode_PDL"]
 
     def updateContract(self, data=None):
-        try:
-            log.info("--updateContract --")
-            if (data == None): data = self.CallgetDataContract()
-            log.info("updateContract : data %s" % (data))
-            if ( self.checkDataContract(data) ):
-                log.info("updateContract(2) : data %s" % (data))
-                self._contract = self.analyseValueContract(data)
-            return data
-        except Exception as inst:
-            if (inst.args[:2] == ("call", "error")):
-                log.warning("*" * 60)
-                log.warning("%s - Erreur call" % (self.get_PDL_ID(),))
-                self.updateTimeLastCall()
-                self.updateStatusLastCall(False)
-                message = "%s - %s" % (messages.getMessage(inst.args[2]), self.getLastAnswer())
-                self.updateErrorLastCall(message)
-                log.warning("%s - %s" % (self.get_PDL_ID(), self.getLastMethodCall()))
-                raise Exception(inst)
-            else:
-                raise Exception(inst)
+        log.info("--updateContract --")
+        if (data == None): data = self.CallgetDataContract()
+        log.info("updateContract : data %s" % (data))
+        if ( self.checkDataContract(data) ):
+            log.info("updateContract(2) : data %s" % (data))
+            self._contract = self.analyseValueContract(data)
+        return data
+
 
     def analyseValueContract(self, data):
         contract = None

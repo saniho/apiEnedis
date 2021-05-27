@@ -109,6 +109,9 @@ class myClientEnedis:
 
         if (self.getContract().getValue() != None):
             self.update()
+        else:
+            # on a eut un probleme lors de l'appel
+            pass
         return True
 
     def getContract(self):

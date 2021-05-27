@@ -1,6 +1,7 @@
 from custom_components.apiEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
 import json, datetime
+import logging
 
 __version__ = "test_saniho"
 
@@ -9,7 +10,7 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
-dateRepertoire = "20210524"
+dateRepertoire = "20210527"
 def writeDataJson( myDataEnedis ):
     directory = "../myCredential/%s/" %(dateRepertoire)
     for clef in myDataEnedis.getDataJsonKey():
@@ -30,41 +31,32 @@ def readDataJson():
     return data
 
 def testMulti():
+    #logging.basicConfig(level=logging.INFO)
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4"]:
-    #for qui in ["ENEDIS","ENEDIS7"]:
-    #for qui in ["ENEDIS9"]:
-    #for qui in ["ENEDIS","ENEDIS2","ENEDIS3","ENEDIS4","ENEDIS15"]:
-    #for qui in ["ENEDIS18"]:
-    #for qui in ["ENEDIS19"]:
-    #for qui in ["ENEDIS"]:
-    #for qui in ["ENEDIS21"]:
     for qui in ["ENEDIS"]:
         print("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
-        #PDL_ID = "09764109908395"
-        #print(qui , "*", token, PDL_ID)
         heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
-        #heureCreusesCh = None
         heuresCreusesON = True
-        #heuresCreusesON = False
 
         # Lecture fichier Json de sortie
         dataJson = readDataJson()
-        dataJson = {}
+        #dataJson = {}
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=10,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
         print("** on tente une maj ??")
         myDataEnedis.getData()
-        myDataEnedis.getCallPossible()
+        callPossible = myDataEnedis.getCallPossible()
+        print("possible ? %s "%(callPossible))
         print("** on tente une maj ??")
         myDataEnedis.getData()
-        myDataEnedis.getCallPossible()
+        callPossible = myDataEnedis.getCallPossible()
+        print("possible ? %s "%(callPossible))
         #print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
         #print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getUsagePointStatus())
         #print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getTypePDL())
@@ -74,7 +66,7 @@ def testMulti():
         #print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
 
         # SORTIE OUTPUT
-        #writeDataJson( myDataEnedis )
+        writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************
