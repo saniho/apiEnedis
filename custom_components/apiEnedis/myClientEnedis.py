@@ -106,6 +106,12 @@ class myClientEnedis:
                 log.error("myEnedis err %s" % (inst))
                 log.error(traceback.format_exc())
                 log.error("-" * 60)
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                log.warning(sys.exc_info())
+                self.updateStatusLastCall(False)
+                self.updateTimeLastCall()
+                self.updateErrorLastCall("%s" % (inst))
+                log.error("LastMethodCall : %s" % (self.getLastMethodCall()))
 
         if (self.getContract().getValue() != None):
             self.update()
@@ -503,45 +509,54 @@ class myClientEnedis:
     def getDelaiError(self):
         return self._delai
 
-    def getDelaiIsGoodAfterError(self):
+    def getDelaiIsGoodAfterError(self, currentDateTime):
         log.info("TimeLastCall : %s" % (self.getTimeLastCall()))
         ecartOk = True
         if ( self.getTimeLastCall() != None ):
-            ecartOk = (datetime.datetime.now() - self.getTimeLastCall()).seconds > self.getDelaiError()
+            ecartOk = ( currentDateTime - self.getTimeLastCall()).total_seconds() > self.getDelaiError()
         return ecartOk
 
     def getHorairePossible(self):
         # hier 23h
         hourNow = datetime.datetime.now().hour
+        log.info("now : %s" % (hourNow))
+        horairePossible = ( hourNow >= 10 ) and ( hourNow < 23 )
+        log.info("horairePossible : %s" % (horairePossible))
+        return horairePossible
+
+    def getLastCallHier(self):
         if ( self.getTimeLastCall() != None ):
             hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(hour=23,minute=40)
             lastCall = self.getTimeLastCall()
-            log.info("TimeLastCall : %s" % (lastCall))
-            log.info("now : %s" % (hourNow))
-            ## si le dernier appel à eut lieu avant hier 23h et que maintenant il est plus que 10h, alors
-            horairePossible = ( lastCall < hier ) and ( hourNow >= 10 ) and ( hourNow < 23 )
+            lastCallHier = (lastCall < hier)
         else:
-            horairePossible = False
-        log.info("horairePossible : %s" % (horairePossible))
-        return horairePossible
+            lastCallHier = False
+        return lastCallHier
 
     def updateGitVersion(self):
         gitInfo = gitinformation.gitinformation("saniho/apiEnedis")
         gitInfo.getInformation()
         self._gitVersion = gitInfo.getVersion()
 
-    def getCallPossible(self):
+    def getCallPossible(self, currentDateTime = datetime.datetime.now()):
         log.info("myEnedis ...new update self.getHorairePossible() : %s ??" %self.getHorairePossible())
         log.info("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
         log.info("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
-        log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
+        log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError(currentDateTime))
         #print("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
         #print("myEnedis ...new update self.getAppelAEffectuer() : %s ??" %self.getAppelAEffectuer())
         #print("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
         #print("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
-        callpossible = ( self.getHorairePossible() ) or \
+        callpossible = ( self.getHorairePossible() and self.getLastCallHier()) or \
                         ((self.getTimeLastCall() == None) or
-                        (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError()))
+                        (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError(currentDateTime)))
+        # new callpossible ???
+        callpossible = ( self.getHorairePossible() and
+                         ( self.getLastCallHier() or (self.getTimeLastCall() == None) or
+                           (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError(currentDateTime))
+                         )
+                        )
+
         return callpossible
 
     def getGitVersion(self):
@@ -566,7 +581,6 @@ class myClientEnedis:
                         try:
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
                                 self.updateCurrentWeek()
-
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastWeek"):
                                 self.updateLastWeek()
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLast7Days"):
@@ -599,13 +613,13 @@ class myClientEnedis:
                             log.info("mise à jour effectuee")
                         except Exception as inst:
                             if (inst.args[:2] == ("call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
-                                log.warning("%s - Erreur call ERROR %s" % (self.getContract().get_PDL_ID(), inst))
+                                log.error("%s - Erreur call ERROR %s" % (self.getContract().get_PDL_ID(), inst))
                                 # Erreur lors du call...
                                 self.updateTimeLastCall()
                                 self.updateStatusLastCall(False)
                                 self.updateErrorLastCall(
                                     "%s - %s" % (messages.getMessage(inst.args[2]), myCalli.getLastAnswer()))
-                                log.warning("%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
+                                log.error("%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
                             else:
                                 raise Exception(inst)
 
@@ -617,26 +631,26 @@ class myClientEnedis:
 
                 except Exception as inst:
                     if (inst.args == ("call", None)):
-                        log.warning("*" * 60)
-                        log.warning("%s - Erreur call" % (self.getContract().get_PDL_ID(),))
+                        log.error("*" * 60)
+                        log.error("%s - Erreur call" % (self.getContract().get_PDL_ID(),))
                         self.updateTimeLastCall()
                         self.updateStatusLastCall(False)
                         message = "%s - %s" % (messages.getMessage(inst.args[2]), myCalli.getLastAnswer())
                         self.updateErrorLastCall(message)
-                        log.warning("%s - %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
+                        log.error("%s - %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
                     else:
-                        log.warning("-" * 60)
-                        log.warning("Erreur inconnue call ERROR %s" % (inst))
-                        log.warning("Erreur last answer %s" % (inst))
-                        log.warning("Erreur last call %s" % (self.getLastMethodCall()))
-                        log.warning(traceback.format_exc())
-                        log.warning("-" * 60)
+                        log.error("-" * 60)
+                        log.error("Erreur inconnue call ERROR %s" % (inst))
+                        log.error("Erreur last answer %s" % (inst))
+                        log.error("Erreur last call %s" % (self.getLastMethodCall()))
+                        log.error(traceback.format_exc())
+                        log.error("-" * 60)
                         exc_type, exc_value, exc_traceback = sys.exc_info()
                         log.warning(sys.exc_info())
                         self.updateStatusLastCall(False)
                         self.updateTimeLastCall()
                         self.updateErrorLastCall("%s" % (inst))
-                        log.warning("LastMethodCall : %s" % (self.getLastMethodCall()))
+                        log.error("LastMethodCall : %s" % (self.getLastMethodCall()))
             else:
                 self.setUpdateRealise(False)
                 log.info("%s pas d'update trop tot !!!" % (self.getContract().get_PDL_ID()))

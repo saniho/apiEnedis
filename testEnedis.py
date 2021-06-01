@@ -45,7 +45,7 @@ def testMulti():
         # Lecture fichier Json de sortie
         dataJson = readDataJson()
         #dataJson = {}
-        myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=10,
+        myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=3600,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
@@ -55,8 +55,9 @@ def testMulti():
         print("possible ? %s "%(callPossible))
         print("** on tente une maj ??")
         myDataEnedis.getData()
-        callPossible = myDataEnedis.getCallPossible()
-        print("possible ? %s "%(callPossible))
+        currentDateTime = (datetime.datetime.now() + datetime.timedelta(days=1))
+        callPossible = myDataEnedis.getCallPossible(currentDateTime)
+        print("possible %s ? %s "%(currentDateTime, callPossible))
         #print("myDataEnedis.getContract() : ", myDataEnedis.getContract())
         #print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getUsagePointStatus())
         #print("myDataEnedis.getContract() : ", myDataEnedis.getContract().getTypePDL())
@@ -66,7 +67,7 @@ def testMulti():
         #print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
 
         # SORTIE OUTPUT
-        writeDataJson( myDataEnedis )
+        #writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************

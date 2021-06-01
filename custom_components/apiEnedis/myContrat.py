@@ -53,8 +53,10 @@ class myContrat():
             if (dataAnswer["error_code"] == "UNKERROR_001"):
                 return False
             raise Exception('call', "error", dataAnswer)
-        if (dataAnswer.get("error_code",200) != 200 ):
+        elif (dataAnswer.get("error_code",200) != 200 ):
             raise Exception('call', "error", dataAnswer["tag"])
+        elif (dataAnswer.get("error", "") == "token_refresh_401"):
+            raise Exception('call', "error", dataAnswer["description"])
         return True
 
     def getUsagePointStatus(self):
@@ -98,13 +100,22 @@ class myContrat():
         self._contract = contract
 
     def getsubscribed_power(self):
-        return self._contract['subscribed_power']
+        if self._contract == None:
+            return None
+        else:
+            return self._contract['subscribed_power']
 
     def getoffpeak_hours(self):
-        return self._contract['offpeak_hours']
+        if self._contract == None:
+            return None
+        else:
+            return self._contract['offpeak_hours']
 
     def getLastActivationDate(self):
-        return self._contract['last_activation_date']
+        if self._contract == None:
+            return None
+        else:
+            return self._contract['last_activation_date']
 
     def minCompareDateContract(self, datePeriod):
         minDate = self.getLastActivationDate()
