@@ -9,8 +9,9 @@ class myCheckData:
             raise Exception('call', None)
         else:
             tot = 0
-            for x in data["meter_reading"]["interval_reading"]:
-                tot += int(x["value"])
+            if ( "meter_reading" in data.keys()): # meter reading present
+                for x in data["meter_reading"]["interval_reading"]:
+                    tot += int(x["value"])
             return tot
 
     def analyseValueAndMadeDico(self, data):
@@ -19,13 +20,14 @@ class myCheckData:
             raise Exception('call', None)
         else:
             niemejour = 0
-            for x in reversed(data["meter_reading"]["interval_reading"]):
-                niemejour += 1
-                days = {}
-                days['date'] = x['date']
-                days['niemejour'] = niemejour
-                days['value'] = int(x['value'])
-                dicoLast7days.append(days)
+            if ( "meter_reading" in data.keys()): # meter reading present
+                for x in reversed(data["meter_reading"]["interval_reading"]):
+                    niemejour += 1
+                    days = {}
+                    days['date'] = x['date']
+                    days['niemejour'] = niemejour
+                    days['value'] = int(x['value'])
+                    dicoLast7days.append(days)
         return dicoLast7days
 
     def analyseValue(self, data):

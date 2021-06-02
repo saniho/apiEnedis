@@ -628,6 +628,8 @@ class myClientEnedis:
                             self.updateYesterdayProduction()
                         self.updateTimeLastCall()
                         self.updateStatusLastCall(True)
+                    log.error("myEnedis ...%s update termine, status courant : %s, lastCall :%s" \
+                          % (self.getContract().get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
 
                 except Exception as inst:
                     if (inst.args == ("call", None)):

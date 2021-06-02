@@ -44,7 +44,7 @@ def testMulti():
 
         # Lecture fichier Json de sortie
         dataJson = readDataJson()
-        #dataJson = {}
+        dataJson = {}
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=3600,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
