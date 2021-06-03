@@ -44,11 +44,11 @@ class myCall:
             import json, requests
             session = requests.Session()
             session.verify = True
+            #print("ici", params, headers, data)
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
             dataAnswer = response.json()
             self.setLastAnswer(dataAnswer)
-            #print("ici", params, headers, data)
             #raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
             return dataAnswer
         except requests.exceptions.Timeout as error:

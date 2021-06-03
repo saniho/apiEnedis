@@ -10,7 +10,7 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
-dateRepertoire = "20210527"
+dateRepertoire = "20210603"
 def writeDataJson( myDataEnedis ):
     directory = "../myCredential/%s/" %(dateRepertoire)
     for clef in myDataEnedis.getDataJsonKey():
@@ -43,9 +43,9 @@ def testMulti():
         heuresCreusesON = True
 
         # Lecture fichier Json de sortie
-        dataJson = readDataJson()
+        #dataJson = readDataJson()
         dataJson = {}
-        myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=3600,
+        myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=7200,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
@@ -55,6 +55,12 @@ def testMulti():
         print("possible ? %s "%(callPossible))
         print("** on tente une maj ??")
         myDataEnedis.getData()
+        currentDateTime = (datetime.datetime.now() + datetime.timedelta(hours=1))
+        callPossible = myDataEnedis.getCallPossible(currentDateTime)
+        print("possible %s ? %s "%(currentDateTime, callPossible))
+        currentDateTime = (datetime.datetime.now() + datetime.timedelta(hours=5))
+        callPossible = myDataEnedis.getCallPossible(currentDateTime)
+        print("possible %s ? %s "%(currentDateTime, callPossible))
         currentDateTime = (datetime.datetime.now() + datetime.timedelta(days=1))
         callPossible = myDataEnedis.getCallPossible(currentDateTime)
         print("possible %s ? %s "%(currentDateTime, callPossible))
@@ -67,7 +73,7 @@ def testMulti():
         #print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
 
         # SORTIE OUTPUT
-        #writeDataJson( myDataEnedis )
+        writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************

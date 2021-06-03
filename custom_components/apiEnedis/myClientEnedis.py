@@ -543,13 +543,6 @@ class myClientEnedis:
         log.info("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
         log.info("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
         log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError(currentDateTime))
-        #print("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
-        #print("myEnedis ...new update self.getAppelAEffectuer() : %s ??" %self.getAppelAEffectuer())
-        #print("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
-        #print("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError())
-        callpossible = ( self.getHorairePossible() and self.getLastCallHier()) or \
-                        ((self.getTimeLastCall() == None) or
-                        (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError(currentDateTime)))
         # new callpossible ???
         callpossible = ( self.getHorairePossible() and
                          ( self.getLastCallHier() or (self.getTimeLastCall() == None) or
@@ -574,11 +567,11 @@ class myClientEnedis:
                     self.updateErrorLastCall("")
                     self.updateLastMethodCall("")
                     self.setUpdateRealise(True)
-                    if (self.isConsommation()):
-                        self._niemeAppel += 1
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
-                            self.updateYesterday()
-                        try:
+                    try:
+                        if (self.isConsommation()):
+                            self._niemeAppel += 1
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterday"):
+                                self.updateYesterday()
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateCurrentWeek"):
                                 self.updateCurrentWeek()
                             if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateLastWeek"):
@@ -611,25 +604,28 @@ class myClientEnedis:
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(True)
                             log.info("mise à jour effectuee")
-                        except Exception as inst:
-                            if (inst.args[:2] == ("call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
-                                log.error("%s - Erreur call ERROR %s" % (self.getContract().get_PDL_ID(), inst))
-                                # Erreur lors du call...
-                                self.updateTimeLastCall()
-                                self.updateStatusLastCall(False)
-                                self.updateErrorLastCall(
-                                    "%s - %s" % (messages.getMessage(inst.args[2]), myCalli.getLastAnswer()))
-                                log.error("%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
-                            else:
-                                raise Exception(inst)
 
-                    if (self.isProduction()):
-                        if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
-                            self.updateYesterdayProduction()
-                        self.updateTimeLastCall()
-                        self.updateStatusLastCall(True)
-                    log.error("myEnedis ...%s update termine, status courant : %s, lastCall :%s" \
-                          % (self.getContract().get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
+                        if (self.isProduction()):
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
+                                self.updateYesterdayProduction()
+                            self.updateTimeLastCall()
+                            self.updateStatusLastCall(True)
+                        log.error("myEnedis ...%s update termine, status courant : %s, lastCall :%s" \
+                              % (self.getContract().get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError()))
+
+                    except Exception as inst:
+                        if (inst.args[:2] == (
+                        "call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
+                            log.error("%s - Erreur call ERROR %s" % (self.getContract().get_PDL_ID(), inst))
+                            # Erreur lors du call...
+                            self.updateTimeLastCall()
+                            self.updateStatusLastCall(False)
+                            self.updateErrorLastCall(
+                                "%s - %s" % (messages.getMessage(inst.args[2]), myCalli.getLastAnswer()))
+                            log.error(
+                                "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
+                        else:
+                            raise Exception(inst)
 
                 except Exception as inst:
                     if (inst.args == ("call", None)):
