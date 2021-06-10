@@ -27,6 +27,10 @@ class myDataEnedisByDay():
         self._date = None
         self._contrat = contrat
         self._token, self._version = token, version
+        self._dateDeb = None
+        self._dateFin = None
+        self._callOk = None
+        self._nbCall = 0
 
     def CallgetData(self, dateDeb, dateFin):
         val1, val2 = self.myCalli.getDataPeriod(dateDeb, dateFin)
@@ -41,29 +45,45 @@ class myDataEnedisByDay():
     def getDateDeb(self):
         return self._dateDeb
 
-    def updateData(self, clefFunction, data=None, dateDeb=None, dateFin=None):
-        self._dateDeb = dateDeb
-        self._dateFin = dateFin
-        log.info("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
-        #print("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
-        if (data == None):
-            if ( dateDeb == dateFin):
-                self._value = 0
+    def getNbCall(self):
+        return self._nbCall
+
+    def updateData(self, clefFunction, data=None, dateDeb=None, dateFin=None, withControl = False):
+        self._nbCall = 0
+        onLance = True
+        if withControl:
+            if ( self._dateDeb == dateDeb and self._dateFin == dateFin and self._callOk ):
+                onLance = False # pas de lancement si meme date
             else:
-                data, callDone = self.CallgetData(dateDeb, dateFin)
-                if (callDone) and (myCheckData().checkDataPeriod(data)):
-                    self._value = myCheckData().analyseValueAndAdd(data)
+                self._callOk = None
+        if onLance:
+            self._dateDeb = dateDeb
+            self._dateFin = dateFin
+            log.info("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
+            #print("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
+            self._data = data
+            if (self._data == None):
+                if ( dateDeb == dateFin):
+                    self._value = 0
+                else:
+                    self._data, callDone = self.CallgetData(dateDeb, dateFin)
+                    if (callDone) and (myCheckData().checkDataPeriod(self._data)):
+                        self._value = myCheckData().analyseValueAndAdd(self._data)
+                        self._callOk = True
+                        self._nbCall = 1
+                    else:
+                        self._value = 0
+            else:
+                callDone = True
+                if (callDone) and (myCheckData().checkDataPeriod(self._data)):
+                    self._value = myCheckData().analyseValueAndAdd(self._data)
+                    self._callOk = True
+                    self._nbCall = 1
                 else:
                     self._value = 0
+            log.info("with update !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
+            log.info("updateData : data %s" % (self._data))
         else:
-            callDone = True
-            if (callDone) and (myCheckData().checkDataPeriod(data)):
-                self._value = myCheckData().analyseValueAndAdd(data)
-            else:
-                self._value = 0
-        log.info("updateData : data %s" % (data))
-        #if (callDone ) and (myCheckData().checkDataPeriod(data)):
-        #    self._value = myCheckData().analyseValueAndAdd(data)
-        #else:
-        #    self._value = 0
-        return data
+            log.info("noupdate !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
+            log.info("no updateData : data %s" % (self._data))
+        return self._data

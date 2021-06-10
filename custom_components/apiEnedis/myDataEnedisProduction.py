@@ -26,6 +26,7 @@ class myDataEnedisProduction():
         self._date = None
         self._contrat = contrat
         self._token, self._version = token, version
+        self._nbCall = 0
 
     def CallgetData(self, dateDeb, dateFin):
         val1, val2 = self.myCalli.getDataProductionPeriod(dateDeb, dateFin)
@@ -40,7 +41,11 @@ class myDataEnedisProduction():
     def getDateDeb(self):
         return self._dateDeb
 
+    def getNbCall(self):
+        return self._nbCall
+
     def updateData(self, clefFunction, data=None, dateDeb=None, dateFin=None):
+        self._nbCall = 0
         self._dateDeb = dateDeb
         self._dateFin = dateFin
         log.info("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
@@ -50,6 +55,8 @@ class myDataEnedisProduction():
         log.info("updateData : data %s" % (data))
         if (callDone ) and (myCheckData().checkData(data)):
             self._value = myCheckData().analyseValue(data)
+            self._nbCall = 1
         else:
             self._value = 0
+        log.info("with update !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
         return data

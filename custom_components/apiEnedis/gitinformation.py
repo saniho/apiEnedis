@@ -11,9 +11,12 @@ class gitinformation:
 
     def getInformation(self):
         from urllib.request import urlopen
-        myURL = urlopen(self._serverName)
-        s = myURL.read()
-        dataAnswer = json.loads(s)
+        try:
+            myURL = urlopen(self._serverName)
+            s = myURL.read()
+            dataAnswer = json.loads(s)
+        except:
+            dataAnswer = {}
         self._gitData = dataAnswer
 
     def getVersion(self):

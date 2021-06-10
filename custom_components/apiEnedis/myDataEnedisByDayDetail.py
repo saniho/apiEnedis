@@ -31,6 +31,7 @@ class myDataEnedisByDayDetail():
         self._HP = 0
         self._HC = 0
         self._multiDays = multiDays
+        self._nbCall = 0
 
         self._joursHC = {}
         self._joursHP = {}
@@ -65,7 +66,11 @@ class myDataEnedisByDayDetail():
     def getDateDeb(self):
         return self._dateDeb
 
+    def getNbCall(self):
+        return self._nbCall
+
     def updateData(self, clefFunction, data=None, dateDeb=None, dateFin=None):
+        self._nbCall = 0
         self._dateDeb = dateDeb
         self._dateFin = dateFin
         log.info("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
@@ -79,6 +84,7 @@ class myDataEnedisByDayDetail():
             else:
                 if (callDone ) and (myCheckData().checkDataPeriod(data)):
                     self._joursHC, self._joursHP = self.createMultiDaysHCHP(data)
+                    self._nbCall = 1
                 else:
                     self._HC, self._HP = {}, {}
         else:
@@ -87,8 +93,10 @@ class myDataEnedisByDayDetail():
             else:
                 if (callDone ) and (myCheckData().checkData(data)):
                     self.createHCHP(data)
+                    self._nbCall = 1
                 else:
                     self._HC, self._HP = 0, 0
+        log.info("with update !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
         return data
 
     def getCoeffIntervalLength(self):
