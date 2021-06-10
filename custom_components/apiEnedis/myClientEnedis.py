@@ -54,7 +54,7 @@ class myClientEnedis:
         self._heuresCreusesCost = heuresCreusesCost
         self._heuresPleinesCost = heuresPleinesCost
         self._updateRealise = False
-        self._nbCall = None
+        self._nbCall = 0
         self._niemeAppel = 0
         self._version = version
 
