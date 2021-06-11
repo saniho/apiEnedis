@@ -543,6 +543,8 @@ class myClientEnedis:
         hourNow = datetime.datetime.now().hour
         log.info("now : %s" % (hourNow))
         horairePossible = ( hourNow >= 10 ) and ( hourNow < 23 )
+        # for test
+        #horairePossible = ( hourNow >= 9 ) and ( hourNow < 23 )
         log.info("horairePossible : %s" % (horairePossible))
         return horairePossible
 

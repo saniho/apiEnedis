@@ -104,6 +104,7 @@ class manageSensorState:
         if self._myDataEnedis.getTimeLastCall() != None:
             # pas necessaire en visu
             #status_counts["typeCompteurPDL"] = ','.join(self._myDataEnedis.getTypePDL())
+            status_counts["nbCall"] = self._myDataEnedis.getNbCall()
             status_counts["typeCompteur"] = typeSensor
             status_counts["activationDate"] = self._myDataEnedis.getContract().getLastActivationDate()
             if self._myDataEnedis.isConsommation():
