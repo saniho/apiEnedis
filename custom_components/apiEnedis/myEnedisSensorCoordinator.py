@@ -94,6 +94,11 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         if state:
             self._state = state.state
 
+        #TEST info
+        if 'typeCompteur' in state.attributes:
+            self.attrs = state.attributes
+            _LOGGER.info("Redemarrage avec element present ??")
+
         @callback
         def update():
             """Update state."""

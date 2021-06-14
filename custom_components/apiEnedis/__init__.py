@@ -181,9 +181,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         self.clientEnedis = client
         async def _async_update_data_enedis():
             """Fetch data from API endpoint."""
-            return await hass.async_add_executor_job(
-                self.clientEnedis.getData
-        )
+            #TEST
+            #return await hass.async_add_executor_job(self.clientEnedis.getData)
+            return await True
         super().__init__(
             self.hass,
             _LOGGER,
@@ -225,7 +225,12 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             heurescreusesch = "[]"
         heurescreuses = eval(heurescreusesch)
         _LOGGER.info("options - proc -- %s %s %s %s %s %s" % (token, code, hccost, hpcost, heurescreusesON, heurescreuses))
-
+        import os
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        line = open("..\\test.txt").readlines()
+        _LOGGER.info("fichier lu %s" %line )
+        f = open("..\\test.txt","w").write("test fichier sauvegarde 22:44....")
+        _LOGGER.info("fichier ecrit %s" %dir_path )
         self.clientEnedis = myClientEnedis.myClientEnedis(token, code, delai=DEFAULT_REPRISE_ERR,
                                            heuresCreuses=heurescreuses, heuresCreusesCost=hccost,
                                            heuresPleinesCost=hpcost,

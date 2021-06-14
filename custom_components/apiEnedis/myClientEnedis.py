@@ -565,10 +565,10 @@ class myClientEnedis:
         self._gitVersion = gitInfo.getVersion()
 
     def getCallPossible(self, currentDateTime = datetime.datetime.now()):
-        log.info("myEnedis ...new update self.getHorairePossible() : %s ??" %self.getHorairePossible())
-        log.info("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
-        log.info("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
-        log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError(currentDateTime))
+        #log.info("myEnedis ...new update self.getHorairePossible() : %s ??" %self.getHorairePossible())
+        #log.info("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
+        #log.info("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
+        #log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError(currentDateTime))
         # new callpossible ???
         callpossible = ( self.getHorairePossible() and
                          ( self.getLastCallHier() or (self.getTimeLastCall() == None) or
@@ -582,7 +582,7 @@ class myClientEnedis:
         return self._gitVersion
 
     def update(self):
-        log.info("myEnedis ...new update ??" )
+        #log.info("myEnedis ...new update ??" )
 
         if (self.getContract().getValue() != None):
             if self.getCallPossible():
@@ -679,7 +679,7 @@ class myClientEnedis:
                         log.error("LastMethodCall : %s" % (self.getLastMethodCall()))
             else:
                 self.setUpdateRealise(False)
-                log.info("%s pas d'update trop tot !!!" % (self.getContract().get_PDL_ID()))
+                #log.info("%s pas d'update trop tot !!!" % (self.getContract().get_PDL_ID()))
         else:
             self.setUpdateRealise(False)
             log.info("%s update impossible contrat non trouve!!!" % (self.getContract().get_PDL_ID()))

@@ -48,7 +48,7 @@ class myDataEnedis():
         self._nbCall = 0
         self._dateDeb = dateDeb
         self._dateFin = dateFin
-        log.info("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
+        log.info("--updateData %s ( du %s au %s ) data:%s--" %( clefFunction, dateDeb, dateFin, data))
         if (data == None):
             if (dateDeb == dateFin):
                 self._value = 0
