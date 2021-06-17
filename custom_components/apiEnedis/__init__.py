@@ -1,7 +1,7 @@
 """my first component."""
 import asyncio
 import logging
-
+import traceback
 from datetime import timedelta
 
 try:
@@ -182,8 +182,8 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         async def _async_update_data_enedis():
             """Fetch data from API endpoint."""
             #TEST
-            #return await hass.async_add_executor_job(self.clientEnedis.getData)
-            return await True
+            return await hass.async_add_executor_job(self.clientEnedis.getData)
+            #return await True
         super().__init__(
             self.hass,
             _LOGGER,
@@ -227,14 +227,25 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         _LOGGER.info("options - proc -- %s %s %s %s %s %s" % (token, code, hccost, hpcost, heurescreusesON, heurescreuses))
         import os
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        line = open("..\\test.txt").readlines()
-        _LOGGER.info("fichier lu %s" %line )
-        f = open("..\\test.txt","w").write("test fichier sauvegarde 22:44....")
-        _LOGGER.info("fichier ecrit %s" %dir_path )
+        try:
+            path = "%s/archive/%s" %(dir_path,code)
+            if not os.path.isdir(path):
+                _LOGGER.info("creation repertoire  ? %s" %path )
+                os.mkdir(path)
+                _LOGGER.info("repertoire cree %s" %path )
+        except:
+            _LOGGER.info("error" )
+            _LOGGER.error(traceback.format_exc())
+
         self.clientEnedis = myClientEnedis.myClientEnedis(token, code, delai=DEFAULT_REPRISE_ERR,
                                            heuresCreuses=heurescreuses, heuresCreusesCost=hccost,
                                            heuresPleinesCost=hpcost,
                                            version=__VERSION__, heuresCreusesON=heurescreusesON)
+        self.clientEnedis.setPathArchive( path )
+        dataJson = self.clientEnedis.readDataJson()
+        _LOGGER.info("fichier lu %s" %len(dataJson) )
+        self.clientEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
+
 
     async def async_setup(self):
         #Set up myEnedis.

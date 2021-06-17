@@ -10,24 +10,18 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
-dateRepertoire = "20210527"
-def writeDataJson( myDataEnedis ):
-    directory = "../myCredential/%s/" %(dateRepertoire)
-    for clef in myDataEnedis.getDataJsonKey():
-        nomfichier = directory+clef+".json"
-        data = myDataEnedis.getDataJson(clef)
-        with open(nomfichier, 'w') as outfile:
-            json.dump(data, outfile)
+dateRepertoire = "20210617"
+directory = "../myCredential/%s/" %(dateRepertoire)
 
-def readDataJson():
-    import glob, os
-    data = {}
-    directory = "../myCredential/%s/*.json" %(dateRepertoire)
-    listeFile = glob.glob(directory)
-    for nomFichier in listeFile:
-        with open(nomFichier) as json_file:
-            clef = os.path.basename(nomFichier).split(".")[0]
-            data[clef] = json.load(json_file)
+def writeDataJson( myEne ):
+    myEne.writeDataJson()
+
+def readDataJson( myEne):
+    myEne.setPathArchive(directory)
+    data = myEne.readDataJson()
+    myEne.setDataJsonDefault( dataJsonDefault=data )
+    myEne.setDataJsonCopy()
+    myEne.manageLastCallJson()
     return data
 
 def testMulti():
@@ -43,11 +37,11 @@ def testMulti():
         heuresCreusesON = True
 
         # Lecture fichier Json de sortie
-        #dataJson = readDataJson()
-        dataJson = {}
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=7200,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
+        dataJson = readDataJson(myDataEnedis)
+        #dataJson = {}
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
         print("** on tente une maj ??")
         myDataEnedis.getData()
@@ -75,7 +69,7 @@ def testMulti():
         #print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
 
         # SORTIE OUTPUT
-        #writeDataJson( myDataEnedis )
+        writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************

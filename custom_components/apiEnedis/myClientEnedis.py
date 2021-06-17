@@ -90,11 +90,69 @@ class myClientEnedis:
     def getUpdateRealise(self):
         return self._updateRealise
 
+    def setPathArchive(self, path):
+        self._path = path
+
+    def readDataJson(self):
+        import glob, os, json
+        data = {}
+        dataRepertoire = self.getPathArchive()
+        log.info("fichier lu dataRepertoire : %s" %dataRepertoire )
+        directory = "%s/*.json" %dataRepertoire
+        log.info("fichier lu directory : %s" %directory )
+        listeFile = glob.glob(directory)
+        log.info("fichier lu listeFile : %s" %listeFile )
+        for nomFichier in listeFile:
+            with open(nomFichier) as json_file:
+                clef = os.path.basename(nomFichier).split(".")[0]
+                data[clef] = json.load(json_file)
+        return data
+
+    def manageLastCallJson(self):
+        lastCallInformation = self.getDataJson("lastCall")
+        if ( lastCallInformation != None):
+            date = lastCallInformation.get("timeLastCall", None)
+            if ( date != None ):
+                lastCall = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+                self.updateTimeLastCall( lastCall )
+            date = lastCallInformation.get("lastUpdate", None)
+            if ( date != None ):
+                lastUpdate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+                self.updateLastUpdate(lastCall)
+        pass
+
+
+    def getPathArchive(self):
+        return self._path
+
+    def setlastCallJson(self):
+        import json
+        data = {'timeLastCall':'%s'%self.getTimeLastCall(),'lastUpdate':'%s'%self.getLastUpdate()}
+        jsonData = json.dumps(data)
+        self.setDataJson( "lastCall", data)
+
+    def writeDataJson( self ):
+        import json
+        directory = "%s/" %(self.getPathArchive())
+        for clef in self.getDataJsonKey():
+            nomfichier = directory+clef+".json"
+            data = self.getDataJson(clef)
+            with open(nomfichier, 'w') as outfile:
+                json.dump(data, outfile)
+
     def setDataJsonDefault(self, dataJsonDefault):
         self._dataJsonDefault = dataJsonDefault
 
-    def getData(self):
+    def setDataJsonCopy(self):
         self._dataJson = self._dataJsonDefault.copy()
+
+    def getData(self):
+        ##TEST
+        #self.setDataJsonDefault({})
+        #dataJson = self.readDataJson()
+        #self.setDataJsonDefault(dataJsonDefault=dataJson)
+
+        self.setDataJsonCopy()
         log.info(" >>>> getData, self._dataJson ? %s" %self._dataJson)
         if (self.getContract().getValue() == None):
             log.info("contract ? %s" %self.getContract().get_PDL_ID())
@@ -116,6 +174,9 @@ class myClientEnedis:
 
         if (self.getContract().getValue() != None):
             self.update()
+            self.setlastCallJson()
+            self.writeDataJson()
+
         else:
             # on a eut un probleme lors de l'appel
             pass
@@ -556,7 +617,7 @@ class myClientEnedis:
         else:
             lastCallHier = False
         ## TESTR
-        ##lastCallHier = True
+        #lastCallHier = True
         return lastCallHier
 
     def updateGitVersion(self):
@@ -630,13 +691,14 @@ class myClientEnedis:
 
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(True)
-                            log.info("mise à jour effectuee")
+                            log.info("mise à jour effectuee consommation")
 
                         if (self.isProduction()):
-                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateProductionYesterday"):
+                            if (self.getStatusLastCall() or self.getLastMethodCallError() == "updateYesterdayProduction"):
                                 self.updateYesterdayProduction()
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(True)
+                            log.info("mise à jour effectuee production")
                         log.error("myEnedis ...%s update termine, status courant : %s, lastCall :%s, nbCall :%s" \
                               % (self.getContract().get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError(),
                                  self.getNbCall()))

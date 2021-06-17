@@ -34,9 +34,9 @@ HC_COST = "hc_cout"
 HEURES_CREUSES = "heures_creuses"
 
 CONF_DELAY = 60 * 60 * 6  # verification enedis toutes les 6 heures
-DEFAULT_SCAN_INTERVAL = 60 * 30  # verification enedis toutes les 30 minutes
+#DEFAULT_SCAN_INTERVAL = 60 * 30  # verification enedis toutes les 30 minutes
 DEFAULT_REPRISE_ERR = 60 * 60  # verification enedis toutes les heures
-#DEFAULT_SCAN_INTERVAL = 60  # verification enedis toutes les 60 secondes
+DEFAULT_SCAN_INTERVAL = 2 * 60  # verification enedis toutes les 60 secondes
 DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
 DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60*10 # 1 fois toutes les 10 minutes
 
