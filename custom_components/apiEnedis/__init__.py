@@ -245,6 +245,8 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         dataJson = self.clientEnedis.readDataJson()
         _LOGGER.info("fichier lu %s" %len(dataJson) )
         self.clientEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
+        self.clientEnedis.setDataJsonCopy()
+        self.clientEnedis.manageLastCallJson()
 
 
     async def async_setup(self):

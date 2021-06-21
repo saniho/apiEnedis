@@ -78,7 +78,6 @@ class myDataEnedisByDay():
                 if (callDone) and (myCheckData().checkDataPeriod(self._data)):
                     self._value = myCheckData().analyseValueAndAdd(self._data)
                     self._callOk = True
-                    self._nbCall = 1
                 else:
                     self._value = 0
             log.info("with update !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))

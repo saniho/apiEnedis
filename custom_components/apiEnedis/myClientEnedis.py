@@ -57,6 +57,7 @@ class myClientEnedis:
         self._nbCall = 0
         self._niemeAppel = 0
         self._version = version
+        self._forceCallJson = False
 
         myCalli.setParam( PDL_ID, token, version)
         self._contract = myContrat( myCalli, self._token, self._PDL_ID, self._version, heuresCreusesON, heuresCreuses)
@@ -110,15 +111,27 @@ class myClientEnedis:
 
     def manageLastCallJson(self):
         lastCallInformation = self.getDataJson("lastCall")
+        log.info("manageLastCallJson : ")
         if ( lastCallInformation != None):
-            date = lastCallInformation.get("timeLastCall", None)
-            if ( date != None ):
-                lastCall = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+            lastCall = lastCallInformation.get("timeLastCall", None)
+            log.info("manageLastCallJson : lastCall : %s" %lastCall)
+            if ( lastCall != None ):
+                lastCall = datetime.datetime.strptime(lastCall, '%Y-%m-%d %H:%M:%S.%f')
                 self.updateTimeLastCall( lastCall )
-            date = lastCallInformation.get("lastUpdate", None)
-            if ( date != None ):
-                lastUpdate = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
+            lastUpdate = lastCallInformation.get("lastUpdate", None)
+            log.info("manageLastCallJson : lastUpdate : %s" %lastUpdate)
+            if ( lastUpdate != None ):
+                lastUpdate = datetime.datetime.strptime(lastUpdate, '%Y-%m-%d %H:%M:%S.%f')
                 self.updateLastUpdate(lastCall)
+            statutLastCall = lastCallInformation.get("statutLastCall", None)
+            log.info("manageLastCallJson : statutLastCall : %s" %statutLastCall)
+            if ( statutLastCall != None ):
+                self.updateStatusLastCall(statutLastCall)
+            #timeLastUpdate = lastCallInformation.get("timeLastUpdate", None)
+            #if ( timeLastUpdate != None ):
+            #    timeLastUpdate = datetime.datetime.strptime(timeLastUpdate, '%Y-%m-%d %H:%M:%S.%f')
+            #    self.updateTimeLastCall(timeLastUpdate)
+            self._forceCallJson = True
         pass
 
 
@@ -127,7 +140,11 @@ class myClientEnedis:
 
     def setlastCallJson(self):
         import json
-        data = {'timeLastCall':'%s'%self.getTimeLastCall(),'lastUpdate':'%s'%self.getLastUpdate()}
+        data = {'timeLastCall':'%s'%self.getTimeLastCall(),
+                'lastUpdate':'%s'%self.getLastUpdate(),
+                'statutLastCall':self.getStatusLastCall(),
+                #'timeLastUpdate':self.getTimeLastCall()
+                }
         jsonData = json.dumps(data)
         self.setDataJson( "lastCall", data)
 
@@ -524,14 +541,15 @@ class myClientEnedis:
     def getLastUpdate(self):
         return self._lastUpdate
 
-    def updateLastUpdate(self):
-        self._lastUpdate = datetime.datetime.now()
+    def updateLastUpdate(self, t = datetime.datetime.now()):
+        self._lastUpdate = t
 
     def getTimeLastCall(self):
         return self._timeLastUpdate
 
-    def updateTimeLastCall(self):
-        self._timeLastUpdate = datetime.datetime.now()
+    def updateTimeLastCall(self, t = datetime.datetime.now() ):
+        if ( not self._forceCallJson ):
+            self._timeLastUpdate = t
 
     def getStatusLastCall(self):
         return self._statusLastCall
@@ -605,7 +623,7 @@ class myClientEnedis:
         log.info("now : %s" % (hourNow))
         horairePossible = ( hourNow >= 10 ) and ( hourNow < 23 )
         # for test
-        #horairePossible = ( hourNow >= 9 ) and ( hourNow < 23 )
+        #horairePossible = ( hourNow >= 11 ) and ( hourNow < 23 )
         log.info("horairePossible : %s" % (horairePossible))
         return horairePossible
 
@@ -626,17 +644,20 @@ class myClientEnedis:
         self._gitVersion = gitInfo.getVersion()
 
     def getCallPossible(self, currentDateTime = datetime.datetime.now()):
-        #log.info("myEnedis ...new update self.getHorairePossible() : %s ??" %self.getHorairePossible())
-        #log.info("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
-        #log.info("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
-        #log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError(currentDateTime))
+        log.info("myEnedis ...new update self.getHorairePossible() : %s ??" %self.getHorairePossible())
+        log.info("myEnedis ...new update self.getLastCallHier() : %s ??" %self.getLastCallHier())
+        log.info("myEnedis ...new update self.getTimeLastCall() : %s ??" %self.getTimeLastCall())
+        log.info("myEnedis ...new update self.getStatusLastCall() : %s??" %self.getStatusLastCall())
+        log.info("myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??" %self.getDelaiIsGoodAfterError(currentDateTime))
         # new callpossible ???
         callpossible = ( self.getHorairePossible() and
                          ( self.getLastCallHier() or (self.getTimeLastCall() == None) or
                            (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError(currentDateTime))
                          )
                         )
-
+        log.info("myEnedis ..._forceCallJson : %s??" % self._forceCallJson )
+        if ( self._forceCallJson ):
+            callpossible = True
         return callpossible
 
     def getGitVersion(self):
@@ -699,6 +720,10 @@ class myClientEnedis:
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(True)
                             log.info("mise à jour effectuee production")
+                        if ( self._forceCallJson ):
+                            self._forceCallJson = False
+                            self.setDataJsonDefault({})
+
                         log.error("myEnedis ...%s update termine, status courant : %s, lastCall :%s, nbCall :%s" \
                               % (self.getContract().get_PDL_ID(), self.getStatusLastCall(), self.getLastMethodCallError(),
                                  self.getNbCall()))

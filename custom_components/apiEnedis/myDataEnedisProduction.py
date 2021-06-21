@@ -50,12 +50,13 @@ class myDataEnedisProduction():
         self._dateFin = dateFin
         log.info("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
         #print("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
-        if (data == None): data, callDone = self.CallgetData(dateDeb, dateFin)
+        if (data == None):
+            data, callDone = self.CallgetData(dateDeb, dateFin)
+            self._nbCall = 1
         else: callDone = True
         log.info("updateData : data %s" % (data))
         if (callDone ) and (myCheckData().checkData(data)):
             self._value = myCheckData().analyseValue(data)
-            self._nbCall = 1
         else:
             self._value = 0
         log.info("with update !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
