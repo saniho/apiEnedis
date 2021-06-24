@@ -113,25 +113,25 @@ class myClientEnedis:
         lastCallInformation = self.getDataJson("lastCall")
         log.info("manageLastCallJson : ")
         if ( lastCallInformation != None):
-            lastCall = lastCallInformation.get("timeLastCall", None)
-            log.info("manageLastCallJson : lastCall : %s" %lastCall)
-            if ( lastCall != None ):
-                lastCall = datetime.datetime.strptime(lastCall, '%Y-%m-%d %H:%M:%S.%f')
-                self.updateTimeLastCall( lastCall )
-            lastUpdate = lastCallInformation.get("lastUpdate", None)
-            log.info("manageLastCallJson : lastUpdate : %s" %lastUpdate)
-            if ( lastUpdate != None ):
-                lastUpdate = datetime.datetime.strptime(lastUpdate, '%Y-%m-%d %H:%M:%S.%f')
-                self.updateLastUpdate(lastCall)
-            statutLastCall = lastCallInformation.get("statutLastCall", None)
-            log.info("manageLastCallJson : statutLastCall : %s" %statutLastCall)
-            if ( statutLastCall != None ):
-                self.updateStatusLastCall(statutLastCall)
-            #timeLastUpdate = lastCallInformation.get("timeLastUpdate", None)
-            #if ( timeLastUpdate != None ):
-            #    timeLastUpdate = datetime.datetime.strptime(timeLastUpdate, '%Y-%m-%d %H:%M:%S.%f')
-            #    self.updateTimeLastCall(timeLastUpdate)
-            self._forceCallJson = True
+            try:
+                lastCall = lastCallInformation.get("timeLastCall", None)
+                log.info("manageLastCallJson : lastCall : %s" %lastCall)
+                if ( lastCall != None ):
+                    lastCall = datetime.datetime.strptime(lastCall, '%Y-%m-%d %H:%M:%S.%f')
+                    self.updateTimeLastCall( lastCall )
+                lastUpdate = lastCallInformation.get("lastUpdate", None)
+                log.info("manageLastCallJson : lastUpdate : %s" %lastUpdate)
+                if ( lastUpdate != None ):
+                    lastUpdate = datetime.datetime.strptime(lastUpdate, '%Y-%m-%d %H:%M:%S.%f')
+                    self.updateLastUpdate(lastCall)
+                statutLastCall = lastCallInformation.get("statutLastCall", None)
+                log.info("manageLastCallJson : statutLastCall : %s" %statutLastCall)
+                if ( statutLastCall != None ):
+                    self.updateStatusLastCall(statutLastCall)
+                self._forceCallJson = True
+            except:
+                # si le fichier est mal formaté
+                pass
         pass
 
 
@@ -174,7 +174,8 @@ class myClientEnedis:
         if (self.getContract().getValue() == None):
             log.info("contract ? %s" %self.getContract().get_PDL_ID())
             try:
-                self.updateContract()
+                if self.getCallPossible():
+                    self.updateContract()
                 if ( self.getContract().getValue() != None ):
                     self.getContract().updateHCHP()
                 log.info("contract ?(end) %s" %self.getContract().get_PDL_ID())
