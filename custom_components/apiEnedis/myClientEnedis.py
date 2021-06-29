@@ -730,6 +730,10 @@ class myClientEnedis:
                                  self.getNbCall()))
 
                     except Exception as inst:
+                        # pour eviter de boucler le call en permanence
+                        if ( self._forceCallJson ):
+                            self._forceCallJson = False
+                            self.setDataJsonDefault({})
                         if (inst.args[:2] == (
                         "call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
                             log.error("%s - Erreur call ERROR %s" % (self.getContract().get_PDL_ID(), inst))
