@@ -41,7 +41,7 @@ def testMulti():
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
         dataJson = readDataJson(myDataEnedis)
-        #dataJson = {}
+        dataJson = {}
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
         print("** on tente une maj ??")
         myDataEnedis.getData()
@@ -69,7 +69,7 @@ def testMulti():
         #print("consommation : %s" %myDataEnedis.getYesterday().getValue() )
 
         # SORTIE OUTPUT
-        writeDataJson( myDataEnedis )
+        #writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************

@@ -734,8 +734,7 @@ class myClientEnedis:
                         if ( self._forceCallJson ):
                             self._forceCallJson = False
                             self.setDataJsonDefault({})
-                        if (inst.args[:2] == (
-                        "call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
+                        if (inst.args[:2] == ("call", "error")):  # gestion que c'est pas une erreur de contrat trop recent ?
                             log.error("%s - Erreur call ERROR %s" % (self.getContract().get_PDL_ID(), inst))
                             # Erreur lors du call...
                             self.updateTimeLastCall()
@@ -745,6 +744,12 @@ class myClientEnedis:
                             log.error(
                                 "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
                         else:
+                            self.updateTimeLastCall()
+                            self.updateStatusLastCall(False)
+                            self.updateErrorLastCall(
+                                "%s - %s" % (messages.getMessage(inst.args[2]), myCalli.getLastAnswer()))
+                            log.error(
+                                "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
                             raise Exception(inst)
 
                 except Exception as inst:

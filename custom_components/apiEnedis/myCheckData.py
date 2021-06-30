@@ -50,7 +50,7 @@ class myCheckData:
                 return False
             # no_data_found
             if (dataAnswer["error_code"] == "no_data_found"):
-                return False
+                raise Exception('call', "error", "Collecte de données non activée sur le site enedis.fr")
             # No consent can be found for this customer and this usage point
             if dataAnswer["error_code"] in ["ADAM-DC-0008", "ADAM-ERR0069", "UNKERROR_002"]:
                 return False
