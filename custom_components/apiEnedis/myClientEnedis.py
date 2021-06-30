@@ -743,6 +743,7 @@ class myClientEnedis:
                                 "%s - %s" % (messages.getMessage(inst.args[2]), myCalli.getLastAnswer()))
                             log.error(
                                 "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
+                            log.error("myEnedis ...%s update termine, on retentera plus tard" % (self.getContract().get_PDL_ID()))
                         else:
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
@@ -750,6 +751,7 @@ class myClientEnedis:
                                 "%s - %s" % (messages.getMessage(inst.args[2]), myCalli.getLastAnswer()))
                             log.error(
                                 "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
+                            log.error("myEnedis ...%s update termine, on retentera plus tard" % (self.getContract().get_PDL_ID()))
                             raise Exception(inst)
 
                 except Exception as inst:

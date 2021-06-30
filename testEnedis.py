@@ -10,7 +10,7 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
-dateRepertoire = "20210617"
+dateRepertoire = "20210630"
 directory = "../myCredential/%s/" %(dateRepertoire)
 
 def writeDataJson( myEne ):
@@ -49,7 +49,7 @@ def testMulti():
         callPossible = myDataEnedis.getCallPossible()
         print("possible ? %s "%(callPossible))
         print("** on tente une maj ??")
-        myDataEnedis.getData()
+        #myDataEnedis.getData()
         print("===< on a fini le call : %s" %(myDataEnedis.getNbCall()))
         #currentDateTime = (datetime.datetime.now() + datetime.timedelta(hours=1))
         #callPossible = myDataEnedis.getCallPossible(currentDateTime)
