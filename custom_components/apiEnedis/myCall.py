@@ -45,6 +45,7 @@ class myCall:
             session = requests.Session()
             session.verify = True
             #print("ici", params, headers, data)
+            log.info("====== Appel http !!! =====")
             response = session.post(url, params=params, data=json.dumps(data), headers=headers, timeout=30)
             response.raise_for_status()
             dataAnswer = response.json()
