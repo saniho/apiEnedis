@@ -548,8 +548,9 @@ class myClientEnedis:
     def getTimeLastCall(self):
         return self._timeLastUpdate
 
-    def updateTimeLastCall(self, t = datetime.datetime.now() ):
+    def updateTimeLastCall(self, ):
         if ( not self._forceCallJson ):
+            t = datetime.datetime.now()
             self._timeLastUpdate = t
 
     def getStatusLastCall(self):

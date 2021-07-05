@@ -10,8 +10,9 @@ from custom_components.apiEnedis.const import (
     _production,
 )
 
-dateRepertoire = "20210631"
-directory = "../myCredential/%s/" %(dateRepertoire)
+def getLocalDirectory( PDL, dateRepertoire):
+    directory = "../myCredential/%s/%s/" %(PDL, dateRepertoire)
+    return directory
 
 log = logging.getLogger("testEnedis")
 
@@ -23,18 +24,19 @@ def testMulti():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS"]:
+    for qui in ["ENEDIS28"]:
         log.info("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
         heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
         heuresCreusesON = True
 
+
         # Lecture fichier Json de sortie
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=7200,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
-        path = directory
+        path = getLocalDirectory( PDL_ID, "20210631" )
         myDataEnedis.setPathArchive(path)
         dataJson = {}
         dataJson = myDataEnedis.readDataJson()
