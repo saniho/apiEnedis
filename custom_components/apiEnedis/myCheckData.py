@@ -34,7 +34,7 @@ class myCheckData:
         if (data == None):  # pas de valeur
             return None
         else:
-            if ( "meter_reading" in "meter_reading".keys()):
+            if ( "meter_reading" in data.keys()):
                 return int(data["meter_reading"]["interval_reading"][0]["value"])
             else:
                 return None
