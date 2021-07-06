@@ -34,7 +34,10 @@ class myCheckData:
         if (data == None):  # pas de valeur
             return None
         else:
-            return int(data["meter_reading"]["interval_reading"][0]["value"])
+            if ( "meter_reading" in "meter_reading".keys()):
+                return int(data["meter_reading"]["interval_reading"][0]["value"])
+            else:
+                return None
 
     def checkData(self, dataAnswer):
         # new version de la réponse
