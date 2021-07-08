@@ -24,7 +24,7 @@ def testMulti():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS28"]:
+    for qui in ["ENEDIS"]:
         log.info("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
@@ -62,9 +62,9 @@ def testMulti():
         log.info("** on tente une maj ??")
         myDataEnedis.getData()
         log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
-        print(1/0)
+        #print(1/0)
         # SORTIE OUTPUT
-        #writeDataJson( myDataEnedis )
+        writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************

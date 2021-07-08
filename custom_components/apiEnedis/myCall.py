@@ -50,6 +50,7 @@ class myCall:
             response.raise_for_status()
             dataAnswer = response.json()
             self.setLastAnswer(dataAnswer)
+            log.info("====== Appel http !!! reponse : %s =====" %(dataAnswer))
             #raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
             return dataAnswer
         except requests.exceptions.Timeout as error:

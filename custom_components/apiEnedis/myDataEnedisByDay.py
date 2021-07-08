@@ -48,19 +48,19 @@ class myDataEnedisByDay():
     def getNbCall(self):
         return self._nbCall
 
-    def updateData(self, clefFunction, data=None, dateDeb=None, dateFin=None, withControl = False):
+    def updateData(self, clefFunction, data=None, dateDeb=None, dateFin=None, withControl = False, dataControl = None):
         self._nbCall = 0
         onLance = True
         if withControl:
-            if ( self._dateDeb == dateDeb and self._dateFin == dateFin and self._callOk ):
-                onLance = False # pas de lancement si meme date
+            if dataControl.get('deb', None) == dateDeb and dataControl.get('fin', None) == dateFin and self._callOk:
+                onLance = False  # pas de lancement si meme date
             else:
                 self._callOk = None
+                data = None  # si on doit mettre à jour ....
         if onLance:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
-            #print("--updateData %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
             self._data = data
             if (self._data == None):
                 if ( dateDeb == dateFin):
