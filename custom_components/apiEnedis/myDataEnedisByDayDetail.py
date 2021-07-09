@@ -35,6 +35,7 @@ class myDataEnedisByDayDetail():
         self._dateFin = None
         self._callOk = None
         self._nbCall = 0
+        self._data = None
 
         self._joursHC = {}
         self._joursHP = {}
@@ -76,7 +77,7 @@ class myDataEnedisByDayDetail():
         self._nbCall = 0
         onLance = True
         if withControl:
-            if dataControl.get('deb', None) == dateDeb and dataControl.get('fin', None ) == dateFin and self._callOk:
+            if dataControl.get('deb', None) == dateDeb and dataControl.get('fin', None ) == dateFin:# and self._callOk:
                 onLance = False # pas de lancement si meme date
             else:
                 self._callOk = None
@@ -97,6 +98,7 @@ class myDataEnedisByDayDetail():
                 else:
                     if (callDone ) and (myCheckData().checkDataPeriod(self._data)):
                         self._joursHC, self._joursHP = self.createMultiDaysHCHP(self._data)
+                        self._callOk = True
                     else:
                         self._HC, self._HP = {}, {}
             else:
@@ -105,6 +107,7 @@ class myDataEnedisByDayDetail():
                 else:
                     if (callDone ) and (myCheckData().checkData(self._data)):
                         self.createHCHP(self._data)
+                        self._callOk = True
                     else:
                         self._HC, self._HP = 0, 0
             log.info("with update !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))

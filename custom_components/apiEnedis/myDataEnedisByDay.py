@@ -31,6 +31,7 @@ class myDataEnedisByDay():
         self._dateFin = None
         self._callOk = None
         self._nbCall = 0
+        self._data = None
 
     def CallgetData(self, dateDeb, dateFin):
         val1, val2 = self.myCalli.getDataPeriod(dateDeb, dateFin)
@@ -52,7 +53,7 @@ class myDataEnedisByDay():
         self._nbCall = 0
         onLance = True
         if withControl:
-            if dataControl.get('deb', None) == dateDeb and dataControl.get('fin', None) == dateFin and self._callOk:
+            if dataControl.get('deb', None) == dateDeb and dataControl.get('fin', None) == dateFin:# and self._callOk:
                 onLance = False  # pas de lancement si meme date
             else:
                 self._callOk = None

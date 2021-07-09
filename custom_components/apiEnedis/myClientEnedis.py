@@ -104,9 +104,13 @@ class myClientEnedis:
         listeFile = glob.glob(directory)
         log.info("fichier lu listeFile : %s" %listeFile )
         for nomFichier in listeFile:
-            with open(nomFichier) as json_file:
-                clef = os.path.basename(nomFichier).split(".")[0]
-                data[clef] = json.load(json_file)
+            try:
+                with open(nomFichier) as json_file:
+                    clef = os.path.basename(nomFichier).split(".")[0]
+                    data[clef] = json.load(json_file)
+            except:
+                log.error(" >>>> erreur lecture : %s" %(nomfichier))
+                pass # si erreur lecture ... on continue ;)
         return data
 
     def manageLastCallJson(self):
@@ -152,12 +156,15 @@ class myClientEnedis:
         import json
         directory = "%s/" %(self.getPathArchive())
         for clef in self.getDataJsonKey():
-            nomfichier = directory+clef+".json"
-            data = self.getDataJson(clef)
-            log.info(" >>>> ecriture : %s / %s" %(nomfichier, data))
-            with open(nomfichier, 'w') as outfile:
-                json.dump(data, outfile)
-
+            try:
+                data = {}
+                nomfichier = directory+clef+".json"
+                data = self.getDataJson(clef)
+                log.info(" >>>> ecriture : %s / %s" %(nomfichier, data))
+                with open(nomfichier, 'w') as outfile:
+                    json.dump(data, outfile)
+            except:
+                log.error(" >>>> erreur ecriture : %s / %s" %(nomfichier, data))
     def setDataJsonDefault(self, dataJsonDefault):
         self._dataJsonDefault = dataJsonDefault
 
@@ -265,8 +272,8 @@ class myClientEnedis:
         requestJson = self.getDataRequestJson(clefFunction)
         if (data == None): data, callDone = self.getDataJson(clefFunction), True
         today = datetime.date.today()
-        start_date = today + datetime.timedelta(-today.weekday(), weeks=-1)
-        end_date = today + datetime.timedelta(-today.weekday())
+        start_date = (today + datetime.timedelta(-today.weekday(), weeks=-1)).strftime(_formatDateYmd)
+        end_date = (today + datetime.timedelta(-today.weekday())).strftime(_formatDateYmd)
         deb = self.getContract().minCompareDateContract(start_date)
         fin = self.getContract().maxCompareDateContract(end_date)
         data = self._lastWeek.updateData(clefFunction, data, deb, fin, withControl=True, dataControl=requestJson)
@@ -280,7 +287,7 @@ class myClientEnedis:
         requestJson = self.getDataRequestJson(clefFunction)
         if (data == None): data, callDone = self.getDataJson(clefFunction), True
         today = datetime.date.today()
-        start_date = today - datetime.timedelta(7)
+        start_date = (today - datetime.timedelta(7)).strftime(_formatDateYmd)
         end_date = (datetime.date.today()).strftime(_formatDateYmd)
         deb = self.getContract().minCompareDateContract(start_date)
         fin = self.getContract().maxCompareDateContract(end_date)
