@@ -57,7 +57,7 @@ class myDataEnedisByDay():
         onLance = True
         if withControl:
             if dataControl.get('deb', None) == dateDeb and dataControl.get('fin', None) == dateFin \
-                    and dataControl.get('callok', False):
+                    and dataControl.get('callok', True):
                 onLance = False  # pas de lancement si meme date
             else:
                 self._callOk = None

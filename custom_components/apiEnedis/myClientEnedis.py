@@ -161,13 +161,15 @@ class myClientEnedis:
                 nomfichier = directory+clef+".json"
                 data = self.getDataJson(clef)
                 log.info(" >>>> ecriture : %s / %s" %(nomfichier, data))
-                if ( "callok" in data.keys()):
-                    ecriture = data["callok"]
-                else:
-                    ecriture = True
-                if ( ecriture ):
-                    with open(nomfichier, 'w') as outfile:
-                        json.dump(data, outfile)
+                #if ( "callok" in data.keys()):
+                #    ecriture = data["callok"]
+                #else:
+                #    ecriture = True
+                #if ( ecriture ):
+                #    with open(nomfichier, 'w') as outfile:
+                #        json.dump(data, outfile)
+                with open(nomfichier, 'w') as outfile:
+                    json.dump(data, outfile)
             except:
                 log.error(" >>>> erreur ecriture : %s / %s" %(nomfichier, data))
 
@@ -178,12 +180,9 @@ class myClientEnedis:
         self._dataJson = self._dataJsonDefault.copy()
 
     def getData(self):
-        ##TEST
-        #self.setDataJsonDefault({})
-        #dataJson = self.readDataJson()
-        #self.setDataJsonDefault(dataJsonDefault=dataJson)
-
-        self.setDataJsonCopy()
+        ### A VOIR ###
+        ## supprimer test ecrire sur ok present ou non !!! pas d'interet
+        #self.setDataJsonCopy() # pourquoi cela ? vu qu'on l'a mis juste avant ... pas besoin du default !!!!
         log.info(" >>>> getData, self._dataJson ? %s" %self._dataJson)
         if (self.getContract().getValue() == None):
             log.info("contract ? %s" %self.getContract().get_PDL_ID())
