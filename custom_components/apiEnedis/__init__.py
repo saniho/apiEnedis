@@ -102,7 +102,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     heurescreuses = entry.options.get(HEURES_CREUSES, None)
     if ( heurescreuses == "" ): heurescreuses = None
     _LOGGER.info("**enedis**_conf heurescreuses *%s*" % heurescreuses)
-    #heurescreuses = None
     delai_interval = entry.options.get(SCAN_INTERVAL)
     token = entry.options.get(CONF_TOKEN, "")
     code = str(entry.options.get(CONF_CODE, ""))
@@ -181,9 +180,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         self.clientEnedis = client
         async def _async_update_data_enedis():
             """Fetch data from API endpoint."""
-            #TEST
             return await hass.async_add_executor_job(self.clientEnedis.getData)
-            #return await True
         super().__init__(
             self.hass,
             _LOGGER,
@@ -262,9 +259,6 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         async def request_update(call):
             # Request update.
             await self.async_request_refresh()
-
-        #await self.async_set_options()
-        #await self.hass.async_add_executor_job(self.clientEnedis.getData)
         await self.async_set_options()
         await self.hass.async_add_executor_job(self.update_OptionsMyEnedis)
         self._unsub_update_listener = self.entry.add_update_listener(
@@ -276,6 +270,4 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
 async def options_updated_listener(hass, entry):
     """Handle options update. suite modification options"""
     _LOGGER.info("options_updated_listener ")
-    #hass.data[DOMAIN][entry.entry_id].update_interval = timedelta(seconds=DEFAULT_SENSOR_INTERVAL)
-    #await hass.data[DOMAIN][entry.entry_id].async_request_refresh()
     _LOGGER.info("options_updated_listener - done -- ")

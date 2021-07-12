@@ -1,6 +1,7 @@
 
 class myCheckData:
     def __init__(self):
+        # pas d'init defini
         pass
 
     def analyseValueAndAdd(self, data):

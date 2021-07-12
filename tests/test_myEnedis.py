@@ -3,6 +3,7 @@ import datetime
 
 from custom_components.apiEnedis.myClientEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
+contractJsonFile = "tests/Json/Contract/contract1.json"
 
 def loadJsonFile( filename ):
     with open(filename) as json_file:
@@ -11,7 +12,7 @@ def loadJsonFile( filename ):
 
 def test_update_contract():
     myE = myClientEnedis("myToken", "myPDL")
-    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
     assert myE.getContract().getsubscribed_power() == "9 kVA", "bad subscribed"
     assert myE.getContract().getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
@@ -25,7 +26,7 @@ def test_heures_creuses():
     heuresCreusesON = True
     myE = myClientEnedis("myToken", "myPDL", heuresCreuses=heureCreusesCh,
                                      heuresCreusesON=heuresCreusesON)
-    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
     myE.getContract().updateHCHP()
     dataCompare = [['00:00', '05:00'], ['22:00', '24:00']]
@@ -35,7 +36,7 @@ def test_heures_creuses():
     heuresCreusesON = False
     myE = myClientEnedis("myToken", "myPDL", heuresCreuses=heureCreusesCh,
                                      heuresCreusesON=heuresCreusesON)
-    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
     myE.getContract().updateHCHP()
     dataCompare = []
@@ -44,7 +45,7 @@ def test_heures_creuses():
 
 def test_update_last7days():
     myE = myClientEnedis("myToken", "myPDL")
-    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Week/week1.json")
     myE.updateLast7Days(dataJson)
@@ -59,7 +60,7 @@ def test_update_last7days():
 
 def test_update_last_month():
     myE = myClientEnedis("myToken", "myPDL")
-    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Month/month1.json")
     myE.updateLastMonth(dataJson)
@@ -68,7 +69,7 @@ def test_update_last_month():
 
 def call_update_current_month( fileName ):
     myE = myClientEnedis("myToken", "myPDL")
-    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile( fileName )
     myE.updateCurrentMonth(dataJson)
@@ -84,7 +85,7 @@ def test_update_current_month():
 
 def call_update_yesterday( filename ):
     myE = myClientEnedis("myToken", "myPDL")
-    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile( filename )
     myE.updateYesterday(dataJson)
@@ -92,7 +93,7 @@ def call_update_yesterday( filename ):
 
 def call_update_yesterdayHCHP( filename ):
     myE = myClientEnedis("myToken", "myPDL")
-    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
     dataJson = loadJsonFile( filename )
     yesterdayDate = (datetime.date.today() - datetime.timedelta(1)).strftime("%Y-%m-%d")
@@ -112,7 +113,7 @@ def test_update_yesterdayHCHP():
 
 def test_update_yesterday_error():
     myE = myClientEnedis("myToken", "myPDL")
-    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Error/error1.json")
     try:
@@ -137,7 +138,7 @@ def test_updateProductionYesterday2():
 def test_horaire_surcharge():
     hc = [['23:30', '23:59'], ['00:00', '07:35']]
     myE = myClientEnedis("myToken", "myPDL", heuresCreuses = hc)
-    dataJson = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
     myE.getContract().updateHCHP()
     dataCompare = hc

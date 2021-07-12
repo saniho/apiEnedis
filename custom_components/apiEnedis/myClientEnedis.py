@@ -118,6 +118,7 @@ class myClientEnedis:
         log.info("manageLastCallJson : ")
         if ( lastCallInformation != None):
             try:
+                self._forceCallJson = True
                 lastCall = lastCallInformation.get("timeLastCall", None)
                 log.info("manageLastCallJson : lastCall : %s" %lastCall)
                 if ( lastCall != None ):
@@ -132,7 +133,6 @@ class myClientEnedis:
                 log.info("manageLastCallJson : statutLastCall : %s" %statutLastCall)
                 if ( statutLastCall != None ):
                     self.updateStatusLastCall(statutLastCall)
-                self._forceCallJson = True
             except:
                 # si le fichier est mal formaté
                 pass
@@ -206,7 +206,9 @@ class myClientEnedis:
         if (self.getContract().getValue() != None):
             self.update()
             self.setlastCallJson()
-            self.writeDataJson()
+            log.info("UpdateRealise : %s" % (self.getUpdateRealise()))
+            if ( self.getUpdateRealise()):
+                self.writeDataJson()
 
         else:
             # on a eut un probleme lors de l'appel
@@ -596,9 +598,11 @@ class myClientEnedis:
     def getTimeLastCall(self):
         return self._timeLastUpdate
 
-    def updateTimeLastCall(self, ):
-        if ( not self._forceCallJson ):
+    def updateTimeLastCall(self, t = None):
+        if ( t is None ):
             t = datetime.datetime.now()
+            self._timeLastUpdate = t
+        else:
             self._timeLastUpdate = t
 
     def getStatusLastCall(self):

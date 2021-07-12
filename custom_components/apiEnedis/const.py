@@ -1,6 +1,6 @@
 """ Constants """
 
-__VERSION__ = "1.3.0.10" # attention updater aussi manifest.json
+__VERSION__ = "1.3.1.0" # attention updater aussi manifest.json
 __name__ = "myEnedis"
 
 try:

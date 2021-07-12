@@ -19,6 +19,7 @@ import datetime, logging
 log = logging.getLogger(__nameMyEnedis__)
 
 from .myCheckData import myCheckData
+from .myDataControl import okDataControl
 
 class myDataEnedisByDay():
     def __init__(self, myCalli, token, version, contrat):
@@ -56,9 +57,9 @@ class myDataEnedisByDay():
         self._nbCall = 0
         onLance = True
         if withControl:
-            if dataControl.get('deb', None) == dateDeb and dataControl.get('fin', None) == dateFin \
-                    and dataControl.get('callok', True):
-                onLance = False  # pas de lancement si meme date
+            if okDataControl( clefFunction, dataControl, dateDeb, dateFin ):
+                onLance = True
+                self._callOk = True
             else:
                 self._callOk = None
                 data = None  # si on doit mettre à jour ....
@@ -78,6 +79,7 @@ class myDataEnedisByDay():
                         self._nbCall = 1
                     else:
                         self._value = 0
+                    self._callOk = callDone
             else:
                 callDone = True
                 if (callDone) and (myCheckData().checkDataPeriod(self._data)):
@@ -85,6 +87,7 @@ class myDataEnedisByDay():
                     self._callOk = True
                 else:
                     self._value = 0
+                self._callOk = callDone
             log.info("with update !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
             log.info("updateData : data %s" % (self._data))
         else:

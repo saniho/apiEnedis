@@ -18,6 +18,7 @@ except ImportError:
 import datetime, logging
 log = logging.getLogger(__nameMyEnedis__)
 from .myCheckData import myCheckData
+from .myDataControl import okDataControl
 
 class myDataEnedis():
     def __init__(self, myCalli, token, version, contrat):
@@ -26,6 +27,9 @@ class myDataEnedis():
         self._date = None
         self._contrat = contrat
         self._token, self._version = token, version
+        self._dateDeb = None
+        self._dateFin = None
+        self._callOk = None
         self._nbCall = 0
         self._data = None
 
@@ -52,9 +56,9 @@ class myDataEnedis():
         self._nbCall = 0
         onLance = True
         if withControl:
-            if dataControl.get('deb', None) == dateDeb and dataControl.get('fin', None ) == dateFin \
-                    and dataControl.get('callok', True):
-                onLance = False # pas de lancement si meme date
+            if okDataControl( clefFunction, dataControl, dateDeb, dateFin ):
+                onLance = True
+                self._callOk = True
             else:
                 self._callOk = None
                 data = None # si on doit mettre à jour ....
@@ -74,6 +78,7 @@ class myDataEnedis():
                         self._callOk = True
                     else:
                         self._value = 0
+                    self._callOk = callDone
             else:
                 callDone = True
                 if (callDone) and (myCheckData().checkData(self._data)):
@@ -82,6 +87,7 @@ class myDataEnedis():
                     self._nbCall = 1
                 else:
                     self._value = 0
+                self._callOk = callDone
             log.info("with update !! %s ( du %s au %s )--" %( clefFunction, dateDeb, dateFin))
             log.info("updateData : data %s" % (self._data))
         else:

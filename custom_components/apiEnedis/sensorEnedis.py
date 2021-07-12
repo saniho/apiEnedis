@@ -311,7 +311,10 @@ class manageSensorState:
                         status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()
                         status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
-
+                    if status_counts['yesterday'] == None:
+                        status_counts['yesterday'] = 0
+                    if status_counts['yesterday_production'] == None:
+                        status_counts['yesterday_production'] = 0
                     if typeSensor == _consommation: #self._myDataEnedis.isConsommation():
                         valeurstate = status_counts['yesterday'] * 0.001
                     else:

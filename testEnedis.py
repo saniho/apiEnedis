@@ -36,10 +36,10 @@ def testMulti():
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=7200,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
-        path = getLocalDirectory( PDL_ID, "20210631" )
+        path = getLocalDirectory( PDL_ID, "20210712" )
         myDataEnedis.setPathArchive(path)
         dataJson = {}
-        dataJson = myDataEnedis.readDataJson()
+        #dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
@@ -52,7 +52,7 @@ def testMulti():
         callPossible = myDataEnedis.getCallPossible()
         log.info("possible ? %s "%(callPossible))
         log.info("** on tente une maj ??")
-        myDataEnedis.getData()
+        #myDataEnedis.getData()
         log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
 
         log.info("" )
@@ -60,11 +60,11 @@ def testMulti():
         callPossible = myDataEnedis.getCallPossible()
         log.info("possible ? %s "%(callPossible))
         log.info("** on tente une maj ??")
-        myDataEnedis.getData()
+        #myDataEnedis.getData()
         log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
         #print(1/0)
         # SORTIE OUTPUT
-        writeDataJson( myDataEnedis )
+        #writeDataJson( myDataEnedis )
 
         # ***********************************
         # ***********************************
