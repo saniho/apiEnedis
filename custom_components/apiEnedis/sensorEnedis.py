@@ -123,7 +123,9 @@ class manageSensorState:
                         status_counts["timeLastCall"] = self._myDataEnedis.getTimeLastCall()
                         # à supprimer car doublon avec j_1
                         status_counts['yesterday'] = self._myDataEnedis.getYesterday().getValue()
+                        status_counts['yesterdayDate'] = self._myDataEnedis.getYesterday().getDateDeb()
                         status_counts['yesterdayLastYear'] = self._myDataEnedis.getYesterdayLastYear().getValue()
+                        status_counts['yesterdayLastYearDate'] = self._myDataEnedis.getYesterday().getDateDeb()
                         status_counts['yesterdayConsumptionMaxPower'] = \
                             self._myDataEnedis.getYesterdayConsumptionMaxPower().getValue()
                         status_counts['last_week'] = self._myDataEnedis.getLastWeek().getValue()
@@ -249,6 +251,8 @@ class manageSensorState:
                             "{:.3f}".format(self._myDataEnedis.getYesterdayHCHP().getHP() * 0.001)
                         status_counts['current_week'] = \
                             "{:.3f}".format(self._myDataEnedis.getCurrentWeek().getValue() * 0.001)
+                        status_counts['current_week_number'] = \
+                            datetime.datetime.fromisoformat(self._myDataEnedis.getCurrentWeek().getDateDeb()).isocalendar()[1]
                         status_counts['current_week_last_year'] = \
                             "{:.3f}".format(self._myDataEnedis.getCurrentWeekLastYear().getValue() * 0.001)
                         status_counts['last_month'] = "{:.3f}".format(self._myDataEnedis.getLastMonth().getValue() * 0.001)
