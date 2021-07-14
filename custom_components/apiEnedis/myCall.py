@@ -76,9 +76,10 @@ class myCall:
                 #    json.dump(response.json(), outfile)
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
-                #return dataAnswer
                 try_again = False
             if ( try_again ) and ( nbEssai > 2):
+                import time
+                time.sleep(2) # on attend quelques secondes
                 try_again = False
         return dataAnswer
 

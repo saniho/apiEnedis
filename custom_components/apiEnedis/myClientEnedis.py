@@ -59,6 +59,9 @@ class myClientEnedis:
         self._version = version
         self._forceCallJson = False
 
+        import random
+        self._horaireMin = random.randrange(930,1059)
+
         myCalli.setParam( PDL_ID, token, version)
         self._contract = myContrat( myCalli, self._token, self._PDL_ID, self._version, heuresCreusesON, heuresCreuses)
         self._yesterday = myDataEnedis( myCalli, self._token, self._version, self._contract)
@@ -673,11 +676,14 @@ class myClientEnedis:
         #ecartOk = True
         return ecartOk
 
+    def getHoraireMin(self):
+        return self._horaireMin
+
     def getHorairePossible(self):
         # hier 23h
-        hourNow = datetime.datetime.now().hour
+        hourNow = datetime.datetime.now().hour + datetime.datetime.now().minute
         log.info("now : %s" % (hourNow))
-        horairePossible = ( hourNow >= 10 ) and ( hourNow < 23 )
+        horairePossible = ( hourNow >= self.getHoraireMin() ) and ( hourNow < 2300 )
         # for test
         #horairePossible = ( hourNow >= 11 ) and ( hourNow < 23 )
         log.info("horairePossible : %s" % (horairePossible))
