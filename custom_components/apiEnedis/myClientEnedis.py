@@ -109,7 +109,7 @@ class myClientEnedis:
                     clef = os.path.basename(nomFichier).split(".")[0]
                     data[clef] = json.load(json_file)
             except:
-                log.error(" >>>> erreur lecture : %s" %(nomfichier))
+                log.error(" >>>> erreur lecture : %s" %(nomFichier))
                 pass # si erreur lecture ... on continue ;)
         return data
 

@@ -100,12 +100,11 @@ class manageSensorState:
         status_counts["versionUpdateAvailable"] = \
             self.getExistsRecentVersion( self.version, self._myDataEnedis.getGitVersion() )
 
-        #if self._myDataEnedis.getContract() != None:
         if self._myDataEnedis.getTimeLastCall() != None:
-            # pas necessaire en visu
-            #status_counts["typeCompteurPDL"] = ','.join(self._myDataEnedis.getTypePDL())
+            self._LOGGER.info("-- ** on va mettre à jour : %s" %self._myDataEnedis.getContract().get_PDL_ID())
             status_counts["nbCall"] = self._myDataEnedis.getNbCall()
             status_counts["typeCompteur"] = typeSensor
+            status_counts["numPDL"] = self._myDataEnedis.getContract().get_PDL_ID()
             status_counts["activationDate"] = self._myDataEnedis.getContract().getLastActivationDate()
             if self._myDataEnedis.isConsommation():
                 status_counts["lastUpdate"] = self._myDataEnedis.getLastUpdate()
@@ -251,8 +250,10 @@ class manageSensorState:
                             "{:.3f}".format(self._myDataEnedis.getYesterdayHCHP().getHP() * 0.001)
                         status_counts['current_week'] = \
                             "{:.3f}".format(self._myDataEnedis.getCurrentWeek().getValue() * 0.001)
-                        status_counts['current_week_number'] = \
-                            datetime.datetime.fromisoformat(self._myDataEnedis.getCurrentWeek().getDateDeb()).isocalendar()[1]
+
+                        if self._myDataEnedis.getCurrentWeek().getDateDeb() != None:
+                            status_counts['current_week_number'] = \
+                                datetime.datetime.fromisoformat(self._myDataEnedis.getCurrentWeek().getDateDeb()).isocalendar()[1]
                         status_counts['current_week_last_year'] = \
                             "{:.3f}".format(self._myDataEnedis.getCurrentWeekLastYear().getValue() * 0.001)
                         status_counts['last_month'] = "{:.3f}".format(self._myDataEnedis.getLastMonth().getValue() * 0.001)

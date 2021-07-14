@@ -57,13 +57,11 @@ class myCall:
                 log.info("====== Appel http !!! reponse : %s =====" %(dataAnswer))
                 #raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 try_again = False
-                #return dataAnswer
             except requests.exceptions.Timeout as error:
                 # a ajouter raison de l'erreur !!!
                 log.info("====== Appel http !!! requests.exceptions.Timeout" )
                 dataAnswer = {"enedis_return": {"error": "UNKERROR_002"}}
                 self.setLastAnswer(dataAnswer)
-                #return dataAnswer
             except requests.exceptions.HTTPError as error:
                 log.info("====== Appel http !!! requests.exceptions.HTTPError" )
                 if ( "ADAM-ERR0069" not in response.text ) and \

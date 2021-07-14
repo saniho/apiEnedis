@@ -24,7 +24,7 @@ def testMulti():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS"]:
+    for qui in ["ENEDIS28"]:
         log.info("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
@@ -39,7 +39,7 @@ def testMulti():
         path = getLocalDirectory( PDL_ID, "20210713" )
         myDataEnedis.setPathArchive(path)
         dataJson = {}
-        dataJson = myDataEnedis.readDataJson()
+        #dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
