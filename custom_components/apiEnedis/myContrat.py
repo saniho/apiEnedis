@@ -69,7 +69,7 @@ class myContrat():
         return self._contract["mode_PDL"]
 
     def updateContract(self, data=None):
-        log.info("--updateContract --")
+        log.info("--updateContract : data %s" % (data))
         if (data == None): data = self.CallgetDataContract()
         log.info("updateContract : data %s" % (data))
         if ( self.checkDataContract(data) ):

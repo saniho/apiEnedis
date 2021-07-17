@@ -71,7 +71,17 @@ from .const import (
     PLATFORMS,
     DEFAULT_REPRISE_ERR,
 )
+try:
+    from .const import (
+        __nameMyEnedis__,
+    )
 
+except ImportError:
+    from const import (
+        __nameMyEnedis__,
+    )
+import logging
+log = logging.getLogger(__nameMyEnedis__)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -107,19 +117,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     code = str(entry.options.get(CONF_CODE, ""))
     hpcost = float(entry.options.get(HP_COST, "0.0"))
     hccost = float(entry.options.get(HC_COST, "0.0"))
-    heurescreusesON = bool(entry.options.get(HEURESCREUSES_ON, True)),
+    heurescreusesON = bool(entry.options.get(HEURESCREUSES_ON, True))
 
-    client = myClientEnedis.myClientEnedis(token, code, delai=DEFAULT_REPRISE_ERR,
-                                       heuresCreuses=heurescreuses, heuresCreusesCost=hccost,
-                                       heuresPleinesCost=hpcost,
-                                       version=__VERSION__, heuresCreusesON=heurescreusesON)
-
-    coordinator_enedis = sensorEnedisCoordinator(hass, entry, client)
+    coordinator_enedis = sensorEnedisCoordinator(hass, entry)
 
     await coordinator_enedis.async_setup()
     async def _enable_scheduled_myEnedis(*_):
         """Activate the data update coordinator."""
-        coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL        )
+        coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL )
         await coordinator_enedis.async_refresh()
 
     if hass.state == CoreState.running:
@@ -128,8 +133,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             raise ConfigEntryNotReady
 
     else:
-        # Running a speed test during startup can prevent
-        # integrations from being able to setup
         hass.bus.async_listen_once(
             EVENT_HOMEASSISTANT_STARTED, _enable_scheduled_myEnedis
         )
@@ -173,21 +176,47 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry):
 
 class sensorEnedisCoordinator(DataUpdateCoordinator):
 
-    def __init__(self, hass, entry, client):
+    #def __init__(self, hass, entry, _client):
+    def __init__(self, hass, entry):
         """Initialize the data object."""
         self.hass = hass
         self.entry = entry
-        self.clientEnedis = client
-        async def _async_update_data_enedis():
-            """Fetch data from API endpoint."""
-            return await hass.async_add_executor_job(self.clientEnedis.getData)
+        self._PDL_ID = None
+        #client = myClientEnedis.myClientEnedis(token=_client.get("token"),
+        #                                        PDL_ID=_client.get("code"),
+        #                                        delai=_client.get("DEFAULT_REPRISE_ERR"),
+        #                                        heuresCreuses=_client.get("heurescreuses"),
+        #                                        heuresCreusesCost=_client.get("hccost"),
+        #                                        heuresPleinesCost=_client.get("hpcost"),
+        #                                        version=_client.get("__VERSION__"),
+        #                                        heuresCreusesON=_client.get("heurescreusesON"))
+
+        self.clientEnedis = None
+        #async def _async_update_data_enedis():
+        #    """Fetch data from API endpoint."""
+        #    return await hass.async_add_executor_job(self.clientEnedis.getData)
         super().__init__(
             self.hass,
             _LOGGER,
             name=f"Enedis information for {entry.title}",
-            update_method=_async_update_data_enedis,
+            update_method=self._async_update_data_enedis,
             update_interval=SCAN_INTERVAL,
         )
+
+    def update_data(self):
+        """Get the latest data from myEnedis."""
+        log.info("** update_data %s **" %(self._PDL_ID))
+        self.clientEnedis.getData()
+        return True
+
+    async def _async_update_data_enedis(self, *_):
+        #"""Fetch data from API endpoint."""
+        #return await hass.async_add_executor_job(self.clientEnedis.getData)
+        """Update myEnedis data."""
+        try:
+            return await self.hass.async_add_executor_job(self.update_data)
+        except Exception as inst:
+            raise Exception(inst)
 
     async def async_set_options(self):
         """Set options for entry."""
@@ -221,6 +250,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         if ( heurescreusesch == "" ):
             heurescreusesch = "[]"
         heurescreuses = eval(heurescreusesch)
+        self._PDL_ID = code
         _LOGGER.info("options - proc -- %s %s %s %s %s %s" % (token, code, hccost, hpcost, heurescreusesON, heurescreuses))
         import os
         dir_path = os.path.dirname(os.path.realpath(__file__))

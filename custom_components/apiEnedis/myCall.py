@@ -22,6 +22,7 @@ class myCall:
 
     def setParam( self, PDL_ID, token, version):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version
+        self._version = "test_saniho"
 
     def getDefaultHeader(self):
         return {
@@ -54,6 +55,8 @@ class myCall:
                 response.raise_for_status()
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
+                log.info("====== Appel http !!! headers : %s =====" %(headers))
+                log.info("====== Appel http !!! data : %s =====" %(data))
                 log.info("====== Appel http !!! reponse : %s =====" %(dataAnswer))
                 #raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 try_again = False
@@ -77,6 +80,8 @@ class myCall:
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
                 try_again = False
+                if ( "usage_point_id parameter must be 14 digits long." in response.text):
+                    try_again = True # si le nombre de digit n'est pas de 14 ...lié à une erreur coté enedis
             if ( try_again ) and ( nbEssai > 2):
                 import time
                 time.sleep(2) # on attend quelques secondes

@@ -2,5 +2,5 @@ projectKey=saniho:apienedi
 serverUrl=http://192.168.1.80
 serverVersion=9.0.0.45539
 dashboardUrl=http://192.168.1.80/dashboard?id=saniho%3Aapienedi
-ceTaskId=AXqZl_sKnNg7S8Asgwlf
-ceTaskUrl=http://192.168.1.80/api/ce/task?id=AXqZl_sKnNg7S8Asgwlf
+ceTaskId=AXqZwVXRnNg7S8Asgwli
+ceTaskUrl=http://192.168.1.80/api/ce/task?id=AXqZwVXRnNg7S8Asgwli

@@ -63,7 +63,7 @@ def test_update_last_month():
     dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Month/month1.json")
-    myE.updateLastMonth(dataJson)
+    myE.updateLastMonth(dataJson, withControl=False)
     assert myE.getLastMonth().getValue() == 876699, "Error LastMonthData"
 
 
@@ -72,7 +72,7 @@ def call_update_current_month( fileName ):
     dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile( fileName )
-    myE.updateCurrentMonth(dataJson)
+    myE.updateCurrentMonth(dataJson, withControl=False)
     return myE
 
 def test_update_current_month():
@@ -88,7 +88,7 @@ def call_update_yesterday( filename ):
     dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile( filename )
-    myE.updateYesterday(dataJson)
+    myE.updateYesterday(dataJson, withControl=False)
     return myE
 
 def call_update_yesterdayHCHP( filename ):
@@ -97,7 +97,7 @@ def call_update_yesterdayHCHP( filename ):
     myE.updateContract(dataJson)
     dataJson = loadJsonFile( filename )
     yesterdayDate = (datetime.date.today() - datetime.timedelta(1)).strftime("%Y-%m-%d")
-    myE.updateDataYesterdayHCHP(dataJson, yesterdayDate)
+    myE.updateDataYesterdayHCHP(dataJson, yesterdayDate, withControl=False)
     return myE
 
 def test_update_yesterday():
@@ -117,7 +117,7 @@ def test_update_yesterday_error():
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Error/error1.json")
     try:
-        myE.updateYesterday(dataJson)
+        myE.updateYesterday(dataJson, withControl=False)
     except Exception as e:
         assert e.args[2] == "UNKERROR_001", "Erreur UNKERROR_001"
 
@@ -132,7 +132,7 @@ def test_updateProductionYesterday2():
     dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Production/error2.json")
-    myE.updateYesterdayProduction( dataJson )
+    myE.updateYesterdayProduction( dataJson, withControl=False )
     assert myE.getProductionYesterday().getValue() == 0, "Erreur production Value"
 
 def test_horaire_surcharge():
