@@ -22,7 +22,6 @@ class myCall:
 
     def setParam( self, PDL_ID, token, version):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version
-        self._version = "test_saniho"
 
     def getDefaultHeader(self):
         return {
