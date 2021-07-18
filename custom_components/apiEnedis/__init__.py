@@ -254,8 +254,27 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         _LOGGER.info("options - proc -- %s %s %s %s %s %s" % (token, code, hccost, hpcost, heurescreusesON, heurescreuses))
         import os
         dir_path = os.path.dirname(os.path.realpath(__file__))
+        dir_path = dir_path.replace("myEnedis","archive")
         try:
-            path = "%s/archive/%s" %(dir_path,code)
+            path = "%s" %(dir_path)
+            if not os.path.isdir(path):
+                _LOGGER.info("creation repertoire  ? %s" %path )
+                os.mkdir(path)
+                _LOGGER.info("repertoire cree %s" %path )
+        except:
+            _LOGGER.info("error" )
+            _LOGGER.error(traceback.format_exc())
+        try:
+            path = "%s/myEnedis" %(dir_path)
+            if not os.path.isdir(path):
+                _LOGGER.info("creation repertoire  ? %s" %path )
+                os.mkdir(path)
+                _LOGGER.info("repertoire cree %s" %path )
+        except:
+            _LOGGER.info("error" )
+            _LOGGER.error(traceback.format_exc())
+        try:
+            path = "%s/myEnedis/%s" %(dir_path,code)
             if not os.path.isdir(path):
                 _LOGGER.info("creation repertoire  ? %s" %path )
                 os.mkdir(path)
