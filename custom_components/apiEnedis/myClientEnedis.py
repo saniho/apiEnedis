@@ -835,6 +835,7 @@ class myClientEnedis:
                         log.error("Erreur inconnue call ERROR %s" % (inst))
                         log.error("Erreur last answer %s" % (inst))
                         log.error("Erreur last call %s" % (self.getLastMethodCall()))
+                        log.error("Erreur last answer %s" % (self._myCalli.getLastAnswer()))
                         log.error(traceback.format_exc())
                         log.error("-" * 60)
                         exc_type, exc_value, exc_traceback = sys.exc_info()
