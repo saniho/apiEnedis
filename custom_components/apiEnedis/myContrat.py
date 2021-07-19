@@ -19,10 +19,8 @@ except ImportError:
         _formatDateY0101,
     )
 
-import datetime, logging
+import logging
 log = logging.getLogger(__nameMyEnedis__)
-
-from . import messages
 
 class myContrat():
     def __init__(self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses):

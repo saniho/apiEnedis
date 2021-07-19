@@ -41,6 +41,7 @@ class myCall:
     def post_and_get_json(self, url, params=None, data=None, headers=None):
         try_again = True
         nbEssai = 0
+        dataAnswer = None
         while( try_again ):
             nbEssai += 1
             try:

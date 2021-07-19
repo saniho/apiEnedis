@@ -1,6 +1,6 @@
 """ Constants """
-
-__VERSION__ = "1.3.1.6" # attention updater aussi manifest.json
+# attention updater aussi manifest.json
+__VERSION__ = "1.3.1.6"
 __name__ = "myEnedis"
 
 try:
@@ -15,7 +15,7 @@ except ImportError:
             # nothing to do
             pass
 
-ISSUE_URL="https://github.com/saniho/apiEnedis/issues"
+ISSUE_URL = "https://github.com/saniho/apiEnedis/issues"
 myENEDIS_SERVICE = "myEnedis"
 # nom du repertoire
 DOMAIN = "myEnedis"
@@ -27,18 +27,19 @@ PLATFORM = "sensor"
 # Configuration
 CONF_TOKEN = "token"
 CONF_CODE = "code"
-CONF_SCAN_INTERVAL = "conf_scan_interval" # 60 secondes verifications du coordinator
+
+# 60 secondes verifications du coordinator
+CONF_SCAN_INTERVAL = "conf_scan_interval"
 
 HP_COST = "hp_cout"
 HC_COST = "hc_cout"
 HEURES_CREUSES = "heures_creuses"
 
 CONF_DELAY = 60 * 60 * 6  # verification enedis toutes les 6 heures
-#DEFAULT_SCAN_INTERVAL = 60 * 30  # verification enedis toutes les 30 minutes
 DEFAULT_REPRISE_ERR = 60 * 60  # verification enedis toutes les heures
 DEFAULT_SCAN_INTERVAL = 2 * 60  # verification enedis toutes les 60 secondes
 DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
-DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60*10 # 1 fois toutes les 10 minutes
+DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60 * 10 # 1 fois toutes les 10 minutes
 
 HEURESCREUSES_ON = "heuresCreusesON"
 UNDO_UPDATE_LISTENER = "undo_update_listener"
