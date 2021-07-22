@@ -63,6 +63,8 @@ class myCheckData:
                 raise Exception('call', "error", "UNKERROR_001")
             else:
                 raise Exception('call', "error", dataAnswer["error_code"])
+        if ( "meter_reading" not in dataAnswer.keys() ):
+            return False
         return True
 
 
