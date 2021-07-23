@@ -60,7 +60,7 @@ class myClientEnedis:
         self._forceCallJson = False
 
         import random
-        self._horaireMin = datetime.datetime(2021,7,21,9,30) + datetime.timedelta(minutes=random.randrange(60))
+        self._horaireMin = datetime.datetime(2021,7,21,9,30) + datetime.timedelta(minutes=random.randrange(90))
 
         self._myCalli.setParam( PDL_ID, token, version)
         self._contract = myContrat( self._myCalli, self._token, self._PDL_ID, self._version, heuresCreusesON, heuresCreuses)

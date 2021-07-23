@@ -62,8 +62,8 @@ class myCall:
                 try_again = False
             except requests.exceptions.Timeout as error:
                 # a ajouter raison de l'erreur !!!
-                log.info("====== Appel http !!! requests.exceptions.Timeout" )
-                dataAnswer = {"enedis_return": {"error": "UNKERROR_002"}}
+                log.error("====== Appel http !!! requests.exceptions.Timeout" )
+                dataAnswer = {"enedis_return": {"error": "UNKERROR_002","message": "Timeout"}}
                 self.setLastAnswer(dataAnswer)
             except requests.exceptions.HTTPError as error:
                 log.info("====== Appel http !!! requests.exceptions.HTTPError" )
@@ -84,7 +84,7 @@ class myCall:
                     try_again = True # si le nombre de digit n'est pas de 14 ...lié à une erreur coté enedis
             if ( try_again ) and ( nbEssai > 2):
                 import time
-                time.sleep(2) # on attend quelques secondes
+                time.sleep(30) # on attend quelques secondes
                 try_again = False
         return dataAnswer
 
