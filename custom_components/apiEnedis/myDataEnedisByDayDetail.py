@@ -77,7 +77,7 @@ class myDataEnedisByDayDetail():
     def getNbCall(self):
         return self._nbCall
 
-    def updateData(self, clefFunction, data=None, dateDeb=None, dateFin=None, withControl = False, dataControl = None):
+    def updateData(self, clefFunction, horairePossible=True, data=None, dateDeb=None, dateFin=None, withControl = False, dataControl = None):
         self._nbCall = 0
         onLance = True
         if withControl:
@@ -85,8 +85,11 @@ class myDataEnedisByDayDetail():
                 onLance = True
                 self._callOk = True
             else:
-                self._callOk = None
-                data = None # si on doit mettre à jour ....
+                if ( not horairePossible ):
+                    onLance = False
+                else:
+                    self._callOk = None
+                    data = None # si on doit mettre à jour .... sauf si on est pas la
         if onLance:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
