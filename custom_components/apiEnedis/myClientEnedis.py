@@ -619,7 +619,8 @@ class myClientEnedis:
         self._nbCall += nbCall
 
     def updateStatusLastCall(self, status):
-        self._statusLastCall = status
+        if ( not self._forceCallJson ): # pour eviter d'ecraser le statut quand on recupere la date depuis le json
+            self._statusLastCall = status
 
     def getErrorLastCall(self):
         return self._errorLastCall
@@ -705,10 +706,17 @@ class myClientEnedis:
     def getCallPossible(self, currentDateTime = datetime.datetime.now(), trace = False):
         # new callpossible ???
         callpossible = ( self.getHorairePossible() and
-                         ( self.getLastCallHier() or (self.getTimeLastCall() == None) or
-                           (self.getStatusLastCall() == False and self.getDelaiIsGoodAfterError(currentDateTime))
-                         )
+                            ( self.getLastCallHier() or
+                                ( self.getTimeLastCall() == None) or
+                                ( self.getStatusLastCall() == False
+                                  and self.getDelaiIsGoodAfterError(currentDateTime)
+                                )
+                            )
                         )
+        #if ( self.getDelaiIsGoodAfterError(currentDateTime) ):
+        #    trace = True # pour activer la trace ... et voir comprendre quelque choose
+        #if ( self.getStatusLastCall() == False ):
+        #    trace = True # pour activer la trace ... et voir comprendre quelque choose
         if ( self._forceCallJson ):
             callpossible = True
         if ( trace ):
@@ -737,15 +745,15 @@ class myClientEnedis:
         if (self.getContract().getValue() != None):
             if self.getCallPossible():
                 try:
-                    log.info("myEnedis(%s) ...%s update lancé, status precedent : %s, lastCall :%s, forcejson :%s" \
+                    log.info("myEnedis(%s) ...%s update lancé, status precedent : %s, lastMethodCall :%s, forcejson :%s" \
                         % (self.getVersion(), self.getContract().get_PDL_ID(),
                            self.getStatusLastCall(), self.getLastMethodCallError(),
                         self._forceCallJson))
-                    log.error("myEnedis(%s) ...%s update lancé, status precedent : %s, lastCall :%s, forcejson :%s" \
+                    log.error("myEnedis(%s) ...%s update lancé, status precedent : %s, lastMethodCall :%s, forcejson :%s" \
                         % (self.getVersion(), self.getContract().get_PDL_ID(),
                            self.getStatusLastCall(), self.getLastMethodCallError(),
                            self._forceCallJson))
-                    self.getCallPossible()
+                    #self.getCallPossible()
                     self._nbCall = 0
                     self.updateGitVersion()
                     self.updateErrorLastCall("")
