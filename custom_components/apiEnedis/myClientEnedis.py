@@ -759,6 +759,8 @@ class myClientEnedis:
                     self.updateErrorLastCall("")
                     self.updateLastMethodCall("")
                     self.setUpdateRealise(True)
+                    if ( not self._forceCallJson ) : # si pas un forcage alors on reset le last call...
+                        updateStatusLastCall(True)
                     try:
                         if (self.isConsommation()):
                             self._niemeAppel += 1
@@ -831,14 +833,14 @@ class myClientEnedis:
                                 "%s - %s" % (messages.getMessage(inst.args[2]), self._myCalli.getLastAnswer()))
                             log.error(
                                 "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
-                            log.error("myEnedis ...%s update termine, on retentera plus tard" % (self.getContract().get_PDL_ID()))
+                            log.error("myEnedis ...%s update termine, on retentera plus tard(A)" % (self.getContract().get_PDL_ID()))
                         else:
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
                             self.updateErrorLastCall("%s" % (self._myCalli.getLastAnswer()))
                             log.error(
                                 "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
-                            log.error("myEnedis ...%s update termine, on retentera plus tard" % (self.getContract().get_PDL_ID()))
+                            log.error("myEnedis ...%s update termine, on retentera plus tard(B)" % (self.getContract().get_PDL_ID()))
                             raise Exception(inst)
 
                 except Exception as inst:

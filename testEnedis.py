@@ -39,7 +39,7 @@ def testMulti():
         path = getLocalDirectory( PDL_ID, "20210727" )
         myDataEnedis.setPathArchive(path)
         dataJson = {}
-        dataJson = myDataEnedis.readDataJson()
+        #dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
