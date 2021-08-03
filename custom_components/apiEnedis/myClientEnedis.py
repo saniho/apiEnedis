@@ -760,7 +760,7 @@ class myClientEnedis:
                     self.updateLastMethodCall("")
                     self.setUpdateRealise(True)
                     if ( not self._forceCallJson ) : # si pas un forcage alors on reset le last call...
-                        updateStatusLastCall(True)
+                        self.updateStatusLastCall(True)
                     try:
                         if (self.isConsommation()):
                             self._niemeAppel += 1
