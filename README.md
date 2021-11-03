@@ -1,4 +1,5 @@
 # myEnedis
+[![HACS Supported](https://img.shields.io/badge/HACS-Supported-green.svg)](https://github.com/custom-components/hacs)
 
 **Cette integration est compatible avec la carte : https://github.com/saniho/content-card-linky**
 
@@ -8,59 +9,100 @@
 
 Cette intégration fonctionne à l'aide de la passerelle fournie par https://enedisgateway.tech/.
 
-Avant de pouvoir utiliser cette intégration, assurez vous d' : 
-* Avoir validé la partage de données avec la [passerelle](https://enedisgateway.tech/),
-* Avoir activé sur votre [espace privé Enedis](https://mon-compte-client.enedis.fr/) la remontée des informations de votre linky.
+Avant de pouvoir utiliser cette intégration, assurez vous : 
+* D'avoir validé la partage de données avec la [passerelle](https://enedisgateway.tech/),
+* Et d'avoir activé sur votre [espace privé Enedis](https://mon-compte-client.enedis.fr/) la remontée des informations de votre linky.
 
 ## Installer l'intégration
 
-### Via HACS (mise à jour en un clic) : 
-
-*si vous n'avez pas HACS, pour l'installer cela se passe ici : [HACS : Ajoutez des modules et des cartes personnalisées](https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359)*
-
+<details>
+  <summary><b>Via HACS (mise à jour en un clic) : </b></summary><br>
+ 
+* Ouvrez HACS, cliquez sur `Intégration`, puis selectionnez le menu 3 points en haut à droite.
+ 
+ *si vous n'avez pas HACS, pour l'installer cela se passe ici : [HACS : Ajoutez des modules et des cartes personnalisées](https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359)
+ 
+ <br>
+ <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_01.png" height="300"/>
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_02.png" width="600"/>
-
+ <br>
+ </p>
+ 
 * Ajoutez le dépot personnalisé : `https://github.com/saniho/apiEnedis`
 
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_01.png" width="400"/>
-
+ <br>
+ <p align="center">
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_02.png" width="600"/>
+ <br>
+ </p>
+ 
 * Cliquez sur le bouton `Installer` de la carte correspondant à l'intégration
-
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_02.png" width="600"/>
-
+ 
+ <br>
+ <p align="center">
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_01.png" width="400"/>
+ <br>
+ </p>
+ 
 * Cliquez sur le bouton `Installer` de la popup
-
+ 
+ <br>
+ <p align="center">
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_02.png" width="600"/>
+ <br>
+ </p>
+ 
+ * La carte de l'intégration est maintenant rouge, signifiant qu'un redémarrage du serveur Home Assistant est nécessaire
+ 
+ <br>
+ <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_03.png" width="400"/>
+ <br>
+ </p>
 
-* La carte de l'intégration est maintenant rouge, signifiant qu'un redémarrage du serveur Home Assistant est nécessaire
-
-* Accédez à la vue `Contrôle du serveur` (`Configuration` -> `Contrôle du serveur`)
-
+* Accédez à la vue `Contrôle du serveur` (`Configuration` -> `Contrôle du serveur`), puis cliquez sur le bouton `Redémarrer` dans la zone `Gestion du serveur`
+ 
+ <br>
+ <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_04.png" width="400"/>
+ <br>
+ </p>
+
+ 
+</details>
+
+<details>
+  <summary><b>Manuellement (à faire à chaque mise à jour)</b></summary>
+
+* Dans votre propre dossier `custom_components`, créez un dossier nommé `apiEnedis` puis, copiez tout le contenu du dossier [apiEnedis](https://github.com/saniho/apiEnedis/tree/main/custom_components/apiEnedis) dedans.
 
 * Cliquez sur le bouton `Redémarrer` dans la zone `Gestion du serveur`
-
-### Manuellement (à faire à chaque mise à jour)
-
-* Copiez tout le contenu du dossier [custom_components](https://github.com/saniho/apiEnedis/tree/main/custom_components/apiEnedis) dans votre propre dossier `custom_components`, dans un dossier nommé `apiEnedis`
-
-* Redémarrez votre serveur Home Assistant
+ 
+</details>
 
 ## Ajouter l'intégration
 
-### Via l'interface graphique
+<details>
+  <summary><b>Via l'interface graphique</b></summary>
 
 * Accédez à la vue `Intégrations` (`Configuration` -> `Intégration`)
 
 * Appuyez sur le bouton bleu `Ajouter l'intégration` en bas à droite de la vue
 
+ <br>
+ <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_01.png" height="500"/>
-
+ <br>
+ </p>
+ 
 * Tapez dans le champ de recherche qui vient d'apparaître : `myenedis` et cliquez sur l'intégration
 
+ <br>
+ <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_02.png" height="300"/>
-
+ <br>
+ </p>
+ 
 * Renseigner : 
   * Votre `token`
   * Votre `code` (PDL)
@@ -73,13 +115,20 @@ Avant de pouvoir utiliser cette intégration, assurez vous d' :
     
 * Validez la saisie avec le bouton `Soumettre`
 
+ <br>
+ <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_03.png" width="300"/>
-
+ <br>
+ </p>
+ 
 * Fermez la popup de confirmation en cliquant sur le bouton `Terminer`
 
 *Si vous ne voyez pas l'intégration dans la liste, effacer le cache de votre navigateur en faisant la combinaison de touche `CTRL+F5` ou `CTRL+SHIFT+R`*
 
-### Via YAML << DEPRECIATED >>
+</details>
+<details>
+  <summary><b>En YAML << OBSOLETE >></b></summary>
+</details>
 
 ### Redémarrer votre serveur Home Assistant
 
@@ -87,8 +136,12 @@ Avant de pouvoir utiliser cette intégration, assurez vous d' :
 
 L'intégration crée l'entité `sensor.myenedis_<<votrecode>>`
 
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/sensor_v2.png"/>
 
+ <br>
+ <p align="center">
+<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/sensor_v2.png"/>
+ <br>
+ </p>
 
 **************
 
@@ -97,8 +150,8 @@ N'hésitez pas à aller faire un tour sur ce forum ou vous trouverez pleins d'in
 https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359 
 
 *************
-
-_**VERSION**_
+<details>
+  <summary><b>VERSION</b></summary>
 
 
 **1.2.0.0**
@@ -178,3 +231,4 @@ ajout de la remontée yesterday au niveau du state pour permettre l'utilisation 
 
 premiere version
 
+</details>
