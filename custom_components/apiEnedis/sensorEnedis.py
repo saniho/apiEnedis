@@ -86,9 +86,10 @@ class manageSensorState:
         return status_counts, state
 
     def getExistsRecentVersion(self, versionCurrent, versionGit):
+        import packaging.version
         if ( versionCurrent is None ) or ( versionGit is None ):
             return False
-        elif ( versionCurrent < versionGit):
+        elif ( packaging.version.parse(versionCurrent) < packaging.version.parse(versionGit)):
             return True
         else:
             return False
