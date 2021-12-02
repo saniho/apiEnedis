@@ -94,6 +94,14 @@ class manageSensorState:
         else:
             return False
 
+    def getStatusEnergy(self, typeSensor = _consommation):
+        state = "unavailable"
+        status_counts = defaultdict(int)
+        if self._myDataEnedis.getTimeLastCall() != None:
+            state = "{:.3f}".format(self._myDataEnedis.getCurrentYear().getValue() * 0.001)
+
+        return status_counts, state
+
     def getStatus(self, typeSensor = _consommation):
         state = "unavailable"
         status_counts = defaultdict(int)

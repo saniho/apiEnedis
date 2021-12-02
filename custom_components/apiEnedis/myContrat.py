@@ -182,6 +182,6 @@ class myContrat():
                         heurePleine = False
                 except:
                     pass
-                if (heureCreuse[0] < heure) and (heure <= heureCreuse[1]):
+                if (heureCreuse[0] <= heure) and (heure < heureCreuse[1]):
                     heurePleine = False
         return heurePleine
