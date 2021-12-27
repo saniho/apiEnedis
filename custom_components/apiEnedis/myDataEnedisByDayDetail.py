@@ -131,6 +131,7 @@ class myDataEnedisByDayDetail():
         interval = self.getIntervalLength()
         coeff = 1
         if (interval == "PT10M"): coeff = 1 * 10 / 60
+        if (interval == "PT15M"): coeff = 1 * 15 / 60
         if (interval == "PT20M"): coeff = 1 * 20 / 60
         if (interval == "PT30M"): coeff = 1 * 30 / 60
         if (interval == "PT60M"): coeff = 1
