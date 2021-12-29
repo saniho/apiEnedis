@@ -64,6 +64,7 @@ ICON = "mdi:package-variant-closed"
 from .myEnedisSensorCoordinator import myEnedisSensorCoordinator
 from .myEnedisSensorCoordinatorHistory import myEnedisSensorCoordinatorHistory
 from .myEnedisSensorYesterdayCostCoordinator import myEnedisSensorYesterdayCostCoordinator
+from .myEnedisSensorCoordinatorEnergy import myEnedisSensorCoordinatorEnergy
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
@@ -84,9 +85,10 @@ async def async_setup_entry(
             entities.append(myEnedisSensorCoordinatorHistory(mysensor, coordinator_enedis, detail="HP"))
         elif sensor_type == "yesterdayCost":
             entities.append(myEnedisSensorYesterdayCostCoordinator(mysensor, coordinator_enedis))
+        elif sensor_type == "energy":
+            entities.append(myEnedisSensorCoordinatorEnergy(mysensor, coordinator_enedis))
         else:
             pass
-            #entities.append(MeteoFranceSensor(sensor_type, coordinator_enedis))
 
     async_add_entities(
         entities,

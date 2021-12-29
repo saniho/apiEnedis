@@ -42,7 +42,7 @@ from .sensorEnedis import manageSensorState
 
 ICON = "mdi:package-variant-closed"
 
-class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
+class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
     """."""
 
     def __init__(self, sensor_type, coordinator: DataUpdateCoordinator, typeSensor = _consommation):
@@ -54,28 +54,27 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         self._attributes = {}
         self._state = None
-        self._unit = "€"
+        self._unit = "kWh"
         self._lastState = None
         self._lastAttributes = None
         self._typeSensor = typeSensor
-        self._lastYesterday = None
 
     @property
     def unique_id(self):
         "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.cost.yesterday.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.energy.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
         else:
-            name = "myEnedis.cost.yesterday.%s" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.energy.%s" %(self._myDataSensorEnedis.get_PDL_ID())
         return name
 
     @property
     def name(self):
         """Return the name of the sensor."""
         if ( self._typeSensor == _production):
-            name = "myEnedis.cost.yesterday.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.energy.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
         else:
-            name = "myEnedis.cost.yesterday.%s" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.energy.%s" %(self._myDataSensorEnedis.get_PDL_ID())
         return name
 
     @property
@@ -95,6 +94,15 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         if state:
             self._state = state.state
 
+        #TEST info
+        try:
+            if 'typeCompteur' in state.attributes:
+                self.attrs = state.attributes
+                _LOGGER.info("Redemarrage avec element present ??")
+        except:
+            _LOGGER.info("Redemarrage mais rien de present")
+            pass
+
         @callback
         def update():
             """Update state."""
@@ -110,13 +118,12 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         """Update sensors state."""
         self._attributes = {
             ATTR_ATTRIBUTION: "",
+            "device_class": "energy",
+            "state_class": "total",
+            "unit_of_measurement": self._unit,
+            "last_reset": "2021-01-01T00:00:00",  #à corriger plus tard !!
         }
-        dataAvailable, yesterdayDate, status_counts, state = self._myDataSensorEnedis.getStatusYesterdayCost()
-        if dataAvailable:
-            if ( self._lastYesterday != yesterdayDate ) and ( yesterdayDate != None ):
-                status_counts["timeLastCall"] = datetime.datetime.now()
-                self._lastYesterday = yesterdayDate
-        self._attributes.update(status_counts)
+        status_counts, state = self._myDataSensorEnedis.getStatusEnergy( self._typeSensor )
         self._state = state
 
     def _update(self):
