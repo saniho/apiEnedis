@@ -749,10 +749,6 @@ class myClientEnedis:
                         % (self.getVersion(), self.getContract().get_PDL_ID(),
                            self.getStatusLastCall(), self.getLastMethodCallError(),
                         self._forceCallJson))
-                    log.error("myEnedis(%s) ...%s update lancé, status precedent : %s, lastMethodCall :%s, forcejson :%s" \
-                        % (self.getVersion(), self.getContract().get_PDL_ID(),
-                           self.getStatusLastCall(), self.getLastMethodCallError(),
-                           self._forceCallJson))
                     #self.getCallPossible()
                     self._nbCall = 0
                     self.updateGitVersion()
@@ -809,11 +805,6 @@ class myClientEnedis:
                             self._forceCallJson = False
                             self.setDataJsonDefault({})
 
-                        log.error("myEnedis(%s) ...%s update termine, status courant : %s, lastCall :%s, nbCall :%s" \
-                              % (
-                                self.getVersion(), self.getContract().get_PDL_ID(),
-                                self.getStatusLastCall(), self.getLastMethodCallError(),
-                                self.getNbCall()))
                         log.info("myEnedis(%s) ...%s update termine, status courant : %s, lastCall :%s, nbCall :%s" \
                               % (
                                 self.getVersion(), self.getContract().get_PDL_ID(),
