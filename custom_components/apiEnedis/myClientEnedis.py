@@ -805,7 +805,7 @@ class myClientEnedis:
                             self._forceCallJson = False
                             self.setDataJsonDefault({})
 
-                        log.info("myEnedis(%s) ...%s update termine, status courant : %s, lastCall :%s, nbCall :%s" \
+                        log.info("myEnedis(%s) ... %s update termine, status courant : %s, lastCall :%s, nbCall :%s" \
                               % (
                                 self.getVersion(), self.getContract().get_PDL_ID(),
                                 self.getStatusLastCall(), self.getLastMethodCallError(),
