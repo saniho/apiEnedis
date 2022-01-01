@@ -63,7 +63,7 @@ class myCall:
             except requests.exceptions.Timeout as error:
                 # a ajouter raison de l'erreur !!!
                 log.error("====== Appel http !!! requests.exceptions.Timeout" )
-                dataAnswer = {"enedis_return": {"error": "UNKERROR_002","message": "Timeout"}}
+                dataAnswer = {"enedis_return": {"error": "UNKERROR_TIMEOUT","message": "Timeout"}}
                 self.setLastAnswer(dataAnswer)
             except requests.exceptions.HTTPError as error:
                 log.info("====== Appel http !!! requests.exceptions.HTTPError" )
@@ -86,6 +86,10 @@ class myCall:
                 import time
                 time.sleep(30) # on attend quelques secondes
                 try_again = False
+        if ( "enedis_return" in dataAnswer ):
+            if ( "error" in dataAnswer["enedis_return"]):
+                if ( dataAnswer["enedis_return"]["error"] == "UNKERROR_TIMEOUT"):
+                    raise error
         return dataAnswer
 
     def getDataPeriod(self, deb, fin ):
