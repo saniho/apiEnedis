@@ -86,8 +86,8 @@ class myCall:
                 import time
                 time.sleep(30) # on attend quelques secondes
                 try_again = False
-        if ( "enedis_return" in dataAnswer ):
-            if ( "error" in dataAnswer["enedis_return"]):
+        if ( "enedis_return" in dataAnswer.keys() ):
+            if ( "error" in dataAnswer["enedis_return"].keys()):
                 if ( dataAnswer["enedis_return"]["error"] == "UNKERROR_TIMEOUT"):
                     raise error
         return dataAnswer
