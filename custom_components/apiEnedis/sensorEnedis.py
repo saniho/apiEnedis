@@ -259,6 +259,10 @@ class manageSensorState:
                             "{:.3f}".format(self._myDataEnedis.getYesterdayHCHP().getHC() * 0.001)
                         status_counts["yesterday_HP"] = \
                             "{:.3f}".format(self._myDataEnedis.getYesterdayHCHP().getHP() * 0.001)
+                        status_counts["yesterday_HCHP"] = \
+                            "{:.3f}".format((
+                            self._myDataEnedis.getYesterdayHCHP().getHC() +
+                            self._myDataEnedis.getYesterdayHCHP().getHP() ) * 0.001)
                         status_counts['current_week'] = \
                             "{:.3f}".format(self._myDataEnedis.getCurrentWeek().getValue() * 0.001)
 
