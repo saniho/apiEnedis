@@ -263,6 +263,10 @@ class manageSensorState:
                             "{:.3f}".format((
                             self._myDataEnedis.getYesterdayHCHP().getHC() +
                             self._myDataEnedis.getYesterdayHCHP().getHP() ) * 0.001)
+                        if( status_counts['yesterday'] == 0):
+                            status_counts["yesterday"] = \
+                                self._myDataEnedis.getYesterdayHCHP().getHC() + \
+                                self._myDataEnedis.getYesterdayHCHP().getHP()
                         status_counts['current_week'] = \
                             "{:.3f}".format(self._myDataEnedis.getCurrentWeek().getValue() * 0.001)
 
@@ -324,8 +328,7 @@ class manageSensorState:
                         status_counts["subscribed_power"] = self._myDataEnedis.getContract().getsubscribed_power()
                         status_counts["offpeak_hours_enedis"] = self._myDataEnedis.getContract().getoffpeak_hours()
                         status_counts["offpeak_hours"] = self._myDataEnedis.getContract().getHeuresCreuses()
-                        # status_counts['yesterday'] = ""
-                    if typeSensor == _production: #self._myDataEnedis.isProduction():
+                    if typeSensor == _production:
                         status_counts["yesterday_production"] = self._myDataEnedis.getProductionYesterday().getValue()
                         status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
                         status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()

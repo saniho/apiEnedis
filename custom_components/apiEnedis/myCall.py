@@ -109,6 +109,7 @@ class myCall:
             # pas de donnée
             callDone = False
             dataAnswer = ""
+        self.setLastAnswer(dataAnswer)
         return dataAnswer, callDone
 
     def getDataPeriodConsumptionMaxPower(self, deb, fin):

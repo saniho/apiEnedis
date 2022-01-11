@@ -63,6 +63,10 @@ class myCheckData:
                 raise Exception('call', "error", "UNKERROR_001")
             else:
                 raise Exception('call', "error", dataAnswer["error_code"])
+        if ("_error" in dataAnswer.keys()): ## a reactiver plus tard !!!
+            # y a t il une erreur de consentement
+            if (dataAnswer["user_alert"]):
+                raise Exception('call', "error_user_alert", dataAnswer["error"], dataAnswer["description"])
         if ( "meter_reading" not in dataAnswer.keys() ):
             return False
         return True
