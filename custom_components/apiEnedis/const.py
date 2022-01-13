@@ -83,4 +83,8 @@ SENSOR_TYPES = {
         ENTITY_NAME: "energy",
         ENTITY_DELAI: 60,
     },
+    "energyCost": {
+        ENTITY_NAME: "energyCost",
+        ENTITY_DELAI: 60,
+    },
 }

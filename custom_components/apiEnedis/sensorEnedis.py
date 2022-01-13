@@ -45,7 +45,9 @@ class manageSensorState:
         dataAvailable = False
         yesterdayDate = None
         if self._myDataEnedis.getContract() != None:
-            if self._myDataEnedis.getYesterday().getValue() != 0: # on a eut des données
+            #if self._myDataEnedis.getYesterday().getValue() != 0: # on a eut des données
+            if ( self._myDataEnedis.getYesterdayHCHP().getHC() +
+                 self._myDataEnedis.getYesterdayHCHP().getHP() ) != 0: # on a eut des données
                 status_counts["yesterday_HC_cost"] = \
                     "{:.3f}".format(0.001 *
                         self._myDataEnedis.getHCCost(self._myDataEnedis.getYesterdayHCHP().getHC()))
@@ -99,6 +101,14 @@ class manageSensorState:
         status_counts = defaultdict(int)
         if self._myDataEnedis.getTimeLastCall() != None:
             state = "{:.3f}".format(self._myDataEnedis.getCurrentYear().getValue() * 0.001)
+
+        return status_counts, state
+
+    def getStatusEnergyCost(self, typeSensor = _consommation):
+        state = "unavailable"
+        status_counts = defaultdict(int)
+        if self._myDataEnedis.getTimeLastCall() != None:
+            state = "{:.3f}".format(self._myDataEnedis.getCurrentYear().getValue() * 1).replace(".",",")
 
         return status_counts, state
 

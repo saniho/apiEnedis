@@ -54,7 +54,7 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         self._attributes = {}
         self._state = None
-        self._unit = "€"
+        self._unit = "EUR"
         self._lastState = None
         self._lastAttributes = None
         self._typeSensor = typeSensor
