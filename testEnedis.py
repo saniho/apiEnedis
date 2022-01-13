@@ -64,26 +64,28 @@ def testMulti():
         myDataSensorEnedis = manageSensorState()
         myDataSensorEnedis.init(myDataEnedis)
         typeSensor = _consommation
-        status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
+        #status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
+        lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )
+        lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
         log.info("****")
         log.info(status_counts)
         for clef in status_counts.keys():
             log.info( "%s = %s" %(clef, status_counts[clef]))
-
-        typeSensor = _production
-        status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
-        log.info("****")
-        log.info(status_counts)
-        for clef in status_counts.keys():
-            log.info( "%s = %s" %(clef, status_counts[clef]))
-
-        typeSensor = _consommation
-        laDate = datetime.datetime.today() - datetime.timedelta(3)
-        status_counts, state = myDataSensorEnedis.getStatusHistory( laDate, detail = "ALL" )
-        log.info("**** : %s" %state)
-        log.info(status_counts)
-        for clef in status_counts.keys():
-            log.info( "%s = %s" %(clef, status_counts[clef]))
+        #
+        # typeSensor = _production
+        # status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
+        # log.info("****")
+        # log.info(status_counts)
+        # for clef in status_counts.keys():
+        #     log.info( "%s = %s" %(clef, status_counts[clef]))
+        #
+        # typeSensor = _consommation
+        # laDate = datetime.datetime.today() - datetime.timedelta(3)
+        # status_counts, state = myDataSensorEnedis.getStatusHistory( laDate, detail = "ALL" )
+        # log.info("**** : %s" %state)
+        # log.info(status_counts)
+        # for clef in status_counts.keys():
+        #     log.info( "%s = %s" %(clef, status_counts[clef]))
 
         #laDate = datetime.datetime.today() - datetime.timedelta(2)
         #status_counts, state = myDataSensorEnedis.getStatusHistory(laDate, "ALL")

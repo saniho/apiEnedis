@@ -66,6 +66,8 @@ from .myEnedisSensorCoordinatorHistory import myEnedisSensorCoordinatorHistory
 from .myEnedisSensorYesterdayCostCoordinator import myEnedisSensorYesterdayCostCoordinator
 from .myEnedisSensorCoordinatorEnergy import myEnedisSensorCoordinatorEnergy
 from .myEnedisSensorCoordinatorEnergyCost import myEnedisSensorCoordinatorEnergyCost
+from .myEnedisSensorCoordinatorEnergyDetailHours import myEnedisSensorCoordinatorEnergyDetailHours
+from .myEnedisSensorCoordinatorEnergyDetailHoursCost import myEnedisSensorCoordinatorEnergyDetailHoursCost
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
@@ -88,8 +90,12 @@ async def async_setup_entry(
             entities.append(myEnedisSensorYesterdayCostCoordinator(mysensor, coordinator_enedis))
         elif sensor_type == "energy":
             entities.append(myEnedisSensorCoordinatorEnergy(mysensor, coordinator_enedis))
+        elif sensor_type == "energyDetailHours":
+            entities.append(myEnedisSensorCoordinatorEnergyDetailHours(mysensor, coordinator_enedis))
         elif sensor_type == "energyCost":
             entities.append(myEnedisSensorCoordinatorEnergyCost(mysensor, coordinator_enedis))
+        elif sensor_type == "energyDetailHoursCost":
+            entities.append(myEnedisSensorCoordinatorEnergyDetailHoursCost(mysensor, coordinator_enedis))
         else:
             pass
 
