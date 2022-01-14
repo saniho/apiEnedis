@@ -109,7 +109,7 @@ class manageSensorState:
         status_counts = defaultdict(int)
         #"last_reset": "2021-01-01T00:00:00",  # à corriger plus tard !!
 
-        laDate = datetime.datetime.today() - datetime.timedelta(1)
+        laDate = datetime.datetime.today() - datetime.timedelta(2)
         laDate = laDate.replace(minute=0, second=0, microsecond=0)
         lastReset = laDate
         if self._myDataEnedis.getTimeLastCall() != None:
@@ -133,7 +133,7 @@ class manageSensorState:
         status_counts = defaultdict(int)
         #"last_reset": "2021-01-01T00:00:00",  # à corriger plus tard !!
 
-        laDate = datetime.datetime.today() - datetime.timedelta(1)
+        laDate = datetime.datetime.today() - datetime.timedelta(2)
         laDate = laDate.replace(minute=0, second=0, microsecond=0)
         lastReset = laDate
         if self._myDataEnedis.getTimeLastCall() != None:
