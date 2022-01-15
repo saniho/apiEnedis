@@ -154,14 +154,6 @@ class manageSensorState:
         lastResetIso = lastReset.isoformat()
         return lastResetIso, status_counts, state
 
-    def getStatusEnergyCost(self, typeSensor = _consommation):
-        state = "unavailable"
-        status_counts = defaultdict(int)
-        if self._myDataEnedis.getTimeLastCall() != None:
-            state = "{:.3f}".format(self._myDataEnedis.getCurrentYear().getValue() * 1).replace(".",",")
-
-        return status_counts, state
-
     def getStatus(self, typeSensor = _consommation):
         state = "unavailable"
         status_counts = defaultdict(int)

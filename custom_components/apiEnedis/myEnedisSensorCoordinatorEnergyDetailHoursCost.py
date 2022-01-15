@@ -1,5 +1,4 @@
 """Sensor for my first"""
-import datetime
 import logging
 from datetime import timedelta
 
@@ -28,13 +27,10 @@ except ImportError:
 
 
 from .const import (
-    DOMAIN,
     __VERSION__,
     __name__,
     _consommation,
     _production,
-    SENSOR_TYPES,
-    COORDINATOR_ENEDIS,
     ENTITY_DELAI,
 )
 _LOGGER = logging.getLogger(__name__)
