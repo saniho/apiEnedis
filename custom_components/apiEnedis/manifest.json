@@ -3,7 +3,7 @@
     "name": "myEnedis sensor",
     "documentation": "https://github.com/saniho/apiEnedis/",
     "config_flow": true,
-    "version": "1.3.2.7",
+    "version": "1.4.0.0",
     "requirements": [
         "packaging>=20.8"
     ],
