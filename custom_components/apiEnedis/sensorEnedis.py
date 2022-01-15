@@ -150,7 +150,7 @@ class manageSensorState:
             costHC = "{:.3f}".format(0.001 * self._myDataEnedis.getHCCost(valeurHC))
             costHP = "{:.3f}".format(0.001 * self._myDataEnedis.getHPCost(valeurHP))
             cost = self._myDataEnedis.getHCCost(valeurHC) + self._myDataEnedis.getHPCost(valeurHP)
-            state = "{:.3f}".format(0.001 * cost ).replace(".",",")
+            state = "{:.3f}".format(0.001 * cost )
         lastResetIso = lastReset.isoformat()
         return lastResetIso, status_counts, state
 
