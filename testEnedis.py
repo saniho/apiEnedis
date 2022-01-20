@@ -24,10 +24,11 @@ def testMulti():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS"]:
+    for qui in ["ENEDIS30"]:
         log.info("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
+        print(mon_conteneur[qui]['QUI'])
         heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
         heuresCreusesON = True
 
@@ -39,7 +40,7 @@ def testMulti():
         path = getLocalDirectory( PDL_ID, "20220101" )
         myDataEnedis.setPathArchive(path)
         dataJson = {}
-        dataJson = myDataEnedis.readDataJson()
+        #dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
@@ -64,9 +65,9 @@ def testMulti():
         myDataSensorEnedis = manageSensorState()
         myDataSensorEnedis.init(myDataEnedis)
         typeSensor = _consommation
-        #status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
-        lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )
-        lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
+        status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
+        #lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )
+        #lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
         log.info("****")
         log.info(status_counts)
         for clef in status_counts.keys():
