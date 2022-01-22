@@ -24,7 +24,7 @@ def testMulti():
     import configparser
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS30"]:
+    for qui in ["ENEDIS"]:
         log.info("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
@@ -37,10 +37,10 @@ def testMulti():
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=7200,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
-        path = getLocalDirectory( PDL_ID, "20220101" )
+        path = getLocalDirectory( PDL_ID, "20220122" )
         myDataEnedis.setPathArchive(path)
         dataJson = {}
-        #dataJson = myDataEnedis.readDataJson()
+        dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
@@ -48,14 +48,14 @@ def testMulti():
         myDataEnedis.getData()
         log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
 
-        log.info("" )
-        log.info("=================>>>> 2 <<<<============" )
-        time = datetime.datetime.now() + datetime.timedelta(hours=1)
-        callPossible = myDataEnedis.getCallPossible()
-        log.info("possible ? %s "%(callPossible))
-        log.info("** on tente une maj ??")
-        #myDataEnedis.getData()
-        log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
+        #log.info("" )
+        #log.info("=================>>>> 2 <<<<============" )
+        #time = datetime.datetime.now() + datetime.timedelta(hours=1)
+        #callPossible = myDataEnedis.getCallPossible()
+        #log.info("possible ? %s "%(callPossible))
+        #log.info("** on tente une maj ??")
+        ##myDataEnedis.getData()
+        #log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
 
         # SORTIE OUTPUT
         #writeDataJson( myDataEnedis )
