@@ -2,7 +2,8 @@ name: Validate with hassfest
 
 # Note commented because the integration is not ready
 # Run manually
-#on:
+on:
+  workflow_dispatch:
   #push:
   #pull_request:
   #schedule:
