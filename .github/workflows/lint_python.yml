@@ -15,7 +15,7 @@ jobs:
       # Skipping codespell because of french comments
       # - run: codespell --ignore-words-list="hass"
       # Ignoring more rules than we should to avoid blocking, and complexity level too high
-      - run: flake8 . --count --ignore E401,F401,W503,F841,E266,E402,E722
+      - run: flake8 . --count --ignore E401,F401,W503,F841,E266,E402,E722,E821
                       --max-complexity=34 --max-line-length=184 --show-source --statistics
       - run: isort --check-only --profile black . || true
       - run: pip install -r requirements.txt || pip install --editable . || true
