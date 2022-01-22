@@ -16,7 +16,6 @@ try:
     from homeassistant.core import callback
     from homeassistant.helpers.restore_state import RestoreEntity
     from homeassistant.helpers.typing import HomeAssistantType
-    from homeassistant.helpers.update_coordinator import CoordinatorEntity
     from homeassistant.util import Throttle
     from homeassistant.const import (
         ATTR_ATTRIBUTION,

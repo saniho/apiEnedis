@@ -216,7 +216,7 @@ class myClientEnedis:
             "lastUpdate": "%s" % self.getLastUpdate(),
             "statutLastCall": self.getStatusLastCall(),
             "version": self.getVersion(),
-            #'timeLastUpdate':self.getTimeLastCall()
+            # 'timeLastUpdate':self.getTimeLastCall()
         }
         jsonData = json.dumps(data)
         self.setDataJson("lastCall", data)

@@ -89,7 +89,6 @@ except ImportError:
     from const import (
         __nameMyEnedis__,
     )
-import logging
 
 log = logging.getLogger(__nameMyEnedis__)
 
