@@ -37,23 +37,31 @@ from .const import (
     COORDINATOR_ENEDIS,
     ENTITY_DELAI,
 )
+
 _LOGGER = logging.getLogger(__name__)
 from .sensorEnedis import manageSensorState
 
 ICON = "mdi:package-variant-closed"
 
+
 class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
     """."""
 
-    def __init__(self, sensor_type: str, coordinator: DataUpdateCoordinator, typeSensor = _consommation, detail = ""):
+    def __init__(
+        self,
+        sensor_type: str,
+        coordinator: DataUpdateCoordinator,
+        typeSensor=_consommation,
+        detail="",
+    ):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__ )
+        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         # ajout interval dans le sensor
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
-        _LOGGER.info("frequence mise à jour en seconde : %s" %(interval))
+        _LOGGER.info("frequence mise à jour en seconde : %s" % (interval))
         self._attributes = {}
         self._state = None
         self._unit = "kWh"
@@ -71,10 +79,16 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        if ( self._typeSensor == _production):
-            name = "myEnedis.history.%s.production.%s" %(self._myDataSensorEnedis.get_PDL_ID(), self._detail)
+        if self._typeSensor == _production:
+            name = "myEnedis.history.%s.production.%s" % (
+                self._myDataSensorEnedis.get_PDL_ID(),
+                self._detail,
+            )
         else:
-            name = "myEnedis.history.%s.%s" %(self._myDataSensorEnedis.get_PDL_ID(), self._detail)
+            name = "myEnedis.history.%s.%s" % (
+                self._myDataSensorEnedis.get_PDL_ID(),
+                self._detail,
+            )
         return name
 
     @property
@@ -112,8 +126,12 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
         }
         laDate = datetime.datetime.today() - datetime.timedelta(2)
         # on fait 2 jours, car les données de la veille ne sont pas encore disponible
-        status_counts, state = self._myDataSensorEnedis.getStatusHistory( laDate, self._detail )
-        status_counts["lastUpdate"] = datetime.datetime.today().strftime("%Y-%m-%d %H:%M" )
+        status_counts, state = self._myDataSensorEnedis.getStatusHistory(
+            laDate, self._detail
+        )
+        status_counts["lastUpdate"] = datetime.datetime.today().strftime(
+            "%Y-%m-%d %H:%M"
+        )
         self._attributes.update(status_counts)
         self._state = state
 
@@ -121,7 +139,7 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
         """Update device state."""
         self._attributes = {ATTR_ATTRIBUTION: ""}
         self._state = "unavailable"
-        #self._update_state()
+        # self._update_state()
 
     @property
     def extra_state_attributes(self):

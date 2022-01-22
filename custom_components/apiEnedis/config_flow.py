@@ -14,11 +14,13 @@ from .const import (
     HC_COST,
     HP_COST,
     HEURESCREUSES_ON,
-    HEURES_CREUSES
+    HEURES_CREUSES,
 )
 
 import logging
+
 _LOGGER = logging.getLogger(__name__)
+
 
 class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
@@ -49,35 +51,23 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         data_schema = vol.Schema(
             {
-                vol.Required(CONF_TOKEN,
-                    default=user_input.get(
-                        CONF_TOKEN, token
-                    )
+                vol.Required(
+                    CONF_TOKEN, default=user_input.get(CONF_TOKEN, token)
                 ): str,
-                vol.Required(CONF_CODE,
-                    default=user_input.get(
-                        CONF_CODE, code
-                    )
-                ): str,
-                vol.Optional(HC_COST,
-                    default=user_input.get(
-                        HC_COST, val_hc_cost
-                    )
+                vol.Required(CONF_CODE, default=user_input.get(CONF_CODE, code)): str,
+                vol.Optional(
+                    HC_COST, default=user_input.get(HC_COST, val_hc_cost)
                 ): cv.string,
-                vol.Optional(HP_COST,
-                    default=user_input.get(
-                        HP_COST, val_hp_cost
-                    )
+                vol.Optional(
+                    HP_COST, default=user_input.get(HP_COST, val_hp_cost)
                 ): cv.string,
-                vol.Optional(HEURESCREUSES_ON,
-                    default=user_input.get(
-                        HEURESCREUSES_ON, val_heurescreuses_on
-                    )
+                vol.Optional(
+                    HEURESCREUSES_ON,
+                    default=user_input.get(HEURESCREUSES_ON, val_heurescreuses_on),
                 ): cv.boolean,
-                vol.Optional(HEURES_CREUSES,
-                    default=user_input.get(
-                        HEURES_CREUSES, val_heures_creuses
-                    )
+                vol.Optional(
+                    HEURES_CREUSES,
+                    default=user_input.get(HEURES_CREUSES, val_heures_creuses),
                 ): cv.string,
             }
         )
@@ -87,7 +77,7 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors or {},
         )
 
-    async def async_step_user(self, user_input=None):   # pylint: disable=unused-argument
+    async def async_step_user(self, user_input=None):  # pylint: disable=unused-argument
         self._errors = {}
         if user_input is None:
             return self._show_setup_form(user_input, self._errors)
@@ -105,18 +95,24 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_create_entry(
             title=code,
-            data={CONF_TOKEN: token, CONF_CODE: code,
-                  HC_COST: hc_cost, HP_COST: hp_cost,
-                  HEURESCREUSES_ON : heures_creuses_on,
-                  HEURES_CREUSES : heures_creuses},
+            data={
+                CONF_TOKEN: token,
+                CONF_CODE: code,
+                HC_COST: hc_cost,
+                HP_COST: hp_cost,
+                HEURESCREUSES_ON: heures_creuses_on,
+                HEURES_CREUSES: heures_creuses,
+            },
         )
 
     async def async_step_import(self, user_input):
         """Import a config entry."""
         return await self.async_step_user(user_input)
 
+
 class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle a option flow."""
+
     def __init__(self, config_entry):
         self.config_entry = config_entry
         self._data = {}
@@ -131,35 +127,29 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
         val_heures_creuses = ""
         data_schema = vol.Schema(
             {
-                vol.Required(CONF_TOKEN,
-                    default=self.config_entry.options.get(
-                        CONF_TOKEN, token
-                    )
+                vol.Required(
+                    CONF_TOKEN, default=self.config_entry.options.get(CONF_TOKEN, token)
                 ): str,
-                vol.Required(CONF_CODE,
-                    default=self.config_entry.options.get(
-                        CONF_CODE, code
-                    )
+                vol.Required(
+                    CONF_CODE, default=self.config_entry.options.get(CONF_CODE, code)
                 ): str,
-                vol.Optional(HC_COST,
-                    default=self.config_entry.options.get(
-                        HC_COST, "0.0"
-                    ),
+                vol.Optional(
+                    HC_COST,
+                    default=self.config_entry.options.get(HC_COST, "0.0"),
                 ): cv.string,
-                vol.Optional(HP_COST,
-                    default=self.config_entry.options.get(
-                        HP_COST, "0.0"
-                    ),
+                vol.Optional(
+                    HP_COST,
+                    default=self.config_entry.options.get(HP_COST, "0.0"),
                 ): cv.string,
-                vol.Optional(HEURESCREUSES_ON,
-                    default=self.config_entry.options.get(
-                        HEURESCREUSES_ON, True
-                    ),
+                vol.Optional(
+                    HEURESCREUSES_ON,
+                    default=self.config_entry.options.get(HEURESCREUSES_ON, True),
                 ): cv.boolean,
-                vol.Optional(HEURES_CREUSES,
+                vol.Optional(
+                    HEURES_CREUSES,
                     default=self.config_entry.options.get(
                         HEURES_CREUSES, val_heures_creuses
-                    )
+                    ),
                 ): cv.string,
             }
         )
