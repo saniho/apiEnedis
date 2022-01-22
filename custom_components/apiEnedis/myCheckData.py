@@ -5,7 +5,7 @@ class myCheckData:
 
     def analyseValueAndAdd(self, data):
         # print(data)
-        if data == None:  # pas de valeur
+        if data is None:  # pas de valeur
             raise Exception("call", None)
         else:
             tot = 0
@@ -16,7 +16,7 @@ class myCheckData:
 
     def analyseValueAndMadeDico(self, data):
         dicoLast7days = []
-        if data == None:  # pas de valeur
+        if data is None:  # pas de valeur
             raise Exception("call", None)
         else:
             niemejour = 0
@@ -31,7 +31,7 @@ class myCheckData:
         return dicoLast7days
 
     def analyseValue(self, data):
-        if data == None:  # pas de valeur
+        if data is None:  # pas de valeur
             return None
         else:
             if "meter_reading" in data.keys():

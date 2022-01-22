@@ -71,7 +71,7 @@ class myContrat:
 
     def updateContract(self, data=None):
         log.info("--updateContract : data %s" % (data))
-        if data == None:
+        if data is None:
             data = self.CallgetDataContract()
         log.info("updateContract : data %s" % (data))
         if self.checkDataContract(data):
@@ -81,7 +81,7 @@ class myContrat:
 
     def analyseValueContract(self, data):
         contract = None
-        if data != None:  # si une valeur
+        if data is not None:  # si une valeur
             if "customer" in data.keys():
                 for x in data["customer"]["usage_points"]:
                     if str(x["usage_point"]["usage_point_id"]) == self._PDL_ID:
@@ -109,19 +109,19 @@ class myContrat:
         self._contract = contract
 
     def getsubscribed_power(self):
-        if self._contract == None:
+        if self._contract is None:
             return None
         else:
             return self._contract["subscribed_power"]
 
     def getoffpeak_hours(self):
-        if self._contract == None:
+        if self._contract is None:
             return None
         else:
             return self._contract["offpeak_hours"]
 
     def getLastActivationDate(self):
-        if self._contract == None:
+        if self._contract is None:
             return None
         else:
             return self._contract["last_activation_date"]
@@ -141,9 +141,9 @@ class myContrat:
             return None
 
     def getcleanoffpeak_hours(self, offpeak=None):
-        if offpeak == None:
+        if offpeak is None:
             offpeak = self.getoffpeak_hours()
-        if (offpeak != None) and (offpeak != []):
+        if (offpeak is not None) and (offpeak != []):
             offpeakClean1 = (
                 offpeak.split("(")[1]
                 .replace(")", "")
@@ -176,9 +176,9 @@ class myContrat:
     def updateHCHP(self, heuresCreuses=None):
         if self._heuresCreusesON:
             opcnew = self.getcleanoffpeak_hours()
-            if heuresCreuses != None:
+            if heuresCreuses is not None:
                 self._heuresCreuses = heuresCreuses
-            elif (self._heuresCreuses != None) and (self._heuresCreuses != []):
+            elif (self._heuresCreuses is not None) and (self._heuresCreuses != []):
                 # on garde les heures creueses déja définie....
                 # self._heuresCreuses = .....
                 pass

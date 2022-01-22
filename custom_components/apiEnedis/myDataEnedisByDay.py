@@ -83,7 +83,7 @@ class myDataEnedisByDay:
                 "--updateData %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
             )
             self._data = data
-            if self._data == None:
+            if self._data is None:
                 if dateDeb == dateFin:
                     self._value = 0
                 else:

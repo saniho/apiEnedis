@@ -31,7 +31,7 @@ def okDataControl(
     deb = dataControl.get("deb", None)
     fin = dataControl.get("fin", None)
     callOk = dataControl.get("callok", True)
-    if callOk == None:
+    if callOk is None:
         callOk = True
     response = deb == dateDeb and fin == dateFin and callOk
     return response
