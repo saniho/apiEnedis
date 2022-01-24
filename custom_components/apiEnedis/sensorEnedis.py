@@ -335,51 +335,35 @@ class manageSensorState:
                         status["daily"] = daily
 
                         status["halfhourly"] = []
-                        status["offpeak_hours"] = "{:.3f}".format(
-                            data.getYesterdayHCHP().getHC() * 0.001
-                        )
-                        status["peak_hours"] = "{:.3f}".format(
-                            data.getYesterdayHCHP().getHP() * 0.001
-                        )
-                        if (
-                            data.getYesterdayHCHP().getHC()
-                            + data.getYesterdayHCHP().getHP()
-                        ) != 0:
-                            valeur = (data.getYesterdayHCHP().getHP() * 100) / (
-                                data.getYesterdayHCHP().getHC()
-                                + data.getYesterdayHCHP().getHP()
-                            )
+
+                        # Intermediate variables
+                        prevDayHC = data.getYesterdayHCHP().getHC()
+                        prevDayHCCost = data.getHCCost(prevDayHC) * 0.001
+                        prevDayHP = data.getYesterdayHCHP().getHP()
+                        prevDayHPCost = data.getHPCost(prevDayHP) * 0.001
+                        prevDailyCost = prevDayHCCost + prevDayHPCost
+
+                        status["offpeak_hours"] = f"{prevDayHC * 0.001:.3f}"
+                        status["peak_hours"] = f"{prevDayHP * 0.001:.3f}"
+
+                        # Get Yesterday's HP/(HP+HC) in %
+                        prevDayHPHC = prevDayHC + prevDayHP
+                        if prevDayHPHC != 0:  # Pas de division par 0
+                            valeur = (prevDayHP * 100) / prevDayHPHC
                             status["peak_offpeak_percent"] = f"{valeur:.2f}"
                         else:
                             status["peak_offpeak_percent"] = 0
-                        status["yesterday_HC_cost"] = "{:.3f}".format(
-                            0.001 * data.getHCCost(data.getYesterdayHCHP().getHC())
-                        )
-                        status["yesterday_HP_cost"] = "{:.3f}".format(
-                            0.001 * data.getHPCost(data.getYesterdayHCHP().getHP())
-                        )
-                        status["daily_cost"] = "{:.2f}".format(
-                            0.001 * data.getHCCost(data.getYesterdayHCHP().getHC())
-                            + 0.001 * data.getHPCost(data.getYesterdayHCHP().getHP())
-                        )
-                        status["yesterday_HC"] = "{:.3f}".format(
-                            data.getYesterdayHCHP().getHC() * 0.001
-                        )
-                        status["yesterday_HP"] = "{:.3f}".format(
-                            data.getYesterdayHCHP().getHP() * 0.001
-                        )
-                        status["yesterday_HCHP"] = "{:.3f}".format(
-                            (
-                                data.getYesterdayHCHP().getHC()
-                                + data.getYesterdayHCHP().getHP()
-                            )
-                            * 0.001
-                        )
+
+                        status["yesterday_HC_cost"] = f"{prevDayHCCost:.3f}"
+                        status["yesterday_HP_cost"] = f"{prevDayHPCost:.3f}"
+                        status["daily_cost"] = f"{prevDailyCost:.2f}"
+                        status["yesterday_HC"] = f"{prevDayHC * 0.001:.3f}"
+                        status["yesterday_HP"] = f"{prevDayHP * 0.001:.3f}"
+                        status["yesterday_HCHP"] = f"{prevDayHPHC * 0.001:.3f}"
+
                         if status["yesterday"] == 0:
-                            status["yesterday"] = (
-                                data.getYesterdayHCHP().getHC()
-                                + data.getYesterdayHCHP().getHP()
-                            )
+                            status["yesterday"] = prevDayHPHC
+
                         status["current_week"] = "{:.3f}".format(
                             data.getCurrentWeek().getValue() * 0.001
                         )
