@@ -16,7 +16,6 @@ try:
     from homeassistant.core import callback
     from homeassistant.helpers.restore_state import RestoreEntity
     from homeassistant.helpers.typing import HomeAssistantType
-    from homeassistant.helpers.update_coordinator import CoordinatorEntity
     from homeassistant.util import Throttle
     from homeassistant.const import (
         ATTR_ATTRIBUTION,
@@ -45,10 +44,6 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 from .sensorEnedis import manageSensorState
-
-import homeassistant.helpers.config_validation as cv
-import voluptuous as vol
-from homeassistant.components.sensor import PLATFORM_SCHEMA
 
 # pour gerer les anciennes config via yaml et le message d'ereur
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(

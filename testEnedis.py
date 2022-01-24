@@ -68,7 +68,7 @@ def testMulti():
         # callPossible = myDataEnedis.getCallPossible()
         # log.info("possible ? %s "%(callPossible))
         # log.info("** on tente une maj ??")
-        ##myDataEnedis.getData()
+        # #myDataEnedis.getData()
         # log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
 
         # SORTIE OUTPUT
