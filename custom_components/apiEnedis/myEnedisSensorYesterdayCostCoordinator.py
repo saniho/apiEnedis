@@ -130,7 +130,7 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
             state,
         ) = self._myDataSensorEnedis.getStatusYesterdayCost()
         if dataAvailable:
-            if (self._lastYesterday != yesterdayDate) and (yesterdayDate != None):
+            if (self._lastYesterday != yesterdayDate) and (yesterdayDate is not None):
                 status_counts["timeLastCall"] = datetime.datetime.now()
                 self._lastYesterday = yesterdayDate
         self._attributes.update(status_counts)

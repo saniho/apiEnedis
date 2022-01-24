@@ -82,7 +82,7 @@ class myDataEnedisProduction:
                 "--updateData %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
             )
             self._data = data
-            if self._data == None:
+            if self._data is None:
                 self._data, callDone = self.CallgetData(dateDeb, dateFin)
                 self._nbCall = 1
             else:

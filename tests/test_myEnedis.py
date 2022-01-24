@@ -175,14 +175,14 @@ def test_horaire_surcharge():
 
 def test_get_message():
     pass
-    # assert False == False, "message errone"
+    # assert False is False, "message errone"
 
 
 def test_get_init():
     from custom_components.apiEnedis import sensorEnedis
 
     se = sensorEnedis.manageSensorState()
-    assert se.getInit() == False, "not False !! "
+    assert se.getInit() is False, "not False !! "
 
 
 def test_error_contract():

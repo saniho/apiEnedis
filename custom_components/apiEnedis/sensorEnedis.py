@@ -26,7 +26,7 @@ class manageSensorState:
     def init(self, _myDataEnedis, _LOGGER=None, version=None):
         # enedis à initialiser ici!!!
         self._myDataEnedis = _myDataEnedis
-        if _LOGGER == None:
+        if _LOGGER is None:
             _LOGGER = logging.getLogger(__nameManageSensorState__)
         self._LOGGER = _LOGGER
         self.version = version
@@ -42,7 +42,7 @@ class manageSensorState:
         status_counts["version"] = self.version
         dataAvailable = False
         yesterdayDate = None
-        if self._myDataEnedis.getContract() != None:
+        if self._myDataEnedis.getContract() is not None:
             # if self._myDataEnedis.getYesterday().getValue() != 0: # on a eut des données
             if (
                 self._myDataEnedis.getYesterdayHCHP().getHC()
@@ -83,7 +83,7 @@ class manageSensorState:
         clefDate = laDate.strftime("%Y-%m-%d %H")
         status_counts["DateHeure"] = clefDate
         status_counts["detail"] = detail
-        if self._myDataEnedis.getContract() != None:
+        if self._myDataEnedis.getContract() is not None:
             if self._myDataEnedis.isConsommation():
                 state = 0
                 DateHeureDetail = {}
@@ -118,7 +118,7 @@ class manageSensorState:
     def getStatusEnergy(self, typeSensor=_consommation):
         state = "unavailable"
         status_counts = defaultdict(int)
-        if self._myDataEnedis.getTimeLastCall() != None:
+        if self._myDataEnedis.getTimeLastCall() is not None:
             state = "{:.3f}".format(
                 self._myDataEnedis.getCurrentYear().getValue() * 0.001
             )
@@ -133,7 +133,7 @@ class manageSensorState:
         laDate = datetime.datetime.today() - datetime.timedelta(2)
         laDate = laDate.replace(minute=0, second=0, microsecond=0)
         lastReset = laDate
-        if self._myDataEnedis.getTimeLastCall() != None:
+        if self._myDataEnedis.getTimeLastCall() is not None:
             DateHeureDetail = {}
             DateHeureDetailHP = (
                 self._myDataEnedis.getLast7DaysDetails().getDateHeureDetailHP()
@@ -161,7 +161,7 @@ class manageSensorState:
         laDate = datetime.datetime.today() - datetime.timedelta(2)
         laDate = laDate.replace(minute=0, second=0, microsecond=0)
         lastReset = laDate
-        if self._myDataEnedis.getTimeLastCall() != None:
+        if self._myDataEnedis.getTimeLastCall() is not None:
             DateHeureDetail = {}
             DateHeureDetailHP = (
                 self._myDataEnedis.getLast7DaysDetails().getDateHeureDetailHP()
@@ -194,7 +194,7 @@ class manageSensorState:
             self.version, self._myDataEnedis.getGitVersion()
         )
 
-        if self._myDataEnedis.getTimeLastCall() != None:
+        if self._myDataEnedis.getTimeLastCall() is not None:
             self._LOGGER.info(
                 "-- ** on va mettre à jour : %s"
                 % self._myDataEnedis.getContract().get_PDL_ID()
@@ -424,7 +424,7 @@ class manageSensorState:
                             self._myDataEnedis.getCurrentWeek().getValue() * 0.001
                         )
 
-                        if self._myDataEnedis.getCurrentWeek().getDateDeb() != None:
+                        if self._myDataEnedis.getCurrentWeek().getDateDeb() is not None:
                             status_counts[
                                 "current_week_number"
                             ] = datetime.datetime.fromisoformat(
@@ -584,9 +584,9 @@ class manageSensorState:
                         status_counts[
                             "timeLastCall"
                         ] = self._myDataEnedis.getTimeLastCall()
-                    if status_counts["yesterday"] == None:
+                    if status_counts["yesterday"] is None:
                         status_counts["yesterday"] = 0
-                    if status_counts["yesterday_production"] == None:
+                    if status_counts["yesterday_production"] is None:
                         status_counts["yesterday_production"] = 0
                     if (
                         typeSensor == _consommation
