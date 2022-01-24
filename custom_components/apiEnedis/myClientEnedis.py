@@ -825,6 +825,17 @@ class myClientEnedis:
                             log.error(
                                 "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
                             log.error("myEnedis ...%s update termine, on retentera plus tard(A)" % (self.getContract().get_PDL_ID()))
+                        elif (inst.args[:2] == ("call", "error_user_alert")):  # gestion que c'est pas une erreur de contrat trop recent ?
+                            log.error("%s - Erreur call ERROR %s" % (self.getContract().get_PDL_ID(), inst))
+                            # Erreur lors du call...
+                            self.updateTimeLastCall()
+                            self.updateStatusLastCall(False)
+                            self._myCalli.setLastAnswer("Enedis")
+                            self.updateErrorLastCall(
+                                "%s - %s" % (messages.getMessage(inst.args[2]), self._myCalli.getLastAnswer()))
+                            log.error(
+                                "%s - last call : %s" % (self.getContract().get_PDL_ID(), self.getLastMethodCall()))
+                            log.error("myEnedis ...%s update termine, on retentera plus tard(A)" % (self.getContract().get_PDL_ID()))
                         else:
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
