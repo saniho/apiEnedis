@@ -37,19 +37,23 @@ from .const import (
     COORDINATOR_ENEDIS,
     ENTITY_DELAI,
 )
+
 _LOGGER = logging.getLogger(__name__)
 from .sensorEnedis import manageSensorState
 
 ICON = "mdi:package-variant-closed"
 
+
 class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
     """."""
 
-    def __init__(self, sensor_type, coordinator: DataUpdateCoordinator, typeSensor = _consommation):
+    def __init__(
+        self, sensor_type, coordinator: DataUpdateCoordinator, typeSensor=_consommation
+    ):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__ )
+        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         self._attributes = {}
@@ -64,18 +68,26 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
     def unique_id(self):
         "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.cost.yesterday.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.cost.yesterday.%s.production" % (
+                self._myDataSensorEnedis.get_PDL_ID()
+            )
         else:
-            name = "myEnedis.cost.yesterday.%s" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.cost.yesterday.%s" % (
+                self._myDataSensorEnedis.get_PDL_ID()
+            )
         return name
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        if ( self._typeSensor == _production):
-            name = "myEnedis.cost.yesterday.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
+        if self._typeSensor == _production:
+            name = "myEnedis.cost.yesterday.%s.production" % (
+                self._myDataSensorEnedis.get_PDL_ID()
+            )
         else:
-            name = "myEnedis.cost.yesterday.%s" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.cost.yesterday.%s" % (
+                self._myDataSensorEnedis.get_PDL_ID()
+            )
         return name
 
     @property
@@ -111,9 +123,14 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         self._attributes = {
             ATTR_ATTRIBUTION: "",
         }
-        dataAvailable, yesterdayDate, status_counts, state = self._myDataSensorEnedis.getStatusYesterdayCost()
+        (
+            dataAvailable,
+            yesterdayDate,
+            status_counts,
+            state,
+        ) = self._myDataSensorEnedis.getStatusYesterdayCost()
         if dataAvailable:
-            if ( self._lastYesterday != yesterdayDate ) and ( yesterdayDate != None ):
+            if (self._lastYesterday != yesterdayDate) and (yesterdayDate != None):
                 status_counts["timeLastCall"] = datetime.datetime.now()
                 self._lastYesterday = yesterdayDate
         self._attributes.update(status_counts)
