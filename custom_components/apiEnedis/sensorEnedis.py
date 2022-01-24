@@ -149,7 +149,7 @@ class manageSensorState:
                 valeurHC = DateHeureDetailHC[clefDate]
 
             total = valeurHP + valeurHC
-            state = "{:.3f}".format(0.001 * total)
+            state = f"{0.001 * total:.3f}"
         lastResetIso = lastReset.isoformat()
         return lastResetIso, status_counts, state
 
@@ -176,12 +176,12 @@ class manageSensorState:
             if clefDate in DateHeureDetailHC.keys():
                 valeurHC = DateHeureDetailHC[clefDate]
 
-            costHC = "{:.3f}".format(0.001 * self._myDataEnedis.getHCCost(valeurHC))
-            costHP = "{:.3f}".format(0.001 * self._myDataEnedis.getHPCost(valeurHP))
+            costHC = f"{0.001 * self._myDataEnedis.getHCCost(valeurHC):.3f}"
+            costHP = f"{0.001 * self._myDataEnedis.getHPCost(valeurHP):.3f}"
             cost = self._myDataEnedis.getHCCost(
                 valeurHC
             ) + self._myDataEnedis.getHPCost(valeurHP)
-            state = "{:.3f}".format(0.001 * cost)
+            state = f"{0.001 * cost:.3f}"
         lastResetIso = lastReset.isoformat()
         return lastResetIso, status_counts, state
 
@@ -271,7 +271,7 @@ class manageSensorState:
                                 valeur = 0.001 * data.getHCCost(
                                     last7daysHC[clef]
                                 ) + 0.001 * data.getHPCost(last7daysHP[clef])
-                                valeur = "{:.2f}".format(valeur)
+                                valeur = f"{valeur:.2f}"
                             cout.append(valeur)
                         status["dailyweek_cost"] = cout
                         niemejour = 0
@@ -281,7 +281,7 @@ class manageSensorState:
                             valeur = -1
                             if clef in last7daysHC.keys():
                                 valeur = 0.001 * data.getHCCost(last7daysHC[clef])
-                                valeur = "{:.2f}".format(valeur)
+                                valeur = f"{valeur:.2f}"
                             coutHC.append(valeur)
                         status["dailyweek_costHC"] = coutHC
 
@@ -291,7 +291,7 @@ class manageSensorState:
                             niemejour += 1
                             valeur = -1
                             if clef in last7daysHC.keys():
-                                valeur = "{:.3f}".format(0.001 * last7daysHC[clef])
+                                valeur = f"{0.001 * last7daysHC[clef]:.3f}"
                             dailyHC.append(valeur)
                         status["dailyweek_HC"] = dailyHC
 
@@ -303,7 +303,7 @@ class manageSensorState:
                             valeur = -1
                             if clef in last7daysHP.keys():
                                 valeur = 0.001 * data.getHPCost(last7daysHP[clef])
-                                valeur = "{:.2f}".format(valeur)
+                                valeur = f"{valeur:.2f}"
                             coutHP.append(valeur)
                         status["dailyweek_costHP"] = coutHP
                         # gestion du format : "{:.2f}".format(a)
@@ -315,7 +315,7 @@ class manageSensorState:
                             valeur = -1
                             if clef in last7daysHP.keys():
                                 valeur = last7daysHP[clef]
-                                valeur = "{:.3f}".format(0.001 * valeur)
+                                valeur = f"{0.001 * valeur:.3f}"
                             dailyHP.append(valeur)
                         status["dailyweek_HP"] = dailyHP
 
@@ -329,7 +329,7 @@ class manageSensorState:
                                 and clef in last7daysHC.keys()
                             ):
                                 somme = last7daysHP[clef] + last7daysHC[clef]
-                                somme = "{:.2f}".format(0.001 * somme)
+                                somme = f"{0.001 * somme:.2f}"
                             status["day_%s" % (niemejour)] = somme
                             daily.append(somme)
                         status["daily"] = daily
@@ -349,7 +349,7 @@ class manageSensorState:
                                 data.getYesterdayHCHP().getHC()
                                 + data.getYesterdayHCHP().getHP()
                             )
-                            status["peak_offpeak_percent"] = "{:.2f}".format(valeur)
+                            status["peak_offpeak_percent"] = f"{valeur:.2f}"
                         else:
                             status["peak_offpeak_percent"] = 0
                         status["yesterday_HC_cost"] = "{:.3f}".format(
@@ -427,7 +427,7 @@ class manageSensorState:
                                 )
                                 / data.getLastMonthLastYear().getValue()
                             ) * 100
-                            status["monthly_evolution"] = "{:.3f}".format(valeur)
+                            status["monthly_evolution"] = f"{valeur:.3f}"
                         else:
                             status["monthly_evolution"] = 0
                         if (
@@ -442,7 +442,7 @@ class manageSensorState:
                                 )
                                 / data.getCurrentWeekLastYear().getValue()
                             ) * 100
-                            status["current_week_evolution"] = "{:.3f}".format(valeur)
+                            status["current_week_evolution"] = f"{valeur:.3f}"
                         else:
                             status["current_week_evolution"] = 0
                         if (
@@ -457,7 +457,7 @@ class manageSensorState:
                                 )
                                 / data.getCurrentMonthLastYear().getValue()
                             ) * 100
-                            status["current_month_evolution"] = "{:.3f}".format(valeur)
+                            status["current_month_evolution"] = f"{valeur:.3f}"
                         else:
                             status["current_month_evolution"] = 0
                         if (
@@ -472,7 +472,7 @@ class manageSensorState:
                                 )
                                 / data.getYesterdayLastYear().getValue()
                             ) * 100
-                            status["yesterday_evolution"] = "{:.3f}".format(valeur)
+                            status["yesterday_evolution"] = f"{valeur:.3f}"
                         else:
                             status["yesterday_evolution"] = 0
                         status[
@@ -498,7 +498,7 @@ class manageSensorState:
                         valeurstate = status["yesterday"] * 0.001
                     else:
                         valeurstate = status["yesterday_production"] * 0.001
-                    state = "{:.3f}".format(valeurstate)
+                    state = f"{valeurstate:.3f}"
 
                 except Exception:
                     status["errorLastCall"] = data.getCardErrorLastCall()
@@ -526,4 +526,4 @@ class manageSensorState:
 
 def logSensorState(status_counts):
     for x in status_counts.keys():
-        print(" %s : %s" % (x, status_counts[x]))
+        print(f" {x} : {status_counts[x]}")
