@@ -1,4 +1,7 @@
 {
   "name": "myEnedis sensor",
+  "content_in_root": false,
+  "homeassistant": "2021.09",
+  "zip_release": false,
   "render_readme": true
 }
