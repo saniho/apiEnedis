@@ -28,6 +28,7 @@ def testMulti():
         log.info("*** traitement de %s " %(qui))
         token = mon_conteneur[qui]['TOKEN']
         PDL_ID = mon_conteneur[qui]['CODE']
+        print(mon_conteneur[qui]['QUI'])
         heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
         heuresCreusesON = True
 
@@ -36,7 +37,7 @@ def testMulti():
         myDataEnedis = myClientEnedis.myClientEnedis( token=token, PDL_ID=PDL_ID, delai=7200,
             heuresCreuses=heureCreusesCh, heuresCreusesCost=0.0797, heuresPleinesCost=0.1175,
             version = __version__, heuresCreusesON=heuresCreusesON )
-        path = getLocalDirectory( PDL_ID, "20220101" )
+        path = getLocalDirectory( PDL_ID, "20220122" )
         myDataEnedis.setPathArchive(path)
         dataJson = {}
         dataJson = myDataEnedis.readDataJson()
@@ -47,14 +48,14 @@ def testMulti():
         myDataEnedis.getData()
         log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
 
-        log.info("" )
-        log.info("=================>>>> 2 <<<<============" )
-        time = datetime.datetime.now() + datetime.timedelta(hours=1)
-        callPossible = myDataEnedis.getCallPossible()
-        log.info("possible ? %s "%(callPossible))
-        log.info("** on tente une maj ??")
-        #myDataEnedis.getData()
-        log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
+        #log.info("" )
+        #log.info("=================>>>> 2 <<<<============" )
+        #time = datetime.datetime.now() + datetime.timedelta(hours=1)
+        #callPossible = myDataEnedis.getCallPossible()
+        #log.info("possible ? %s "%(callPossible))
+        #log.info("** on tente une maj ??")
+        ##myDataEnedis.getData()
+        #log.info("=================< on a fini le call : %s ============" %(myDataEnedis.getNbCall()))
 
         # SORTIE OUTPUT
         #writeDataJson( myDataEnedis )
@@ -65,25 +66,27 @@ def testMulti():
         myDataSensorEnedis.init(myDataEnedis)
         typeSensor = _consommation
         status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
+        #lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )
+        #lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
         log.info("****")
         log.info(status_counts)
         for clef in status_counts.keys():
             log.info( "%s = %s" %(clef, status_counts[clef]))
-
-        typeSensor = _production
-        status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
-        log.info("****")
-        log.info(status_counts)
-        for clef in status_counts.keys():
-            log.info( "%s = %s" %(clef, status_counts[clef]))
-
-        typeSensor = _consommation
-        laDate = datetime.datetime.today() - datetime.timedelta(3)
-        status_counts, state = myDataSensorEnedis.getStatusHistory( laDate, detail = "ALL" )
-        log.info("**** : %s" %state)
-        log.info(status_counts)
-        for clef in status_counts.keys():
-            log.info( "%s = %s" %(clef, status_counts[clef]))
+        #
+        # typeSensor = _production
+        # status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
+        # log.info("****")
+        # log.info(status_counts)
+        # for clef in status_counts.keys():
+        #     log.info( "%s = %s" %(clef, status_counts[clef]))
+        #
+        # typeSensor = _consommation
+        # laDate = datetime.datetime.today() - datetime.timedelta(3)
+        # status_counts, state = myDataSensorEnedis.getStatusHistory( laDate, detail = "ALL" )
+        # log.info("**** : %s" %state)
+        # log.info(status_counts)
+        # for clef in status_counts.keys():
+        #     log.info( "%s = %s" %(clef, status_counts[clef]))
 
         #laDate = datetime.datetime.today() - datetime.timedelta(2)
         #status_counts, state = myDataSensorEnedis.getStatusHistory(laDate, "ALL")

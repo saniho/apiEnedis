@@ -45,7 +45,9 @@ class manageSensorState:
         dataAvailable = False
         yesterdayDate = None
         if self._myDataEnedis.getContract() != None:
-            if self._myDataEnedis.getYesterday().getValue() != 0: # on a eut des données
+            #if self._myDataEnedis.getYesterday().getValue() != 0: # on a eut des données
+            if ( self._myDataEnedis.getYesterdayHCHP().getHC() +
+                 self._myDataEnedis.getYesterdayHCHP().getHP() ) != 0: # on a eut des données
                 status_counts["yesterday_HC_cost"] = \
                     "{:.3f}".format(0.001 *
                         self._myDataEnedis.getHCCost(self._myDataEnedis.getYesterdayHCHP().getHC()))
@@ -101,6 +103,56 @@ class manageSensorState:
             state = "{:.3f}".format(self._myDataEnedis.getCurrentYear().getValue() * 0.001)
 
         return status_counts, state
+
+    def getStatusEnergyDetailHours(self, typeSensor = _consommation):
+        state = "unavailable"
+        status_counts = defaultdict(int)
+        #"last_reset": "2021-01-01T00:00:00",  # à corriger plus tard !!
+
+        laDate = datetime.datetime.today() - datetime.timedelta(2)
+        laDate = laDate.replace(minute=0, second=0, microsecond=0)
+        lastReset = laDate
+        if self._myDataEnedis.getTimeLastCall() != None:
+            DateHeureDetail = {}
+            DateHeureDetailHP = self._myDataEnedis.getLast7DaysDetails().getDateHeureDetailHP()
+            DateHeureDetailHC = self._myDataEnedis.getLast7DaysDetails().getDateHeureDetailHC()
+            clefDate = laDate.strftime("%Y-%m-%d %H" )
+            valeurHP, valeurHC = 0, 0
+            if (clefDate in DateHeureDetailHP.keys()):
+                valeurHP = DateHeureDetailHP[clefDate]
+            if (clefDate in DateHeureDetailHC.keys()):
+                valeurHC = DateHeureDetailHC[clefDate]
+
+            total = valeurHP + valeurHC
+            state = "{:.3f}".format(0.001 * total)
+        lastResetIso = lastReset.isoformat()
+        return lastResetIso, status_counts, state
+
+    def getStatusEnergyDetailHoursCost(self, typeSensor = _consommation):
+        state = "unavailable"
+        status_counts = defaultdict(int)
+        #"last_reset": "2021-01-01T00:00:00",  # à corriger plus tard !!
+
+        laDate = datetime.datetime.today() - datetime.timedelta(2)
+        laDate = laDate.replace(minute=0, second=0, microsecond=0)
+        lastReset = laDate
+        if self._myDataEnedis.getTimeLastCall() != None:
+            DateHeureDetail = {}
+            DateHeureDetailHP = self._myDataEnedis.getLast7DaysDetails().getDateHeureDetailHP()
+            DateHeureDetailHC = self._myDataEnedis.getLast7DaysDetails().getDateHeureDetailHC()
+            clefDate = laDate.strftime("%Y-%m-%d %H" )
+            valeurHP, valeurHC = 0, 0
+            if (clefDate in DateHeureDetailHP.keys()):
+                valeurHP = DateHeureDetailHP[clefDate]
+            if (clefDate in DateHeureDetailHC.keys()):
+                valeurHC = DateHeureDetailHC[clefDate]
+
+            costHC = "{:.3f}".format(0.001 * self._myDataEnedis.getHCCost(valeurHC))
+            costHP = "{:.3f}".format(0.001 * self._myDataEnedis.getHPCost(valeurHP))
+            cost = self._myDataEnedis.getHCCost(valeurHC) + self._myDataEnedis.getHPCost(valeurHP)
+            state = "{:.3f}".format(0.001 * cost )
+        lastResetIso = lastReset.isoformat()
+        return lastResetIso, status_counts, state
 
     def getStatus(self, typeSensor = _consommation):
         state = "unavailable"
@@ -263,6 +315,10 @@ class manageSensorState:
                             "{:.3f}".format((
                             self._myDataEnedis.getYesterdayHCHP().getHC() +
                             self._myDataEnedis.getYesterdayHCHP().getHP() ) * 0.001)
+                        if( status_counts['yesterday'] == 0):
+                            status_counts["yesterday"] = \
+                                self._myDataEnedis.getYesterdayHCHP().getHC() + \
+                                self._myDataEnedis.getYesterdayHCHP().getHP()
                         status_counts['current_week'] = \
                             "{:.3f}".format(self._myDataEnedis.getCurrentWeek().getValue() * 0.001)
 
@@ -324,8 +380,7 @@ class manageSensorState:
                         status_counts["subscribed_power"] = self._myDataEnedis.getContract().getsubscribed_power()
                         status_counts["offpeak_hours_enedis"] = self._myDataEnedis.getContract().getoffpeak_hours()
                         status_counts["offpeak_hours"] = self._myDataEnedis.getContract().getHeuresCreuses()
-                        # status_counts['yesterday'] = ""
-                    if typeSensor == _production: #self._myDataEnedis.isProduction():
+                    if typeSensor == _production:
                         status_counts["yesterday_production"] = self._myDataEnedis.getProductionYesterday().getValue()
                         status_counts['errorLastCall'] = self._myDataEnedis.getCardErrorLastCall()
                         status_counts['errorLastCallInterne'] = self._myDataEnedis.getErrorLastCall()

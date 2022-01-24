@@ -86,11 +86,11 @@ class myCall:
                 import time
                 time.sleep(30) # on attend quelques secondes
                 try_again = False
-        if ( "enedis_return" in dataAnswer.keys() ):
-            if ( type( dataAnswer["enedis_return"] ) is dict ):
-                if ( "error" in dataAnswer["enedis_return"].keys()):
-                    if ( dataAnswer["enedis_return"]["error"] == "UNKERROR_TIMEOUT"):
-                        raise error
+        #if ( "enedis_return" in dataAnswer.keys() ):
+        #    if ( type( dataAnswer["enedis_return"] ) is dict ):
+        #        if ( "error" in dataAnswer["enedis_return"].keys()):
+        #            if ( dataAnswer["enedis_return"]["error"] == "UNKERROR_TIMEOUT"):
+        #                raise error
         return dataAnswer
 
     def getDataPeriod(self, deb, fin ):
@@ -109,6 +109,7 @@ class myCall:
             # pas de donnée
             callDone = False
             dataAnswer = ""
+        self.setLastAnswer(dataAnswer)
         return dataAnswer, callDone
 
     def getDataPeriodConsumptionMaxPower(self, deb, fin):

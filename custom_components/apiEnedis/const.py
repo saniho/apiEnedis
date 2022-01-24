@@ -1,6 +1,6 @@
 """ Constants """
 # attention updater aussi manifest.json
-__VERSION__ = "1.3.2.7"
+__VERSION__ = "1.4.0.3"
 __name__ = "myEnedis"
 
 try:
@@ -81,6 +81,14 @@ SENSOR_TYPES = {
     },
     "energy": {
         ENTITY_NAME: "energy",
+        ENTITY_DELAI: 60,
+    },
+    "energyDetailHours": {
+        ENTITY_NAME: "energyDetailHours",
+        ENTITY_DELAI: 60,
+    },
+    "energyDetailHoursCost": {
+        ENTITY_NAME: "energyDetailHoursCost",
         ENTITY_DELAI: 60,
     },
 }
