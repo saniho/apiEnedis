@@ -2,7 +2,7 @@ FLAKE_EXCLUDES=E401,F401,W503,F841,E266,E402,E722,C416,B001,B008,E501
 BANDIT_EXCLUDES=B101,B105,B110,B307,B310,B311
 
 lint_python:
-	shopt -s globstar && pyupgrade --py36-plus **/*.py
+	-shopt -s globstar && pyupgrade --py36-plus **/*.py
 	bandit --recursive --skip $(BANDIT_EXCLUDES) .
 	black -l 79 .
 	# codespell --ignore-words-list="hass" custom_components
