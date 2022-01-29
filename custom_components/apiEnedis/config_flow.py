@@ -22,7 +22,7 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 
-class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
     def __init__(self):

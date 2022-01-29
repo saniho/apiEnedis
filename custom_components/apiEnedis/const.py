@@ -3,6 +3,8 @@
 __VERSION__ = "1.4.0.4"
 __name__ = "myEnedis"
 
+from typing import Dict, Union
+
 try:
     from homeassistant.const import (
         CONF_NAME,
@@ -59,7 +61,7 @@ _formatDateY0101 = "%Y-01-01"
 ENTITY_NAME = "name"
 ENTITY_DELAI = "delai"
 
-SENSOR_TYPES = {
+SENSOR_TYPES: Dict[str, Dict[str, Union[int, str]]] = {
     "principal": {
         ENTITY_NAME: "principal",
         ENTITY_DELAI: 60,

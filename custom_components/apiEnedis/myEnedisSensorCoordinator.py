@@ -1,6 +1,7 @@
 """Sensor for my first"""
 import datetime
 import logging
+from typing import Dict
 from datetime import timedelta
 
 try:
@@ -55,7 +56,7 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
-        self._attributes = {}
+        self._attributes: Dict[str, str] = {}
         self._state = None
         self._unit = "kWh"
         self._lastState = None

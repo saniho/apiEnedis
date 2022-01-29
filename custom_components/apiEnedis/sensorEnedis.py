@@ -185,7 +185,7 @@ class manageSensorState:
         lastResetIso = lastReset.isoformat()
         return lastResetIso, status_counts, state
 
-    def getStatus(self, typeSensor=_consommation):
+    def getStatus(self, typeSensor=_consommation):  # noqa C901
         # Raccourci pour self._myDataEnedit (lignes plus court)
         data = self._myDataEnedis
 

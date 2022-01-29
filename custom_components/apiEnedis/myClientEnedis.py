@@ -1011,7 +1011,7 @@ class myClientEnedis:
     def getGitVersion(self):
         return self._gitVersion
 
-    def update(self):
+    def update(self):  # noqa C901
         log.info("myEnedis ...new update ?? %s" % self._PDL_ID)
         if self.getContract().getValue() is not None:
             if self.getCallPossible():

@@ -1,6 +1,7 @@
 """Sensor for my first"""
 import datetime
 import logging
+from typing import Dict, Union
 from datetime import timedelta
 
 try:
@@ -48,7 +49,7 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
 
     def __init__(
         self,
-        sensor_type: str,
+        sensor_type: Dict[str, Union[int, str]],
         coordinator: DataUpdateCoordinator,
         typeSensor=_consommation,
         detail="",
@@ -58,10 +59,15 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
         self._myDataSensorEnedis = manageSensorState()
         self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         # ajout interval dans le sensor
-        interval = sensor_type[ENTITY_DELAI]
+        # Assure que la valeur est un float:
+        try:
+            interval = float(sensor_type[ENTITY_DELAI])
+        except:
+            interval = 60.
+            _LOGGER.warn(f"{ENTITY_DELAI} non defini pour le sensor")
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         _LOGGER.info("frequence mise à jour en seconde : %s" % (interval))
-        self._attributes = {}
+        self._attributes: Dict[str, Union[int, str]] = {}
         self._state = None
         self._unit = "kWh"
         self._lastState = None
