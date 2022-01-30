@@ -3,6 +3,7 @@ BANDIT_EXCLUDES=B101,B105,B110,B307,B310,B311
 
 lint_python:
 	-shopt -s globstar && pyupgrade --py36-plus **/*.py
+	-shopt -s globstar && autoflake8 **/*.py
 	bandit --recursive --skip $(BANDIT_EXCLUDES) .
 	black -l 79 .
 	# codespell --ignore-words-list="hass" custom_components
@@ -23,4 +24,5 @@ test:
 install_requirements:
 	pip install --upgrade pip wheel
 	pip install bandit black codespell flake8 flake8-2020 flake8-bugbear \
-                  flake8-comprehensions isort mypy pytest pyupgrade safety
+                  flake8-comprehensions isort mypy pytest pyupgrade safety \
+                  autoflake8
