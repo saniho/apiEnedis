@@ -15,7 +15,6 @@ import logging
 class manageSensorState:
     def __init__(self):
         self._init = False
-        pass
 
     def getInit(self):
         return self._init
@@ -31,7 +30,6 @@ class manageSensorState:
         self._LOGGER = _LOGGER
         self.version = version
         self.setInit(True)
-        pass
 
     def get_PDL_ID(self):
         return self._myDataEnedis.getContract().get_PDL_ID()
@@ -199,13 +197,16 @@ class manageSensorState:
 
         if data.getTimeLastCall() is not None:
             self._LOGGER.info(
-                "-- ** on va mettre à jour : %s" % data.getContract().get_PDL_ID()
+                "-- ** on va mettre à jour : %s"
+                % data.getContract().get_PDL_ID()
             )
             status["nbCall"] = data.getNbCall()
             status["typeCompteur"] = typeSensor
             status["numPDL"] = data.getContract().get_PDL_ID()
             status["horaireMinCall"] = data.getHoraireMin()
-            status["activationDate"] = data.getContract().getLastActivationDate()
+            status[
+                "activationDate"
+            ] = data.getContract().getLastActivationDate()
             if data.isConsommation():
                 status["lastUpdate"] = data.getLastUpdate()
                 status["timeLastCall"] = data.getTimeLastCall()
@@ -222,7 +223,9 @@ class manageSensorState:
                         status["timeLastCall"] = data.getTimeLastCall()
                         # à supprimer car doublon avec j_1
                         status["yesterday"] = data.getYesterday().getValue()
-                        status["yesterdayDate"] = data.getYesterday().getDateDeb()
+                        status[
+                            "yesterdayDate"
+                        ] = data.getYesterday().getDateDeb()
                         status[
                             "yesterdayLastYear"
                         ] = data.getYesterdayLastYear().getValue()
@@ -280,7 +283,9 @@ class manageSensorState:
                             niemejour += 1
                             valeur = -1
                             if clef in last7daysHC.keys():
-                                valeur = 0.001 * data.getHCCost(last7daysHC[clef])
+                                valeur = 0.001 * data.getHCCost(
+                                    last7daysHC[clef]
+                                )
                                 valeur = f"{valeur:.2f}"
                             coutHC.append(valeur)
                         status["dailyweek_costHC"] = coutHC
@@ -302,7 +307,9 @@ class manageSensorState:
                             niemejour += 1
                             valeur = -1
                             if clef in last7daysHP.keys():
-                                valeur = 0.001 * data.getHPCost(last7daysHP[clef])
+                                valeur = 0.001 * data.getHPCost(
+                                    last7daysHP[clef]
+                                )
                                 valeur = f"{valeur:.2f}"
                             coutHP.append(valeur)
                         status["dailyweek_costHP"] = coutHP
@@ -364,97 +371,102 @@ class manageSensorState:
                         if status["yesterday"] == 0:
                             status["yesterday"] = prevDayHPHC
 
-                        status["current_week"] = "{:.3f}".format(
-                            data.getCurrentWeek().getValue() * 0.001
+                        currWk = data.getCurrentWeek().getValue() * 0.001
+                        currWkLastYear = (
+                            data.getCurrentWeekLastYear().getValue() * 0.001
                         )
+                        lastMonth = data.getLastMonth().getValue() * 0.001
+                        lastMonthLastYear = (
+                            data.getLastMonthLastYear().getValue() * 0.001
+                        )
+                        currMonth = data.getCurrentMonth().getValue() * 0.001
+                        currMonthLastYear = (
+                            data.getCurrentMonthLastYear().getValue() * 0.001
+                        )
+                        lastYear = data.getLastYear().getValue() * 0.001
+                        currYear = data.getCurrentYear().getValue() * 0.001
 
-                        if data.getCurrentWeek().getDateDeb() is not None:
+                        dateDeb = data.getCurrentWeek().getDateDeb()
+
+                        status["current_week"] = f"{currWk:.3f}"
+
+                        if dateDeb is not None:
                             status[
                                 "current_week_number"
                             ] = datetime.datetime.fromisoformat(
-                                data.getCurrentWeek().getDateDeb()
+                                dateDeb
                             ).isocalendar()[
                                 1
                             ]
-                        status["current_week_last_year"] = "{:.3f}".format(
-                            data.getCurrentWeekLastYear().getValue() * 0.001
-                        )
-                        status["last_month"] = "{:.3f}".format(
-                            data.getLastMonth().getValue() * 0.001
-                        )
-                        status["last_month_last_year"] = "{:.3f}".format(
-                            data.getLastMonthLastYear().getValue() * 0.001
-                        )
-                        status["current_month"] = "{:.3f}".format(
-                            data.getCurrentMonth().getValue() * 0.001
-                        )
-                        status["current_month_last_year"] = "{:.3f}".format(
-                            data.getCurrentMonthLastYear().getValue() * 0.001
-                        )
-                        status["last_year"] = "{:.3f}".format(
-                            data.getLastYear().getValue() * 0.001
-                        )
-                        status["current_year"] = "{:.3f}".format(
-                            data.getCurrentYear().getValue() * 0.001
-                        )
+
+                        status["current_week_last_year"] = f"{currWkLastYear:.3f}"
+                        status["last_month"] = f"{lastMonth:.3f}"
+                        status["last_month_last_year"] = f"{lastMonthLastYear:.3f}"
+                        status["current_month"] = f"{currMonth:.3f}"
+                        status["current_month_last_year"] = f"{currMonthLastYear:.3f}"
+                        status["last_year"] = f"{lastYear:.3f}"
+                        status["current_year"] = f"{currYear:.3f}"
+
                         status["errorLastCall"] = data.getCardErrorLastCall()
-                        status["errorLastCallInterne"] = data.getErrorLastCall()
+                        status[
+                            "errorLastCallInterne"
+                        ] = data.getErrorLastCall()
+
                         if (
-                            (data.getLastMonthLastYear().getValue() is not None)
-                            and (data.getLastMonthLastYear().getValue() != 0)
-                            and (data.getLastMonth().getValue() is not None)
+                            (lastMonthLastYear is not None)
+                            and (lastMonthLastYear != 0)
+                            and (lastMonth is not None)
                         ):
                             valeur = (
-                                (
-                                    data.getLastMonth().getValue()
-                                    - data.getLastMonthLastYear().getValue()
-                                )
-                                / data.getLastMonthLastYear().getValue()
-                            ) * 100
+                                100
+                                * (lastMonth - lastMonthLastYear)
+                                / lastMonthLastYear
+                            )
                             status["monthly_evolution"] = f"{valeur:.3f}"
                         else:
                             status["monthly_evolution"] = 0
+
                         if (
-                            (data.getCurrentWeekLastYear().getValue() is not None)
-                            and (data.getCurrentWeekLastYear().getValue() != 0)
-                            and (data.getCurrentWeek().getValue() is not None)
+                            (currWkLastYear is not None)
+                            and (currWkLastYear != 0)
+                            and (currWk is not None)
                         ):
                             valeur = (
-                                (
-                                    data.getCurrentWeek().getValue()
-                                    - data.getCurrentWeekLastYear().getValue()
-                                )
-                                / data.getCurrentWeekLastYear().getValue()
-                            ) * 100
+                                100
+                                * (currWk - currWkLastYear)
+                                / currWkLastYear
+                            )
                             status["current_week_evolution"] = f"{valeur:.3f}"
                         else:
                             status["current_week_evolution"] = 0
+
                         if (
-                            (data.getCurrentMonthLastYear().getValue() is not None)
-                            and (data.getCurrentMonthLastYear().getValue() != 0)
-                            and (data.getCurrentMonth().getValue() is not None)
+                            (currMonthLastYear is not None)
+                            and (currMonthLastYear != 0)
+                            and (currMonth is not None)
                         ):
                             valeur = (
-                                (
-                                    data.getCurrentMonth().getValue()
-                                    - data.getCurrentMonthLastYear().getValue()
-                                )
-                                / data.getCurrentMonthLastYear().getValue()
-                            ) * 100
+                                100
+                                * (currMonth - currMonthLastYear)
+                                / currMonthLastYear
+                            )
                             status["current_month_evolution"] = f"{valeur:.3f}"
                         else:
                             status["current_month_evolution"] = 0
+
+                        yesterdayLastYear = (
+                            data.getYesterdayLastYear().getValue()
+                        )
+                        yesterday = data.getYesterday().getValue()
+
                         if (
-                            (data.getYesterdayLastYear().getValue() is not None)
-                            and (data.getYesterdayLastYear().getValue() != 0)
-                            and (data.getYesterday().getValue() is not None)
+                            (yesterdayLastYear is not None)
+                            and (yesterdayLastYear != 0)
+                            and (yesterday is not None)
                         ):
                             valeur = (
-                                (
-                                    data.getYesterday().getValue()
-                                    - data.getYesterdayLastYear().getValue()
-                                )
-                                / data.getYesterdayLastYear().getValue()
+                                (yesterday - yesterdayLastYear)
+                                / yesterdayLastYear
                             ) * 100
                             status["yesterday_evolution"] = f"{valeur:.3f}"
                         else:
@@ -465,13 +477,17 @@ class manageSensorState:
                         status[
                             "offpeak_hours_enedis"
                         ] = data.getContract().getoffpeak_hours()
-                        status["offpeak_hours"] = data.getContract().getHeuresCreuses()
+                        status[
+                            "offpeak_hours"
+                        ] = data.getContract().getHeuresCreuses()
                     if typeSensor == _production:
                         status[
                             "yesterday_production"
                         ] = data.getProductionYesterday().getValue()
                         status["errorLastCall"] = data.getCardErrorLastCall()
-                        status["errorLastCallInterne"] = data.getErrorLastCall()
+                        status[
+                            "errorLastCallInterne"
+                        ] = data.getErrorLastCall()
                         status["lastUpdate"] = data.getLastUpdate()
                         status["timeLastCall"] = data.getTimeLastCall()
                     if status["yesterday"] is None:
@@ -491,7 +507,9 @@ class manageSensorState:
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     self._LOGGER.error(sys.exc_info())
                     msg = repr(
-                        traceback.format_exception(exc_type, exc_value, exc_traceback)
+                        traceback.format_exception(
+                            exc_type, exc_value, exc_traceback
+                        )
                     )
 
                     self._LOGGER.error(msg)
