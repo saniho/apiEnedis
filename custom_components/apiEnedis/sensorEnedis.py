@@ -104,14 +104,15 @@ class manageSensorState:
     def getExistsRecentVersion(self, versionCurrent, versionGit):
         import packaging.version
 
+        # If only one of the versions exists, result is False
         if (versionCurrent is None) or (versionGit is None):
             return False
-        elif packaging.version.parse(versionCurrent) < packaging.version.parse(
-            versionGit
-        ):
-            return True
-        else:
-            return False
+
+        # Get version representations
+        currVersionObj = packaging.version.parse(versionCurrent)
+        gitVersionObj = packaging.version.parse(versionGit)
+
+        return currVersionObj < gitVersionObj
 
     def getStatusEnergy(self, typeSensor=_consommation):
         state = "unavailable"
@@ -399,11 +400,17 @@ class manageSensorState:
                                 1
                             ]
 
-                        status["current_week_last_year"] = f"{currWkLastYear:.3f}"
+                        status[
+                            "current_week_last_year"
+                        ] = f"{currWkLastYear:.3f}"
                         status["last_month"] = f"{lastMonth:.3f}"
-                        status["last_month_last_year"] = f"{lastMonthLastYear:.3f}"
+                        status[
+                            "last_month_last_year"
+                        ] = f"{lastMonthLastYear:.3f}"
                         status["current_month"] = f"{currMonth:.3f}"
-                        status["current_month_last_year"] = f"{currMonthLastYear:.3f}"
+                        status[
+                            "current_month_last_year"
+                        ] = f"{currMonthLastYear:.3f}"
                         status["last_year"] = f"{lastYear:.3f}"
                         status["current_year"] = f"{currYear:.3f}"
 
