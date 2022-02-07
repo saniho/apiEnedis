@@ -249,6 +249,7 @@ class myClientEnedis:
         log.info(
             " %s >>>> getData, self._dataJson ? %s" % (self._PDL_ID, self._dataJson)
         )
+        forceCallJson = self._forceCallJson
         if self.getContract().getValue() is None:
             log.info("contract ? %s" % self.getContract().get_PDL_ID())
             try:
@@ -272,7 +273,7 @@ class myClientEnedis:
             self.update()
             self.setlastCallJson()
             log.info("UpdateRealise : %s" % (self.getUpdateRealise()))
-            if self.getUpdateRealise():
+            if self.getUpdateRealise() and not forceCallJson:
                 self.writeDataJson()
 
         else:
@@ -832,7 +833,9 @@ class myClientEnedis:
             t = datetime.datetime.now()
             self._timeLastUpdate = t
         else:
-            self._timeLastUpdate = t
+            # si on est dans le cas ou l'appel vient d'un forcage .. alors pas d'update
+            if not self._forceCallJson:
+                self._timeLastUpdate = t
 
     def getStatusLastCall(self):
         return self._statusLastCall
@@ -935,8 +938,6 @@ class myClientEnedis:
             lastCallHier = lastCall < hier
         else:
             lastCallHier = False
-        ## TESTR
-        # lastCallHier = True
         return lastCallHier
 
     def updateGitVersion(self):
@@ -945,7 +946,6 @@ class myClientEnedis:
         self._gitVersion = gitInfo.getVersion()
 
     def getCallPossible(self, currentDateTime=datetime.datetime.now(), trace=False):
-        # new callpossible ???
         callpossible = self.getHorairePossible() and (
             self.getLastCallHier()
             or (self.getTimeLastCall() is None)
@@ -954,10 +954,7 @@ class myClientEnedis:
                 and self.getDelaiIsGoodAfterError(currentDateTime)
             )
         )
-        # if ( self.getDelaiIsGoodAfterError(currentDateTime) ):
-        #    trace = True # pour activer la trace ... et voir comprendre quelque choose
-        # if ( self.getStatusLastCall() is False ):
-        #    trace = True # pour activer la trace ... et voir comprendre quelque choose
+        # si on doit prendre les informations des fichiers de sauvegarde
         if self._forceCallJson:
             callpossible = True
         if trace:
@@ -1011,6 +1008,100 @@ class myClientEnedis:
     def getGitVersion(self):
         return self._gitVersion
 
+    def callConsommation(self):
+        if self.isConsommation():
+            self._niemeAppel += 1
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateYesterday"
+            ):
+                self.updateYesterday()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateCurrentWeek"
+            ):
+                self.updateCurrentWeek()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateLastWeek"
+            ):
+                self.updateLastWeek()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateLast7Days"
+            ):
+                self.updateLast7Days()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateDataYesterdayHCHP"
+            ):
+                self.updateDataYesterdayHCHP()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateLast7DaysDetails"
+            ):
+                self.updateLast7DaysDetails()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateCurrentMonth"
+            ):
+                self.updateCurrentMonth()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateLastMonth"
+            ):
+                self.updateLastMonth()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateLastMonthLastYear"
+            ):
+                self.updateLastMonthLastYear()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateCurrentYear"
+            ):
+                self.updateCurrentYear()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateLastYear"
+            ):
+                self.updateLastYear()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateYesterdayLastYear"
+            ):
+                self.updateYesterdayLastYear()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateCurrentWeekLastYear"
+            ):
+                self.updateCurrentWeekLastYear()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateYesterdayConsumptionMaxPower"
+            ):
+                self.updateYesterdayConsumptionMaxPower()
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateCurrentMonthLastYear"
+            ):
+                self.updateCurrentMonthLastYear()
+
+            self.updateTimeLastCall()
+            self.updateStatusLastCall(True)
+            log.info("mise à jour effectuee consommation")
+
+    def callProduction(self):
+        if self.isProduction():
+            if (
+                self.getStatusLastCall()
+                or self.getLastMethodCallError() == "updateYesterdayProduction"
+            ):
+                self.updateYesterdayProduction()
+            self.updateTimeLastCall()
+            self.updateStatusLastCall(True)
+            log.info("mise à jour effectuee production")
+
     def update(self):  # noqa C901
         log.info("myEnedis ...new update ?? %s" % self._PDL_ID)
         if self.getContract().getValue() is not None:
@@ -1037,105 +1128,8 @@ class myClientEnedis:
                     ):  # si pas un forcage alors on reset le last call...
                         self.updateStatusLastCall(True)
                     try:
-                        if self.isConsommation():
-                            self._niemeAppel += 1
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError() == "updateYesterday"
-                            ):
-                                self.updateYesterday()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError() == "updateCurrentWeek"
-                            ):
-                                self.updateCurrentWeek()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError() == "updateLastWeek"
-                            ):
-                                self.updateLastWeek()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError() == "updateLast7Days"
-                            ):
-                                self.updateLast7Days()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError()
-                                == "updateDataYesterdayHCHP"
-                            ):
-                                self.updateDataYesterdayHCHP()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError()
-                                == "updateLast7DaysDetails"
-                            ):
-                                self.updateLast7DaysDetails()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError() == "updateCurrentMonth"
-                            ):
-                                self.updateCurrentMonth()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError() == "updateLastMonth"
-                            ):
-                                self.updateLastMonth()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError()
-                                == "updateLastMonthLastYear"
-                            ):
-                                self.updateLastMonthLastYear()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError() == "updateCurrentYear"
-                            ):
-                                self.updateCurrentYear()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError() == "updateLastYear"
-                            ):
-                                self.updateLastYear()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError()
-                                == "updateYesterdayLastYear"
-                            ):
-                                self.updateYesterdayLastYear()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError()
-                                == "updateCurrentWeekLastYear"
-                            ):
-                                self.updateCurrentWeekLastYear()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError()
-                                == "updateYesterdayConsumptionMaxPower"
-                            ):
-                                self.updateYesterdayConsumptionMaxPower()
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError()
-                                == "updateCurrentMonthLastYear"
-                            ):
-                                self.updateCurrentMonthLastYear()
-
-                            self.updateTimeLastCall()
-                            self.updateStatusLastCall(True)
-                            log.info("mise à jour effectuee consommation")
-
-                        if self.isProduction():
-                            if (
-                                self.getStatusLastCall()
-                                or self.getLastMethodCallError()
-                                == "updateYesterdayProduction"
-                            ):
-                                self.updateYesterdayProduction()
-                            self.updateTimeLastCall()
-                            self.updateStatusLastCall(True)
-                            log.info("mise à jour effectuee production")
+                        self.callConsommation()
+                        self.callProduction()
                         if self._forceCallJson:
                             self._forceCallJson = False
                             self.setDataJsonDefault({})
