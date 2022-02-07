@@ -66,10 +66,10 @@ def testMulti():
         log.info("=================>>>> 2 <<<<============")
         # time = datetime.datetime.now() + datetime.timedelta(hours=1)
         callPossible = myDataEnedis.getCallPossible()
-        log.info("possible ? %s " %callPossible)
+        log.info("possible ? %s " % callPossible)
         log.info("** on tente une maj ??")
         myDataEnedis.getData()
-        log.info("=================< on a fini le call : %s ============" %myDataEnedis.getNbCall())
+        log.info("=================< on a fini le call : %s ============" % myDataEnedis.getNbCall())
 
         # SORTIE OUTPUT
         # writeDataJson( myDataEnedis )
