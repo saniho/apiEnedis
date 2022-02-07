@@ -1053,7 +1053,7 @@ class myClientEnedis:
                 self.updateLastMonth()
             if (
                 self.getStatusLastCall()
-                or self.getLastMethodCallError()== "updateLastMonthLastYear"
+                or self.getLastMethodCallError() == "updateLastMonthLastYear"
             ):
                 self.updateLastMonthLastYear()
             if (
