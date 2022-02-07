@@ -471,7 +471,7 @@ class manageSensorState:
                             and (yesterdayLastYear != 0)
                             and (yesterday is not None)
                         ):
-                            if ( yesterday == 0 and prevDayHPHC!= 0):
+                            if (yesterday == 0 and prevDayHPHC != 0):
                                 yestValue = prevDayHPHC
                             else:
                                 yestValue = yesterday
