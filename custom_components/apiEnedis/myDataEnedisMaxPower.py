@@ -72,6 +72,8 @@ class myDataEnedisMaxPower:
             else:
                 if not horairePossible:
                     onLance = False
+                    # si horaire non ok, on garde quand meme ce qui était passé en parametre..cas du reboot
+                    self._data = data
                 else:
                     self._callOk = None
                     data = None  # si on doit mettre à jour .... sauf si on est pas la
