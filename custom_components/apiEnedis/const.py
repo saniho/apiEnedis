@@ -1,6 +1,6 @@
 """ Constants """
 # attention updater aussi manifest.json
-__VERSION__ = "1.4.05.a"
+__VERSION__ = "1.4.0.5a"
 __name__ = "myEnedis"
 
 from typing import Dict, Union
