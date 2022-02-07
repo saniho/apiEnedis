@@ -5,7 +5,7 @@
     "issue_tracker": "https://github.com/saniho/apiEnedis/issues",
     "iot_class": "cloud_polling",
     "config_flow": true,
-    "version": "1.4.0.4",
+    "version": "1.4.0.5a",
     "requirements": [
         "packaging>=20.8"
     ],
