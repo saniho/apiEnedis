@@ -74,13 +74,9 @@ class myDataEnedisByDay:
             else:
                 if not horairePossible:
                     onLance = True
-                    #... mais si on a quelque chose de ok avant, on le prendre
                     dateDeb, dateFin, self._callOk = getInformationDataControl( dataControl )
-                    if self._callOk == None:
+                    if self._callOk is None:
                         data = None  # si on doit mettre à jour .... sauf si on est pas la
-                    #onLance = False
-                    # si horaire non ok, on garde quand meme ce qui était passé en parametre..cas du reboot
-                    #self._data = data
                 else:
                     self._callOk = None
                     data = None  # si on doit mettre à jour .... sauf si on est pas la

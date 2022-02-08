@@ -1090,7 +1090,7 @@ class myClientEnedis:
             ):
                 self.updateCurrentMonthLastYear()
 
-            if( not self._forceCallJson ):
+            if not self._forceCallJson:
                 self.updateTimeLastCall()
             self.updateStatusLastCall(True)
             log.info("mise à jour effectuee consommation")

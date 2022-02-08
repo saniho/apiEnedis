@@ -102,9 +102,8 @@ class myDataEnedisByDayDetail:
             else:
                 if not horairePossible:
                     onLance = True
-                    #... mais si on a quelque chose de ok avant, on le prendre
-                    dateDeb, dateFin, self._callOk = getInformationDataControl( dataControl )
-                    if self._callOk == None:
+                    dateDeb, dateFin, self._callOk = getInformationDataControl(dataControl)
+                    if self._callOk is None:
                         data = None  # si on doit mettre à jour .... sauf si on est pas la
                 else:
                     self._callOk = None

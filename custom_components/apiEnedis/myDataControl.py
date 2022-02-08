@@ -37,5 +37,6 @@ def okDataControl(
     log.info("--okDataControl / response : %s " % (response))
     return response
 
-def getInformationDataControl( dataControl ):
+
+def getInformationDataControl(dataControl):
     return dataControl.get("deb", None), dataControl.get("fin", None), dataControl.get("callok", None)
