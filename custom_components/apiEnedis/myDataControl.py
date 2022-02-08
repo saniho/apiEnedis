@@ -34,4 +34,8 @@ def okDataControl(
     if callOk is None:
         callOk = True
     response = deb == dateDeb and fin == dateFin and callOk
+    log.info("--okDataControl / response : %s " % (response))
     return response
+
+def getInformationDataControl( dataControl ):
+    return dataControl.get("deb", None), dataControl.get("fin", None), dataControl.get("callok", None)
