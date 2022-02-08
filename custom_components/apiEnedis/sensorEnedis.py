@@ -533,7 +533,10 @@ class manageSensorState:
         else:
             status["errorLastCall"] = data.getCardErrorLastCall()
             status["errorLastCallInterne"] = data.getErrorLastCall()
-
+        self._LOGGER.info("*** SENSOR ***")
+        self._LOGGER.info("status :%s" % status)
+        self._LOGGER.info("state :%s" % state)
+        self._LOGGER.info("*** FIN SENSOR ***")
         return status, state
 
 

@@ -20,6 +20,7 @@ log = logging.getLogger(__nameMyEnedis__)
 
 from .myCheckData import myCheckData
 from .myDataControl import okDataControl
+from .myDataControl import getInformationDataControl
 
 
 class myDataEnedisByDay:
@@ -72,12 +73,14 @@ class myDataEnedisByDay:
                 self._callOk = True
             else:
                 if not horairePossible:
-                    onLance = False
-                    # si horaire non ok, on garde quand meme ce qui était passé en parametre..cas du reboot
-                    self._data = data
+                    onLance = True
+                    dateDeb, dateFin, self._callOk = getInformationDataControl(dataControl)
+                    if self._callOk is None:
+                        data = None  # si on doit mettre à jour .... sauf si on est pas la
                 else:
                     self._callOk = None
                     data = None  # si on doit mettre à jour .... sauf si on est pas la
+
         if onLance:
             self._dateDeb = dateDeb
             self._dateFin = dateFin

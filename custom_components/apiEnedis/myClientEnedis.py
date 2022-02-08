@@ -829,12 +829,15 @@ class myClientEnedis:
         return self._timeLastUpdate
 
     def updateTimeLastCall(self, t=None):
-        if t is None:
-            t = datetime.datetime.now()
-            self._timeLastUpdate = t
+        # si on est dans le cas ou l'appel vient d'un forcage .. alors pas d'update
+        if not self._forceCallJson:
+            if t is None:
+                t = datetime.datetime.now()
+                self._timeLastUpdate = t
+            else:
+                self._timeLastUpdate = t
         else:
-            # si on est dans le cas ou l'appel vient d'un forcage .. alors pas d'update
-            if not self._forceCallJson:
+            if t is not None:
                 self._timeLastUpdate = t
 
     def getStatusLastCall(self):
@@ -1087,7 +1090,8 @@ class myClientEnedis:
             ):
                 self.updateCurrentMonthLastYear()
 
-            self.updateTimeLastCall()
+            if not self._forceCallJson:
+                self.updateTimeLastCall()
             self.updateStatusLastCall(True)
             log.info("mise à jour effectuee consommation")
 

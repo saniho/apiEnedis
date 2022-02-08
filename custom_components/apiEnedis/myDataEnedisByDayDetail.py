@@ -20,6 +20,7 @@ log = logging.getLogger(__nameMyEnedis__)
 
 from .myCheckData import myCheckData
 from .myDataControl import okDataControl
+from .myDataControl import getInformationDataControl
 
 
 class myDataEnedisByDayDetail:
@@ -100,9 +101,10 @@ class myDataEnedisByDayDetail:
                 self._callOk = True
             else:
                 if not horairePossible:
-                    onLance = False
-                    # si horaire non ok, on garde quand meme ce qui était passé en parametre..cas du reboot
-                    self._data = data
+                    onLance = True
+                    dateDeb, dateFin, self._callOk = getInformationDataControl(dataControl)
+                    if self._callOk is None:
+                        data = None  # si on doit mettre à jour .... sauf si on est pas la
                 else:
                     self._callOk = None
                     data = None  # si on doit mettre à jour .... sauf si on est pas la
@@ -110,17 +112,17 @@ class myDataEnedisByDayDetail:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info(
-                "--updateData %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                "--updateData %s ( du %s au %s )--" % (clefFunction, self._dateDeb, self._dateFin)
             )
             self._data = data
             if self._data is None:
-                self._data, callDone = self.CallgetData(dateDeb, dateFin)
+                self._data, callDone = self.CallgetData(self._dateDeb, self._dateFin)
                 self._nbCall = 1
             else:
                 callDone = True
             log.info("updateData : data %s" % (self._data))
             if self._multiDays:
-                if dateDeb == dateFin:
+                if self._dateDeb == self._dateFin:
                     self._HC, self._HP = {}, {}
                 else:
                     if (callDone) and (myCheckData().checkDataPeriod(self._data)):
@@ -132,7 +134,7 @@ class myDataEnedisByDayDetail:
                         self._HC, self._HP = {}, {}
                     self._callOk = callDone
             else:
-                if dateDeb == dateFin:
+                if self._dateDeb == self._dateFin:
                     self._HC, self._HP = 0, 0
                 else:
                     if (callDone) and (myCheckData().checkData(self._data)):
@@ -142,7 +144,7 @@ class myDataEnedisByDayDetail:
                         self._HC, self._HP = 0, 0
                     self._callOk = callDone
             log.info(
-                "with update !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                "with update !! %s ( du %s au %s )--" % (clefFunction, self._dateDeb, self._dateFin)
             )
             log.info("updateData : data %s" % (self._data))
         else:
