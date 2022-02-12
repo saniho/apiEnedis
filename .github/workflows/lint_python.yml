@@ -9,7 +9,7 @@ jobs:
       - uses: actions/setup-python@v2
       - run: pip install --upgrade pip wheel
       - run: >-
-          pip install bandit black codespell flake8 flake8-2020flake8-bugbear
+          pip install bandit black codespell flake8 flake8-2020 flake8-bugbear
           flake8-comprehensions isort mypy pytest pyupgrade safety
       # Skipping rules that would block the flow at this moment
       - run: bandit --recursive --skip B101,B105,B110,B307,B310,B311 .
