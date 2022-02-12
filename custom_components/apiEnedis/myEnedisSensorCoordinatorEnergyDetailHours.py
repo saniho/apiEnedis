@@ -103,7 +103,7 @@ class myEnedisSensorCoordinatorEnergyDetailHours(CoordinatorEntity, RestoreEntit
             if "typeCompteur" in state.attributes:
                 self.attrs = state.attributes
                 _LOGGER.info("Redemarrage avec element present ??")
-        except:
+        except Exception:
             _LOGGER.info("Redemarrage mais rien de present")
             pass
 
