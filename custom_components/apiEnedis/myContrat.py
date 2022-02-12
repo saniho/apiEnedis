@@ -1,5 +1,5 @@
 try:
-    from .const import (
+    from .const import (  # isort:skip
         _consommation,
         _production,
         __nameMyEnedis__,

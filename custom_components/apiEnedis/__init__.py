@@ -59,7 +59,7 @@ except ImportError:
 
 from . import myClientEnedis
 
-from .const import (
+from .const import (  # isort:skip
     CONF_TOKEN,
     CONF_CODE,
     DOMAIN,
@@ -81,7 +81,7 @@ from .const import (
 )
 
 try:
-    from .const import (
+    from .const import (  # isort:skip
         __nameMyEnedis__,
     )
 

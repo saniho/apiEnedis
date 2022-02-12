@@ -1,5 +1,5 @@
 try:
-    from .const import (
+    from .const import (  # isort:skip
         __nameMyEnedis__,
     )
 

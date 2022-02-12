@@ -26,7 +26,7 @@ except ImportError:
     pass
 
 
-from .const import (
+from .const import (  # isort:skip
     __VERSION__,
     __name__,
     _consommation,

@@ -7,7 +7,7 @@ import homeassistant.helpers.config_validation as cv
 import uuid
 
 
-from .const import (
+from .const import (  # isort:skip
     DOMAIN,
     CONF_TOKEN,
     CONF_CODE,
