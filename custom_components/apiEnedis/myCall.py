@@ -4,7 +4,7 @@ try:
     )
 
 except ImportError:
-    from const import (
+    from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
     )
 import logging

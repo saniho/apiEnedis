@@ -12,7 +12,6 @@ lint_python:
                   --show-source --statistics
 	mypy --show-error-codes --ignore-missing-imports --install-types \
               --non-interactive \
-              --disable-error-code no-redef \
               . 
 	safety check
 

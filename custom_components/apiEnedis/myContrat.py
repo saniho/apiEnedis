@@ -9,7 +9,7 @@ try:
     )
 
 except ImportError:
-    from const import (
+    from const import (  # type: ignore[no-redef]
         _consommation,
         _production,
         __nameMyEnedis__,

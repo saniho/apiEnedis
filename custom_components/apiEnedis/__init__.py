@@ -21,37 +21,37 @@ try:
     )
 except ImportError:
     # si py test
-    class DataUpdateCoordinator:
+    class DataUpdateCoordinator:  # type: ignore[no-redef]
         def __init__(self):
             # nothing to do
             pass
 
-    class ConfigEntryNotReady:
+    class ConfigEntryNotReady:  # type: ignore[no-redef]
         def __init__(self):
             # nothing to do
             pass
 
-    class HomeAssistant:
+    class HomeAssistant:  # type: ignore[no-redef]
         def __init__(self):
             # nothing to do
             pass
 
-    class ConfigType:
+    class ConfigType:  # type: ignore[no-redef]
         def __init__(self):
             # nothing to do
             pass
 
-    class SOURCE_IMPORT:
+    class SOURCE_IMPORT:  # type: ignore[no-redef]
         def __init__(self):
             # nothing to do
             pass
 
-    class ConfigEntry:
+    class ConfigEntry:  # type: ignore[no-redef]
         def __init__(self):
             # nothing to do
             pass
 
-    class callback:
+    class callback:  # type: ignore[no-redef]
         def __init__(self):
             # nothing to do
             pass
@@ -86,7 +86,7 @@ try:
     )
 
 except ImportError:
-    from const import (
+    from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
     )
 
