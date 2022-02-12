@@ -1,9 +1,10 @@
+---
 name: CI
 
 on:
   push:
   schedule:
-    - cron: "10 5 * * *"
+    - cron: 10 5 * * *
 
 jobs:
   build:
@@ -12,8 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.x', '3.7', 'pypy3' ]
-        os: ['ubuntu-latest']
+        python: [3.x, '3.7', pypy3]
+        os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
       - name: Setup python
