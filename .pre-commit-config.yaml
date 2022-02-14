@@ -55,11 +55,11 @@ repos:
           - --max-line-length=79
           - --show-source
           - --statistics
-  # - repo: https://github.com/PyCQA/isort
-  #  rev: 5.10.1
-  #  hooks:
-  #    - id: isort
-  #      args: ["-l", "78"]
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        args: [-l, "79", --profile, black]
   # - repo: https://github.com/codespell-project/codespell
   #   rev: v2.1.0
   #   hooks:
