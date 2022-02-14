@@ -74,7 +74,9 @@ class myDataEnedisByDay:
             else:
                 if not horairePossible:
                     onLance = True
-                    dateDeb, dateFin, self._callOk = getInformationDataControl(dataControl)
+                    dateDeb, dateFin, self._callOk = getInformationDataControl(
+                        dataControl
+                    )
                     if self._callOk is None:
                         data = None  # si on doit mettre à jour .... sauf si on est pas la
                 else:
@@ -85,7 +87,7 @@ class myDataEnedisByDay:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info(
-                "--updateData %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                f"--updateData {clefFunction} ( du {dateDeb} au {dateFin} )--"
             )
             self._data = data
             if self._data is None:
@@ -93,8 +95,12 @@ class myDataEnedisByDay:
                     self._value = 0
                 else:
                     self._data, callDone = self.CallgetData(dateDeb, dateFin)
-                    if (callDone) and (myCheckData().checkDataPeriod(self._data)):
-                        self._value = myCheckData().analyseValueAndAdd(self._data)
+                    if (callDone) and (
+                        myCheckData().checkDataPeriod(self._data)
+                    ):
+                        self._value = myCheckData().analyseValueAndAdd(
+                            self._data
+                        )
                         self._callOk = True
                         self._nbCall = 1
                     else:
@@ -109,12 +115,12 @@ class myDataEnedisByDay:
                     self._value = 0
                 self._callOk = callDone
             log.info(
-                "with update !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                f"with update !! {clefFunction} ( du {dateDeb} au {dateFin} )--"
             )
             log.info("updateData : data %s" % (self._data))
         else:
             log.info(
-                "noupdate !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--"
             )
             log.info("no updateData : data %s" % (self._data))
         return self._data

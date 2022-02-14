@@ -14,7 +14,7 @@ except ImportError:
         _formatDateY0101,
     )
 
-import datetime, logging
+import logging
 
 log = logging.getLogger(__nameMyEnedis__)
 from .myCheckData import myCheckData
@@ -36,7 +36,9 @@ class myDataEnedisMaxPower:
         self._data = None
 
     def CallgetData(self, dateDeb, dateFin):
-        val1, val2 = self.myCalli.getDataPeriodConsumptionMaxPower(dateDeb, dateFin)
+        val1, val2 = self.myCalli.getDataPeriodConsumptionMaxPower(
+            dateDeb, dateFin
+        )
         return val1, val2
 
     def getValue(self):
@@ -73,7 +75,9 @@ class myDataEnedisMaxPower:
             else:
                 if not horairePossible:
                     onLance = True
-                    dateDeb, dateFin, self._callOk = getInformationDataControl(dataControl)
+                    dateDeb, dateFin, self._callOk = getInformationDataControl(
+                        dataControl
+                    )
                     if self._callOk is None:
                         data = None  # si on doit mettre à jour .... sauf si on est pas la
                 else:
@@ -83,7 +87,7 @@ class myDataEnedisMaxPower:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info(
-                "--updateData %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                f"--updateData {clefFunction} ( du {dateDeb} au {dateFin} )--"
             )
             self._data = data
             if self._data is None:
@@ -99,12 +103,12 @@ class myDataEnedisMaxPower:
                 self._value = 0
             self._callOk = callDone
             log.info(
-                "with update !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                f"with update !! {clefFunction} ( du {dateDeb} au {dateFin} )--"
             )
             log.info("updateData : data %s" % (self._data))
         else:
             log.info(
-                "noupdate !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--"
             )
             log.info("no updateData : data %s" % (self._data))
         return self._data

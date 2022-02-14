@@ -19,7 +19,6 @@ class myCall:
         self._contentType = "application/json"
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
         self._serverName = "https://enedisgateway.tech/api"
-        pass
 
     def setParam(self, PDL_ID, token, version):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version
@@ -48,7 +47,8 @@ class myCall:
                 import time
 
                 time.sleep(waitCall)
-                import json, requests
+                import json
+                import requests
 
                 session = requests.Session()
                 session.verify = True
@@ -64,16 +64,23 @@ class myCall:
                 response.raise_for_status()
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
-                log.info("====== Appel http !!! headers : %s =====" % (headers))
+                log.info(
+                    "====== Appel http !!! headers : %s =====" % (headers)
+                )
                 log.info("====== Appel http !!! data : %s =====" % (data))
-                log.info("====== Appel http !!! reponse : %s =====" % (dataAnswer))
+                log.info(
+                    "====== Appel http !!! reponse : %s =====" % (dataAnswer)
+                )
                 # raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 try_again = False
             except requests.exceptions.Timeout as error:
                 # a ajouter raison de l'erreur !!!
                 log.error("====== Appel http !!! requests.exceptions.Timeout")
                 dataAnswer = {
-                    "enedis_return": {"error": "UNKERROR_TIMEOUT", "message": "Timeout"}
+                    "enedis_return": {
+                        "error": "UNKERROR_TIMEOUT",
+                        "message": "Timeout",
+                    }
                 }
                 self.setLastAnswer(dataAnswer)
             except requests.exceptions.HTTPError as error:
@@ -92,7 +99,10 @@ class myCall:
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
                 try_again = False
-                if "usage_point_id parameter must be 14 digits long." in response.text:
+                if (
+                    "usage_point_id parameter must be 14 digits long."
+                    in response.text
+                ):
                     try_again = True  # si le nombre de digit n'est pas de 14 ...lié à une erreur coté enedis
             if (try_again) and (nbEssai > 2):
                 import time
@@ -108,7 +118,7 @@ class myCall:
 
     def getDataPeriod(self, deb, fin):
         if fin is not None:
-            log.info("--get dataPeriod : %s => %s --" % (deb, fin))
+            log.info(f"--get dataPeriod : {deb} => {fin} --")
             payload = {
                 "type": "daily_consumption",
                 "usage_point_id": self._PDL_ID,
@@ -129,7 +139,7 @@ class myCall:
 
     def getDataPeriodConsumptionMaxPower(self, deb, fin):
         if fin is not None:
-            log.info("--get dataPeriod : %s => %s --" % (deb, fin))
+            log.info(f"--get dataPeriod : {deb} => {fin} --")
             payload = {
                 "type": "daily_consumption_max_power",
                 "usage_point_id": self._PDL_ID,

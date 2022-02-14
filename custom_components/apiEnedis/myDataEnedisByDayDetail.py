@@ -14,7 +14,8 @@ except ImportError:
         _formatDateY0101,
     )
 
-import datetime, logging
+import datetime
+import logging
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -102,7 +103,9 @@ class myDataEnedisByDayDetail:
             else:
                 if not horairePossible:
                     onLance = True
-                    dateDeb, dateFin, self._callOk = getInformationDataControl(dataControl)
+                    dateDeb, dateFin, self._callOk = getInformationDataControl(
+                        dataControl
+                    )
                     if self._callOk is None:
                         data = None  # si on doit mettre à jour .... sauf si on est pas la
                 else:
@@ -112,11 +115,13 @@ class myDataEnedisByDayDetail:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info(
-                "--updateData %s ( du %s au %s )--" % (clefFunction, self._dateDeb, self._dateFin)
+                f"--updateData {clefFunction} ( du {self._dateDeb} au {self._dateFin} )--"
             )
             self._data = data
             if self._data is None:
-                self._data, callDone = self.CallgetData(self._dateDeb, self._dateFin)
+                self._data, callDone = self.CallgetData(
+                    self._dateDeb, self._dateFin
+                )
                 self._nbCall = 1
             else:
                 callDone = True
@@ -125,10 +130,13 @@ class myDataEnedisByDayDetail:
                 if self._dateDeb == self._dateFin:
                     self._HC, self._HP = {}, {}
                 else:
-                    if (callDone) and (myCheckData().checkDataPeriod(self._data)):
-                        self._joursHC, self._joursHP = self.createMultiDaysHCHP(
-                            self._data
-                        )
+                    if (callDone) and (
+                        myCheckData().checkDataPeriod(self._data)
+                    ):
+                        (
+                            self._joursHC,
+                            self._joursHP,
+                        ) = self.createMultiDaysHCHP(self._data)
                         self._callOk = True
                     else:
                         self._HC, self._HP = {}, {}
@@ -144,12 +152,12 @@ class myDataEnedisByDayDetail:
                         self._HC, self._HP = 0, 0
                     self._callOk = callDone
             log.info(
-                "with update !! %s ( du %s au %s )--" % (clefFunction, self._dateDeb, self._dateFin)
+                f"with update !! {clefFunction} ( du {self._dateDeb} au {self._dateFin} )--"
             )
             log.info("updateData : data %s" % (self._data))
         else:
             log.info(
-                "noupdate !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+                f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--"
             )
             log.info("no updateData : data %s" % (self._data))
         return self._data
@@ -184,7 +192,8 @@ class myDataEnedisByDayDetail:
                 heure == "00:00"
             ):  # alors sur la veille, var c'est la fin de la tranche du jour precedent
                 date = (
-                    datetime.datetime.strptime(date, "%Y-%m-%d") - datetime.timedelta(1)
+                    datetime.datetime.strptime(date, "%Y-%m-%d")
+                    - datetime.timedelta(1)
                 ).strftime(_formatDateYmd)
 
             # if ( date == dateDuJour ):

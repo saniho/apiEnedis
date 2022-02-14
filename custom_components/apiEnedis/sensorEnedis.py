@@ -1,6 +1,7 @@
 from collections import defaultdict
 import datetime
-import sys, traceback
+import sys
+import traceback
 
 try:
     from .const import _consommation, _production
@@ -471,7 +472,7 @@ class manageSensorState:
                             and (yesterdayLastYear != 0)
                             and (yesterday is not None)
                         ):
-                            if (yesterday == 0 and prevDayHPHC != 0):
+                            if yesterday == 0 and prevDayHPHC != 0:
                                 yestValue = prevDayHPHC
                             else:
                                 yestValue = yesterday

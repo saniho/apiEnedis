@@ -1,18 +1,16 @@
 from custom_components.apiEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
-import json, datetime
 import logging
 
 __version__ = "test_saniho"
 
 from custom_components.apiEnedis.const import (
     _consommation,
-    _production,
 )
 
 
 def getLocalDirectory(PDL, dateRepertoire):
-    directory = "../myCredential/%s/%s/" % (PDL, dateRepertoire)
+    directory = f"../myCredential/{PDL}/{dateRepertoire}/"
     return directory
 
 
@@ -69,7 +67,10 @@ def testMulti():
         log.info("possible ? %s " % callPossible)
         log.info("** on tente une maj ??")
         myDataEnedis.getData()
-        log.info("=================< on a fini le call : %s ============" % myDataEnedis.getNbCall())
+        log.info(
+            "=================< on a fini le call : %s ============"
+            % myDataEnedis.getNbCall()
+        )
 
         # SORTIE OUTPUT
         # writeDataJson( myDataEnedis )
@@ -85,7 +86,7 @@ def testMulti():
         log.info("****")
         log.info(status_counts)
         for clef in status_counts.keys():
-            log.info("%s = %s" % (clef, status_counts[clef]))
+            log.info(f"{clef} = {status_counts[clef]}")
         #
         # typeSensor = _production
         # status_counts, state = myDataSensorEnedis.getStatus( typeSensor )

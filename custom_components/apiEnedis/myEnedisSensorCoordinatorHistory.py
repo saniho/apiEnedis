@@ -5,18 +5,12 @@ from typing import Dict, Union
 from datetime import timedelta
 
 try:
-    import homeassistant.helpers.config_validation as cv
-    import voluptuous as vol
     from homeassistant.helpers.update_coordinator import (
         CoordinatorEntity,
         DataUpdateCoordinator,
     )
-    from homeassistant.core import HomeAssistant
-    from homeassistant.components.sensor import PLATFORM_SCHEMA
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import callback
     from homeassistant.helpers.restore_state import RestoreEntity
-    from homeassistant.helpers.typing import HomeAssistantType
     from homeassistant.util import Throttle
     from homeassistant.const import (
         ATTR_ATTRIBUTION,
@@ -57,13 +51,15 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
+        self._myDataSensorEnedis.init(
+            coordinator.clientEnedis, _LOGGER, __VERSION__
+        )
         # ajout interval dans le sensor
         # Assure que la valeur est un float:
         try:
             interval = float(sensor_type[ENTITY_DELAI])
         except:
-            interval = 60.
+            interval = 60.0
             _LOGGER.warn(f"{ENTITY_DELAI} non defini pour le sensor")
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         _LOGGER.info("frequence mise à jour en seconde : %s" % (interval))
@@ -85,12 +81,12 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
     def name(self):
         """Return the name of the sensor."""
         if self._typeSensor == _production:
-            name = "myEnedis.history.%s.production.%s" % (
+            name = "myEnedis.history.{}.production.{}".format(
                 self._myDataSensorEnedis.get_PDL_ID(),
                 self._detail,
             )
         else:
-            name = "myEnedis.history.%s.%s" % (
+            name = "myEnedis.history.{}.{}".format(
                 self._myDataSensorEnedis.get_PDL_ID(),
                 self._detail,
             )

@@ -7,7 +7,8 @@ repos:
         args: [--unsafe]
       - id: debug-statements
       # - id: end-of-file-fixer
-      - id: trailing-whitespace
+      # - id: trailing-whitespace
+      #   Hangs too often
       # - id: check-json
       - id: mixed-line-ending
   - repo: https://github.com/adrienverge/yamllint.git

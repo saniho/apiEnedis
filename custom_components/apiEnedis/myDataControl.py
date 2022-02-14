@@ -22,12 +22,18 @@ def okDataControl(
     log.info("--okDataControl--")
     log.info("--okDataControl / clefFunction : %s" % clefFunction)
     log.info(
-        "--okDataControl / deb : %s / %s" % (dataControl.get("deb", None), dateDeb)
+        "--okDataControl / deb : {} / {}".format(
+            dataControl.get("deb", None), dateDeb
+        )
     )
     log.info(
-        "--okDataControl / fin : %s / %s" % (dataControl.get("fin", None), dateFin)
+        "--okDataControl / fin : {} / {}".format(
+            dataControl.get("fin", None), dateFin
+        )
     )
-    log.info("--okDataControl / callok : %s " % (dataControl.get("callok", True)))
+    log.info(
+        "--okDataControl / callok : %s " % (dataControl.get("callok", True))
+    )
     deb = dataControl.get("deb", None)
     fin = dataControl.get("fin", None)
     callOk = dataControl.get("callok", True)
@@ -39,4 +45,8 @@ def okDataControl(
 
 
 def getInformationDataControl(dataControl):
-    return dataControl.get("deb", None), dataControl.get("fin", None), dataControl.get("callok", None)
+    return (
+        dataControl.get("deb", None),
+        dataControl.get("fin", None),
+        dataControl.get("callok", None),
+    )

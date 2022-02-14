@@ -4,18 +4,12 @@ from typing import Dict
 from datetime import timedelta
 
 try:
-    import homeassistant.helpers.config_validation as cv
-    import voluptuous as vol
     from homeassistant.helpers.update_coordinator import (
         CoordinatorEntity,
         DataUpdateCoordinator,
     )
-    from homeassistant.core import HomeAssistant
-    from homeassistant.components.sensor import PLATFORM_SCHEMA
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import callback
     from homeassistant.helpers.restore_state import RestoreEntity
-    from homeassistant.helpers.typing import HomeAssistantType
     from homeassistant.util import Throttle
     from homeassistant.const import (
         ATTR_ATTRIBUTION,
@@ -44,12 +38,17 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
     """."""
 
     def __init__(
-        self, sensor_type, coordinator: DataUpdateCoordinator, typeSensor=_consommation
+        self,
+        sensor_type,
+        coordinator: DataUpdateCoordinator,
+        typeSensor=_consommation,
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
+        self._myDataSensorEnedis.init(
+            coordinator.clientEnedis, _LOGGER, __VERSION__
+        )
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         self._attributes: Dict[str, str] = {}
@@ -67,7 +66,9 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
                 self._myDataSensorEnedis.get_PDL_ID()
             )
         else:
-            name = "myEnedis.energy.%s" % (self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.energy.%s" % (
+                self._myDataSensorEnedis.get_PDL_ID()
+            )
         return name
 
     @property
@@ -78,7 +79,9 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
                 self._myDataSensorEnedis.get_PDL_ID()
             )
         else:
-            name = "myEnedis.energy.%s" % (self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.energy.%s" % (
+                self._myDataSensorEnedis.get_PDL_ID()
+            )
         return name
 
     @property
@@ -105,7 +108,6 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
                 _LOGGER.info("Redemarrage avec element present ??")
         except:
             _LOGGER.info("Redemarrage mais rien de present")
-            pass
 
         @callback
         def update():

@@ -18,7 +18,9 @@ def test_update_contract():
     dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
     assert myE.getContract().getsubscribed_power() == "9 kVA", "bad subscribed"
-    assert myE.getContract().getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
+    assert (
+        myE.getContract().getoffpeak_hours() == "HC (23H30-7H30)"
+    ), "bad hour"
     assert (
         myE.getContract().getLastActivationDate() == "2007-07-06"
     ), "bad date activation"
@@ -42,7 +44,9 @@ def test_heures_creuses():
     myE.updateContract(dataJson)
     myE.getContract().updateHCHP()
     dataCompare = [["00:00", "05:00"], ["22:00", "24:00"]]
-    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP 1"
+    assert (
+        myE.getContract().getHeuresCreuses() == dataCompare
+    ), "erreur format HC/HP 1"
     # ***********
     heureCreusesCh = None
     heuresCreusesON = False
@@ -56,7 +60,9 @@ def test_heures_creuses():
     myE.updateContract(dataJson)
     myE.getContract().updateHCHP()
     dataCompare = []
-    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP 2"
+    assert (
+        myE.getContract().getHeuresCreuses() == dataCompare
+    ), "erreur format HC/HP 2"
 
 
 def test_update_last7days():
@@ -118,7 +124,9 @@ def call_update_yesterdayHCHP(filename):
     dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
     dataJson = loadJsonFile(filename)
-    yesterdayDate = (datetime.date.today() - datetime.timedelta(1)).strftime("%Y-%m-%d")
+    yesterdayDate = (datetime.date.today() - datetime.timedelta(1)).strftime(
+        "%Y-%m-%d"
+    )
     myE.updateDataYesterdayHCHP(dataJson, yesterdayDate, withControl=False)
     return myE
 
@@ -129,7 +137,9 @@ def test_update_yesterday():
 
 
 def test_update_yesterdayHCHP():
-    myE = call_update_yesterdayHCHP("tests/Json/Yesterday/yesterdayDetail1.json")
+    myE = call_update_yesterdayHCHP(
+        "tests/Json/Yesterday/yesterdayDetail1.json"
+    )
     mSS = manageSensorState()
     mSS.init(myE)
     laDate = datetime.date.today() - datetime.timedelta(60)
@@ -160,7 +170,9 @@ def test_updateProductionYesterday2():
     myE.updateContract(dataJsonContrat)
     dataJson = loadJsonFile("tests/Json/Production/error2.json")
     myE.updateYesterdayProduction(dataJson, withControl=False)
-    assert myE.getProductionYesterday().getValue() == 0, "Erreur production Value"
+    assert (
+        myE.getProductionYesterday().getValue() == 0
+    ), "Erreur production Value"
 
 
 def test_horaire_surcharge():
@@ -170,7 +182,9 @@ def test_horaire_surcharge():
     myE.updateContract(dataJson)
     myE.getContract().updateHCHP()
     dataCompare = hc
-    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP"
+    assert (
+        myE.getContract().getHeuresCreuses() == dataCompare
+    ), "erreur format HC/HP"
 
 
 def test_get_message():

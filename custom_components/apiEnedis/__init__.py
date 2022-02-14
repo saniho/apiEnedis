@@ -17,7 +17,6 @@ try:
 
     from homeassistant.helpers.update_coordinator import (
         DataUpdateCoordinator,
-        UpdateFailed,
     )
 except ImportError:
     # si py test
@@ -138,7 +137,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def _enable_scheduled_myEnedis(*_):
         """Activate the data update coordinator."""
-        coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL)
+        coordinator_enedis.update_interval = timedelta(
+            seconds=DEFAULT_SCAN_INTERVAL
+        )
         await coordinator_enedis.async_refresh()
 
     if hass.state == CoreState.running:
@@ -240,7 +241,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             _LOGGER.info(".config_entry.options()")
             data = {**self.entry.data}
             options = {
-                CONF_SCAN_INTERVAL: data.pop(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                CONF_SCAN_INTERVAL: data.pop(
+                    CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                ),
                 CONF_TOKEN: data.pop(CONF_TOKEN, ""),
                 CONF_CODE: str(data.pop(CONF_CODE, "")),
                 HP_COST: str(data.pop(HP_COST, "0.0")),
@@ -261,7 +264,10 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         _LOGGER.info("getInit()")
         hccost = float(self.entry.options.get(HC_COST, "0.0"))
         hpcost = float(self.entry.options.get(HP_COST, "0.0"))
-        token, code = self.entry.options[CONF_TOKEN], self.entry.options[CONF_CODE]
+        token, code = (
+            self.entry.options[CONF_TOKEN],
+            self.entry.options[CONF_CODE],
+        )
         heurescreusesON = self.entry.options[HEURESCREUSES_ON]
         heurescreusesch = self.entry.options.get(HEURES_CREUSES, "[]")
         if heurescreusesch == "":
@@ -295,7 +301,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
         try:
-            path = "%s/myEnedis/%s" % (dir_path, code)
+            path = f"{dir_path}/myEnedis/{code}"
             if not os.path.isdir(path):
                 _LOGGER.info("creation repertoire  ? %s" % path)
                 os.mkdir(path)

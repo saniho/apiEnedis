@@ -6,10 +6,7 @@ __name__ = "myEnedis"
 from typing import Dict, Union
 
 try:
-    from homeassistant.const import (
-        CONF_NAME,
-        ATTR_ATTRIBUTION,
-    )
+    pass
 except ImportError:
     # si py test
     class homeassistant:

@@ -1,25 +1,12 @@
 """Sensor for my first"""
-import datetime
 import logging
-from datetime import timedelta
 
 try:
     import homeassistant.helpers.config_validation as cv
     import voluptuous as vol
-    from homeassistant.helpers.update_coordinator import (
-        CoordinatorEntity,
-        DataUpdateCoordinator,
-    )
     from homeassistant.core import HomeAssistant
     from homeassistant.components.sensor import PLATFORM_SCHEMA
     from homeassistant.config_entries import ConfigEntry
-    from homeassistant.core import callback
-    from homeassistant.helpers.restore_state import RestoreEntity
-    from homeassistant.helpers.typing import HomeAssistantType
-    from homeassistant.util import Throttle
-    from homeassistant.const import (
-        ATTR_ATTRIBUTION,
-    )
 
 except ImportError:
     # si py test
@@ -43,7 +30,6 @@ from .const import (  # isort:skip
 )
 
 _LOGGER = logging.getLogger(__name__)
-from .sensorEnedis import manageSensorState
 
 # pour gerer les anciennes config via yaml et le message d'ereur
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -83,7 +69,9 @@ async def async_setup_entry(
     for sensor_type in SENSOR_TYPES:
         mysensor = SENSOR_TYPES[sensor_type]
         if sensor_type == "principal":
-            entities.append(myEnedisSensorCoordinator(mysensor, coordinator_enedis))
+            entities.append(
+                myEnedisSensorCoordinator(mysensor, coordinator_enedis)
+            )
         elif sensor_type == "history_all":
             entities.append(
                 myEnedisSensorCoordinatorHistory(
@@ -104,7 +92,9 @@ async def async_setup_entry(
             )
         elif sensor_type == "yesterdayCost":
             entities.append(
-                myEnedisSensorYesterdayCostCoordinator(mysensor, coordinator_enedis)
+                myEnedisSensorYesterdayCostCoordinator(
+                    mysensor, coordinator_enedis
+                )
             )
         elif sensor_type == "energy":
             entities.append(
@@ -112,7 +102,9 @@ async def async_setup_entry(
             )
         elif sensor_type == "energyDetailHours":
             entities.append(
-                myEnedisSensorCoordinatorEnergyDetailHours(mysensor, coordinator_enedis)
+                myEnedisSensorCoordinatorEnergyDetailHours(
+                    mysensor, coordinator_enedis
+                )
             )
         elif sensor_type == "energyDetailHoursCost":
             entities.append(

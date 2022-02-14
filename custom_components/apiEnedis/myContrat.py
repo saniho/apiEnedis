@@ -24,7 +24,9 @@ log = logging.getLogger(__nameMyEnedis__)
 
 
 class myContrat:
-    def __init__(self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses):
+    def __init__(
+        self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses
+    ):
         self._contract = None
         self._heuresCreusesON = heuresCreusesON
         self._heuresCreuses = heuresCreuses
@@ -97,9 +99,13 @@ class myContrat:
                         contract["offpeak_hours"] = self.getContractData(
                             x["contracts"], "offpeak_hours", []
                         )
-                        contract["last_activation_date"] = self.getContractData(
+                        contract[
+                            "last_activation_date"
+                        ] = self.getContractData(
                             x["contracts"], "last_activation_date", None
-                        )[:10]
+                        )[
+                            :10
+                        ]
         return contract
 
     def getValue(self):
@@ -178,7 +184,9 @@ class myContrat:
             opcnew = self.getcleanoffpeak_hours()
             if heuresCreuses is not None:
                 self._heuresCreuses = heuresCreuses
-            elif (self._heuresCreuses is not None) and (self._heuresCreuses != []):
+            elif (self._heuresCreuses is not None) and (
+                self._heuresCreuses != []
+            ):
                 # on garde les heures creueses déja définie....
                 # self._heuresCreuses = .....
                 pass

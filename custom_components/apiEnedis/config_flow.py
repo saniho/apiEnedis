@@ -1,5 +1,4 @@
 """ Config flow """
-from collections import OrderedDict
 from homeassistant.core import callback
 import voluptuous as vol
 from homeassistant import config_entries
@@ -54,7 +53,9 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ig
                 vol.Required(
                     CONF_TOKEN, default=user_input.get(CONF_TOKEN, token)
                 ): str,
-                vol.Required(CONF_CODE, default=user_input.get(CONF_CODE, code)): str,
+                vol.Required(
+                    CONF_CODE, default=user_input.get(CONF_CODE, code)
+                ): str,
                 vol.Optional(
                     HC_COST, default=user_input.get(HC_COST, val_hc_cost)
                 ): cv.string,
@@ -63,7 +64,9 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ig
                 ): cv.string,
                 vol.Optional(
                     HEURESCREUSES_ON,
-                    default=user_input.get(HEURESCREUSES_ON, val_heurescreuses_on),
+                    default=user_input.get(
+                        HEURESCREUSES_ON, val_heurescreuses_on
+                    ),
                 ): cv.boolean,
                 vol.Optional(
                     HEURES_CREUSES,
@@ -77,7 +80,9 @@ class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ig
             errors=errors or {},
         )
 
-    async def async_step_user(self, user_input=None):  # pylint: disable=unused-argument
+    async def async_step_user(
+        self, user_input=None
+    ):  # pylint: disable=unused-argument
         self._errors = {}
         if user_input is None:
             return self._show_setup_form(user_input, self._errors)
@@ -128,10 +133,12 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
         data_schema = vol.Schema(
             {
                 vol.Required(
-                    CONF_TOKEN, default=self.config_entry.options.get(CONF_TOKEN, token)
+                    CONF_TOKEN,
+                    default=self.config_entry.options.get(CONF_TOKEN, token),
                 ): str,
                 vol.Required(
-                    CONF_CODE, default=self.config_entry.options.get(CONF_CODE, code)
+                    CONF_CODE,
+                    default=self.config_entry.options.get(CONF_CODE, code),
                 ): str,
                 vol.Optional(
                     HC_COST,
@@ -143,7 +150,9 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
                 ): cv.string,
                 vol.Optional(
                     HEURESCREUSES_ON,
-                    default=self.config_entry.options.get(HEURESCREUSES_ON, True),
+                    default=self.config_entry.options.get(
+                        HEURESCREUSES_ON, True
+                    ),
                 ): cv.boolean,
                 vol.Optional(
                     HEURES_CREUSES,
