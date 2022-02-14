@@ -4,9 +4,9 @@ import logging
 try:
     import homeassistant.helpers.config_validation as cv
     import voluptuous as vol
-    from homeassistant.core import HomeAssistant
     from homeassistant.components.sensor import PLATFORM_SCHEMA
     from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import HomeAssistant
 
 except ImportError:
     # si py test
@@ -46,16 +46,16 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 ICON = "mdi:package-variant-closed"
 
 from .myEnedisSensorCoordinator import myEnedisSensorCoordinator
-from .myEnedisSensorCoordinatorHistory import myEnedisSensorCoordinatorHistory
-from .myEnedisSensorYesterdayCostCoordinator import (
-    myEnedisSensorYesterdayCostCoordinator,
-)
 from .myEnedisSensorCoordinatorEnergy import myEnedisSensorCoordinatorEnergy
 from .myEnedisSensorCoordinatorEnergyDetailHours import (
     myEnedisSensorCoordinatorEnergyDetailHours,
 )
 from .myEnedisSensorCoordinatorEnergyDetailHoursCost import (
     myEnedisSensorCoordinatorEnergyDetailHoursCost,
+)
+from .myEnedisSensorCoordinatorHistory import myEnedisSensorCoordinatorHistory
+from .myEnedisSensorYesterdayCostCoordinator import (
+    myEnedisSensorYesterdayCostCoordinator,
 )
 
 

@@ -1,19 +1,17 @@
 """Sensor for my first"""
 import logging
-from typing import Dict
 from datetime import timedelta
+from typing import Dict
 
 try:
+    from homeassistant.const import ATTR_ATTRIBUTION
+    from homeassistant.core import callback
+    from homeassistant.helpers.restore_state import RestoreEntity
     from homeassistant.helpers.update_coordinator import (
         CoordinatorEntity,
         DataUpdateCoordinator,
     )
-    from homeassistant.core import callback
-    from homeassistant.helpers.restore_state import RestoreEntity
     from homeassistant.util import Throttle
-    from homeassistant.const import (
-        ATTR_ATTRIBUTION,
-    )
 
 except ImportError:
     # si py test

@@ -7,6 +7,7 @@ except ImportError:
     from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
     )
+
 import logging
 
 log = logging.getLogger(__nameMyEnedis__)
@@ -48,6 +49,7 @@ class myCall:
 
                 time.sleep(waitCall)
                 import json
+
                 import requests
 
                 session = requests.Session()

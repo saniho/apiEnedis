@@ -1,6 +1,6 @@
 import datetime
-import sys
 import logging
+import sys
 import traceback
 
 try:
@@ -12,8 +12,7 @@ try:
         _formatDateYm01,
         _formatDateY0101,
     )
-    from . import messages
-    from . import gitinformation
+    from . import gitinformation, messages
 
 except ImportError:
     import messages  # type: ignore[no-redef]
@@ -27,15 +26,13 @@ except ImportError:
     )
     import gitinformation  # type: ignore[no-redef]
 
-
 from .myCall import myCall
-
 from .myContrat import myContrat
 from .myDataEnedis import myDataEnedis
-from .myDataEnedisProduction import myDataEnedisProduction
 from .myDataEnedisByDay import myDataEnedisByDay
 from .myDataEnedisByDayDetail import myDataEnedisByDayDetail
 from .myDataEnedisMaxPower import myDataEnedisMaxPower
+from .myDataEnedisProduction import myDataEnedisProduction
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -154,8 +151,8 @@ class myClientEnedis:
 
     def readDataJson(self):
         import glob
-        import os
         import json
+        import os
 
         data = {}
         dataRepertoire = self.getPathArchive()

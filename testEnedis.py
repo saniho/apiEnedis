@@ -1,12 +1,11 @@
+import logging
+
 from custom_components.apiEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
-import logging
 
 __version__ = "test_saniho"
 
-from custom_components.apiEnedis.const import (
-    _consommation,
-)
+from custom_components.apiEnedis.const import _consommation
 
 
 def getLocalDirectory(PDL, dateRepertoire):

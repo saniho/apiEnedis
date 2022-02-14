@@ -10,14 +10,10 @@ try:
         CONF_SCAN_INTERVAL,
         EVENT_HOMEASSISTANT_STARTED,
     )
-    from homeassistant.core import CoreState, callback
+    from homeassistant.core import CoreState, HomeAssistant, callback
     from homeassistant.exceptions import ConfigEntryNotReady
-    from homeassistant.core import HomeAssistant
     from homeassistant.helpers.typing import ConfigType
-
-    from homeassistant.helpers.update_coordinator import (
-        DataUpdateCoordinator,
-    )
+    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 except ImportError:
     # si py test
     class DataUpdateCoordinator:  # type: ignore[no-redef]
@@ -85,9 +81,7 @@ try:
     )
 
 except ImportError:
-    from const import (  # type: ignore[no-redef]
-        __nameMyEnedis__,
-    )
+    from const import __nameMyEnedis__  # type: ignore[no-redef]
 
 log = logging.getLogger(__nameMyEnedis__)
 

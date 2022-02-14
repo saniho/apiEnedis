@@ -20,8 +20,7 @@ import logging
 log = logging.getLogger(__nameMyEnedis__)
 
 from .myCheckData import myCheckData
-from .myDataControl import okDataControl
-from .myDataControl import getInformationDataControl
+from .myDataControl import getInformationDataControl, okDataControl
 
 
 class myDataEnedisByDayDetail:
