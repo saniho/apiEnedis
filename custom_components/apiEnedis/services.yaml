@@ -1,4 +1,4 @@
 remote:
   name: remote on
-  description: Turn a enedis call.
+  description: Make an Enedis call.
   target:

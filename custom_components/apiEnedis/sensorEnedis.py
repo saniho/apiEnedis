@@ -6,7 +6,7 @@ try:
     from .const import _consommation, _production
 
 except ImportError:
-    from const import _consommation, _production
+    from const import _consommation, _production  # type: ignore[no-redef]
 
 __nameManageSensorState__ = "manageSensorState"
 import logging

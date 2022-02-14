@@ -2,7 +2,7 @@ import datetime, sys
 import logging, traceback
 
 try:
-    from .const import (
+    from .const import (  # isort:skip
         _consommation,
         _production,
         __nameMyEnedis__,
@@ -14,8 +14,8 @@ try:
     from . import gitinformation
 
 except ImportError:
-    import messages
-    from const import (
+    import messages  # type: ignore[no-redef]
+    from const import (  # type: ignore[no-redef]
         _consommation,
         _production,
         __nameMyEnedis__,
@@ -23,7 +23,7 @@ except ImportError:
         _formatDateYm01,
         _formatDateY0101,
     )
-    import gitinformation
+    import gitinformation  # type: ignore[no-redef]
 
 
 from .myCall import myCall

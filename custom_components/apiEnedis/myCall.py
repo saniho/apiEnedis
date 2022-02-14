@@ -1,10 +1,10 @@
 try:
-    from .const import (
+    from .const import (  # isort:skip
         __nameMyEnedis__,
     )
 
 except ImportError:
-    from const import (
+    from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
     )
 import logging

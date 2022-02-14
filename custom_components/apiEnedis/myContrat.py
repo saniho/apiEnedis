@@ -1,5 +1,5 @@
 try:
-    from .const import (
+    from .const import (  # isort:skip
         _consommation,
         _production,
         __nameMyEnedis__,
@@ -9,7 +9,7 @@ try:
     )
 
 except ImportError:
-    from const import (
+    from const import (  # type: ignore[no-redef]
         _consommation,
         _production,
         __nameMyEnedis__,
