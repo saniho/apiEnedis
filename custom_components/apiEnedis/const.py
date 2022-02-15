@@ -1,19 +1,19 @@
 """ Constants """
 # attention updater aussi manifest.json
-__VERSION__ = "1.4.0.3"
+__VERSION__ = "1.4.1.1"
 __name__ = "myEnedis"
 
+from typing import Dict, Union
+
 try:
-    from homeassistant.const import (
-        CONF_NAME,
-        ATTR_ATTRIBUTION,
-    )
+    pass
 except ImportError:
     # si py test
     class homeassistant:
         def __init__(self):
             # nothing to do
             pass
+
 
 ISSUE_URL = "https://github.com/saniho/apiEnedis/issues"
 myENEDIS_SERVICE = "myEnedis"
@@ -38,8 +38,8 @@ HEURES_CREUSES = "heures_creuses"
 CONF_DELAY = 60 * 60 * 6  # verification enedis toutes les 6 heures
 DEFAULT_REPRISE_ERR = 60 * 60  # verification enedis toutes les heures
 DEFAULT_SCAN_INTERVAL = 2 * 60  # verification enedis toutes les 60 secondes
-DEFAULT_SENSOR_INTERVAL = 60 # 60 secondes verifications du coordinator
-DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60 * 10 # 1 fois toutes les 10 minutes
+DEFAULT_SENSOR_INTERVAL = 60  # 60 secondes verifications du coordinator
+DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60 * 10  # 1 fois toutes les 10 minutes
 
 HEURESCREUSES_ON = "heuresCreusesON"
 UNDO_UPDATE_LISTENER = "undo_update_listener"
@@ -58,7 +58,7 @@ _formatDateY0101 = "%Y-01-01"
 ENTITY_NAME = "name"
 ENTITY_DELAI = "delai"
 
-SENSOR_TYPES = {
+SENSOR_TYPES: Dict[str, Dict[str, Union[int, str]]] = {
     "principal": {
         ENTITY_NAME: "principal",
         ENTITY_DELAI: 60,

@@ -1,6 +1,5 @@
-
 try:
-    from .const import (
+    from .const import (  # isort:skip
         _consommation,
         _production,
         __nameMyEnedis__,
@@ -10,7 +9,7 @@ try:
     )
 
 except ImportError:
-    from const import (
+    from const import (  # type: ignore[no-redef]
         _consommation,
         _production,
         __nameMyEnedis__,
@@ -20,10 +19,14 @@ except ImportError:
     )
 
 import logging
+
 log = logging.getLogger(__nameMyEnedis__)
 
-class myContrat():
-    def __init__(self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses):
+
+class myContrat:
+    def __init__(
+        self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses
+    ):
         self._contract = None
         self._heuresCreusesON = heuresCreusesON
         self._heuresCreuses = heuresCreuses
@@ -32,8 +35,10 @@ class myContrat():
 
     def get_PDL_ID(self):
         return self._PDL_ID
+
     def get_token(self):
         return self._token
+
     def get_version(self):
         return self._version
 
@@ -42,23 +47,23 @@ class myContrat():
 
     def getContractData(self, contract, clef, defaultValue):
         if clef in contract:
-            return contract[ clef ]
+            return contract[clef]
         else:
             return defaultValue
 
     def checkDataContract(self, dataAnswer):
-        if ("error_code" in dataAnswer.keys()):
-            if (dataAnswer["error_code"] == "UNKERROR_001"):
+        if "error_code" in dataAnswer.keys():
+            if dataAnswer["error_code"] == "UNKERROR_001":
                 return False
-            raise Exception('call', "error", dataAnswer)
-        elif (dataAnswer.get("error_code",200) != 200 ):
-            raise Exception('call', "error", dataAnswer["tag"])
-        elif (dataAnswer.get("error", "") == "token_refresh_401"):
-            raise Exception('call', "error", dataAnswer["description"])
+            raise Exception("call", "error", dataAnswer)
+        elif dataAnswer.get("error_code", 200) != 200:
+            raise Exception("call", "error", dataAnswer["tag"])
+        elif dataAnswer.get("error", "") == "token_refresh_401":
+            raise Exception("call", "error", dataAnswer["description"])
         return True
 
     def getUsagePointStatus(self):
-        return self._contract['usage_point_status']
+        return self._contract["usage_point_status"]
 
     def getHeuresCreuses(self):
         return self._heuresCreuses
@@ -68,52 +73,64 @@ class myContrat():
 
     def updateContract(self, data=None):
         log.info("--updateContract : data %s" % (data))
-        if (data == None): data = self.CallgetDataContract()
+        if data is None:
+            data = self.CallgetDataContract()
         log.info("updateContract : data %s" % (data))
-        if ( self.checkDataContract(data) ):
+        if self.checkDataContract(data):
             log.info("updateContract(2) : data %s" % (data))
             self._contract = self.analyseValueContract(data)
         return data
 
-
     def analyseValueContract(self, data):
         contract = None
-        if data != None:  # si une valeur
-            if ( 'customer' in data.keys()):
-                for x in data['customer']['usage_points']:
-                    if str(x["usage_point"]['usage_point_id']) == self._PDL_ID:
+        if data is not None:  # si une valeur
+            if "customer" in data.keys():
+                for x in data["customer"]["usage_points"]:
+                    if str(x["usage_point"]["usage_point_id"]) == self._PDL_ID:
                         contract = {}
-                        contract['contracts'] = x["contracts"]
-                        contract['usage_point_status'] = x["usage_point"]["usage_point_status"]
-                        contract['subscribed_power'] = self.getContractData(x["contracts"], "subscribed_power", "???")
-                        contract["mode_PDL"] = [ _consommation, _production ]
-                        contract['offpeak_hours'] = self.getContractData(x["contracts"], "offpeak_hours", [])
-                        contract['last_activation_date'] = self.getContractData(x["contracts"], "last_activation_date", None)[:10]
+                        contract["contracts"] = x["contracts"]
+                        contract["usage_point_status"] = x["usage_point"][
+                            "usage_point_status"
+                        ]
+                        contract["subscribed_power"] = self.getContractData(
+                            x["contracts"], "subscribed_power", "???"
+                        )
+                        contract["mode_PDL"] = [_consommation, _production]
+                        contract["offpeak_hours"] = self.getContractData(
+                            x["contracts"], "offpeak_hours", []
+                        )
+                        contract[
+                            "last_activation_date"
+                        ] = self.getContractData(
+                            x["contracts"], "last_activation_date", None
+                        )[
+                            :10
+                        ]
         return contract
 
     def getValue(self):
         return self._contract
 
-    def setContract(self, contract= None):
+    def setContract(self, contract=None):
         self._contract = contract
 
     def getsubscribed_power(self):
-        if self._contract == None:
+        if self._contract is None:
             return None
         else:
-            return self._contract['subscribed_power']
+            return self._contract["subscribed_power"]
 
     def getoffpeak_hours(self):
-        if self._contract == None:
+        if self._contract is None:
             return None
         else:
-            return self._contract['offpeak_hours']
+            return self._contract["offpeak_hours"]
 
     def getLastActivationDate(self):
-        if self._contract == None:
+        if self._contract is None:
             return None
         else:
-            return self._contract['last_activation_date']
+            return self._contract["last_activation_date"]
 
     def minCompareDateContract(self, datePeriod):
         minDate = self.getLastActivationDate()
@@ -130,18 +147,25 @@ class myContrat():
             return None
 
     def getcleanoffpeak_hours(self, offpeak=None):
-        if (offpeak == None): offpeak = self.getoffpeak_hours()
-        if (offpeak != None) and (offpeak != []):
-            offpeakClean1 = offpeak.split("(")[1].replace(")", "").replace("H", ":").replace(";", "-").split("-")
+        if offpeak is None:
+            offpeak = self.getoffpeak_hours()
+        if (offpeak is not None) and (offpeak != []):
+            offpeakClean1 = (
+                offpeak.split("(")[1]
+                .replace(")", "")
+                .replace("H", ":")
+                .replace(";", "-")
+                .split("-")
+            )
             opcnew = []
             deb = ""
             fin = ""
             lastopc = ""
             for opc in offpeakClean1:
                 opc = opc.rjust(5).replace(" ", "0")
-                if (lastopc != ""):
+                if lastopc != "":
                     fin = opc
-                    if (lastopc > opc):
+                    if lastopc > opc:
                         fin = "23:59"
                         opcnew.append([deb, fin])
                         deb = "00:00"
@@ -156,29 +180,30 @@ class myContrat():
         return opcnew
 
     def updateHCHP(self, heuresCreuses=None):
-        if ( self._heuresCreusesON ):
+        if self._heuresCreusesON:
             opcnew = self.getcleanoffpeak_hours()
-            if (heuresCreuses != None):
+            if heuresCreuses is not None:
                 self._heuresCreuses = heuresCreuses
-            elif (self._heuresCreuses != None) and ( self._heuresCreuses != []):
+            elif (self._heuresCreuses is not None) and (
+                self._heuresCreuses != []
+            ):
                 # on garde les heures creueses déja définie....
                 # self._heuresCreuses = .....
                 pass
-            elif (opcnew != []):
+            elif opcnew != []:
                 self._heuresCreuses = opcnew
             else:
                 pass
         else:
-            #pas d'heures creuses
+            # pas d'heures creuses
             self._heuresCreuses = []
-
 
     def _getHCHPfromHour(self, heure):
         heurePleine = True
-        if ( self._heuresCreuses is not None ):
+        if self._heuresCreuses is not None:
             for heureCreuse in self._heuresCreuses:
                 try:  # gestion du 00:00 en heure de fin de creneau
-                    if (heure == {"24:00": "00:00"}[heureCreuse[1]]):
+                    if heure == {"24:00": "00:00"}[heureCreuse[1]]:
                         heurePleine = False
                 except:
                     pass

@@ -1,33 +1,24 @@
 """Sensor for my first"""
-import datetime
 import logging
 from datetime import timedelta
+from typing import Dict
 
 try:
-    import homeassistant.helpers.config_validation as cv
-    import voluptuous as vol
+    from homeassistant.const import ATTR_ATTRIBUTION
+    from homeassistant.core import callback
+    from homeassistant.helpers.restore_state import RestoreEntity
     from homeassistant.helpers.update_coordinator import (
         CoordinatorEntity,
         DataUpdateCoordinator,
     )
-    from homeassistant.core import HomeAssistant
-    from homeassistant.components.sensor import PLATFORM_SCHEMA
-    from homeassistant.config_entries import ConfigEntry
-    from homeassistant.core import callback
-    from homeassistant.helpers.restore_state import RestoreEntity
-    from homeassistant.helpers.typing import HomeAssistantType
-    from homeassistant.helpers.update_coordinator import CoordinatorEntity
     from homeassistant.util import Throttle
-    from homeassistant.const import (
-        ATTR_ATTRIBUTION,
-    )
 
 except ImportError:
     # si py test
     pass
 
 
-from .const import (
+from .const import (  # isort:skip
     DOMAIN,
     __VERSION__,
     __name__,
@@ -37,22 +28,31 @@ from .const import (
     COORDINATOR_ENEDIS,
     ENTITY_DELAI,
 )
+
 _LOGGER = logging.getLogger(__name__)
 from .sensorEnedis import manageSensorState
 
 ICON = "mdi:package-variant-closed"
 
+
 class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     """."""
 
-    def __init__(self, sensor_type, coordinator: DataUpdateCoordinator, typeSensor = _consommation):
+    def __init__(
+        self,
+        sensor_type,
+        coordinator: DataUpdateCoordinator,
+        typeSensor=_consommation,
+    ):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__ )
+        self._myDataSensorEnedis.init(
+            coordinator.clientEnedis, _LOGGER, __VERSION__
+        )
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
-        self._attributes = {}
+        self._attributes: Dict[str, str] = {}
         self._state = None
         self._unit = "kWh"
         self._lastState = None
@@ -63,18 +63,22 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def unique_id(self):
         "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.%s.production" % (
+                self._myDataSensorEnedis.get_PDL_ID()
+            )
         else:
-            name = "myEnedis.%s" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.%s" % (self._myDataSensorEnedis.get_PDL_ID())
         return name
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        if ( self._typeSensor == _production):
-            name = "myEnedis.%s.production" %(self._myDataSensorEnedis.get_PDL_ID())
+        if self._typeSensor == _production:
+            name = "myEnedis.%s.production" % (
+                self._myDataSensorEnedis.get_PDL_ID()
+            )
         else:
-            name = "myEnedis.%s" %(self._myDataSensorEnedis.get_PDL_ID())
+            name = "myEnedis.%s" % (self._myDataSensorEnedis.get_PDL_ID())
         return name
 
     @property
@@ -94,14 +98,13 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         if state:
             self._state = state.state
 
-        #TEST info
+        # TEST info
         try:
-            if 'typeCompteur' in state.attributes:
+            if "typeCompteur" in state.attributes:
                 self.attrs = state.attributes
                 _LOGGER.info("Redemarrage avec element present ??")
         except:
             _LOGGER.info("Redemarrage mais rien de present")
-            pass
 
         @callback
         def update():
@@ -119,7 +122,9 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         self._attributes = {
             ATTR_ATTRIBUTION: "",
         }
-        status_counts, state = self._myDataSensorEnedis.getStatus( self._typeSensor )
+        status_counts, state = self._myDataSensorEnedis.getStatus(
+            self._typeSensor
+        )
         self._attributes.update(status_counts)
         self._state = state
 

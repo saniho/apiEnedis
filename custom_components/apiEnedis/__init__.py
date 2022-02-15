@@ -10,48 +10,51 @@ try:
         CONF_SCAN_INTERVAL,
         EVENT_HOMEASSISTANT_STARTED,
     )
-    from homeassistant.core import CoreState, callback
+    from homeassistant.core import CoreState, HomeAssistant, callback
     from homeassistant.exceptions import ConfigEntryNotReady
-    from homeassistant.core import HomeAssistant
     from homeassistant.helpers.typing import ConfigType
-
-    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 except ImportError:
     # si py test
-    class DataUpdateCoordinator:
-        def __init__(self):
-            # nothing to do
-            pass
-    class ConfigEntryNotReady:
-        def __init__(self):
-            # nothing to do
-            pass
-    class HomeAssistant:
-        def __init__(self):
-            # nothing to do
-            pass
-    class ConfigType:
-        def __init__(self):
-            # nothing to do
-            pass
-    class SOURCE_IMPORT:
-        def __init__(self):
-            # nothing to do
-            pass
-    class ConfigEntry:
-        def __init__(self):
-            # nothing to do
-            pass
-    class callback:
+    class DataUpdateCoordinator:  # type: ignore[no-redef]
         def __init__(self):
             # nothing to do
             pass
 
+    class ConfigEntryNotReady:  # type: ignore[no-redef]
+        def __init__(self):
+            # nothing to do
+            pass
+
+    class HomeAssistant:  # type: ignore[no-redef]
+        def __init__(self):
+            # nothing to do
+            pass
+
+    class ConfigType:  # type: ignore[no-redef]
+        def __init__(self):
+            # nothing to do
+            pass
+
+    class SOURCE_IMPORT:  # type: ignore[no-redef]
+        def __init__(self):
+            # nothing to do
+            pass
+
+    class ConfigEntry:  # type: ignore[no-redef]
+        def __init__(self):
+            # nothing to do
+            pass
+
+    class callback:  # type: ignore[no-redef]
+        def __init__(self):
+            # nothing to do
+            pass
 
 
 from . import myClientEnedis
 
-from .const import (
+from .const import (  # isort:skip
     CONF_TOKEN,
     CONF_CODE,
     DOMAIN,
@@ -71,21 +74,23 @@ from .const import (
     PLATFORMS,
     DEFAULT_REPRISE_ERR,
 )
+
 try:
-    from .const import (
+    from .const import (  # isort:skip
         __nameMyEnedis__,
     )
 
 except ImportError:
-    from const import (
-        __nameMyEnedis__,
-    )
-import logging
+    from const import __nameMyEnedis__  # type: ignore[no-redef]
+
 log = logging.getLogger(__nameMyEnedis__)
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = timedelta(hours=3, minutes=00) # delai de lancement pour savoir si update à faire
+SCAN_INTERVAL = timedelta(
+    hours=3, minutes=00
+)  # delai de lancement pour savoir si update à faire
+
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up Enedis from legacy config file."""
@@ -95,7 +100,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     for enedis_conf in conf:
         ch = dir(enedis_conf)
-        _LOGGER.info("enedis_conf data %s" %ch)
+        _LOGGER.info("enedis_conf data %s" % ch)
         hass.async_create_task(
             hass.config_entries.flow.async_init(
                 DOMAIN, context={"source": SOURCE_IMPORT}, data=enedis_conf
@@ -110,7 +115,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     heurescreuses = entry.options.get(HEURES_CREUSES, None)
-    if ( heurescreuses == "" ): heurescreuses = None
+    if heurescreuses == "":
+        heurescreuses = None
     _LOGGER.info("**enedis**_conf heurescreuses *%s*" % heurescreuses)
     delai_interval = entry.options.get(SCAN_INTERVAL)
     token = entry.options.get(CONF_TOKEN, "")
@@ -122,9 +128,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator_enedis = sensorEnedisCoordinator(hass, entry)
 
     await coordinator_enedis.async_setup()
+
     async def _enable_scheduled_myEnedis(*_):
         """Activate the data update coordinator."""
-        coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL )
+        coordinator_enedis.update_interval = timedelta(
+            seconds=DEFAULT_SCAN_INTERVAL
+        )
         await coordinator_enedis.async_refresh()
 
     if hass.state == CoreState.running:
@@ -174,15 +183,16 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry):
     """Handle options update."""
     await hass.config_entries.async_reload(entry.entry_id)
 
+
 class sensorEnedisCoordinator(DataUpdateCoordinator):
 
-    #def __init__(self, hass, entry, _client):
+    # def __init__(self, hass, entry, _client):
     def __init__(self, hass, entry):
         """Initialize the data object."""
         self.hass = hass
         self.entry = entry
         self._PDL_ID = None
-        #client = myClientEnedis.myClientEnedis(token=_client.get("token"),
+        # client = myClientEnedis.myClientEnedis(token=_client.get("token"),
         #                                        PDL_ID=_client.get("code"),
         #                                        delai=_client.get("DEFAULT_REPRISE_ERR"),
         #                                        heuresCreuses=_client.get("heurescreuses"),
@@ -192,7 +202,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         #                                        heuresCreusesON=_client.get("heurescreusesON"))
 
         self.clientEnedis = None
-        #async def _async_update_data_enedis():
+        # async def _async_update_data_enedis():
         #    """Fetch data from API endpoint."""
         #    return await hass.async_add_executor_job(self.clientEnedis.getData)
         super().__init__(
@@ -205,13 +215,13 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
 
     def update_data(self):
         """Get the latest data from myEnedis."""
-        log.info("** update_data %s **" %(self._PDL_ID))
+        log.info("** update_data %s **" % (self._PDL_ID))
         self.clientEnedis.getData()
         return True
 
     async def _async_update_data_enedis(self, *_):
-        #"""Fetch data from API endpoint."""
-        #return await hass.async_add_executor_job(self.clientEnedis.getData)
+        # """Fetch data from API endpoint."""
+        # return await hass.async_add_executor_job(self.clientEnedis.getData)
         """Update myEnedis data."""
         try:
             return await self.hass.async_add_executor_job(self.update_data)
@@ -225,7 +235,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             _LOGGER.info(".config_entry.options()")
             data = {**self.entry.data}
             options = {
-                CONF_SCAN_INTERVAL: data.pop(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                CONF_SCAN_INTERVAL: data.pop(
+                    CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                ),
                 CONF_TOKEN: data.pop(CONF_TOKEN, ""),
                 CONF_CODE: str(data.pop(CONF_CODE, "")),
                 HP_COST: str(data.pop(HP_COST, "0.0")),
@@ -240,63 +252,77 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         _LOGGER.info("async_set_options - proc -- done ")
 
     def update_OptionsMyEnedis(self):
-        _LOGGER.info("update_MyEnedis pre-getini for %s" % (self.entry.options['token']))
+        _LOGGER.info(
+            "update_MyEnedis pre-getini for %s" % (self.entry.options["token"])
+        )
         _LOGGER.info("getInit()")
         hccost = float(self.entry.options.get(HC_COST, "0.0"))
         hpcost = float(self.entry.options.get(HP_COST, "0.0"))
-        token, code = self.entry.options[CONF_TOKEN], self.entry.options[CONF_CODE]
+        token, code = (
+            self.entry.options[CONF_TOKEN],
+            self.entry.options[CONF_CODE],
+        )
         heurescreusesON = self.entry.options[HEURESCREUSES_ON]
         heurescreusesch = self.entry.options.get(HEURES_CREUSES, "[]")
-        if ( heurescreusesch == "" ):
+        if heurescreusesch == "":
             heurescreusesch = "[]"
         heurescreuses = eval(heurescreusesch)
         self._PDL_ID = code
-        _LOGGER.info("options - proc -- %s %s %s %s %s %s" % (token, code, hccost, hpcost, heurescreusesON, heurescreuses))
+        _LOGGER.info(
+            "options - proc -- %s %s %s %s %s %s"
+            % (token, code, hccost, hpcost, heurescreusesON, heurescreuses)
+        )
         import os
+
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        dir_path = dir_path.replace("myEnedis","archive")
+        dir_path = dir_path.replace("myEnedis", "archive")
         try:
-            path = "%s" %(dir_path)
+            path = "%s" % (dir_path)
             if not os.path.isdir(path):
-                _LOGGER.info("creation repertoire  ? %s" %path )
+                _LOGGER.info("creation repertoire  ? %s" % path)
                 os.mkdir(path)
-                _LOGGER.info("repertoire cree %s" %path )
+                _LOGGER.info("repertoire cree %s" % path)
         except:
-            _LOGGER.info("error" )
+            _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
         try:
-            path = "%s/myEnedis" %(dir_path)
+            path = "%s/myEnedis" % (dir_path)
             if not os.path.isdir(path):
-                _LOGGER.info("creation repertoire  ? %s" %path )
+                _LOGGER.info("creation repertoire  ? %s" % path)
                 os.mkdir(path)
-                _LOGGER.info("repertoire cree %s" %path )
+                _LOGGER.info("repertoire cree %s" % path)
         except:
-            _LOGGER.info("error" )
+            _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
         try:
-            path = "%s/myEnedis/%s" %(dir_path,code)
+            path = f"{dir_path}/myEnedis/{code}"
             if not os.path.isdir(path):
-                _LOGGER.info("creation repertoire  ? %s" %path )
+                _LOGGER.info("creation repertoire  ? %s" % path)
                 os.mkdir(path)
-                _LOGGER.info("repertoire cree %s" %path )
+                _LOGGER.info("repertoire cree %s" % path)
         except:
-            _LOGGER.info("error" )
+            _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
 
-        self.clientEnedis = myClientEnedis.myClientEnedis(token, code, delai=DEFAULT_REPRISE_ERR,
-                                           heuresCreuses=heurescreuses, heuresCreusesCost=hccost,
-                                           heuresPleinesCost=hpcost,
-                                           version=__VERSION__, heuresCreusesON=heurescreusesON)
-        self.clientEnedis.setPathArchive( path )
+        self.clientEnedis = myClientEnedis.myClientEnedis(
+            token,
+            code,
+            delai=DEFAULT_REPRISE_ERR,
+            heuresCreuses=heurescreuses,
+            heuresCreusesCost=hccost,
+            heuresPleinesCost=hpcost,
+            version=__VERSION__,
+            heuresCreusesON=heurescreusesON,
+        )
+        self.clientEnedis.setPathArchive(path)
         dataJson = self.clientEnedis.readDataJson()
-        _LOGGER.info("fichier lu %s" %len(dataJson) )
-        self.clientEnedis.setDataJsonDefault( dataJsonDefault = dataJson)
+        _LOGGER.info("fichier lu %s" % len(dataJson))
+        self.clientEnedis.setDataJsonDefault(dataJsonDefault=dataJson)
         self.clientEnedis.setDataJsonCopy()
         self.clientEnedis.manageLastCallJson()
 
-
     async def async_setup(self):
-        #Set up myEnedis.
+        # Set up myEnedis.
         try:
             _LOGGER.info("run my First Extension")
             # ne sert plus normalement ...
@@ -308,6 +334,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         async def request_update(call):
             # Request update.
             await self.async_request_refresh()
+
         await self.async_set_options()
         await self.hass.async_add_executor_job(self.update_OptionsMyEnedis)
         self._unsub_update_listener = self.entry.add_update_listener(
