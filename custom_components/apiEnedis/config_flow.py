@@ -1,5 +1,4 @@
 """ Config flow """
-from collections import OrderedDict
 from homeassistant.core import callback
 import voluptuous as vol
 from homeassistant import config_entries

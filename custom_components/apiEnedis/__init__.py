@@ -17,7 +17,6 @@ try:
 
     from homeassistant.helpers.update_coordinator import (
         DataUpdateCoordinator,
-        UpdateFailed,
     )
 except ImportError:
     # si py test

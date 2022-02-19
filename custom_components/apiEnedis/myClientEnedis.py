@@ -137,7 +137,6 @@ class myClientEnedis:
         self._gitVersion = None
         self._dataJsonDefault = {}
         self._dataJson = {}
-        pass
 
     def getVersion(self):
         return self._version
@@ -203,7 +202,6 @@ class myClientEnedis:
             except:
                 # si le fichier est mal formaté
                 pass
-        pass
 
     def getPathArchive(self):
         return self._path

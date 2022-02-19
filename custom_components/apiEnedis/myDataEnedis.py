@@ -14,7 +14,7 @@ except ImportError:
         _formatDateY0101,
     )
 
-import datetime, logging
+import logging
 
 log = logging.getLogger(__nameMyEnedis__)
 from .myCheckData import myCheckData

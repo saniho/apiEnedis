@@ -19,7 +19,6 @@ class myCall:
         self._contentType = "application/json"
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
         self._serverName = "https://enedisgateway.tech/api"
-        pass
 
     def setParam(self, PDL_ID, token, version):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version

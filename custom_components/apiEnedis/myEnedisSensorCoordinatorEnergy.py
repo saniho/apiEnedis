@@ -4,18 +4,12 @@ from typing import Dict
 from datetime import timedelta
 
 try:
-    import homeassistant.helpers.config_validation as cv
-    import voluptuous as vol
     from homeassistant.helpers.update_coordinator import (
         CoordinatorEntity,
         DataUpdateCoordinator,
     )
-    from homeassistant.core import HomeAssistant
-    from homeassistant.components.sensor import PLATFORM_SCHEMA
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import callback
     from homeassistant.helpers.restore_state import RestoreEntity
-    from homeassistant.helpers.typing import HomeAssistantType
     from homeassistant.util import Throttle
     from homeassistant.const import (
         ATTR_ATTRIBUTION,
@@ -105,7 +99,6 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
                 _LOGGER.info("Redemarrage avec element present ??")
         except:
             _LOGGER.info("Redemarrage mais rien de present")
-            pass
 
         @callback
         def update():

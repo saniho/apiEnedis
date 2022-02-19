@@ -1,6 +1,6 @@
 import logging
 
-import urllib, json
+import json
 
 _LOGGER = logging.getLogger(__name__)
 
