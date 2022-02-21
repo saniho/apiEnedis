@@ -1,18 +1,25 @@
 """Sensor for my first"""
-from __future__ import annotations
-
 import logging
+from typing import Dict
 from datetime import timedelta
 
 try:
-    from homeassistant.const import ATTR_ATTRIBUTION
-    from homeassistant.core import callback
-    from homeassistant.helpers.restore_state import RestoreEntity
+    import homeassistant.helpers.config_validation as cv
+    import voluptuous as vol
     from homeassistant.helpers.update_coordinator import (
         CoordinatorEntity,
         DataUpdateCoordinator,
     )
+    from homeassistant.core import HomeAssistant
+    from homeassistant.components.sensor import PLATFORM_SCHEMA
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import callback
+    from homeassistant.helpers.restore_state import RestoreEntity
+    from homeassistant.helpers.typing import HomeAssistantType
     from homeassistant.util import Throttle
+    from homeassistant.const import (
+        ATTR_ATTRIBUTION,
+    )
 
 except ImportError:
     # si py test
@@ -37,10 +44,7 @@ class myEnedisSensorCoordinatorEnergyDetailHoursCost(CoordinatorEntity, RestoreE
     """."""
 
     def __init__(
-        self,
-        sensor_type,
-        coordinator: DataUpdateCoordinator,
-        typeSensor=_consommation,
+        self, sensor_type, coordinator: DataUpdateCoordinator, typeSensor=_consommation
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
@@ -48,8 +52,8 @@ class myEnedisSensorCoordinatorEnergyDetailHoursCost(CoordinatorEntity, RestoreE
         self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
-        self._attributes: dict[str, str] = {}
-        self._state: str
+        self._attributes: Dict[str, str] = {}
+        self._state = None
         self._unit = "EUR"
         self._lastState = None
         self._lastAttributes = None
@@ -105,6 +109,7 @@ class myEnedisSensorCoordinatorEnergyDetailHoursCost(CoordinatorEntity, RestoreE
                 _LOGGER.info("Redemarrage avec element present ??")
         except:
             _LOGGER.info("Redemarrage mais rien de present")
+            pass
 
         @callback
         def update():

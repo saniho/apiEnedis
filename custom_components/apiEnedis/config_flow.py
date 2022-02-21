@@ -1,11 +1,11 @@
 """ Config flow """
-import logging
-import uuid
-
-import homeassistant.helpers.config_validation as cv
+from collections import OrderedDict
+from homeassistant.core import callback
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.core import callback
+import homeassistant.helpers.config_validation as cv
+import uuid
+
 
 from .const import (  # isort:skip
     DOMAIN,
@@ -17,6 +17,7 @@ from .const import (  # isort:skip
     HEURES_CREUSES,
 )
 
+import logging
 
 _LOGGER = logging.getLogger(__name__)
 
