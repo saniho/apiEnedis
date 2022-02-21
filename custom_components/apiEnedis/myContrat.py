@@ -28,8 +28,18 @@ log = logging.getLogger(__nameMyEnedis__)
 
 
 class myContrat:
+    _NULL_CONTRACT = {
+        "contracts": None,
+        "usage_point_status": None,
+        "subscribed_power": "???",
+        "mode_PDL": None,
+        "offpeak_hours": (),
+        "last_activation_date": None,
+    }
+
     def __init__(self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses):
         self._contract: dict[str, Any]
+        self.setContract(None)
         self._heuresCreusesON = heuresCreusesON
         self._heuresCreuses = heuresCreuses
         self._token, self._PDL_ID, self._version = token, PDL_ID, version
@@ -47,11 +57,11 @@ class myContrat:
     def CallgetDataContract(self):
         return self.myCalli.getDataContract()
 
-    def getContractData(self, contract, clef, defaultValue):
+    def getContractData(self, contract, clef):
         if clef in contract:
             return contract[clef]
         else:
-            return defaultValue
+            return myContrat._NULL_CONTRACT[clef]
 
     def checkDataContract(self, dataAnswer):
         if "error_code" in dataAnswer.keys():
@@ -74,61 +84,56 @@ class myContrat:
         return self._contract["mode_PDL"]
 
     def updateContract(self, data=None):
-        log.info("--updateContract : data %s" % (data))
+        log.debug(f"--updateContract : data {data}")
         if data is None:
             data = self.CallgetDataContract()
-        log.info("updateContract : data %s" % (data))
+        log.debug(f"updateContract : data {data}")
         if self.checkDataContract(data):
-            log.info("updateContract(2) : data %s" % (data))
-            self._contract = self.analyseValueContract(data)
+            log.debug(f"updateContract(2) : data {data}")
+            self.setContract(self.analyseValueContract(data))
         return data
 
-    def analyseValueContract(self, data):
+    def analyseValueContract(self, data) -> dict[str, Any] | None:
         contract = None
-        if data is not None:  # si une valeur
-            if "customer" in data.keys():
-                for x in data["customer"]["usage_points"]:
-                    if str(x["usage_point"]["usage_point_id"]) == self._PDL_ID:
-                        contract = {}
-                        contract["contracts"] = x["contracts"]
-                        contract["usage_point_status"] = x["usage_point"][
-                            "usage_point_status"
-                        ]
-                        contract["subscribed_power"] = self.getContractData(
-                            x["contracts"], "subscribed_power", "???"
-                        )
-                        contract["mode_PDL"] = [_consommation, _production]
-                        contract["offpeak_hours"] = self.getContractData(
-                            x["contracts"], "offpeak_hours", []
-                        )
-                        contract["last_activation_date"] = self.getContractData(
-                            x["contracts"], "last_activation_date", None
-                        )[:10]
+        if data is not None and "customer" in data.keys():
+            for x in data["customer"]["usage_points"]:
+                usage_point = str(x["usage_point"]["usage_point_id"])
+                if usage_point != self._PDL_ID:
+                    continue
+
+                contracts = x["contracts"]
+                contract = {
+                    "contracts": contracts,
+                    "usage_point_status": usage_point,
+                    "subscribed_power": self.getContractData(
+                        contracts, "subscribed_power"
+                    ),
+                    "mode_PDL": [_consommation, _production],
+                    "offpeak_hours": self.getContractData(contracts, "offpeak_hours"),
+                    "last_activation_date": self.getContractData(
+                        contracts, "last_activation_date"
+                    )[:10],
+                }
+                break
         return contract
 
     def getValue(self):
         return self._contract
 
     def setContract(self, contract=None):
-        self._contract = contract
+        if isinstance(contract, dict):
+            self._contract = contract
+        else:
+            self._contract = myContrat._NULL_CONTRACT.copy()
 
     def getsubscribed_power(self):
-        if self._contract is None:
-            return None
-        else:
-            return self._contract["subscribed_power"]
+        return self._contract["subscribed_power"]
 
     def getoffpeak_hours(self):
-        if self._contract is None:
-            return None
-        else:
-            return self._contract["offpeak_hours"]
+        return self._contract["offpeak_hours"]
 
     def getLastActivationDate(self):
-        if self._contract is None:
-            return None
-        else:
-            return self._contract["last_activation_date"]
+        return self._contract["last_activation_date"]
 
     def minCompareDateContract(self, datePeriod):
         minDate = self.getLastActivationDate()
