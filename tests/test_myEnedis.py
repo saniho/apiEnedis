@@ -1,5 +1,5 @@
-import json
 import datetime
+import json
 
 from custom_components.apiEnedis.myClientEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
@@ -11,6 +11,18 @@ def loadJsonFile(filename):
     with open(filename) as json_file:
         dataJson = json.load(json_file)
     return dataJson
+
+
+def test_no_contract():
+    myE = myClientEnedis("myToken", "myPDL")
+    assert (
+        myE.getContract().getsubscribed_power() == "???"
+    ), "bad subscribed initialisation"
+    assert myE.getContract().getoffpeak_hours() == ()
+    assert myE.getContract().getHeuresCreuses() is None
+    assert myE.getContract().getcleanoffpeak_hours() == []
+    assert myE.getContract().getLastActivationDate() is None, "bad date initialisation"
+    myE.getContract().updateHCHP()
 
 
 def test_update_contract():

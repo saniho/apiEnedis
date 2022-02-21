@@ -19,7 +19,7 @@ lint_python:
 
 
 test:
-	pytest tests/
+	pytest -sv tests/
 
 
 install_requirements:

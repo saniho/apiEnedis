@@ -129,7 +129,7 @@ class myContrat:
     def getsubscribed_power(self):
         return self._contract["subscribed_power"]
 
-    def getoffpeak_hours(self):
+    def getoffpeak_hours(self) -> str | None:
         return self._contract["offpeak_hours"]
 
     def getLastActivationDate(self):
@@ -150,9 +150,9 @@ class myContrat:
             return None
 
     def getcleanoffpeak_hours(self, offpeak=None):
-        if offpeak is None:
+        if not isinstance(offpeak, (list, tuple)):
             offpeak = self.getoffpeak_hours()
-        if (offpeak is not None) and (offpeak != []):
+        if isinstance(offpeak, str) and (len(offpeak) > 0):
             offpeakClean1 = (
                 offpeak.split("(")[1]
                 .replace(")", "")
