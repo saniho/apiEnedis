@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
@@ -16,13 +14,13 @@ except ImportError:
         _formatDateY0101,
     )
 
-import datetime
-import logging
+import datetime, logging
 
 log = logging.getLogger(__nameMyEnedis__)
 
 from .myCheckData import myCheckData
-from .myDataControl import getInformationDataControl, okDataControl
+from .myDataControl import okDataControl
+from .myDataControl import getInformationDataControl
 
 
 class myDataEnedisByDayDetail:
@@ -33,12 +31,12 @@ class myDataEnedisByDayDetail:
         self._contrat = contrat
         self._token, self._version = token, version
         self._interval_length = 1
-        self._HP: dict | float = 0  # dict si multiDays
-        self._HC: dict | float = 0  # dict si multiDays
-        self._multiDays: bool = multiDays
+        self._HP = 0
+        self._HC = 0
+        self._multiDays = multiDays
         self._dateDeb = None
         self._dateFin = None
-        self._callOk: bool | None = None
+        self._callOk = None
         self._nbCall = 0
         self._data = None
 
@@ -104,13 +102,9 @@ class myDataEnedisByDayDetail:
             else:
                 if not horairePossible:
                     onLance = True
-                    dateDeb, dateFin, self._callOk = getInformationDataControl(
-                        dataControl
-                    )
+                    dateDeb, dateFin, self._callOk = getInformationDataControl(dataControl)
                     if self._callOk is None:
-                        data = (
-                            None  # si on doit mettre à jour .... sauf si on est pas la
-                        )
+                        data = None  # si on doit mettre à jour .... sauf si on est pas la
                 else:
                     self._callOk = None
                     data = None  # si on doit mettre à jour .... sauf si on est pas la
@@ -118,7 +112,7 @@ class myDataEnedisByDayDetail:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info(
-                f"--updateData {clefFunction} ( du {self._dateDeb} au {self._dateFin} )--"
+                "--updateData %s ( du %s au %s )--" % (clefFunction, self._dateDeb, self._dateFin)
             )
             self._data = data
             if self._data is None:
@@ -132,10 +126,9 @@ class myDataEnedisByDayDetail:
                     self._HC, self._HP = {}, {}
                 else:
                     if (callDone) and (myCheckData().checkDataPeriod(self._data)):
-                        (
-                            self._joursHC,
-                            self._joursHP,
-                        ) = self.createMultiDaysHCHP(self._data)
+                        self._joursHC, self._joursHP = self.createMultiDaysHCHP(
+                            self._data
+                        )
                         self._callOk = True
                     else:
                         self._HC, self._HP = {}, {}
@@ -151,17 +144,19 @@ class myDataEnedisByDayDetail:
                         self._HC, self._HP = 0, 0
                     self._callOk = callDone
             log.info(
-                f"with update !! {clefFunction} ( du {self._dateDeb} au {self._dateFin} )--"
+                "with update !! %s ( du %s au %s )--" % (clefFunction, self._dateDeb, self._dateFin)
             )
             log.info("updateData : data %s" % (self._data))
         else:
-            log.info(f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
+            log.info(
+                "noupdate !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
+            )
             log.info("no updateData : data %s" % (self._data))
         return self._data
 
     def getCoeffIntervalLength(self):
         interval = self.getIntervalLength()
-        coeff: float = 1
+        coeff = 1
         if interval == "PT10M":
             coeff = 1 * 10 / 60
         if interval == "PT15M":
@@ -239,8 +234,8 @@ class myDataEnedisByDayDetail:
             if heurePleine:
                 self._HP += (
                     int(x["value"]) * self.getCoeffIntervalLength()
-                )  # car par tranche de 30 minutes
+                )  # car par transhce de 30 minutes
             else:
                 self._HC += (
                     int(x["value"]) * self.getCoeffIntervalLength()
-                )  # car par tranche de 30 minutes
+                )  # car par transhce de 30 minutes

@@ -10,10 +10,15 @@ try:
         CONF_SCAN_INTERVAL,
         EVENT_HOMEASSISTANT_STARTED,
     )
-    from homeassistant.core import CoreState, HomeAssistant, callback
+    from homeassistant.core import CoreState, callback
     from homeassistant.exceptions import ConfigEntryNotReady
+    from homeassistant.core import HomeAssistant
     from homeassistant.helpers.typing import ConfigType
-    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+
+    from homeassistant.helpers.update_coordinator import (
+        DataUpdateCoordinator,
+        UpdateFailed,
+    )
 except ImportError:
     # si py test
     class DataUpdateCoordinator:  # type: ignore[no-redef]
@@ -81,7 +86,9 @@ try:
     )
 
 except ImportError:
-    from const import __nameMyEnedis__  # type: ignore[no-redef]
+    from const import (  # type: ignore[no-redef]
+        __nameMyEnedis__,
+    )
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -189,7 +196,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         """Initialize the data object."""
         self.hass = hass
         self.entry = entry
-        self._PDL_ID: str
+        self._PDL_ID = None
         # client = myClientEnedis.myClientEnedis(token=_client.get("token"),
         #                                        PDL_ID=_client.get("code"),
         #                                        delai=_client.get("DEFAULT_REPRISE_ERR"),
@@ -199,7 +206,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         #                                        version=_client.get("__VERSION__"),
         #                                        heuresCreusesON=_client.get("heurescreusesON"))
 
-        self.clientEnedis: myClientEnedis.myClientEnedis
+        self.clientEnedis = None
         # async def _async_update_data_enedis():
         #    """Fetch data from API endpoint."""
         #    return await hass.async_add_executor_job(self.clientEnedis.getData)
@@ -254,10 +261,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         _LOGGER.info("getInit()")
         hccost = float(self.entry.options.get(HC_COST, "0.0"))
         hpcost = float(self.entry.options.get(HP_COST, "0.0"))
-        token, code = (
-            self.entry.options[CONF_TOKEN],
-            self.entry.options[CONF_CODE],
-        )
+        token, code = self.entry.options[CONF_TOKEN], self.entry.options[CONF_CODE]
         heurescreusesON = self.entry.options[HEURESCREUSES_ON]
         heurescreusesch = self.entry.options.get(HEURES_CREUSES, "[]")
         if heurescreusesch == "":
@@ -291,7 +295,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
         try:
-            path = f"{dir_path}/myEnedis/{code}"
+            path = "%s/myEnedis/%s" % (dir_path, code)
             if not os.path.isdir(path):
                 _LOGGER.info("creation repertoire  ? %s" % path)
                 os.mkdir(path)

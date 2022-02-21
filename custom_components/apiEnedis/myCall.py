@@ -7,7 +7,6 @@ except ImportError:
     from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
     )
-
 import logging
 
 log = logging.getLogger(__nameMyEnedis__)
@@ -20,6 +19,7 @@ class myCall:
         self._contentType = "application/json"
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
         self._serverName = "https://enedisgateway.tech/api"
+        pass
 
     def setParam(self, PDL_ID, token, version):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version
@@ -48,9 +48,7 @@ class myCall:
                 import time
 
                 time.sleep(waitCall)
-                import json
-
-                import requests
+                import json, requests
 
                 session = requests.Session()
                 session.verify = True
@@ -110,7 +108,7 @@ class myCall:
 
     def getDataPeriod(self, deb, fin):
         if fin is not None:
-            log.info(f"--get dataPeriod : {deb} => {fin} --")
+            log.info("--get dataPeriod : %s => %s --" % (deb, fin))
             payload = {
                 "type": "daily_consumption",
                 "usage_point_id": self._PDL_ID,
@@ -131,7 +129,7 @@ class myCall:
 
     def getDataPeriodConsumptionMaxPower(self, deb, fin):
         if fin is not None:
-            log.info(f"--get dataPeriod : {deb} => {fin} --")
+            log.info("--get dataPeriod : %s => %s --" % (deb, fin))
             payload = {
                 "type": "daily_consumption_max_power",
                 "usage_point_id": self._PDL_ID,
