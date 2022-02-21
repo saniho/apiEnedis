@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 try:
     from .const import (  # isort:skip
         _consommation,
@@ -25,7 +29,7 @@ log = logging.getLogger(__nameMyEnedis__)
 
 class myContrat:
     def __init__(self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses):
-        self._contract = None
+        self._contract: dict[str, Any]
         self._heuresCreusesON = heuresCreusesON
         self._heuresCreuses = heuresCreuses
         self._token, self._PDL_ID, self._version = token, PDL_ID, version

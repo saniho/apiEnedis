@@ -14,7 +14,7 @@ except ImportError:
         _formatDateY0101,
     )
 
-import datetime, logging
+import logging
 
 log = logging.getLogger(__nameMyEnedis__)
 from .myCheckData import myCheckData
@@ -106,13 +106,9 @@ class myDataEnedis:
                 else:
                     self._value = 0
                 self._callOk = callDone
-            log.info(
-                "with update !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
-            )
+            log.info(f"with update !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
             log.info("updateData : data %s" % (self._data))
         else:
-            log.info(
-                "noupdate !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
-            )
+            log.info(f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
             log.info("no updateData : data %s" % (self._data))
         return self._data
