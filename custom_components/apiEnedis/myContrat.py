@@ -37,11 +37,19 @@ class myContrat:
         "last_activation_date": None,
     }
 
-    def __init__(self, myCalli, token, PDL_ID, version, heuresCreusesON, heuresCreuses):
+    def __init__(
+        self,
+        myCalli,
+        token: str,
+        PDL_ID: str,
+        version: str,
+        heuresCreusesON: bool,
+        heuresCreuses: list | tuple | None,
+    ):
         self._contract: dict[str, Any]
         self.setContract(None)
         self._heuresCreusesON = heuresCreusesON
-        self._heuresCreuses = heuresCreuses
+        self._heuresCreuses: list | tuple | None = heuresCreuses
         self._token, self._PDL_ID, self._version = token, PDL_ID, version
         self.myCalli = myCalli
 
@@ -54,16 +62,16 @@ class myContrat:
     def get_version(self):
         return self._version
 
-    def CallgetDataContract(self):
+    def __callGetDataContract(self):
         return self.myCalli.getDataContract()
 
-    def getContractData(self, contract, clef):
+    def __contractField(self, contract, clef):
         if clef in contract:
             return contract[clef]
         else:
             return myContrat._NULL_CONTRACT[clef]
 
-    def checkDataContract(self, dataAnswer):
+    def __checkDataContract(self, dataAnswer):
         if "error_code" in dataAnswer.keys():
             if dataAnswer["error_code"] == "UNKERROR_001":
                 return False
@@ -86,14 +94,14 @@ class myContrat:
     def updateContract(self, data=None):
         log.debug(f"--updateContract : data {data}")
         if data is None:
-            data = self.CallgetDataContract()
+            data = self.__callGetDataContract()
         log.debug(f"updateContract : data {data}")
-        if self.checkDataContract(data):
+        if self.__checkDataContract(data):
             log.debug(f"updateContract(2) : data {data}")
-            self.setContract(self.analyseValueContract(data))
+            self.setContract(self.__analyseValueContract(data))
         return data
 
-    def analyseValueContract(self, data) -> dict[str, Any] | None:
+    def __analyseValueContract(self, data) -> dict[str, Any] | None:
         contract = None
         if data is not None and "customer" in data.keys():
             for x in data["customer"]["usage_points"]:
@@ -105,12 +113,12 @@ class myContrat:
                 contract = {
                     "contracts": contracts,
                     "usage_point_status": usage_point,
-                    "subscribed_power": self.getContractData(
+                    "subscribed_power": self.__contractField(
                         contracts, "subscribed_power"
                     ),
                     "mode_PDL": [_consommation, _production],
-                    "offpeak_hours": self.getContractData(contracts, "offpeak_hours"),
-                    "last_activation_date": self.getContractData(
+                    "offpeak_hours": self.__contractField(contracts, "offpeak_hours"),
+                    "last_activation_date": self.__contractField(
                         contracts, "last_activation_date"
                     )[:10],
                 }
@@ -199,6 +207,10 @@ class myContrat:
             # pas d'heures creuses
             self._heuresCreuses = []
 
+        if self._heuresCreuses is None:
+            self._heuresCreuses = []
+
+    # TODO: Not a private method, remove '_'
     def _getHCHPfromHour(self, heure):
         heurePleine = True
         if self._heuresCreuses is not None:

@@ -15,14 +15,28 @@ def loadJsonFile(filename):
 
 def test_no_contract():
     myE = myClientEnedis("myToken", "myPDL")
-    assert (
-        myE.getContract().getsubscribed_power() == "???"
-    ), "bad subscribed initialisation"
-    assert myE.getContract().getoffpeak_hours() == ()
-    assert myE.getContract().getHeuresCreuses() is None
-    assert myE.getContract().getcleanoffpeak_hours() == []
-    assert myE.getContract().getLastActivationDate() is None, "bad date initialisation"
-    myE.getContract().updateHCHP()
+    contract = myE.getContract()
+    assert contract.getsubscribed_power() == "???", "bad subscribed initialisation"
+    assert contract.getoffpeak_hours() == ()
+    assert contract.getHeuresCreuses() is None
+    assert contract.getcleanoffpeak_hours() == []
+    assert contract.getLastActivationDate() is None, "bad date initialisation"
+    assert contract.get_PDL_ID() == "myPDL", "bad PDL ID initialisation"
+    assert contract.get_token() == "myToken", "bad token initialisation"
+    assert contract.get_version() == "0.0.0", "bad version initialisation"
+    assert contract.getUsagePointStatus() is None, "bad usage point initialisation"
+    assert contract.getTypePDL() is None, "bad usage PDL type initialisation"
+    assert isinstance(contract.getValue(), dict), "bad initial value"
+    assert contract._getHCHPfromHour(4) is True, "bad value"
+    dateStr = "2022-01-01"
+    assert contract.minCompareDateContract(dateStr) == "2022-01-01"
+    assert contract.maxCompareDateContract(dateStr) is None
+
+    contract.updateHCHP()  # Update HC from None to []
+    assert contract.getHeuresCreuses() == []
+
+    # Not tested:
+    # contract.updateContract(self, None)
 
 
 def test_update_contract():
