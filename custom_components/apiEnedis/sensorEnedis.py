@@ -35,7 +35,7 @@ class manageSensorState:
         self.setInit(True)
 
     def get_PDL_ID(self):
-        return self._myDataEnedis.getContract().get_PDL_ID()
+        return self._myDataEnedis.contract.get_PDL_ID()
 
     def getStatusYesterdayCost(self):
         state = "unavailable"
@@ -43,7 +43,7 @@ class manageSensorState:
         status_counts["version"] = self.version
         dataAvailable = False
         yesterdayDate = None
-        if self._myDataEnedis.getContract() is not None:
+        if self._myDataEnedis.contract is not None:
             # if self._myDataEnedis.getYesterday().getValue() != 0: # on a eut des données
             if (
                 self._myDataEnedis.getYesterdayHCHP().getHC()
@@ -84,7 +84,7 @@ class manageSensorState:
         clefDate = laDate.strftime("%Y-%m-%d %H")
         status_counts["DateHeure"] = clefDate
         status_counts["detail"] = detail
-        if self._myDataEnedis.getContract() is not None:
+        if self._myDataEnedis.contract is not None:
             if self._myDataEnedis.isConsommation():
                 state = 0
                 DateHeureDetail = {}
@@ -201,13 +201,13 @@ class manageSensorState:
 
         if data.getTimeLastCall() is not None:
             self._LOGGER.info(
-                "-- ** on va mettre à jour : %s" % data.getContract().get_PDL_ID()
+                "-- ** on va mettre à jour : %s" % data.contract.get_PDL_ID()
             )
             status["nbCall"] = data.getNbCall()
             status["typeCompteur"] = typeSensor
-            status["numPDL"] = data.getContract().get_PDL_ID()
+            status["numPDL"] = data.contract.get_PDL_ID()
             status["horaireMinCall"] = data.getHoraireMin()
-            status["activationDate"] = data.getContract().getLastActivationDate()
+            status["activationDate"] = data.contract.getLastActivationDate()
             if data.isConsommation():
                 status["lastUpdate"] = data.getLastUpdate()
                 status["timeLastCall"] = data.getTimeLastCall()
@@ -462,13 +462,11 @@ class manageSensorState:
                             status["yesterday_evolution"] = f"{valeur:.3f}"
                         else:
                             status["yesterday_evolution"] = 0
-                        status[
-                            "subscribed_power"
-                        ] = data.getContract().getsubscribed_power()
+                        status["subscribed_power"] = data.contract.getsubscribed_power()
                         status[
                             "offpeak_hours_enedis"
-                        ] = data.getContract().getoffpeak_hours()
-                        status["offpeak_hours"] = data.getContract().getHeuresCreuses()
+                        ] = data.contract.getoffpeak_hours()
+                        status["offpeak_hours"] = data.contract.getHeuresCreuses()
                     if typeSensor == _production:
                         status[
                             "yesterday_production"

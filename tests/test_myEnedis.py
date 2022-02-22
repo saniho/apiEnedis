@@ -15,7 +15,7 @@ def loadJsonFile(filename):
 
 def test_no_contract():
     myE = myClientEnedis("myToken", "myPDL")
-    contract = myE.getContract()
+    contract = myE.contract
     assert contract.getsubscribed_power() == "???", "bad subscribed initialisation"
     assert contract.getoffpeak_hours() == ()
     assert contract.getHeuresCreuses() is None
@@ -43,15 +43,11 @@ def test_update_contract():
     myE = myClientEnedis("myToken", "myPDL")
     dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
-    assert myE.getContract().getsubscribed_power() == "9 kVA", "bad subscribed"
-    assert myE.getContract().getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
-    assert (
-        myE.getContract().getLastActivationDate() == "2007-07-06"
-    ), "bad date activation"
+    assert myE.contract.getsubscribed_power() == "9 kVA", "bad subscribed"
+    assert myE.contract.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
+    assert myE.contract.getLastActivationDate() == "2007-07-06", "bad date activation"
     dataCompare = [["23:30", "23:59"], ["00:00", "07:30"]]
-    assert (
-        myE.getContract().getcleanoffpeak_hours() == dataCompare
-    ), "erreur format HC/HP"
+    assert myE.contract.getcleanoffpeak_hours() == dataCompare, "erreur format HC/HP"
 
 
 def test_heures_creuses():
@@ -66,9 +62,9 @@ def test_heures_creuses():
     )
     dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
-    myE.getContract().updateHCHP()
+    myE.contract.updateHCHP()
     dataCompare = [["00:00", "05:00"], ["22:00", "24:00"]]
-    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP 1"
+    assert myE.contract.getHeuresCreuses() == dataCompare, "erreur format HC/HP 1"
     # ***********
     heureCreusesCh = None
     heuresCreusesON = False
@@ -80,9 +76,9 @@ def test_heures_creuses():
     )
     dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
-    myE.getContract().updateHCHP()
+    myE.contract.updateHCHP()
     dataCompare = []
-    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP 2"
+    assert myE.contract.getHeuresCreuses() == dataCompare, "erreur format HC/HP 2"
 
 
 def test_update_last7days():
@@ -194,9 +190,9 @@ def test_horaire_surcharge():
     myE = myClientEnedis("myToken", "myPDL", heuresCreuses=hc)
     dataJson = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJson)
-    myE.getContract().updateHCHP()
+    myE.contract.updateHCHP()
     dataCompare = hc
-    assert myE.getContract().getHeuresCreuses() == dataCompare, "erreur format HC/HP"
+    assert myE.contract.getHeuresCreuses() == dataCompare, "erreur format HC/HP"
 
 
 def test_get_message():
