@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import datetime
 import json
 
+import pytest
 import requests_mock
 
 from custom_components.apiEnedis.myClientEnedis import myClientEnedis
@@ -13,6 +16,12 @@ def loadJsonFile(filename):
     with open(filename) as json_file:
         dataJson = json.load(json_file)
     return dataJson
+
+
+def loadFile(filename):
+    with open(filename) as file:
+        data = file.read()
+    return data
 
 
 def test_no_contract():
@@ -28,7 +37,7 @@ def test_no_contract():
     assert contract.get_version() == "0.0.0", "bad version initialisation"
     assert contract.getUsagePointStatus() is None, "bad usage point initialisation"
     assert contract.getTypePDL() is None, "bad usage PDL type initialisation"
-    assert contract.isLoaded() is False, "bad initial value"
+    assert contract.isLoaded is False, "bad initial value"
     assert contract._getHCHPfromHour(4) is True, "bad value"
     dateStr = "2022-01-01"
     assert contract.minCompareDateContract(dateStr) == "2022-01-01"
@@ -41,13 +50,26 @@ def test_no_contract():
     # contract.updateContract(self, None)
 
 
-def test_init_contract():
+FAKE_TIME = datetime.datetime(2020, 12, 25, 17, 5, 55)
 
-    dataJson = loadJsonFile(contractJsonFile)
+
+@pytest.fixture
+def patch_datetime_now(monkeypatch):
+    class mydatetime(datetime.datetime):
+        @classmethod
+        def now(cls):
+            return FAKE_TIME
+
+    monkeypatch.setattr(datetime, "datetime", mydatetime)
+
+
+def test_init_contract(patch_datetime_now):
+    dataJson = loadFile(contractJsonFile)
 
     with requests_mock.Mocker() as m:
         m.post("https://enedisgateway.tech/api", text=dataJson)
         myE = myClientEnedis("myToken", "myPDL")
+        myE.getData()
         assert myE.contract.getsubscribed_power() == "9 kVA", "bad subscribed"
         assert myE.contract.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
 

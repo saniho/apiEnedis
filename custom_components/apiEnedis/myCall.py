@@ -77,7 +77,10 @@ class myCall:
                 # a ajouter raison de l'erreur !!!
                 log.error("====== Appel http !!! requests.exceptions.Timeout")
                 dataAnswer = {
-                    "enedis_return": {"error": "UNKERROR_TIMEOUT", "message": "Timeout"}
+                    "enedis_return": {
+                        "error": "UNKERROR_TIMEOUT",
+                        "message": "Timeout",
+                    }
                 }
                 self.setLastAnswer(dataAnswer)
             except requests.exceptions.HTTPError as error:

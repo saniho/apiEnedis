@@ -324,10 +324,10 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
     async def async_setup(self):
         # Set up myEnedis.
         try:
-            _LOGGER.info("run my First Extension")
+            _LOGGER.info("run apiEnedis")
             # ne sert plus normalement ...
             # self.myEnedis = await self.hass.async_add_executor_job(self.clientEnedis.getData)
-            _LOGGER.info("run my First Extension - done -- ")
+            _LOGGER.info("run apiEnedis - done -- ")
         except Exception as inst:
             raise Exception(inst)
 

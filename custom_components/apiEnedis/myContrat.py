@@ -135,7 +135,7 @@ class myContrat:
 
     @property
     def isLoaded(self):
-        return self._contract["isLoaded"]
+        return self._contract["is_loaded"]
 
     def getsubscribed_power(self):
         return self._contract["subscribed_power"]

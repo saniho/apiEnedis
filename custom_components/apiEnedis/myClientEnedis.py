@@ -69,6 +69,7 @@ class myClientEnedis:
         self._niemeAppel: int = 0
         self._version: str = version
         self._forceCallJson: bool = False
+        self._path: str | None = None
 
         import random
 
@@ -245,12 +246,12 @@ class myClientEnedis:
         #   avant ... pas besoin du default !!!!
         log.debug(f" {self._PDL_ID} >>>> getData, self._dataJson ? {self._dataJson}")
         forceCallJson = self._forceCallJson
-        if not self.contract.isLoaded():
+        if not self.contract.isLoaded:
             log.debug(f"contract ? {self.contract.get_PDL_ID()}")
             try:
                 if self.getCallPossible():
                     self.updateContract()
-                if not self.contract.isLoaded():
+                if not self.contract.isLoaded:
                     self.contract.updateHCHP()
                 log.debug(f"contract ?(end) {self.contract.get_PDL_ID()}")
             except Exception as inst:
@@ -264,7 +265,7 @@ class myClientEnedis:
                 self.updateErrorLastCall(str(inst))
                 log.error(f"LastMethodCall : {self.lastMethodCall}")
 
-        if self.contract.isLoaded():
+        if self.contract.isLoaded:
             self.update()
             self.setlastCallJson()
             log.info(f"UpdateRealise : {self.getUpdateRealise()}")
@@ -300,15 +301,15 @@ class myClientEnedis:
         self._dataJson[key] = value
 
     def getDataJsonValue(self, key: str, default: Any = None) -> Any:
-        return self._dataJson.get(key, None)
+        return self._dataJson.get(key, default)
 
     def getDataJsonKeys(self):
         return self._dataJson.keys()
 
-    def setDataRequestJson(self, quoi, myObjet):
-        quoi = f"{quoi}_Req"
+    def setDataRequestJson(self, key: str, myObjet):
+        key = f"{key}_Req"
         self.setDataJsonValue(
-            quoi,
+            key,
             {
                 "deb": myObjet.getDateDeb(),
                 "fin": myObjet.getDateFin(),
@@ -316,9 +317,9 @@ class myClientEnedis:
             },
         )
 
-    def getDataRequestJson(self, quoi):
-        quoi = f"{quoi}_Req"
-        request = self.getDataJsonValue(quoi, {})
+    def getDataRequestJson(self, key: str) -> dict[str, Any]:
+        key = f"{key}_Req"
+        request = self.getDataJsonValue(key, {})
         return request
 
     def updateContract(self, indata=None):
@@ -937,12 +938,13 @@ class myClientEnedis:
     def getHorairePossible(self):
         # hier 23h
         hourNow = datetime.datetime.now().hour * 100 + datetime.datetime.now().minute
-        log.info(f"now : {hourNow}")
-        horairePossible = (hourNow >= self.getHoraireMin()) and (hourNow < 2330)
-        log.info("now : %s" % self.getHoraireMin())
+        hourMin = self.getHoraireMin()
+        horairePossible = (hourNow >= hourMin) and (hourNow < 2330)
         # for test
         # horairePossible = ( hourNow >= 11 ) and ( hourNow < 23 )
-        log.info(f"horairePossible : {horairePossible}")
+        log.info(
+            f"HorairePossible : {hourMin} <= {hourNow} < 2330 => {horairePossible}"
+        )
         return horairePossible
 
     def getLastCallHier(self):
@@ -970,54 +972,55 @@ class myClientEnedis:
                 and self.getDelaiIsGoodAfterError(currentDateTime)
             )
         )
+
         # si on doit prendre les informations des fichiers de sauvegarde
         if self._forceCallJson:
             callpossible = True
         if trace:
             log.error(
                 "myEnedis ...new update self.getHorairePossible() : %s ??"
-                % self.getHorairePossible()
+                % (self.getHorairePossible(),)
             )
             log.error(
                 "myEnedis ...new update self.getLastCallHier() : %s ??"
-                % self.getLastCallHier()
+                % (self.getLastCallHier(),)
             )
             log.error(
                 "myEnedis ...new update self.getTimeLastCall() : %s ??"
-                % self.getTimeLastCall()
+                % (self.getTimeLastCall(),)
             )
             log.error(
                 "myEnedis ...new update self.getStatusLastCall() : %s??"
-                % self.getStatusLastCall()
+                % (self.getStatusLastCall(),)
             )
             log.error(
                 "myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??"
-                % self.getDelaiIsGoodAfterError(currentDateTime)
+                % (self.getDelaiIsGoodAfterError(currentDateTime),)
             )
-            log.error("myEnedis ..._forceCallJson : %s??" % self._forceCallJson)
+            log.error(f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
             log.error(f"myEnedis ...<< call Possible >> : {callpossible}??")
         else:
             log.info(
                 "myEnedis ...new update self.getHorairePossible() : %s ??"
-                % self.getHorairePossible()
+                % (self.getHorairePossible(),)
             )
             log.info(
                 "myEnedis ...new update self.getLastCallHier() : %s ??"
-                % self.getLastCallHier()
+                % (self.getLastCallHier(),)
             )
             log.info(
                 "myEnedis ...new update self.getTimeLastCall() : %s ??"
-                % self.getTimeLastCall()
+                % (self.getTimeLastCall(),)
             )
             log.info(
                 "myEnedis ...new update self.getStatusLastCall() : %s??"
-                % self.getStatusLastCall()
+                % (self.getStatusLastCall(),)
             )
             log.info(
                 "myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??"
-                % self.getDelaiIsGoodAfterError(currentDateTime)
+                % (self.getDelaiIsGoodAfterError(currentDateTime),)
             )
-            log.info("myEnedis ..._forceCallJson : %s??" % self._forceCallJson)
+            log.info(f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
             log.info(f"myEnedis ...<< call Possible >> : {callpossible}??")
         return callpossible
 
@@ -1115,7 +1118,7 @@ class myClientEnedis:
 
     def update(self):  # noqa C901
         log.info("myEnedis ...new update ?? %s" % self._PDL_ID)
-        if self.contract.isLoaded():
+        if self.contract.isLoaded:
             if self.getCallPossible():
                 try:
                     log.info(
