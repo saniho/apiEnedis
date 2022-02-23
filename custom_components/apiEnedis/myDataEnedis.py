@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
@@ -14,43 +16,45 @@ except ImportError:
         _formatDateY0101,
     )
 
-import datetime, logging
+import logging
 
 log = logging.getLogger(__nameMyEnedis__)
+from .myCall import myCall
 from .myCheckData import myCheckData
+from .myContrat import myContrat
 from .myDataControl import okDataControl
 
 
 class myDataEnedis:
-    def __init__(self, myCalli, token, version, contrat):
+    def __init__(self, myCalli: myCall, token: str, version: str, contrat: myContrat):
         self.myCalli = myCalli
         self._value = 0
         self._date = None
         self._contrat = contrat
         self._token, self._version = token, version
-        self._dateDeb = None
-        self._dateFin = None
-        self._callOk = None
-        self._nbCall = 0
-        self._data = None
+        self._dateDeb: str | None = None
+        self._dateFin: str | None = None
+        self._callOk: bool | None = None
+        self._nbCall: int = 0
+        self._data: str | None = None
 
-    def CallgetData(self, dateDeb, dateFin):
+    def CallgetData(self, dateDeb, dateFin) -> tuple[str, bool]:
         val1, val2 = self.myCalli.getDataPeriod(dateDeb, dateFin)
         return val1, val2
 
-    def getValue(self):
+    def getValue(self) -> int:
         return self._value
 
-    def getDateFin(self):
+    def getDateFin(self) -> str | None:
         return self._dateFin
 
-    def getDateDeb(self):
+    def getDateDeb(self) -> str | None:
         return self._dateDeb
 
-    def getCallOk(self):
+    def getCallOk(self) -> bool | None:
         return self._callOk
 
-    def getNbCall(self):
+    def getNbCall(self) -> int:
         return self._nbCall
 
     def updateData(
@@ -62,7 +66,7 @@ class myDataEnedis:
         dateFin=None,
         withControl=False,
         dataControl=None,
-    ):
+    ) -> str | None:
         self._nbCall = 0
         onLance = True
         if withControl:
@@ -106,13 +110,9 @@ class myDataEnedis:
                 else:
                     self._value = 0
                 self._callOk = callDone
-            log.info(
-                "with update !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
-            )
-            log.info("updateData : data %s" % (self._data))
+            log.info(f"with update !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
+            log.info(f"updateData : data {self._data}")
         else:
-            log.info(
-                "noupdate !! %s ( du %s au %s )--" % (clefFunction, dateDeb, dateFin)
-            )
-            log.info("no updateData : data %s" % (self._data))
+            log.info(f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
+            log.info(f"no updateData : data {self._data}")
         return self._data

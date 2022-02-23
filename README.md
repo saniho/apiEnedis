@@ -1,83 +1,100 @@
 # myEnedis
+
 [![HACS Supported](https://img.shields.io/badge/HACS-Supported-green.svg)](https://github.com/custom-components/hacs)
 
-**Cette integration est compatible avec la carte : https://github.com/saniho/content-card-linky**
+**Cette integration est compatible avec la carte :
+https://github.com/saniho/content-card-linky**
 
-**Un question ? Un problème ? Une demande ? Venez en parler sur le [fil de discussion dédié](https://forum.hacf.fr/t/sensor-pour-enedis-apienedis/935) sur le [forum HACF](https://forum.hacf.fr/).**
+**Un question ? Un problème ? Une demande ? Venez en parler sur le
+[fil de discussion dédié](https://forum.hacf.fr/t/sensor-pour-enedis-apienedis/935)
+sur le [forum HACF](https://forum.hacf.fr/).**
 
 ## Bienvenue !
 
-Cette intégration fonctionne à l'aide de la passerelle fournie par https://enedisgateway.tech/.
+Cette intégration fonctionne à l'aide de la passerelle fournie par
+https://enedisgateway.tech/.
 
-Avant de pouvoir utiliser cette intégration, assurez vous : 
-* D'avoir validé la partage de données avec la [passerelle](https://enedisgateway.tech/),
-* Et d'avoir activé sur votre [espace privé Enedis](https://mon-compte-client.enedis.fr/) la remontée des informations de votre linky.
+Avant de pouvoir utiliser cette intégration, assurez vous :
+
+- D'avoir validé la partage de données avec la
+  [passerelle](https://enedisgateway.tech/),
+- Et d'avoir activé sur votre
+  [espace privé Enedis](https://mon-compte-client.enedis.fr/) la remontée
+  des informations de votre linky.
 
 ## Installer l'intégration
 
 <details>
   <summary><b>Via HACS (mise à jour en un clic) : </b></summary><br>
- 
-* Ouvrez HACS, cliquez sur `Intégration`, puis selectionnez le menu 3 points en haut à droite.
- 
- *si vous n'avez pas HACS, pour l'installer cela se passe ici : [HACS : Ajoutez des modules et des cartes personnalisées](https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359)
- 
- <br>
+
+- Ouvrez HACS, cliquez sur `Intégration`, puis selectionnez le menu 3
+  points en haut à droite.
+
+\*si vous n'avez pas HACS, pour l'installer cela se passe ici :
+[HACS : Ajoutez des modules et des cartes personnalisées](https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359)
+
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_01.png" height="300"/>
  <br>
  </p>
- 
-* Ajoutez le dépot personnalisé : `https://github.com/saniho/apiEnedis`
 
- <br>
+- Ajoutez le dépot personnalisé : `https://github.com/saniho/apiEnedis`
+
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_02.png" width="600"/>
  <br>
  </p>
- 
-* Cliquez sur le bouton `Installer` de la carte correspondant à l'intégration
- 
- <br>
+
+- Cliquez sur le bouton `Installer` de la carte correspondant à
+  l'intégration
+
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_01.png" width="400"/>
  <br>
  </p>
- 
-* Cliquez sur le bouton `Installer` de la popup
- 
- <br>
+
+- Cliquez sur le bouton `Installer` de la popup
+
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_02.png" width="600"/>
  <br>
  </p>
- 
- * La carte de l'intégration est maintenant rouge, signifiant qu'un redémarrage du serveur Home Assistant est nécessaire
- 
- <br>
+
+- La carte de l'intégration est maintenant rouge, signifiant qu'un
+  redémarrage du serveur Home Assistant est nécessaire
+
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_03.png" width="400"/>
  <br>
  </p>
 
-* Accédez à la vue `Contrôle du serveur` (`Configuration` -> `Contrôle du serveur`), puis cliquez sur le bouton `Redémarrer` dans la zone `Gestion du serveur`
- 
- <br>
+- Accédez à la vue `Contrôle du serveur` (`Configuration` ->
+  `Contrôle du serveur`), puis cliquez sur le bouton `Redémarrer` dans la
+  zone `Gestion du serveur`
+
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_04.png" width="400"/>
  <br>
  </p>
 
- 
 </details>
 
 <details>
   <summary><b>Manuellement (à faire à chaque mise à jour)</b></summary>
 
-* Dans votre propre dossier `custom_components`, créez un dossier nommé `apiEnedis` puis, copiez tout le contenu du dossier [apiEnedis](https://github.com/saniho/apiEnedis/tree/main/custom_components/apiEnedis) dedans.
+- Dans votre propre dossier `custom_components`, créez un dossier nommé
+  `apiEnedis` puis, copiez tout le contenu du dossier
+  [apiEnedis](https://github.com/saniho/apiEnedis/tree/main/custom_components/apiEnedis)
+  dedans.
 
-* Cliquez sur le bouton `Redémarrer` dans la zone `Gestion du serveur`
- 
+- Cliquez sur le bouton `Redémarrer` dans la zone `Gestion du serveur`
+
 </details>
 
 ## Ajouter l'intégration
@@ -85,45 +102,51 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 <details>
   <summary><b>Via l'interface graphique</b></summary>
 
-* Accédez à la vue `Intégrations` (`Configuration` -> `Intégration`)
+- Accédez à la vue `Intégrations` (`Configuration` -> `Intégration`)
 
-* Appuyez sur le bouton bleu `Ajouter l'intégration` en bas à droite de la vue
+- Appuyez sur le bouton bleu `Ajouter l'intégration` en bas à droite de la
+  vue
 
- <br>
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_01.png" height="500"/>
  <br>
  </p>
- 
-* Tapez dans le champ de recherche qui vient d'apparaître : `myenedis` et cliquez sur l'intégration
 
- <br>
+- Tapez dans le champ de recherche qui vient d'apparaître : `myenedis` et
+  cliquez sur l'intégration
+
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_02.png" height="300"/>
  <br>
  </p>
- 
-* Renseigner : 
-  * Votre `token`
-  * Votre `code` (PDL)
-  * Si vous disposez d'un contrat heures pleines/heures creuses : 
-    * Le prix des heures creuses
-    * Le prix des heures pleines
-  * cocher la case heures creuses si votre contrat comporte des heures creuses  
-  * vos heures creuses si différentes de celles proposées par enedis
-    exemple de format : ``[['00:00','05:00'], ['22:00', '24:00']]``
-    
-* Validez la saisie avec le bouton `Soumettre`
 
- <br>
+- Renseigner :
+
+  - Votre `token`
+  - Votre `code` (PDL)
+  - Si vous disposez d'un contrat heures pleines/heures creuses :
+    - Le prix des heures creuses
+    - Le prix des heures pleines
+  - cocher la case heures creuses si votre contrat comporte des heures
+    creuses
+  - vos heures creuses si différentes de celles proposées par enedis
+    exemple de format : `[['00:00','05:00'], ['22:00', '24:00']]`
+
+- Validez la saisie avec le bouton `Soumettre`
+
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_03.png" width="300"/>
  <br>
  </p>
- 
-* Fermez la popup de confirmation en cliquant sur le bouton `Terminer`
 
-*Si vous ne voyez pas l'intégration dans la liste, effacer le cache de votre navigateur en faisant la combinaison de touche `CTRL+F5` ou `CTRL+SHIFT+R`*
+- Fermez la popup de confirmation en cliquant sur le bouton `Terminer`
+
+*Si vous ne voyez pas l'intégration dans la liste, effacer le cache de
+votre navigateur en faisant la combinaison de touche `CTRL+F5` ou
+`CTRL+SHIFT+R`*
 
 </details>
 <details>
@@ -136,33 +159,33 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 L'intégration crée l'entité `sensor.myenedis_<<votrecode>>`
 
-
- <br>
+<br>
  <p align="center">
 <img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/sensor_v2.png"/>
  <br>
  </p>
 
-**************
+______________________________________________________________________
 
-N'hésitez pas à aller faire un tour sur ce forum ou vous trouverez pleins d'informations
+N'hésitez pas à aller faire un tour sur ce forum ou vous trouverez pleins
+d'informations
 
-https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359 
+https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359
 
-*************
+______________________________________________________________________
+
 <details>
   <summary><b>VERSION</b></summary>
 
+**1.2.0.0** refactoring du code
 
-**1.2.0.0**
-refactoring du code
-
-**suppression de la configuration possible par le fichier yaml, uniquement possible via l'integration**
+**suppression de la configuration possible par le fichier yaml, uniquement
+possible via l'integration**
 
 heures creuses disponible dans l'interface de l'integration
 
-**1.1.2.2**
-possibilité de forcer ses propres horaires dans le yaml( differentes de celles de enedis)
+**1.1.2.2** possibilité de forcer ses propres horaires dans le yaml(
+differentes de celles de enedis)
 
 tag heures_creuses
 
@@ -170,9 +193,10 @@ Possibilité de forcer l'absence de HC/HP, meme si Enedis en fournit
 
 tag heuresCreusesON
 
-dans l'integration yaml et via flow, possibilité de forcer l'absence de HC/HP
+dans l'integration yaml et via flow, possibilité de forcer l'absence de
+HC/HP
 
-``heuresCreusesON: False``
+`heuresCreusesON: False`
 
 **1.1.0.0**
 
@@ -180,9 +204,11 @@ nouvelle version, permettant l'integration via flow
 
 **1.0.4.0**
 
-gestion de contrat recent, correction calcul de monté si relevé compteur par tranche de 10 minutes, 30 minutes
+gestion de contrat recent, correction calcul de monté si relevé compteur
+par tranche de 10 minutes, 30 minutes
 
-attention le nom du sensor contiendra maintenant le numéro de PDL( cela permet de piloter plusieurs compteurs )
+attention le nom du sensor contiendra maintenant le numéro de PDL( cela
+permet de piloter plusieurs compteurs )
 
 **1.0.2.5**
 
@@ -200,18 +226,20 @@ correction bug
 
 **1.0.2.2**
 
-ajout de la gestion des heures HC/HP, pour cela indiquer dans votre sensor yalm les tranches horaires
+ajout de la gestion des heures HC/HP, pour cela indiquer dans votre sensor
+yalm les tranches horaires
 
 ajout gestion du calcul du prix sur la veille
 
-**changement du nom du sensor dans le sensor.yaml, myEnedis remplace apiEnedis**
+**changement du nom du sensor dans le sensor.yaml, myEnedis remplace
+apiEnedis**
 
 **1.0.2.0**
 
 integration à HACS
 
-**changement du nom du sensor dans le sensor.yaml, myEnedis remplace apiEnedis**
-**1.0.1.2**
+**changement du nom du sensor dans le sensor.yaml, myEnedis remplace
+apiEnedis** **1.0.1.2**
 
 Delay est maintenant facultatif dans sensor.yaml
 
@@ -221,11 +249,13 @@ ajout de la consmmation last week, and current week
 
 gestion des contrats de moins de 2 ans
 
-remonté d'un statut indiquant l'erreur remonté par la gateway s'il y a erreur
+remonté d'un statut indiquant l'erreur remonté par la gateway s'il y a
+erreur
 
 **1.0.1.0**
 
-ajout de la remontée yesterday au niveau du state pour permettre l'utilisation par certaines card( graphique par exemple )
+ajout de la remontée yesterday au niveau du state pour permettre
+l'utilisation par certaines card( graphique par exemple )
 
 **1.0.0.0**
 

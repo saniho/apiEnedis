@@ -1,11 +1,11 @@
 """ Config flow """
-from collections import OrderedDict
-from homeassistant.core import callback
-import voluptuous as vol
-from homeassistant import config_entries
-import homeassistant.helpers.config_validation as cv
+import logging
 import uuid
 
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
+from homeassistant import config_entries
+from homeassistant.core import callback
 
 from .const import (  # isort:skip
     DOMAIN,
@@ -17,7 +17,6 @@ from .const import (  # isort:skip
     HEURES_CREUSES,
 )
 
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -128,10 +127,12 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
         data_schema = vol.Schema(
             {
                 vol.Required(
-                    CONF_TOKEN, default=self.config_entry.options.get(CONF_TOKEN, token)
+                    CONF_TOKEN,
+                    default=self.config_entry.options.get(CONF_TOKEN, token),
                 ): str,
                 vol.Required(
-                    CONF_CODE, default=self.config_entry.options.get(CONF_CODE, code)
+                    CONF_CODE,
+                    default=self.config_entry.options.get(CONF_CODE, code),
                 ): str,
                 vol.Optional(
                     HC_COST,

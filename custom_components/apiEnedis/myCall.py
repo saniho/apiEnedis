@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
@@ -7,6 +9,7 @@ except ImportError:
     from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
     )
+
 import logging
 
 log = logging.getLogger(__nameMyEnedis__)
@@ -19,12 +22,11 @@ class myCall:
         self._contentType = "application/json"
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
         self._serverName = "https://enedisgateway.tech/api"
-        pass
 
-    def setParam(self, PDL_ID, token, version):
+    def setParam(self, PDL_ID: str, token: str, version: str):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version
 
-    def getDefaultHeader(self):
+    def getDefaultHeader(self) -> dict[str, str]:
         return {
             "Authorization": self._token,
             "Content-Type": self._contentType,
@@ -48,7 +50,9 @@ class myCall:
                 import time
 
                 time.sleep(waitCall)
-                import json, requests
+                import json
+
+                import requests
 
                 session = requests.Session()
                 session.verify = True
@@ -73,7 +77,10 @@ class myCall:
                 # a ajouter raison de l'erreur !!!
                 log.error("====== Appel http !!! requests.exceptions.Timeout")
                 dataAnswer = {
-                    "enedis_return": {"error": "UNKERROR_TIMEOUT", "message": "Timeout"}
+                    "enedis_return": {
+                        "error": "UNKERROR_TIMEOUT",
+                        "message": "Timeout",
+                    }
                 }
                 self.setLastAnswer(dataAnswer)
             except requests.exceptions.HTTPError as error:
@@ -82,10 +89,10 @@ class myCall:
                     "__token_refresh_401" not in response.text
                 ):
                     log.error("*" * 60)
-                    log.error("header : %s " % (headers))
-                    log.error("params : %s " % (params))
-                    log.error("data : %s " % (json.dumps(data)))
-                    log.error("Error JSON : %s " % (response.text))
+                    log.error(f"header : {headers} ")
+                    log.error(f"params : {params} ")
+                    log.error(f"data : {json.dumps(data)} ")
+                    log.error(f"Error JSON : {response.text} ")
                     log.error("*" * 60)
                 # with open('error.json', 'w') as outfile:
                 #    json.dump(response.json(), outfile)
@@ -106,14 +113,14 @@ class myCall:
         #                raise error
         return dataAnswer
 
-    def getDataPeriod(self, deb, fin):
+    def getDataPeriod(self, deb: str, fin: str | None) -> tuple[str, bool]:
         if fin is not None:
-            log.info("--get dataPeriod : %s => %s --" % (deb, fin))
+            log.info(f"--get dataPeriod : {deb} => {fin} --")
             payload = {
                 "type": "daily_consumption",
                 "usage_point_id": self._PDL_ID,
-                "start": "%s" % (deb),
-                "end": "%s" % (fin),
+                "start": str(deb),
+                "end": str(fin),
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
@@ -129,12 +136,12 @@ class myCall:
 
     def getDataPeriodConsumptionMaxPower(self, deb, fin):
         if fin is not None:
-            log.info("--get dataPeriod : %s => %s --" % (deb, fin))
+            log.info(f"--get dataPeriod : {deb} => {fin} --")
             payload = {
                 "type": "daily_consumption_max_power",
                 "usage_point_id": self._PDL_ID,
-                "start": "%s" % (deb),
-                "end": "%s" % (fin),
+                "start": str(deb),
+                "end": str(fin),
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
@@ -153,8 +160,8 @@ class myCall:
             payload = {
                 "type": "daily_production",
                 "usage_point_id": self._PDL_ID,
-                "start": "%s" % (deb),
-                "end": "%s" % (fin),
+                "start": str(deb),
+                "end": str(fin),
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
@@ -173,8 +180,8 @@ class myCall:
             payload = {
                 "type": "consumption_load_curve",
                 "usage_point_id": self._PDL_ID,
-                "start": "%s" % (deb),
-                "end": "%s" % (fin),
+                "start": str(deb),
+                "end": str(fin),
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(

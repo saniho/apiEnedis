@@ -1,4 +1,7 @@
-"""my first component."""
+"""apiEnedis component."""
+from __future__ import annotations
+
+import ast
 import asyncio
 import logging
 import traceback
@@ -10,15 +13,10 @@ try:
         CONF_SCAN_INTERVAL,
         EVENT_HOMEASSISTANT_STARTED,
     )
-    from homeassistant.core import CoreState, callback
+    from homeassistant.core import CoreState, HomeAssistant, callback
     from homeassistant.exceptions import ConfigEntryNotReady
-    from homeassistant.core import HomeAssistant
     from homeassistant.helpers.typing import ConfigType
-
-    from homeassistant.helpers.update_coordinator import (
-        DataUpdateCoordinator,
-        UpdateFailed,
-    )
+    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 except ImportError:
     # si py test
     class DataUpdateCoordinator:  # type: ignore[no-redef]
@@ -86,9 +84,7 @@ try:
     )
 
 except ImportError:
-    from const import (  # type: ignore[no-redef]
-        __nameMyEnedis__,
-    )
+    from const import __nameMyEnedis__  # type: ignore[no-redef]
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -107,7 +103,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     for enedis_conf in conf:
         ch = dir(enedis_conf)
-        _LOGGER.info("enedis_conf data %s" % ch)
+        _LOGGER.info(f"enedis_conf data {ch}")
         hass.async_create_task(
             hass.config_entries.flow.async_init(
                 DOMAIN, context={"source": SOURCE_IMPORT}, data=enedis_conf
@@ -165,7 +161,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = all(
         await asyncio.gather(
@@ -196,7 +192,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         """Initialize the data object."""
         self.hass = hass
         self.entry = entry
-        self._PDL_ID = None
+        self._PDL_ID: str
         # client = myClientEnedis.myClientEnedis(token=_client.get("token"),
         #                                        PDL_ID=_client.get("code"),
         #                                        delai=_client.get("DEFAULT_REPRISE_ERR"),
@@ -206,7 +202,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         #                                        version=_client.get("__VERSION__"),
         #                                        heuresCreusesON=_client.get("heurescreusesON"))
 
-        self.clientEnedis = None
+        self.clientEnedis: myClientEnedis.myClientEnedis
         # async def _async_update_data_enedis():
         #    """Fetch data from API endpoint."""
         #    return await hass.async_add_executor_job(self.clientEnedis.getData)
@@ -218,9 +214,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             update_interval=SCAN_INTERVAL,
         )
 
-    def update_data(self):
+    def update_data(self) -> bool:
         """Get the latest data from myEnedis."""
-        log.info("** update_data %s **" % (self._PDL_ID))
+        log.info(f"** update_data {self._PDL_ID} **")
         self.clientEnedis.getData()
         return True
 
@@ -235,7 +231,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
 
     async def async_set_options(self):
         """Set options for entry."""
-        _LOGGER.info("async_set_options - proc -- %s" % self.entry.options)
+        _LOGGER.info(f"async_set_options - proc -- {self.entry.options}")
         if not self.entry.options:
             _LOGGER.info(".config_entry.options()")
             data = {**self.entry.data}
@@ -256,28 +252,32 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
 
     def update_OptionsMyEnedis(self):
         _LOGGER.info(
-            "update_MyEnedis pre-getini for %s" % (self.entry.options["token"])
+            "update_MyEnedis pre-getini for {}".format(self.entry.options["token"])
         )
         _LOGGER.info("getInit()")
         hccost = float(self.entry.options.get(HC_COST, "0.0"))
         hpcost = float(self.entry.options.get(HP_COST, "0.0"))
-        token, code = self.entry.options[CONF_TOKEN], self.entry.options[CONF_CODE]
+        token, code = (
+            self.entry.options[CONF_TOKEN],
+            self.entry.options[CONF_CODE],
+        )
         heurescreusesON = self.entry.options[HEURESCREUSES_ON]
         heurescreusesch = self.entry.options.get(HEURES_CREUSES, "[]")
         if heurescreusesch == "":
             heurescreusesch = "[]"
-        heurescreuses = eval(heurescreusesch)
+        heurescreuses = ast.literal_eval(heurescreusesch)
         self._PDL_ID = code
         _LOGGER.info(
             "options - proc -- %s %s %s %s %s %s"
             % (token, code, hccost, hpcost, heurescreusesON, heurescreuses)
         )
+
         import os
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
         dir_path = dir_path.replace("myEnedis", "archive")
         try:
-            path = "%s" % (dir_path)
+            path = str(dir_path)
             if not os.path.isdir(path):
                 _LOGGER.info("creation repertoire  ? %s" % path)
                 os.mkdir(path)
@@ -286,20 +286,20 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
         try:
-            path = "%s/myEnedis" % (dir_path)
+            path = f"{dir_path}/myEnedis"
             if not os.path.isdir(path):
-                _LOGGER.info("creation repertoire  ? %s" % path)
+                _LOGGER.info(f"creation repertoire  ? {path}")
                 os.mkdir(path)
-                _LOGGER.info("repertoire cree %s" % path)
+                _LOGGER.info(f"repertoire cree {path}")
         except:
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
         try:
-            path = "%s/myEnedis/%s" % (dir_path, code)
+            path = f"{dir_path}/myEnedis/{code}"
             if not os.path.isdir(path):
-                _LOGGER.info("creation repertoire  ? %s" % path)
+                _LOGGER.info(f"creation repertoire  ? {path}")
                 os.mkdir(path)
-                _LOGGER.info("repertoire cree %s" % path)
+                _LOGGER.info(f"repertoire cree {path}")
         except:
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
@@ -316,7 +316,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         )
         self.clientEnedis.setPathArchive(path)
         dataJson = self.clientEnedis.readDataJson()
-        _LOGGER.info("fichier lu %s" % len(dataJson))
+        _LOGGER.info(f"fichier lu {len(dataJson)}")
         self.clientEnedis.setDataJsonDefault(dataJsonDefault=dataJson)
         self.clientEnedis.setDataJsonCopy()
         self.clientEnedis.manageLastCallJson()
@@ -324,10 +324,10 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
     async def async_setup(self):
         # Set up myEnedis.
         try:
-            _LOGGER.info("run my First Extension")
+            _LOGGER.info("run apiEnedis")
             # ne sert plus normalement ...
             # self.myEnedis = await self.hass.async_add_executor_job(self.clientEnedis.getData)
-            _LOGGER.info("run my First Extension - done -- ")
+            _LOGGER.info("run apiEnedis - done -- ")
         except Exception as inst:
             raise Exception(inst)
 
