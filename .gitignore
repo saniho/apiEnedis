@@ -1,3 +1,6 @@
+# "local" directory
+custom_components/apiEnedis/myEnedis
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
