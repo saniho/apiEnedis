@@ -72,6 +72,13 @@ def test_init_contract(patch_datetime_now):
         myE.getData()
         assert myE.contract.getsubscribed_power() == "9 kVA", "bad subscribed"
         assert myE.contract.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
+        assert (
+            myE.contract.getLastActivationDate() == "2007-07-06"
+        ), "bad date activation"
+        dataCompare = [["23:30", "23:59"], ["00:00", "07:30"]]
+        assert (
+            myE.contract.getcleanoffpeak_hours() == dataCompare
+        ), "erreur format HC/HP"
 
 
 def test_update_contract():
