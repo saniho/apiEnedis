@@ -30,5 +30,5 @@ install_requirements:
 
 
 setup_precommit:
-	pip install --upgrade pip pre-commit tox
+	pip install --upgrade pip pre-commit tox requests_mock
 	pre-commit install

@@ -1,6 +1,8 @@
 import datetime
 import json
 
+import requests_mock
+
 from custom_components.apiEnedis.myClientEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
 
@@ -26,7 +28,7 @@ def test_no_contract():
     assert contract.get_version() == "0.0.0", "bad version initialisation"
     assert contract.getUsagePointStatus() is None, "bad usage point initialisation"
     assert contract.getTypePDL() is None, "bad usage PDL type initialisation"
-    assert isinstance(contract.getValue(), dict), "bad initial value"
+    assert contract.isLoaded() is False, "bad initial value"
     assert contract._getHCHPfromHour(4) is True, "bad value"
     dateStr = "2022-01-01"
     assert contract.minCompareDateContract(dateStr) == "2022-01-01"
@@ -37,6 +39,17 @@ def test_no_contract():
 
     # Not tested:
     # contract.updateContract(self, None)
+
+
+def test_init_contract():
+
+    dataJson = loadJsonFile(contractJsonFile)
+
+    with requests_mock.Mocker() as m:
+        m.post("https://enedisgateway.tech/api", text=dataJson)
+        myE = myClientEnedis("myToken", "myPDL")
+        assert myE.contract.getsubscribed_power() == "9 kVA", "bad subscribed"
+        assert myE.contract.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
 
 
 def test_update_contract():

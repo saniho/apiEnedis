@@ -29,6 +29,7 @@ log = logging.getLogger(__nameMyEnedis__)
 
 class myContrat:
     _NULL_CONTRACT = {
+        "is_loaded": False,
         "contracts": None,
         "usage_point_status": None,
         "subscribed_power": "???",
@@ -47,7 +48,7 @@ class myContrat:
         heuresCreuses: list | tuple | None,
     ):
         self._contract: dict[str, Any]
-        self.setContract(None)
+        self.__setContract(None)
         self._heuresCreusesON = heuresCreusesON
         self._heuresCreuses: list | tuple | None = heuresCreuses
         self._token, self._PDL_ID, self._version = token, PDL_ID, version
@@ -98,7 +99,7 @@ class myContrat:
         log.debug(f"updateContract : data {data}")
         if self.__checkDataContract(data):
             log.debug(f"updateContract(2) : data {data}")
-            self.setContract(self.__analyseValueContract(data))
+            self.__setContract(self.__analyseValueContract(data))
         return data
 
     def __analyseValueContract(self, data) -> dict[str, Any] | None:
@@ -111,6 +112,7 @@ class myContrat:
 
                 contracts = x["contracts"]
                 contract = {
+                    "is_loaded": True,
                     "contracts": contracts,
                     "usage_point_status": usage_point,
                     "subscribed_power": self.__contractField(
@@ -125,14 +127,15 @@ class myContrat:
                 break
         return contract
 
-    def getValue(self):
-        return self._contract
-
-    def setContract(self, contract=None):
+    def __setContract(self, contract=None):
         if isinstance(contract, dict):
             self._contract = contract
         else:
             self._contract = myContrat._NULL_CONTRACT.copy()
+
+    @property
+    def isLoaded(self):
+        return self._contract["isLoaded"]
 
     def getsubscribed_power(self):
         return self._contract["subscribed_power"]
