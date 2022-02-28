@@ -129,7 +129,7 @@ def testMono():
         version=__version__,
     )
     myDataEnedis.getData()
-    log.info(myDataEnedis.getContract())
+    log.info(myDataEnedis.contract)
     # myDataEnedis.updateProductionYesterday()
     # retour = myDataEnedis.getProductionYesterday()
     # log.info("retour", retour)
@@ -153,5 +153,5 @@ def main():
 
 
 if __name__ == "__main__":
+    """get all update and charge l'instance et utilisation avec get after ....."""
     main()
-""" get all update and charge l'instance et utilisation avec get after ....."""

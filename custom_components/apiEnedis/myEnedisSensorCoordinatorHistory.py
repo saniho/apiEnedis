@@ -1,8 +1,9 @@
 """Sensor for my first"""
+from __future__ import annotations
+
 import datetime
 import logging
 from datetime import timedelta
-from typing import Dict, Union
 
 try:
     from homeassistant.const import ATTR_ATTRIBUTION
@@ -41,7 +42,7 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
 
     def __init__(
         self,
-        sensor_type: Dict[str, Union[int, str]],
+        sensor_type: dict[str, int | str],
         coordinator: DataUpdateCoordinator,
         typeSensor=_consommation,
         detail="",
@@ -49,9 +50,7 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(
-            coordinator.clientEnedis, _LOGGER, __VERSION__
-        )
+        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         # ajout interval dans le sensor
         # Assure que la valeur est un float:
         try:
@@ -61,8 +60,8 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
             _LOGGER.warn(f"{ENTITY_DELAI} non defini pour le sensor")
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         _LOGGER.info("frequence mise à jour en seconde : %s" % (interval))
-        self._attributes: Dict[str, Union[int, str]] = {}
-        self._state = None
+        self._attributes: dict[str, int | str] = {}
+        self._state: str
         self._unit = "kWh"
         self._lastState = None
         self._lastAttributes = None

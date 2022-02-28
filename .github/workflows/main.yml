@@ -3,6 +3,7 @@ name: CI
 
 on:
   push:
+  pull_request:
   schedule:
     - cron: 10 5 * * *
 
@@ -13,19 +14,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: [3.x, '3.7', pypy3]
+        python: [3.x, '3.7', pypy-3.7, pypy-3.9]
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
       - name: Setup python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
           architecture: x64
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest
+          pip install pytest requests_mock mock
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Test with pytest
         run: pytest tests/test_myEnedis.py

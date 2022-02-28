@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
@@ -21,10 +23,10 @@ class myCall:
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
         self._serverName = "https://enedisgateway.tech/api"
 
-    def setParam(self, PDL_ID, token, version):
+    def setParam(self, PDL_ID: str, token: str, version: str):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version
 
-    def getDefaultHeader(self):
+    def getDefaultHeader(self) -> dict[str, str]:
         return {
             "Authorization": self._token,
             "Content-Type": self._contentType,
@@ -66,13 +68,9 @@ class myCall:
                 response.raise_for_status()
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
-                log.info(
-                    "====== Appel http !!! headers : %s =====" % (headers)
-                )
+                log.info("====== Appel http !!! headers : %s =====" % (headers))
                 log.info("====== Appel http !!! data : %s =====" % (data))
-                log.info(
-                    "====== Appel http !!! reponse : %s =====" % (dataAnswer)
-                )
+                log.info("====== Appel http !!! reponse : %s =====" % (dataAnswer))
                 # raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 try_again = False
             except requests.exceptions.Timeout as error:
@@ -91,20 +89,17 @@ class myCall:
                     "__token_refresh_401" not in response.text
                 ):
                     log.error("*" * 60)
-                    log.error("header : %s " % (headers))
-                    log.error("params : %s " % (params))
-                    log.error("data : %s " % (json.dumps(data)))
-                    log.error("Error JSON : %s " % (response.text))
+                    log.error(f"header : {headers} ")
+                    log.error(f"params : {params} ")
+                    log.error(f"data : {json.dumps(data)} ")
+                    log.error(f"Error JSON : {response.text} ")
                     log.error("*" * 60)
                 # with open('error.json', 'w') as outfile:
                 #    json.dump(response.json(), outfile)
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
                 try_again = False
-                if (
-                    "usage_point_id parameter must be 14 digits long."
-                    in response.text
-                ):
+                if "usage_point_id parameter must be 14 digits long." in response.text:
                     try_again = True  # si le nombre de digit n'est pas de 14 ...lié à une erreur coté enedis
             if (try_again) and (nbEssai > 2):
                 import time
@@ -118,14 +113,14 @@ class myCall:
         #                raise error
         return dataAnswer
 
-    def getDataPeriod(self, deb, fin):
+    def getDataPeriod(self, deb: str, fin: str | None) -> tuple[str, bool]:
         if fin is not None:
             log.info(f"--get dataPeriod : {deb} => {fin} --")
             payload = {
                 "type": "daily_consumption",
                 "usage_point_id": self._PDL_ID,
-                "start": "%s" % (deb),
-                "end": "%s" % (fin),
+                "start": str(deb),
+                "end": str(fin),
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
@@ -145,8 +140,8 @@ class myCall:
             payload = {
                 "type": "daily_consumption_max_power",
                 "usage_point_id": self._PDL_ID,
-                "start": "%s" % (deb),
-                "end": "%s" % (fin),
+                "start": str(deb),
+                "end": str(fin),
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
@@ -165,8 +160,8 @@ class myCall:
             payload = {
                 "type": "daily_production",
                 "usage_point_id": self._PDL_ID,
-                "start": "%s" % (deb),
-                "end": "%s" % (fin),
+                "start": str(deb),
+                "end": str(fin),
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
@@ -185,8 +180,8 @@ class myCall:
             payload = {
                 "type": "consumption_load_curve",
                 "usage_point_id": self._PDL_ID,
-                "start": "%s" % (deb),
-                "end": "%s" % (fin),
+                "start": str(deb),
+                "end": str(fin),
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(

@@ -1,8 +1,9 @@
 """Sensor for my first"""
+from __future__ import annotations
+
 import datetime
 import logging
 from datetime import timedelta
-from typing import Dict
 
 try:
     from homeassistant.const import ATTR_ATTRIBUTION
@@ -48,13 +49,11 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(
-            coordinator.clientEnedis, _LOGGER, __VERSION__
-        )
+        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
-        self._attributes: Dict[str, str] = {}
-        self._state = None
+        self._attributes: dict[str, str] = {}
+        self._state: str
         self._unit = "EUR"
         self._lastState = None
         self._lastAttributes = None
@@ -127,9 +126,7 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
             state,
         ) = self._myDataSensorEnedis.getStatusYesterdayCost()
         if dataAvailable:
-            if (self._lastYesterday != yesterdayDate) and (
-                yesterdayDate is not None
-            ):
+            if (self._lastYesterday != yesterdayDate) and (yesterdayDate is not None):
                 status_counts["timeLastCall"] = datetime.datetime.now()
                 self._lastYesterday = yesterdayDate
         self._attributes.update(status_counts)

@@ -1,7 +1,8 @@
 """Sensor for my first"""
+from __future__ import annotations
+
 import logging
 from datetime import timedelta
-from typing import Dict
 
 try:
     from homeassistant.const import ATTR_ATTRIBUTION
@@ -47,13 +48,11 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(
-            coordinator.clientEnedis, _LOGGER, __VERSION__
-        )
+        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
-        self._attributes: Dict[str, str] = {}
-        self._state = None
+        self._attributes: dict[str, str] = {}
+        self._state: str
         self._unit = "kWh"
         self._lastState = None
         self._lastAttributes = None
@@ -63,9 +62,7 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def unique_id(self):
         "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.%s.production" % (
-                self._myDataSensorEnedis.get_PDL_ID()
-            )
+            name = "myEnedis.%s.production" % (self._myDataSensorEnedis.get_PDL_ID())
         else:
             name = "myEnedis.%s" % (self._myDataSensorEnedis.get_PDL_ID())
         return name
@@ -74,9 +71,7 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def name(self):
         """Return the name of the sensor."""
         if self._typeSensor == _production:
-            name = "myEnedis.%s.production" % (
-                self._myDataSensorEnedis.get_PDL_ID()
-            )
+            name = "myEnedis.%s.production" % (self._myDataSensorEnedis.get_PDL_ID())
         else:
             name = "myEnedis.%s" % (self._myDataSensorEnedis.get_PDL_ID())
         return name
@@ -122,9 +117,7 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         self._attributes = {
             ATTR_ATTRIBUTION: "",
         }
-        status_counts, state = self._myDataSensorEnedis.getStatus(
-            self._typeSensor
-        )
+        status_counts, state = self._myDataSensorEnedis.getStatus(self._typeSensor)
         self._attributes.update(status_counts)
         self._state = state
 

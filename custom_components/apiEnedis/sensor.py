@@ -69,9 +69,7 @@ async def async_setup_entry(
     for sensor_type in SENSOR_TYPES:
         mysensor = SENSOR_TYPES[sensor_type]
         if sensor_type == "principal":
-            entities.append(
-                myEnedisSensorCoordinator(mysensor, coordinator_enedis)
-            )
+            entities.append(myEnedisSensorCoordinator(mysensor, coordinator_enedis))
         elif sensor_type == "history_all":
             entities.append(
                 myEnedisSensorCoordinatorHistory(
@@ -92,9 +90,7 @@ async def async_setup_entry(
             )
         elif sensor_type == "yesterdayCost":
             entities.append(
-                myEnedisSensorYesterdayCostCoordinator(
-                    mysensor, coordinator_enedis
-                )
+                myEnedisSensorYesterdayCostCoordinator(mysensor, coordinator_enedis)
             )
         elif sensor_type == "energy":
             entities.append(
@@ -102,9 +98,7 @@ async def async_setup_entry(
             )
         elif sensor_type == "energyDetailHours":
             entities.append(
-                myEnedisSensorCoordinatorEnergyDetailHours(
-                    mysensor, coordinator_enedis
-                )
+                myEnedisSensorCoordinatorEnergyDetailHours(mysensor, coordinator_enedis)
             )
         elif sensor_type == "energyDetailHoursCost":
             entities.append(
