@@ -76,16 +76,16 @@ class myDataEnedisProduction:
                         dataControl
                     )
                     if self._callOk is None:
-                        data = None  # si on doit mettre à jour .... sauf si on est pas la
+                        data = (
+                            None  # si on doit mettre à jour .... sauf si on est pas la
+                        )
                 else:
                     self._callOk = None
                     data = None  # si on doit mettre à jour .... sauf si on est pas la
         if onLance:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
-            log.info(
-                f"--updateData {clefFunction} ( du {dateDeb} au {dateFin} )--"
-            )
+            log.info(f"--updateData {clefFunction} ( du {dateDeb} au {dateFin} )--")
             self._data = data
             if self._data is None:
                 self._data, callDone = self.CallgetData(dateDeb, dateFin)
@@ -99,13 +99,9 @@ class myDataEnedisProduction:
             else:
                 self._value = 0
             self._callOk = callDone
-            log.info(
-                f"with update !! {clefFunction} ( du {dateDeb} au {dateFin} )--"
-            )
+            log.info(f"with update !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
             log.info("updateData : data %s" % (self._data))
         else:
-            log.info(
-                f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--"
-            )
+            log.info(f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
             log.info("no updateData : data %s" % (self._data))
         return self._data

@@ -1,7 +1,8 @@
 """Sensor for my first"""
+from __future__ import annotations
+
 import logging
 from datetime import timedelta
-from typing import Dict
 
 try:
     from homeassistant.const import ATTR_ATTRIBUTION
@@ -32,9 +33,7 @@ from .sensorEnedis import manageSensorState
 ICON = "mdi:package-variant-closed"
 
 
-class myEnedisSensorCoordinatorEnergyDetailHoursCost(
-    CoordinatorEntity, RestoreEntity
-):
+class myEnedisSensorCoordinatorEnergyDetailHoursCost(CoordinatorEntity, RestoreEntity):
     """."""
 
     def __init__(
@@ -46,13 +45,11 @@ class myEnedisSensorCoordinatorEnergyDetailHoursCost(
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(
-            coordinator.clientEnedis, _LOGGER, __VERSION__
-        )
+        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
-        self._attributes: Dict[str, str] = {}
-        self._state = None
+        self._attributes: dict[str, str] = {}
+        self._state: str
         self._unit = "EUR"
         self._lastState = None
         self._lastAttributes = None
@@ -126,9 +123,7 @@ class myEnedisSensorCoordinatorEnergyDetailHoursCost(
             lastReset,
             status_counts,
             state,
-        ) = self._myDataSensorEnedis.getStatusEnergyDetailHoursCost(
-            self._typeSensor
-        )
+        ) = self._myDataSensorEnedis.getStatusEnergyDetailHoursCost(self._typeSensor)
 
         self._attributes = {
             ATTR_ATTRIBUTION: "",

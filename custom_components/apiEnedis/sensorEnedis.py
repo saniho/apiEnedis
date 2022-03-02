@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import sys
 import traceback
@@ -33,7 +35,7 @@ class manageSensorState:
         self.setInit(True)
 
     def get_PDL_ID(self):
-        return self._myDataEnedis.getContract().get_PDL_ID()
+        return self._myDataEnedis.contract.get_PDL_ID()
 
     def getStatusYesterdayCost(self):
         state = "unavailable"
@@ -41,7 +43,7 @@ class manageSensorState:
         status_counts["version"] = self.version
         dataAvailable = False
         yesterdayDate = None
-        if self._myDataEnedis.getContract() is not None:
+        if self._myDataEnedis.contract is not None:
             # if self._myDataEnedis.getYesterday().getValue() != 0: # on a eut des données
             if (
                 self._myDataEnedis.getYesterdayHCHP().getHC()
@@ -76,13 +78,13 @@ class manageSensorState:
         return dataAvailable, yesterdayDate, status_counts, state
 
     def getStatusHistory(self, laDate, detail="ALL", typeSensor=_consommation):
-        state = "unavailable"
+        state: int | str = "unavailable"
         status_counts = defaultdict(int)
         status_counts["version"] = self.version
         clefDate = laDate.strftime("%Y-%m-%d %H")
         status_counts["DateHeure"] = clefDate
         status_counts["detail"] = detail
-        if self._myDataEnedis.getContract() is not None:
+        if self._myDataEnedis.contract is not None:
             if self._myDataEnedis.isConsommation():
                 state = 0
                 DateHeureDetail = {}
@@ -117,7 +119,7 @@ class manageSensorState:
 
     def getStatusEnergy(self, typeSensor=_consommation):
         state = "unavailable"
-        status_counts = defaultdict(int)
+        status_counts: dict[str, int] = defaultdict(int)
         if self._myDataEnedis.getTimeLastCall() is not None:
             state = "{:.3f}".format(
                 self._myDataEnedis.getCurrentYear().getValue() * 0.001
@@ -127,7 +129,7 @@ class manageSensorState:
 
     def getStatusEnergyDetailHours(self, typeSensor=_consommation):
         state = "unavailable"
-        status_counts = defaultdict(int)
+        status_counts: dict[str, int] = defaultdict(int)
         # "last_reset": "2021-01-01T00:00:00",  # à corriger plus tard !!
 
         laDate = datetime.datetime.today() - datetime.timedelta(2)
@@ -155,7 +157,7 @@ class manageSensorState:
 
     def getStatusEnergyDetailHoursCost(self, typeSensor=_consommation):
         state = "unavailable"
-        status_counts = defaultdict(int)
+        status_counts: dict[str, int] = defaultdict(int)
         # "last_reset": "2021-01-01T00:00:00",  # à corriger plus tard !!
 
         laDate = datetime.datetime.today() - datetime.timedelta(2)
@@ -190,7 +192,7 @@ class manageSensorState:
         data = self._myDataEnedis
 
         state = "unavailable"
-        status = defaultdict(int)
+        status: dict[str, int | float | str | list] = defaultdict(int)
         status["version"] = self.version
         status["versionGit"] = data.getGitVersion()
         status["versionUpdateAvailable"] = self.getExistsRecentVersion(
@@ -199,16 +201,13 @@ class manageSensorState:
 
         if data.getTimeLastCall() is not None:
             self._LOGGER.info(
-                "-- ** on va mettre à jour : %s"
-                % data.getContract().get_PDL_ID()
+                "-- ** on va mettre à jour : %s" % data.contract.get_PDL_ID()
             )
             status["nbCall"] = data.getNbCall()
             status["typeCompteur"] = typeSensor
-            status["numPDL"] = data.getContract().get_PDL_ID()
+            status["numPDL"] = data.contract.get_PDL_ID()
             status["horaireMinCall"] = data.getHoraireMin()
-            status[
-                "activationDate"
-            ] = data.getContract().getLastActivationDate()
+            status["activationDate"] = data.contract.getLastActivationDate()
             if data.isConsommation():
                 status["lastUpdate"] = data.getLastUpdate()
                 status["timeLastCall"] = data.getTimeLastCall()
@@ -220,14 +219,13 @@ class manageSensorState:
                 try:
                     # typesensor ... fonction de  ?
                     if typeSensor == _consommation:  # data.isConsommation():
+                        valeur: int | str
 
                         status["lastUpdate"] = data.getLastUpdate()
                         status["timeLastCall"] = data.getTimeLastCall()
                         # à supprimer car doublon avec j_1
                         status["yesterday"] = data.getYesterday().getValue()
-                        status[
-                            "yesterdayDate"
-                        ] = data.getYesterday().getDateDeb()
+                        status["yesterdayDate"] = data.getYesterday().getDateDeb()
                         status[
                             "yesterdayLastYear"
                         ] = data.getYesterdayLastYear().getValue()
@@ -239,7 +237,9 @@ class manageSensorState:
                         ] = data.getYesterdayConsumptionMaxPower().getValue()
                         status["last_week"] = data.getLastWeek().getValue()
                         last7daysHP = data.getLast7DaysDetails().getDaysHP()
-                        listeClef = list(last7daysHP.keys())
+
+                        # TODO: Verifier si les deux lignes suivants sont utiles!
+                        listeClef: list[str] = list(last7daysHP.keys())
                         listeClef.reverse()
 
                         today = datetime.date.today()
@@ -253,7 +253,7 @@ class manageSensorState:
                             valeur = -1
                             if clef in last7daysHP.keys():
                                 valeur = last7daysHP[clef]
-                            status["day_%s_HP" % (niemejour)] = valeur
+                            status[f"day_{niemejour}_HP"] = valeur
                         last7daysHC = data.getLast7DaysDetails().getDaysHC()
                         niemejour = 0
                         for clef in listeClef:
@@ -285,9 +285,7 @@ class manageSensorState:
                             niemejour += 1
                             valeur = -1
                             if clef in last7daysHC.keys():
-                                valeur = 0.001 * data.getHCCost(
-                                    last7daysHC[clef]
-                                )
+                                valeur = 0.001 * data.getHCCost(last7daysHC[clef])
                                 valeur = f"{valeur:.2f}"
                             coutHC.append(valeur)
                         status["dailyweek_costHC"] = coutHC
@@ -302,17 +300,15 @@ class manageSensorState:
                             dailyHC.append(valeur)
                         status["dailyweek_HC"] = dailyHC
 
-                        status["dailyweek"] = [(day) for day in listeClef]
+                        status["dailyweek"] = list(listeClef)  # listeClef -> days
                         niemejour = 0
                         coutHP = []
                         for clef in listeClef:
                             niemejour += 1
                             valeur = -1
                             if clef in last7daysHP.keys():
-                                valeur = 0.001 * data.getHPCost(
-                                    last7daysHP[clef]
-                                )
-                                valeur = f"{valeur:.2f}"
+                                valeurFloat = 0.001 * data.getHPCost(last7daysHP[clef])
+                                valeur = f"{valeurFloat:.2f}"
                             coutHP.append(valeur)
                         status["dailyweek_costHP"] = coutHP
                         # gestion du format : "{:.2f}".format(a)
@@ -323,8 +319,8 @@ class manageSensorState:
                             niemejour += 1
                             valeur = -1
                             if clef in last7daysHP.keys():
-                                valeur = last7daysHP[clef]
-                                valeur = f"{0.001 * valeur:.3f}"
+                                valeurFloat = last7daysHP[clef]
+                                valeur = f"{0.001 * valeurFloat:.3f}"
                             dailyHP.append(valeur)
                         status["dailyweek_HP"] = dailyHP
 
@@ -332,14 +328,14 @@ class manageSensorState:
                         daily = []
                         for clef in listeClef:
                             niemejour += 1
-                            somme = -1
+                            somme: int | float | str = -1
                             if (
                                 clef in last7daysHP.keys()
                                 and clef in last7daysHC.keys()
                             ):
-                                somme = last7daysHP[clef] + last7daysHC[clef]
-                                somme = f"{0.001 * somme:.2f}"
-                            status["day_%s" % (niemejour)] = somme
+                                sommeFloat = last7daysHP[clef] + last7daysHC[clef]
+                                somme = f"{0.001 * sommeFloat:.2f}"
+                            status[f"day_{niemejour}"] = somme
                             daily.append(somme)
                         status["daily"] = daily
 
@@ -395,30 +391,20 @@ class manageSensorState:
                         if dateDeb is not None:
                             status[
                                 "current_week_number"
-                            ] = datetime.datetime.fromisoformat(
-                                dateDeb
-                            ).isocalendar()[
+                            ] = datetime.datetime.fromisoformat(dateDeb).isocalendar()[
                                 1
                             ]
 
-                        status[
-                            "current_week_last_year"
-                        ] = f"{currWkLastYear:.3f}"
+                        status["current_week_last_year"] = f"{currWkLastYear:.3f}"
                         status["last_month"] = f"{lastMonth:.3f}"
-                        status[
-                            "last_month_last_year"
-                        ] = f"{lastMonthLastYear:.3f}"
+                        status["last_month_last_year"] = f"{lastMonthLastYear:.3f}"
                         status["current_month"] = f"{currMonth:.3f}"
-                        status[
-                            "current_month_last_year"
-                        ] = f"{currMonthLastYear:.3f}"
+                        status["current_month_last_year"] = f"{currMonthLastYear:.3f}"
                         status["last_year"] = f"{lastYear:.3f}"
                         status["current_year"] = f"{currYear:.3f}"
 
                         status["errorLastCall"] = data.getCardErrorLastCall()
-                        status[
-                            "errorLastCallInterne"
-                        ] = data.getErrorLastCall()
+                        status["errorLastCallInterne"] = data.getErrorLastCall()
 
                         if (
                             (lastMonthLastYear is not None)
@@ -439,11 +425,7 @@ class manageSensorState:
                             and (currWkLastYear != 0)
                             and (currWk is not None)
                         ):
-                            valeur = (
-                                100
-                                * (currWk - currWkLastYear)
-                                / currWkLastYear
-                            )
+                            valeur = 100 * (currWk - currWkLastYear) / currWkLastYear
                             status["current_week_evolution"] = f"{valeur:.3f}"
                         else:
                             status["current_week_evolution"] = 0
@@ -462,9 +444,7 @@ class manageSensorState:
                         else:
                             status["current_month_evolution"] = 0
 
-                        yesterdayLastYear = (
-                            data.getYesterdayLastYear().getValue()
-                        )
+                        yesterdayLastYear = data.getYesterdayLastYear().getValue()
                         yesterday = data.getYesterday().getValue()
 
                         if (
@@ -477,29 +457,22 @@ class manageSensorState:
                             else:
                                 yestValue = yesterday
                             valeur = (
-                                (yestValue - yesterdayLastYear)
-                                / yesterdayLastYear
+                                (yestValue - yesterdayLastYear) / yesterdayLastYear
                             ) * 100
                             status["yesterday_evolution"] = f"{valeur:.3f}"
                         else:
                             status["yesterday_evolution"] = 0
-                        status[
-                            "subscribed_power"
-                        ] = data.getContract().getsubscribed_power()
+                        status["subscribed_power"] = data.contract.getsubscribed_power()
                         status[
                             "offpeak_hours_enedis"
-                        ] = data.getContract().getoffpeak_hours()
-                        status[
-                            "offpeak_hours"
-                        ] = data.getContract().getHeuresCreuses()
+                        ] = data.contract.getoffpeak_hours()
+                        status["offpeak_hours"] = data.contract.getHeuresCreuses()
                     if typeSensor == _production:
                         status[
                             "yesterday_production"
                         ] = data.getProductionYesterday().getValue()
                         status["errorLastCall"] = data.getCardErrorLastCall()
-                        status[
-                            "errorLastCallInterne"
-                        ] = data.getErrorLastCall()
+                        status["errorLastCallInterne"] = data.getErrorLastCall()
                         status["lastUpdate"] = data.getLastUpdate()
                         status["timeLastCall"] = data.getTimeLastCall()
                     if status["yesterday"] is None:
@@ -507,9 +480,14 @@ class manageSensorState:
                     if status["yesterday_production"] is None:
                         status["yesterday_production"] = 0
                     if typeSensor == _consommation:  # data.isConsommation():
-                        valeurstate = status["yesterday"] * 0.001
+                        valeurstate = (
+                            status["yesterday"] * 0.001  # type:ignore[operator]
+                        )  # type:ignore[operator]
                     else:
-                        valeurstate = status["yesterday_production"] * 0.001
+                        valeurstate = (
+                            status["yesterday_production"]
+                            * 0.001  # type:ignore[operator]
+                        )  # type:ignore[operator]
                     state = f"{valeurstate:.3f}"
 
                 except Exception:
@@ -519,9 +497,7 @@ class manageSensorState:
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     self._LOGGER.error(sys.exc_info())
                     msg = repr(
-                        traceback.format_exception(
-                            exc_type, exc_value, exc_traceback
-                        )
+                        traceback.format_exception(exc_type, exc_value, exc_traceback)
                     )
 
                     self._LOGGER.error(msg)

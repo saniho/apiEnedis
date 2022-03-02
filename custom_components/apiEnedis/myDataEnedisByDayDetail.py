@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
@@ -31,12 +33,12 @@ class myDataEnedisByDayDetail:
         self._contrat = contrat
         self._token, self._version = token, version
         self._interval_length = 1
-        self._HP = 0
-        self._HC = 0
-        self._multiDays = multiDays
+        self._HP: dict | float = 0  # dict si multiDays
+        self._HC: dict | float = 0  # dict si multiDays
+        self._multiDays: bool = multiDays
         self._dateDeb = None
         self._dateFin = None
-        self._callOk = None
+        self._callOk: bool | None = None
         self._nbCall = 0
         self._data = None
 
@@ -106,7 +108,9 @@ class myDataEnedisByDayDetail:
                         dataControl
                     )
                     if self._callOk is None:
-                        data = None  # si on doit mettre à jour .... sauf si on est pas la
+                        data = (
+                            None  # si on doit mettre à jour .... sauf si on est pas la
+                        )
                 else:
                     self._callOk = None
                     data = None  # si on doit mettre à jour .... sauf si on est pas la
@@ -118,9 +122,7 @@ class myDataEnedisByDayDetail:
             )
             self._data = data
             if self._data is None:
-                self._data, callDone = self.CallgetData(
-                    self._dateDeb, self._dateFin
-                )
+                self._data, callDone = self.CallgetData(self._dateDeb, self._dateFin)
                 self._nbCall = 1
             else:
                 callDone = True
@@ -129,9 +131,7 @@ class myDataEnedisByDayDetail:
                 if self._dateDeb == self._dateFin:
                     self._HC, self._HP = {}, {}
                 else:
-                    if (callDone) and (
-                        myCheckData().checkDataPeriod(self._data)
-                    ):
+                    if (callDone) and (myCheckData().checkDataPeriod(self._data)):
                         (
                             self._joursHC,
                             self._joursHP,
@@ -155,15 +155,13 @@ class myDataEnedisByDayDetail:
             )
             log.info("updateData : data %s" % (self._data))
         else:
-            log.info(
-                f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--"
-            )
+            log.info(f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
             log.info("no updateData : data %s" % (self._data))
         return self._data
 
     def getCoeffIntervalLength(self):
         interval = self.getIntervalLength()
-        coeff = 1
+        coeff: float = 1
         if interval == "PT10M":
             coeff = 1 * 10 / 60
         if interval == "PT15M":
@@ -191,8 +189,7 @@ class myDataEnedisByDayDetail:
                 heure == "00:00"
             ):  # alors sur la veille, var c'est la fin de la tranche du jour precedent
                 date = (
-                    datetime.datetime.strptime(date, "%Y-%m-%d")
-                    - datetime.timedelta(1)
+                    datetime.datetime.strptime(date, "%Y-%m-%d") - datetime.timedelta(1)
                 ).strftime(_formatDateYmd)
 
             # if ( date == dateDuJour ):
@@ -242,8 +239,8 @@ class myDataEnedisByDayDetail:
             if heurePleine:
                 self._HP += (
                     int(x["value"]) * self.getCoeffIntervalLength()
-                )  # car par transhce de 30 minutes
+                )  # car par tranche de 30 minutes
             else:
                 self._HC += (
                     int(x["value"]) * self.getCoeffIntervalLength()
-                )  # car par transhce de 30 minutes
+                )  # car par tranche de 30 minutes

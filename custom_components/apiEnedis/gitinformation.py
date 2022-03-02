@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import logging
 
@@ -5,13 +7,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class gitinformation:
-    def __init__(self, repo):
-        self._serverName = (
-            "https://api.github.com/repos/%s/releases/latest" % (repo)
-        )
-        self._gitData = None
+    def __init__(self, repo: str):
+        self._serverName = f"https://api.github.com/repos/{repo}/releases/latest"
+        self._gitData: dict[str, str]
 
-    def getInformation(self):
+    def getInformation(self) -> None:
         from urllib.request import urlopen
 
         try:
@@ -22,5 +22,5 @@ class gitinformation:
             dataAnswer = {}
         self._gitData = dataAnswer
 
-    def getVersion(self):
+    def getVersion(self) -> str:
         return self._gitData.get("tag_name", "")

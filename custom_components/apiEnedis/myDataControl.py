@@ -20,27 +20,21 @@ def okDataControl(
     dateFin,
 ):
     log.info("--okDataControl--")
-    log.info("--okDataControl / clefFunction : %s" % clefFunction)
+    log.info(f"--okDataControl / clefFunction : {clefFunction}")
     log.info(
-        "--okDataControl / deb : {} / {}".format(
-            dataControl.get("deb", None), dateDeb
-        )
+        "--okDataControl / deb : {} / {}".format(dataControl.get("deb", None), dateDeb)
     )
     log.info(
-        "--okDataControl / fin : {} / {}".format(
-            dataControl.get("fin", None), dateFin
-        )
+        "--okDataControl / fin : {} / {}".format(dataControl.get("fin", None), dateFin)
     )
-    log.info(
-        "--okDataControl / callok : %s " % (dataControl.get("callok", True))
-    )
+    log.info("--okDataControl / callok : %s " % (dataControl.get("callok", True)))
     deb = dataControl.get("deb", None)
     fin = dataControl.get("fin", None)
     callOk = dataControl.get("callok", True)
     if callOk is None:
         callOk = True
     response = deb == dateDeb and fin == dateFin and callOk
-    log.info("--okDataControl / response : %s " % (response))
+    log.info(f"--okDataControl / response : {response} ")
     return response
 
 
