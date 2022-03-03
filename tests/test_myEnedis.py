@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import json
 import logging
+import os
 
 import pytest
 import requests_mock
@@ -10,7 +11,6 @@ import requests_mock
 from custom_components.apiEnedis.myClientEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
 
-import os
 JSON_DIR = os.path.dirname(__file__) + "/Json/"
 
 contractJsonFile = "Contract/contract1.json"
@@ -132,8 +132,10 @@ def test_heures_creuses():
     assert myE.contract.getHeuresCreuses() == dataCompare, "erreur format HC/HP 2"
 
 
-@pytest.mark.usefixtures('patch_datetime_now')
-@pytest.mark.parametrize('patch_datetime_now', [(datetime.datetime(2020,12,9,11,22,00))], indirect=True)
+@pytest.mark.usefixtures("patch_datetime_now")
+@pytest.mark.parametrize(
+    "patch_datetime_now", [(datetime.datetime(2020, 12, 9, 11, 22, 00))], indirect=True
+)
 def test_update_last7days(caplog):
     caplog.set_level(logging.DEBUG)  # Aide au debogue
     myE = myClientEnedis("myToken", "myPDL")
@@ -151,7 +153,7 @@ def test_update_last7days(caplog):
         {"date": "2020-12-03", "niemejour": 7, "value": 33665},
     ]
     data = myE.getLast7Days().getValue()
-    LOGGER.debug("Last7Days Data = %s", data) 
+    LOGGER.debug("Last7Days Data = %s", data)
     assert dataExpected == data
     # assert error == "Error last7Days"
 
