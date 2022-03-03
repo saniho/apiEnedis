@@ -154,8 +154,7 @@ def test_update_last7days(caplog):
     ]
     data = myE.getLast7Days().getValue()
     LOGGER.debug("Last7Days Data = %s", data)
-    assert dataExpected == data
-    # assert error == "Error last7Days"
+    assert dataExpected == data, "Error last7Days"
 
 
 def test_update_last_month():
