@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import logging
 
 import pytest
 import requests_mock
@@ -9,17 +10,22 @@ import requests_mock
 from custom_components.apiEnedis.myClientEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
 
-contractJsonFile = "tests/Json/Contract/contract1.json"
+import os
+JSON_DIR = os.path.dirname(__file__) + "/Json/"
+
+contractJsonFile = "Contract/contract1.json"
+
+LOGGER = logging.getLogger(__name__)
 
 
 def loadJsonFile(filename):
-    with open(filename) as json_file:
+    with open(JSON_DIR + filename) as json_file:
         dataJson = json.load(json_file)
     return dataJson
 
 
 def loadFile(filename):
-    with open(filename) as file:
+    with open(JSON_DIR + filename) as file:
         data = file.read()
     return data
 
@@ -50,24 +56,27 @@ def test_no_contract():
     # contract.updateContract(self, None)
 
 
-FAKE_TIME = datetime.datetime(2020, 12, 25, 17, 5, 55)
-
-
-@pytest.fixture
-def patch_datetime_now(monkeypatch):
+@pytest.fixture(params=[datetime.datetime(2020, 12, 25, 17, 5, 55)])
+def patch_datetime_now(request, monkeypatch):
     class mydatetime(datetime.datetime):
         @classmethod
         def now(cls):
-            return FAKE_TIME
+            return request.param
+
+    class mydate(datetime.date):
+        @classmethod
+        def today(cls):
+            return request.param.date()
 
     monkeypatch.setattr(datetime, "datetime", mydatetime)
+    monkeypatch.setattr(datetime, "date", mydate)
 
 
 def test_init_contract(patch_datetime_now):
-    dataJson = loadFile(contractJsonFile)
+    dataFile = loadFile(contractJsonFile)
 
     with requests_mock.Mocker() as m:
-        m.post("https://enedisgateway.tech/api", text=dataJson)
+        m.post("https://enedisgateway.tech/api", text=dataFile)
         myE = myClientEnedis("myToken", "myPDL")
         myE.getData()
         assert myE.contract.getsubscribed_power() == "9 kVA", "bad subscribed"
@@ -123,13 +132,16 @@ def test_heures_creuses():
     assert myE.contract.getHeuresCreuses() == dataCompare, "erreur format HC/HP 2"
 
 
-def test_update_last7days():
+@pytest.mark.usefixtures('patch_datetime_now')
+@pytest.mark.parametrize('patch_datetime_now', [(datetime.datetime(2020,12,9,11,22,00))], indirect=True)
+def test_update_last7days(caplog):
+    caplog.set_level(logging.DEBUG)  # Aide au debogue
     myE = myClientEnedis("myToken", "myPDL")
     dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
-    dataJson = loadJsonFile("tests/Json/Week/week1.json")
+    dataJson = loadJsonFile("Week/week1.json")
     myE.updateLast7Days(dataJson)
-    dataCompare = [
+    dataExpected = [
         {"date": "2020-12-09", "niemejour": 1, "value": 42951},
         {"date": "2020-12-08", "niemejour": 2, "value": 35992},
         {"date": "2020-12-07", "niemejour": 3, "value": 46092},
@@ -138,14 +150,17 @@ def test_update_last7days():
         {"date": "2020-12-04", "niemejour": 6, "value": 38633},
         {"date": "2020-12-03", "niemejour": 7, "value": 33665},
     ]
-    # assert myE.getLast7Days().getValue() == dataCompare, "Error last7Days"
+    data = myE.getLast7Days().getValue()
+    LOGGER.debug("Last7Days Data = %s", data) 
+    assert dataExpected == data
+    # assert error == "Error last7Days"
 
 
 def test_update_last_month():
     myE = myClientEnedis("myToken", "myPDL")
     dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
-    dataJson = loadJsonFile("tests/Json/Month/month1.json")
+    dataJson = loadJsonFile("Month/month1.json")
     myE.updateLastMonth(dataJson, withControl=False)
     assert myE.getLastMonth().getValue() == 876699, "Error LastMonthData"
 
@@ -160,10 +175,10 @@ def call_update_current_month(fileName):
 
 
 def test_update_current_month():
-    myE = call_update_current_month("tests/Json/Month/currentMonth1.json")
+    myE = call_update_current_month("Month/currentMonth1.json")
     assert myE.getCurrentMonth().getValue() == 242475, "Erreur currentMonth"
     # try:
-    #    myE = call_update_current_month("tests/Json/Month/currentMonthError1.json")
+    #    myE = call_update_current_month("Month/currentMonthError1.json")
     # except Exception as e:
     #    assert e.args[2] == "UNKERROR_001", "Erreur UNKERROR_001"
 
@@ -188,12 +203,12 @@ def call_update_yesterdayHCHP(filename):
 
 
 def test_update_yesterday():
-    myE = call_update_yesterday("tests/Json/Yesterday/yesterday1.json")
+    myE = call_update_yesterday("Yesterday/yesterday1.json")
     assert myE.getYesterday().getValue() == 42951, "Erreur yesterday"
 
 
 def test_update_yesterdayHCHP():
-    myE = call_update_yesterdayHCHP("tests/Json/Yesterday/yesterdayDetail1.json")
+    myE = call_update_yesterdayHCHP("Yesterday/yesterdayDetail1.json")
     mSS = manageSensorState()
     mSS.init(myE)
     laDate = datetime.date.today() - datetime.timedelta(60)
@@ -204,7 +219,7 @@ def test_update_yesterday_error():
     myE = myClientEnedis("myToken", "myPDL")
     dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
-    dataJson = loadJsonFile("tests/Json/Error/error1.json")
+    dataJson = loadJsonFile("Error/error1.json")
     try:
         myE.updateYesterday(dataJson, withControl=False)
     except Exception as e:
@@ -213,16 +228,16 @@ def test_update_yesterday_error():
 
 # def test_updateProductionYesterday():
 #    myE = myClientEnedis("myToken", "myPDL")
-#    dataJson = loadJsonFile("tests/Json/Production/error1.json")
+#    dataJson = loadJsonFile("Production/error1.json")
 #    myE.updateProductionYesterday( dataJson )
 #    assert myE.getProductionYesterday() == 0, "Erreur production Value"
 
 
 def test_updateProductionYesterday2():
     myE = myClientEnedis("myToken", "myPDL")
-    dataJsonContrat = loadJsonFile("tests/Json/Contract/contract1.json")
+    dataJsonContrat = loadJsonFile(contractJsonFile)
     myE.updateContract(dataJsonContrat)
-    dataJson = loadJsonFile("tests/Json/Production/error2.json")
+    dataJson = loadJsonFile("Production/error2.json")
     myE.updateYesterdayProduction(dataJson, withControl=False)
     assert myE.getProductionYesterday().getValue() == 0, "Erreur production Value"
 
@@ -251,7 +266,7 @@ def test_get_init():
 
 def test_error_contract():
     myE = myClientEnedis("myToken", "myPDL")
-    dataJson = loadJsonFile("tests/Json/Error/error.json")
+    dataJson = loadJsonFile("Error/error.json")
     try:
         myE.updateContract(dataJson)
     except:
