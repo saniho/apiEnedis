@@ -139,10 +139,26 @@ def test_heures_creuses():
 def test_update_last7days(caplog):
     caplog.set_level(logging.DEBUG)  # Aide au debogue
     myE = myClientEnedis("myToken", "myPDL")
+
     dataJsonContrat = loadJsonFile(contractJsonFile)
+    LOGGER.debug("Chargement CONTRAT")
     myE.updateContract(dataJsonContrat)
-    dataJson = loadJsonFile("Week/week1.json")
-    myE.updateLast7Days(dataJson)
+
+    with requests_mock.Mocker() as m:
+        dataJson = loadJsonFile("Week/week1.json")
+        LOGGER.debug("Chargement WEEK1")
+
+        dataFile = loadFile("Week/week1.json")
+        m.post("https://enedisgateway.tech/api", text=dataFile)
+
+        # La igne suitante déclenche un appel HTTP, d'ou le mock
+        myE.updateLast7Days(dataJson)
+
+    data = (
+        myE.getLast7DaysDetails().getDaysHP(),
+        myE.getLast7DaysDetails().getDaysHC(),
+    )
+
     dataExpected = [
         {"date": "2020-12-09", "niemejour": 1, "value": 42951},
         {"date": "2020-12-08", "niemejour": 2, "value": 35992},
@@ -152,7 +168,6 @@ def test_update_last7days(caplog):
         {"date": "2020-12-04", "niemejour": 6, "value": 38633},
         {"date": "2020-12-03", "niemejour": 7, "value": 33665},
     ]
-    data = myE.getLast7Days().getValue()
     LOGGER.debug("Last7Days Data = %s", data)
     assert dataExpected == data, "Error last7Days"
 
