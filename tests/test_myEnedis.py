@@ -82,11 +82,11 @@ def test_init_contract(patch_datetime_now):
         assert myE.contract.getsubscribed_power() == "9 kVA", "bad subscribed"
         assert myE.contract.getoffpeak_hours() == "HC (23H30-7H30)", "bad hour"
         assert (
-            myE.contract.getLastActivationDate() == "2007-07-06"
+                myE.contract.getLastActivationDate() == "2007-07-06"
         ), "bad date activation"
         dataCompare = [["23:30", "23:59"], ["00:00", "07:30"]]
         assert (
-            myE.contract.getcleanoffpeak_hours() == dataCompare
+                myE.contract.getcleanoffpeak_hours() == dataCompare
         ), "erreur format HC/HP"
 
 
@@ -99,6 +99,7 @@ def test_update_contract():
     assert myE.contract.getLastActivationDate() == "2007-07-06", "bad date activation"
     dataCompare = [["23:30", "23:59"], ["00:00", "07:30"]]
     assert myE.contract.getcleanoffpeak_hours() == dataCompare, "erreur format HC/HP"
+
 
 def test_heures_creuses():
     myE = myClientEnedis("myToken", "myPDL")
@@ -138,8 +139,9 @@ def test_heures_creuses():
 def test_update_last7days(caplog):
     caplog.set_level(logging.DEBUG)  # Aide au debogue
     myE = myClientEnedis("myToken", "myPDL",
-        heuresCreuses=eval("[['00:00','05:00'], ['22:00', '24:00']]"),
-        heuresCreusesON = True)
+                         heuresCreuses=
+                         eval("[['00:00','05:00'], ['22:00', '24:00']]"),
+                         heuresCreusesON=True)
 
     dataJsonContrat = loadJsonFile(contractJsonFile)
     LOGGER.debug("Chargement CONTRAT")
@@ -153,7 +155,7 @@ def test_update_last7days(caplog):
         m.post("https://enedisgateway.tech/api", text=dataFile)
 
         # La igne suitante déclenche un appel HTTP, d'ou le mock
-        myE.updateLast7DaysDetails(data = dataJson, withControl= False)
+        myE.updateLast7DaysDetails(data=dataJson, withControl=False)
     data = (
         myE.getLast7DaysDetails().getDaysHP(),
         myE.getLast7DaysDetails().getDaysHC(),
@@ -162,15 +164,15 @@ def test_update_last7days(caplog):
 
     dataExpected = (
         {'2022-03-01': 13199.0,
-        '2022-03-02': 14112.0,
-        '2022-03-05': 21588.0,
-        '2022-03-06': 23683.0,
-        '2022-03-07': 34041.0},
+         '2022-03-02': 14112.0,
+         '2022-03-05': 21588.0,
+         '2022-03-06': 23683.0,
+         '2022-03-07': 34041.0},
         {'2022-03-01': 14793.0,
-        '2022-03-02': 8245.0,
-        '2022-03-05': 10011.0,
-        '2022-03-06': 8533.0,
-        '2022-03-07': 8852.0},
+         '2022-03-02': 8245.0,
+         '2022-03-05': 10011.0,
+         '2022-03-06': 8533.0,
+         '2022-03-07': 8852.0},
     )
     LOGGER.debug("Last7Days Data = %s", data)
     assert dataExpected == data, "Error last7Days"
