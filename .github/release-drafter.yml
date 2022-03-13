@@ -1,0 +1,45 @@
+---
+name-template: '⚡v$RESOLVED_VERSION '
+tag-template: v$RESOLVED_VERSION
+change-template: '- #$NUMBER $TITLE @$AUTHOR'
+sort-direction: ascending
+categories:
+  - title: 🚀 Fonctionnalités & amélioriations
+    labels:
+      - feature
+      - enhancement
+
+  - title: 🐛 Corrections
+    labels:
+      - fix
+      - bugfix
+      - bug
+
+  - title: 🧰 Maintenance
+    label: chore
+
+version-resolver:
+  major:
+    labels:
+      - major
+  minor:
+    labels:
+      - minor
+  patch:
+    labels:
+      - patch
+  default: patch
+template: |
+  ## Evolutions
+
+  $CHANGES
+
+  ## ⭐️ Contributeurs
+  $CONTRIBUTORS
+autolabeler:
+  - label: bug
+    branch:
+      - /fix\/.+/
+  - label: enhancement
+    branch:
+      - /feature\/.+/

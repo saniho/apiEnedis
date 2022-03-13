@@ -45,10 +45,10 @@ def testMulti():
             version=__version__,
             heuresCreusesON=heuresCreusesON,
         )
-        path = getLocalDirectory(PDL_ID, "20220122")
+        path = getLocalDirectory(PDL_ID, "20220308")
         myDataEnedis.setPathArchive(path)
         dataJson = {}
-        dataJson = myDataEnedis.readDataJson()
+        # dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault(dataJsonDefault=dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
@@ -72,7 +72,7 @@ def testMulti():
         )
 
         # SORTIE OUTPUT
-        # writeDataJson( myDataEnedis )
+        writeDataJson(myDataEnedis)
 
         # ***********************************
         # ***********************************
