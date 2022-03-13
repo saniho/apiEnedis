@@ -1,9 +1,18 @@
 """ Constants """
-# attention updater aussi manifest.json
-__VERSION__ = "1.5.0.1"
-__name__ = "myEnedis"
+from __future__ import annotations
 
-from typing import Dict, Union
+import json
+import logging
+import os
+
+LOGGER = logging.getLogger(__name__)
+# version is fetched from manifest
+
+__VERSION__: str
+__name__ = "myEnedis"
+VERSION_TIME: float
+MANIFEST: dict[str, str | list[str]]
+
 
 try:
     pass
@@ -58,7 +67,7 @@ _formatDateY0101 = "%Y-01-01"
 ENTITY_NAME = "name"
 ENTITY_DELAI = "delai"
 
-SENSOR_TYPES: Dict[str, Dict[str, Union[int, str]]] = {
+SENSOR_TYPES: dict[str, dict[str, int | str]] = {
     "principal": {
         ENTITY_NAME: "principal",
         ENTITY_DELAI: 60,
@@ -92,3 +101,48 @@ SENSOR_TYPES: Dict[str, Dict[str, Union[int, str]]] = {
         ENTITY_DELAI: 60,
     },
 }
+
+
+def getVersion() -> str:
+    # Set name with regards to local path
+    global VERSION_TIME
+    global __VERSION__
+    global MANIFEST
+
+    fname = os.path.dirname(__file__) + "/manifest.json"
+
+    ftime: float = 0
+    try:
+        VERSION_TIME
+    except NameError:
+        VERSION_TIME = 0
+        __VERSION__ = "Unknown"
+        MANIFEST = {}
+
+    try:
+        ftime = os.path.getmtime(fname)
+        if ftime != ftime:
+            __VERSION__ = "Unknown"
+            MANIFEST = {}
+    except Exception:
+        MANIFEST = {}
+
+    if (__VERSION__ is None and ftime != 0) or (ftime != VERSION_TIME):
+        # No version, or file change -> get version again
+        LOGGER.debug(f"Read version from {fname} {ftime}<>{VERSION_TIME}")
+
+        with open(fname) as f:
+            VERSION_TIME = ftime
+            MANIFEST = json.load(f)
+
+        if MANIFEST is not None:
+            if "version" in MANIFEST.keys():
+                v = MANIFEST["version"]
+                __VERSION__ = v if isinstance(v, str) else "Invalid manifest"
+                if __VERSION__ == "0.0.0":
+                    __VERSION__ = "dev"
+
+    return __VERSION__
+
+
+getVersion()
