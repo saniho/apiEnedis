@@ -138,36 +138,41 @@ def test_heures_creuses():
 )
 def test_update_last7days(caplog):
     caplog.set_level(logging.DEBUG)  # Aide au debogue
-    myE = myClientEnedis("myToken", "myPDL")
+    myE = myClientEnedis("myToken", "myPDL",
+                         heuresCreuses=eval("[['00:00','05:00'], ['22:00', '24:00']]"),
+                         heuresCreusesON=True)
 
     dataJsonContrat = loadJsonFile(contractJsonFile)
     LOGGER.debug("Chargement CONTRAT")
     myE.updateContract(dataJsonContrat)
 
     with requests_mock.Mocker() as m:
-        dataJson = loadJsonFile("Week/week1.json")
+        dataJson = loadJsonFile("Week/week2.json")
         LOGGER.debug("Chargement WEEK1")
 
         dataFile = loadFile("Week/week1.json")
         m.post("https://enedisgateway.tech/api", text=dataFile)
 
         # La igne suitante déclenche un appel HTTP, d'ou le mock
-        myE.updateLast7Days(dataJson)
-
+        myE.updateLast7DaysDetails(data=dataJson, withControl=False)
     data = (
         myE.getLast7DaysDetails().getDaysHP(),
         myE.getLast7DaysDetails().getDaysHC(),
     )
+    print(data)
 
-    dataExpected = [
-        {"date": "2020-12-09", "niemejour": 1, "value": 42951},
-        {"date": "2020-12-08", "niemejour": 2, "value": 35992},
-        {"date": "2020-12-07", "niemejour": 3, "value": 46092},
-        {"date": "2020-12-06", "niemejour": 4, "value": 37753},
-        {"date": "2020-12-05", "niemejour": 5, "value": 38623},
-        {"date": "2020-12-04", "niemejour": 6, "value": 38633},
-        {"date": "2020-12-03", "niemejour": 7, "value": 33665},
-    ]
+    dataExpected = (
+        {'2022-03-01': 13199.0,
+         '2022-03-02': 14112.0,
+         '2022-03-05': 21588.0,
+         '2022-03-06': 23683.0,
+         '2022-03-07': 34041.0},
+        {'2022-03-01': 14793.0,
+         '2022-03-02': 8245.0,
+         '2022-03-05': 10011.0,
+         '2022-03-06': 8533.0,
+         '2022-03-07': 8852.0},
+    )
     LOGGER.debug("Last7Days Data = %s", data)
     assert dataExpected == data, "Error last7Days"
 

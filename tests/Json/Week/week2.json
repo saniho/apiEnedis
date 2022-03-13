@@ -1,0 +1,2895 @@
+{
+  "meter_reading": {
+    "usage_point_id": "xxxx",
+    "start": "2022-03-01",
+    "end": "2022-03-08",
+    "quality": "BRUT",
+    "interval_reading": [
+      {
+        "value": "2896",
+        "date": "2022-03-01 00:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3056",
+        "date": "2022-03-01 00:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2996",
+        "date": "2022-03-01 00:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3076",
+        "date": "2022-03-01 01:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3504",
+        "date": "2022-03-01 01:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2884",
+        "date": "2022-03-01 01:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3172",
+        "date": "2022-03-01 01:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3176",
+        "date": "2022-03-01 02:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3012",
+        "date": "2022-03-01 02:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3048",
+        "date": "2022-03-01 02:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2908",
+        "date": "2022-03-01 02:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2952",
+        "date": "2022-03-01 03:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2920",
+        "date": "2022-03-01 03:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2824",
+        "date": "2022-03-01 03:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2908",
+        "date": "2022-03-01 03:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2944",
+        "date": "2022-03-01 04:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "420",
+        "date": "2022-03-01 04:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "284",
+        "date": "2022-03-01 04:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "288",
+        "date": "2022-03-01 04:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "308",
+        "date": "2022-03-01 05:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "372",
+        "date": "2022-03-01 05:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1340",
+        "date": "2022-03-01 05:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1692",
+        "date": "2022-03-01 05:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "300",
+        "date": "2022-03-01 06:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1108",
+        "date": "2022-03-01 06:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1120",
+        "date": "2022-03-01 06:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "980",
+        "date": "2022-03-01 06:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1252",
+        "date": "2022-03-01 07:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1672",
+        "date": "2022-03-01 07:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4212",
+        "date": "2022-03-01 07:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2560",
+        "date": "2022-03-01 07:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1908",
+        "date": "2022-03-01 08:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "832",
+        "date": "2022-03-01 08:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "448",
+        "date": "2022-03-01 08:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "444",
+        "date": "2022-03-01 08:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "404",
+        "date": "2022-03-01 09:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "384",
+        "date": "2022-03-01 09:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "404",
+        "date": "2022-03-01 09:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "424",
+        "date": "2022-03-01 09:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "396",
+        "date": "2022-03-01 10:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "368",
+        "date": "2022-03-01 10:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "468",
+        "date": "2022-03-01 10:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "752",
+        "date": "2022-03-01 10:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "480",
+        "date": "2022-03-01 11:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "368",
+        "date": "2022-03-01 11:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "364",
+        "date": "2022-03-01 11:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "392",
+        "date": "2022-03-01 11:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "332",
+        "date": "2022-03-01 12:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "316",
+        "date": "2022-03-01 12:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "284",
+        "date": "2022-03-01 12:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "252",
+        "date": "2022-03-01 12:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "216",
+        "date": "2022-03-01 13:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "268",
+        "date": "2022-03-01 13:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "244",
+        "date": "2022-03-01 13:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "240",
+        "date": "2022-03-01 13:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "216",
+        "date": "2022-03-01 14:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "268",
+        "date": "2022-03-01 14:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "224",
+        "date": "2022-03-01 14:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "220",
+        "date": "2022-03-01 14:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "316",
+        "date": "2022-03-01 15:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "288",
+        "date": "2022-03-01 15:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "284",
+        "date": "2022-03-01 15:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "200",
+        "date": "2022-03-01 15:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "280",
+        "date": "2022-03-01 16:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "196",
+        "date": "2022-03-01 16:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "224",
+        "date": "2022-03-01 16:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "208",
+        "date": "2022-03-01 16:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "272",
+        "date": "2022-03-01 17:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "612",
+        "date": "2022-03-01 17:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "444",
+        "date": "2022-03-01 17:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "548",
+        "date": "2022-03-01 17:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "480",
+        "date": "2022-03-01 18:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1564",
+        "date": "2022-03-01 18:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1484",
+        "date": "2022-03-01 18:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1324",
+        "date": "2022-03-01 18:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1252",
+        "date": "2022-03-01 19:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1784",
+        "date": "2022-03-01 19:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1188",
+        "date": "2022-03-01 19:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1648",
+        "date": "2022-03-01 19:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1120",
+        "date": "2022-03-01 20:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1200",
+        "date": "2022-03-01 20:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1064",
+        "date": "2022-03-01 20:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1132",
+        "date": "2022-03-01 20:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1412",
+        "date": "2022-03-01 21:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1136",
+        "date": "2022-03-01 21:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1144",
+        "date": "2022-03-01 21:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1160",
+        "date": "2022-03-01 21:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1220",
+        "date": "2022-03-01 22:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "772",
+        "date": "2022-03-01 22:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "504",
+        "date": "2022-03-01 22:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "452",
+        "date": "2022-03-01 22:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "356",
+        "date": "2022-03-01 23:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "312",
+        "date": "2022-03-01 23:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "256",
+        "date": "2022-03-01 23:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3060",
+        "date": "2022-03-01 23:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2972",
+        "date": "2022-03-02 00:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2984",
+        "date": "2022-03-02 00:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3096",
+        "date": "2022-03-02 00:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2988",
+        "date": "2022-03-02 00:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "392",
+        "date": "2022-03-02 01:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "388",
+        "date": "2022-03-02 01:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "320",
+        "date": "2022-03-02 01:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "300",
+        "date": "2022-03-02 01:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3732",
+        "date": "2022-03-02 02:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "684",
+        "date": "2022-03-02 02:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "552",
+        "date": "2022-03-02 02:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "460",
+        "date": "2022-03-02 02:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "460",
+        "date": "2022-03-02 03:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1136",
+        "date": "2022-03-02 03:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3764",
+        "date": "2022-03-02 03:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "632",
+        "date": "2022-03-02 03:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "444",
+        "date": "2022-03-02 04:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "476",
+        "date": "2022-03-02 04:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "468",
+        "date": "2022-03-02 04:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "444",
+        "date": "2022-03-02 04:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1756",
+        "date": "2022-03-02 05:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "392",
+        "date": "2022-03-02 05:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "400",
+        "date": "2022-03-02 05:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "396",
+        "date": "2022-03-02 05:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "364",
+        "date": "2022-03-02 06:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1084",
+        "date": "2022-03-02 06:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1096",
+        "date": "2022-03-02 06:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2240",
+        "date": "2022-03-02 06:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1168",
+        "date": "2022-03-02 07:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1364",
+        "date": "2022-03-02 07:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1888",
+        "date": "2022-03-02 07:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1360",
+        "date": "2022-03-02 07:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1440",
+        "date": "2022-03-02 08:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "644",
+        "date": "2022-03-02 08:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "396",
+        "date": "2022-03-02 08:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "348",
+        "date": "2022-03-02 08:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "428",
+        "date": "2022-03-02 09:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "988",
+        "date": "2022-03-02 09:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "428",
+        "date": "2022-03-02 09:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1240",
+        "date": "2022-03-02 09:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1056",
+        "date": "2022-03-02 10:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "776",
+        "date": "2022-03-02 10:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "384",
+        "date": "2022-03-02 10:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "356",
+        "date": "2022-03-02 10:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1004",
+        "date": "2022-03-02 11:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1236",
+        "date": "2022-03-02 11:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "260",
+        "date": "2022-03-02 11:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "288",
+        "date": "2022-03-02 11:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "204",
+        "date": "2022-03-02 12:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "244",
+        "date": "2022-03-02 12:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "248",
+        "date": "2022-03-02 12:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "316",
+        "date": "2022-03-02 12:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1376",
+        "date": "2022-03-02 13:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "432",
+        "date": "2022-03-02 13:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "388",
+        "date": "2022-03-02 13:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "368",
+        "date": "2022-03-02 13:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "324",
+        "date": "2022-03-02 14:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "268",
+        "date": "2022-03-02 14:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "188",
+        "date": "2022-03-02 14:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "188",
+        "date": "2022-03-02 14:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "228",
+        "date": "2022-03-02 15:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "232",
+        "date": "2022-03-02 15:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "212",
+        "date": "2022-03-02 15:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "176",
+        "date": "2022-03-02 15:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "232",
+        "date": "2022-03-02 16:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "240",
+        "date": "2022-03-02 16:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "280",
+        "date": "2022-03-02 16:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "276",
+        "date": "2022-03-02 16:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "392",
+        "date": "2022-03-02 17:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1028",
+        "date": "2022-03-02 17:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "788",
+        "date": "2022-03-02 17:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "776",
+        "date": "2022-03-02 17:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "764",
+        "date": "2022-03-02 18:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1640",
+        "date": "2022-03-02 18:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1732",
+        "date": "2022-03-02 18:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1484",
+        "date": "2022-03-02 18:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1752",
+        "date": "2022-03-02 19:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1052",
+        "date": "2022-03-02 19:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2140",
+        "date": "2022-03-02 19:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1684",
+        "date": "2022-03-02 19:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1000",
+        "date": "2022-03-02 20:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1276",
+        "date": "2022-03-02 20:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1336",
+        "date": "2022-03-02 20:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1316",
+        "date": "2022-03-02 20:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1376",
+        "date": "2022-03-02 21:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1032",
+        "date": "2022-03-02 21:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1368",
+        "date": "2022-03-02 21:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1312",
+        "date": "2022-03-02 21:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1160",
+        "date": "2022-03-02 22:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "644",
+        "date": "2022-03-02 22:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "372",
+        "date": "2022-03-02 22:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "396",
+        "date": "2022-03-02 22:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "260",
+        "date": "2022-03-02 23:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "372",
+        "date": "2022-03-02 23:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "216",
+        "date": "2022-03-02 23:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2912",
+        "date": "2022-03-02 23:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2928",
+        "date": "2022-03-03 00:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3088",
+        "date": "2022-03-05 00:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3136",
+        "date": "2022-03-05 00:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3260",
+        "date": "2022-03-05 00:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1604",
+        "date": "2022-03-05 01:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "352",
+        "date": "2022-03-05 01:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "360",
+        "date": "2022-03-05 01:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "972",
+        "date": "2022-03-05 01:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1668",
+        "date": "2022-03-05 02:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1956",
+        "date": "2022-03-05 02:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "464",
+        "date": "2022-03-05 02:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "468",
+        "date": "2022-03-05 02:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "452",
+        "date": "2022-03-05 03:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2104",
+        "date": "2022-03-05 03:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2056",
+        "date": "2022-03-05 03:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1436",
+        "date": "2022-03-05 03:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "520",
+        "date": "2022-03-05 04:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "452",
+        "date": "2022-03-05 04:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "428",
+        "date": "2022-03-05 04:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "396",
+        "date": "2022-03-05 04:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "476",
+        "date": "2022-03-05 05:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1648",
+        "date": "2022-03-05 05:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "448",
+        "date": "2022-03-05 05:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "476",
+        "date": "2022-03-05 05:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "508",
+        "date": "2022-03-05 06:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1812",
+        "date": "2022-03-05 06:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1892",
+        "date": "2022-03-05 06:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1604",
+        "date": "2022-03-05 06:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2948",
+        "date": "2022-03-05 07:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1788",
+        "date": "2022-03-05 07:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1832",
+        "date": "2022-03-05 07:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1816",
+        "date": "2022-03-05 07:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1812",
+        "date": "2022-03-05 08:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "808",
+        "date": "2022-03-05 08:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "588",
+        "date": "2022-03-05 08:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "520",
+        "date": "2022-03-05 08:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "540",
+        "date": "2022-03-05 09:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "508",
+        "date": "2022-03-05 09:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "588",
+        "date": "2022-03-05 09:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "508",
+        "date": "2022-03-05 09:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "516",
+        "date": "2022-03-05 10:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "496",
+        "date": "2022-03-05 10:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "644",
+        "date": "2022-03-05 10:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "576",
+        "date": "2022-03-05 10:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "592",
+        "date": "2022-03-05 11:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "440",
+        "date": "2022-03-05 11:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "520",
+        "date": "2022-03-05 11:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "456",
+        "date": "2022-03-05 11:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "480",
+        "date": "2022-03-05 12:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "484",
+        "date": "2022-03-05 12:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "468",
+        "date": "2022-03-05 12:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "444",
+        "date": "2022-03-05 12:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "452",
+        "date": "2022-03-05 13:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "480",
+        "date": "2022-03-05 13:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "440",
+        "date": "2022-03-05 13:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "452",
+        "date": "2022-03-05 13:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "500",
+        "date": "2022-03-05 14:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "548",
+        "date": "2022-03-05 14:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "484",
+        "date": "2022-03-05 14:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "448",
+        "date": "2022-03-05 14:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "464",
+        "date": "2022-03-05 15:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "496",
+        "date": "2022-03-05 15:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "440",
+        "date": "2022-03-05 15:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "464",
+        "date": "2022-03-05 15:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "484",
+        "date": "2022-03-05 16:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "488",
+        "date": "2022-03-05 16:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "436",
+        "date": "2022-03-05 16:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "488",
+        "date": "2022-03-05 16:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "496",
+        "date": "2022-03-05 17:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "524",
+        "date": "2022-03-05 17:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "508",
+        "date": "2022-03-05 17:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "584",
+        "date": "2022-03-05 17:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "548",
+        "date": "2022-03-05 18:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2008",
+        "date": "2022-03-05 18:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2264",
+        "date": "2022-03-05 18:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2128",
+        "date": "2022-03-05 18:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2016",
+        "date": "2022-03-05 19:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2112",
+        "date": "2022-03-05 19:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2128",
+        "date": "2022-03-05 19:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2296",
+        "date": "2022-03-05 19:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2240",
+        "date": "2022-03-05 20:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3660",
+        "date": "2022-03-05 20:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3988",
+        "date": "2022-03-05 20:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4348",
+        "date": "2022-03-05 20:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4380",
+        "date": "2022-03-05 21:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4460",
+        "date": "2022-03-05 21:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4516",
+        "date": "2022-03-05 21:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4348",
+        "date": "2022-03-05 21:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4320",
+        "date": "2022-03-05 22:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1580",
+        "date": "2022-03-05 22:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "568",
+        "date": "2022-03-05 22:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "536",
+        "date": "2022-03-05 22:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "504",
+        "date": "2022-03-05 23:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "536",
+        "date": "2022-03-05 23:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "556",
+        "date": "2022-03-05 23:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3140",
+        "date": "2022-03-05 23:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3132",
+        "date": "2022-03-06 00:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1260",
+        "date": "2022-03-06 00:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "600",
+        "date": "2022-03-06 00:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "588",
+        "date": "2022-03-06 00:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "524",
+        "date": "2022-03-06 01:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "564",
+        "date": "2022-03-06 01:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "964",
+        "date": "2022-03-06 01:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2236",
+        "date": "2022-03-06 01:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "552",
+        "date": "2022-03-06 02:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "552",
+        "date": "2022-03-06 02:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "540",
+        "date": "2022-03-06 02:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "516",
+        "date": "2022-03-06 02:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "584",
+        "date": "2022-03-06 03:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "524",
+        "date": "2022-03-06 03:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "576",
+        "date": "2022-03-06 03:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1576",
+        "date": "2022-03-06 03:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1300",
+        "date": "2022-03-06 04:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "556",
+        "date": "2022-03-06 04:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "564",
+        "date": "2022-03-06 04:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "528",
+        "date": "2022-03-06 04:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "600",
+        "date": "2022-03-06 05:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "524",
+        "date": "2022-03-06 05:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "580",
+        "date": "2022-03-06 05:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "604",
+        "date": "2022-03-06 05:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "608",
+        "date": "2022-03-06 06:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3600",
+        "date": "2022-03-06 06:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2568",
+        "date": "2022-03-06 06:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2524",
+        "date": "2022-03-06 06:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2496",
+        "date": "2022-03-06 07:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2504",
+        "date": "2022-03-06 07:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2600",
+        "date": "2022-03-06 07:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2548",
+        "date": "2022-03-06 07:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2580",
+        "date": "2022-03-06 08:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1144",
+        "date": "2022-03-06 08:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "744",
+        "date": "2022-03-06 08:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "680",
+        "date": "2022-03-06 08:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "700",
+        "date": "2022-03-06 09:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "656",
+        "date": "2022-03-06 09:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "692",
+        "date": "2022-03-06 09:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "588",
+        "date": "2022-03-06 09:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "612",
+        "date": "2022-03-06 10:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "560",
+        "date": "2022-03-06 10:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "684",
+        "date": "2022-03-06 10:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "612",
+        "date": "2022-03-06 10:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "608",
+        "date": "2022-03-06 11:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "444",
+        "date": "2022-03-06 11:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "492",
+        "date": "2022-03-06 11:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "340",
+        "date": "2022-03-06 11:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "376",
+        "date": "2022-03-06 12:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "328",
+        "date": "2022-03-06 12:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "364",
+        "date": "2022-03-06 12:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "268",
+        "date": "2022-03-06 12:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "320",
+        "date": "2022-03-06 13:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "304",
+        "date": "2022-03-06 13:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "312",
+        "date": "2022-03-06 13:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "256",
+        "date": "2022-03-06 13:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "336",
+        "date": "2022-03-06 14:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "372",
+        "date": "2022-03-06 14:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "352",
+        "date": "2022-03-06 14:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "280",
+        "date": "2022-03-06 14:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "324",
+        "date": "2022-03-06 15:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "288",
+        "date": "2022-03-06 15:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "308",
+        "date": "2022-03-06 15:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "264",
+        "date": "2022-03-06 15:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "352",
+        "date": "2022-03-06 16:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "272",
+        "date": "2022-03-06 16:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "292",
+        "date": "2022-03-06 16:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "300",
+        "date": "2022-03-06 16:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "328",
+        "date": "2022-03-06 17:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "312",
+        "date": "2022-03-06 17:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "424",
+        "date": "2022-03-06 17:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "576",
+        "date": "2022-03-06 17:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "488",
+        "date": "2022-03-06 18:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2088",
+        "date": "2022-03-06 18:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2324",
+        "date": "2022-03-06 18:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2396",
+        "date": "2022-03-06 18:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2224",
+        "date": "2022-03-06 19:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2364",
+        "date": "2022-03-06 19:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2492",
+        "date": "2022-03-06 19:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2560",
+        "date": "2022-03-06 19:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2560",
+        "date": "2022-03-06 20:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4024",
+        "date": "2022-03-06 20:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4528",
+        "date": "2022-03-06 20:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4868",
+        "date": "2022-03-06 20:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "5000",
+        "date": "2022-03-06 21:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "5048",
+        "date": "2022-03-06 21:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4956",
+        "date": "2022-03-06 21:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "5012",
+        "date": "2022-03-06 21:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "5032",
+        "date": "2022-03-06 22:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2076",
+        "date": "2022-03-06 22:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "960",
+        "date": "2022-03-06 22:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "992",
+        "date": "2022-03-06 22:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1036",
+        "date": "2022-03-06 23:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "980",
+        "date": "2022-03-06 23:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "872",
+        "date": "2022-03-06 23:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3528",
+        "date": "2022-03-06 23:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3552",
+        "date": "2022-03-07 00:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1556",
+        "date": "2022-03-07 00:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "804",
+        "date": "2022-03-07 00:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "748",
+        "date": "2022-03-07 00:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "732",
+        "date": "2022-03-07 01:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "692",
+        "date": "2022-03-07 01:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "732",
+        "date": "2022-03-07 01:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "848",
+        "date": "2022-03-07 01:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3380",
+        "date": "2022-03-07 02:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2088",
+        "date": "2022-03-07 02:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "852",
+        "date": "2022-03-07 02:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "804",
+        "date": "2022-03-07 02:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "864",
+        "date": "2022-03-07 03:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "852",
+        "date": "2022-03-07 03:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "880",
+        "date": "2022-03-07 03:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "876",
+        "date": "2022-03-07 03:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "920",
+        "date": "2022-03-07 04:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "864",
+        "date": "2022-03-07 04:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1556",
+        "date": "2022-03-07 04:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "852",
+        "date": "2022-03-07 04:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "912",
+        "date": "2022-03-07 05:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "892",
+        "date": "2022-03-07 05:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2188",
+        "date": "2022-03-07 05:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "864",
+        "date": "2022-03-07 05:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "832",
+        "date": "2022-03-07 06:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2232",
+        "date": "2022-03-07 06:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2664",
+        "date": "2022-03-07 06:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2720",
+        "date": "2022-03-07 06:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3068",
+        "date": "2022-03-07 07:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4468",
+        "date": "2022-03-07 07:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "7096",
+        "date": "2022-03-07 07:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "5176",
+        "date": "2022-03-07 07:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "5428",
+        "date": "2022-03-07 08:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3068",
+        "date": "2022-03-07 08:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2140",
+        "date": "2022-03-07 08:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1900",
+        "date": "2022-03-07 08:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1752",
+        "date": "2022-03-07 09:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1680",
+        "date": "2022-03-07 09:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1660",
+        "date": "2022-03-07 09:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1600",
+        "date": "2022-03-07 09:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1580",
+        "date": "2022-03-07 10:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1484",
+        "date": "2022-03-07 10:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1440",
+        "date": "2022-03-07 10:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1244",
+        "date": "2022-03-07 10:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1264",
+        "date": "2022-03-07 11:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1136",
+        "date": "2022-03-07 11:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1076",
+        "date": "2022-03-07 11:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "956",
+        "date": "2022-03-07 11:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "900",
+        "date": "2022-03-07 12:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "904",
+        "date": "2022-03-07 12:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "760",
+        "date": "2022-03-07 12:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "720",
+        "date": "2022-03-07 12:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "956",
+        "date": "2022-03-07 13:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "952",
+        "date": "2022-03-07 13:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1224",
+        "date": "2022-03-07 13:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "836",
+        "date": "2022-03-07 13:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "740",
+        "date": "2022-03-07 14:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "756",
+        "date": "2022-03-07 14:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "648",
+        "date": "2022-03-07 14:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "676",
+        "date": "2022-03-07 14:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "632",
+        "date": "2022-03-07 15:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "664",
+        "date": "2022-03-07 15:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "636",
+        "date": "2022-03-07 15:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "648",
+        "date": "2022-03-07 15:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "580",
+        "date": "2022-03-07 16:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "608",
+        "date": "2022-03-07 16:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "576",
+        "date": "2022-03-07 16:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "576",
+        "date": "2022-03-07 16:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "620",
+        "date": "2022-03-07 17:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1968",
+        "date": "2022-03-07 17:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2052",
+        "date": "2022-03-07 17:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2424",
+        "date": "2022-03-07 17:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2484",
+        "date": "2022-03-07 18:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4072",
+        "date": "2022-03-07 18:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4440",
+        "date": "2022-03-07 18:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4352",
+        "date": "2022-03-07 18:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "4000",
+        "date": "2022-03-07 19:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3544",
+        "date": "2022-03-07 19:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3068",
+        "date": "2022-03-07 19:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2364",
+        "date": "2022-03-07 19:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2780",
+        "date": "2022-03-07 20:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3344",
+        "date": "2022-03-07 20:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3112",
+        "date": "2022-03-07 20:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3216",
+        "date": "2022-03-07 20:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3184",
+        "date": "2022-03-07 21:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2476",
+        "date": "2022-03-07 21:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2616",
+        "date": "2022-03-07 21:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2536",
+        "date": "2022-03-07 21:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "2424",
+        "date": "2022-03-07 22:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "1372",
+        "date": "2022-03-07 22:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "788",
+        "date": "2022-03-07 22:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "840",
+        "date": "2022-03-07 22:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "796",
+        "date": "2022-03-07 23:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "820",
+        "date": "2022-03-07 23:15:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "676",
+        "date": "2022-03-07 23:30:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3364",
+        "date": "2022-03-07 23:45:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      },
+      {
+        "value": "3428",
+        "date": "2022-03-08 00:00:00",
+        "interval_length": "PT15M",
+        "measure_type": "B"
+      }
+    ],
+    "reading_type": {
+      "unit": "W",
+      "measurement_kind": "power",
+      "aggregate": "average"
+    }
+  }
+}
