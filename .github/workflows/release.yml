@@ -12,28 +12,32 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - uses: pocket-apps/action-update-version@v1
         with:
-          files: custom_components/apiEnedis/manifest.json, custom_components/apiEnedis/const.py
-          version-regexp: \d+\.\d+\.\d+\.\d+
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          # Use head ref to be able to push
+          ref: ${{ github.head_ref }}
 
-      # Replaced with above step
-      # - name: Get version
-      #  id: version
-      #  uses: home-assistant/actions/helpers/version@master
-      # - name: Set version number
-      #  run: >-
-      #    python3
-      #    ${{ github.workspace }}/.github/scripts/update_hacs_manifest.py
-      #    --version ${{ steps.version.outputs.version }}
-      # - uses: stefanzweifel/git-auto-commit-action@v4
+      # Only good for yaml and json:
+      # - uses: pocket-apps/action-update-version@v1
       #  with:
-      #   commit_message: \[Bot\] Release - version update ${{ steps.version.outputs.version
-      #     }}
-      #   commit_user_name: release
-      #   commit_user_email: release@nill
-      #   commit_author: release bot <release>
+      #    files: custom_components/apiEnedis/manifest.json, custom_components/apiEnedis/const.py
+      #    version-regexp: \d+\.\d+\.\d+\.\d+
+      #    repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get version
+        id: version
+        uses: home-assistant/actions/helpers/version@master
+      - name: Set version number
+        run: >-
+          python3
+          ${{ github.workspace }}/.github/scripts/update_hacs_manifest.py
+          --version ${{ steps.version.outputs.version }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: \[Bot\] Release - version update ${{ steps.version.outputs.version
+            }}
+          commit_user_name: release
+          commit_user_email: release@nill
+          commit_author: release bot <release>
 
       - name: Create zip
         run: |
