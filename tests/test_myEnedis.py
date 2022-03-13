@@ -30,6 +30,13 @@ def loadFile(filename):
     return data
 
 
+def test_version():
+    from custom_components.apiEnedis.const import __VERSION__
+
+    manifest = loadJsonFile("../../custom_components/apiEnedis/manifest.json")
+    assert __VERSION__ == manifest["version"]
+
+
 def test_no_contract():
     myE = myClientEnedis("myToken", "myPDL")
     contract = myE.contract
@@ -138,9 +145,12 @@ def test_heures_creuses():
 )
 def test_update_last7days(caplog):
     caplog.set_level(logging.DEBUG)  # Aide au debogue
-    myE = myClientEnedis("myToken", "myPDL",
-                         heuresCreuses=eval("[['00:00','05:00'], ['22:00', '24:00']]"),
-                         heuresCreusesON=True)
+    myE = myClientEnedis(
+        "myToken",
+        "myPDL",
+        heuresCreuses=eval("[['00:00','05:00'], ['22:00', '24:00']]"),
+        heuresCreusesON=True,
+    )
 
     dataJsonContrat = loadJsonFile(contractJsonFile)
     LOGGER.debug("Chargement CONTRAT")
@@ -162,16 +172,20 @@ def test_update_last7days(caplog):
     print(data)
 
     dataExpected = (
-        {'2022-03-01': 13199.0,
-         '2022-03-02': 14112.0,
-         '2022-03-05': 21588.0,
-         '2022-03-06': 23683.0,
-         '2022-03-07': 34041.0},
-        {'2022-03-01': 14793.0,
-         '2022-03-02': 8245.0,
-         '2022-03-05': 10011.0,
-         '2022-03-06': 8533.0,
-         '2022-03-07': 8852.0},
+        {
+            "2022-03-01": 13199.0,
+            "2022-03-02": 14112.0,
+            "2022-03-05": 21588.0,
+            "2022-03-06": 23683.0,
+            "2022-03-07": 34041.0,
+        },
+        {
+            "2022-03-01": 14793.0,
+            "2022-03-02": 8245.0,
+            "2022-03-05": 10011.0,
+            "2022-03-06": 8533.0,
+            "2022-03-07": 8852.0,
+        },
     )
     LOGGER.debug("Last7Days Data = %s", data)
     assert dataExpected == data, "Error last7Days"
