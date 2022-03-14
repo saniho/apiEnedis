@@ -20,7 +20,7 @@ jobs:
       - uses: pocket-apps/action-update-version@v1
         with:
           files: custom_components/apiEnedis/manifest.json
-          version-regexp: \d+\.\d+\.\d+\.\d+
+          version-regexp: \d+\.\d+\.\d+(\.\d+)?
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Get version
