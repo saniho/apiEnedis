@@ -61,6 +61,8 @@ def test_version():
     assert status["versionUpdateAvailable"] is True
 
     mSS.init(myE, version="v99.9.9")
+    status, _ = mSS.getStatus()
+
     # 99.9.9 is futurist current version, so no update is available
     assert "v99.9.9" == status["version"]
     assert status["versionUpdateAvailable"] is False
