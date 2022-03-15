@@ -515,8 +515,3 @@ class manageSensorState:
         self._LOGGER.info("state :%s" % state)
         self._LOGGER.info("*** FIN SENSOR ***")
         return status, state
-
-
-def logSensorState(status_counts):
-    for x in status_counts.keys():
-        print(f" {x} : {status_counts[x]}")
