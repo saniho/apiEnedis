@@ -36,6 +36,35 @@ def test_version():
     manifest = loadJsonFile("../../custom_components/apiEnedis/manifest.json")
     assert __VERSION__ == manifest["version"]
 
+    import packaging.version
+
+    # Ensure 'v' in version does not interfere
+    assert packaging.version.parse("v1.5.0.3") == packaging.version.parse("1.5.0.3")
+    assert packaging.version.parse("v1.5.0.2") > packaging.version.parse("1.5.0.1")
+    v1 = packaging.version.parse("v1.5.0.2")
+    v2 = packaging.version.parse("v1.5.0.3")
+    v3 = packaging.version.parse("v1.5.1")
+    assert v2 > v1  # 2nd long version is newer
+    assert v3 > v2  # 3rd short version is newer
+
+    myE = call_update_yesterdayHCHP("Yesterday/yesterdayDetail1.json")
+    mSS = manageSensorState()
+    mSS.init(myE, version="v1.4.0.3")
+
+    gitVersion = myE.getGitVersion()
+    assert gitVersion is not None
+
+    status, _ = mSS.getStatus()
+    assert "v1.4.0.3" == status["version"]
+    assert gitVersion == status["versionGit"]
+    # v1.4.0.3 is old version, so update is available
+    assert status["versionUpdateAvailable"] is True
+
+    mSS.init(myE, version="v99.9.9")
+    # 99.9.9 is futurist current version, so no update is available
+    assert "v99.9.9" == status["version"]
+    assert status["versionUpdateAvailable"] is False
+
 
 def test_no_contract():
     myE = myClientEnedis("myToken", "myPDL")
