@@ -13,7 +13,13 @@ except ImportError:
 import logging
 
 log = logging.getLogger(__nameMyEnedis__)
-waitCall = 1  # 1 secondes
+
+# Min and Max Delays for initial call and subsequent calls.
+# The purpose is to make some random distribution between client calls
+# so that clients do not sollicit the gateway at the sime time.
+INITIAL_CALL_DELAY = 1  # Minimum time to wait for first call
+NEXT_MIN_CALL_DELAY = 55  # Minimum Time to wait for second call and next calls
+MAX_CALL_DELAY = 125  # Maximum Time to wait for call
 
 
 class myCall:
@@ -41,18 +47,22 @@ class myCall:
         return self._lastAnswer
 
     def post_and_get_json(self, url, params=None, data=None, headers=None):
-        try_again = True
-        nbEssai = 0
+        import json
+        import random
+        import time
+
+        import requests
+
+        maxTriesToGo: int = 4  # Number of gateway requests that can be made
         dataAnswer = None
-        while try_again:
-            nbEssai += 1
+        minDelay: float = INITIAL_CALL_DELAY
+        while maxTriesToGo > 0:
+            maxTriesToGo -= 1
             try:
-                import time
-
-                time.sleep(waitCall)
-                import json
-
-                import requests
+                # Wait some random time so that clients are not making requests
+                # in the same second.
+                time.sleep(random.uniform(minDelay, MAX_CALL_DELAY))
+                minDelay = NEXT_MIN_CALL_DELAY
 
                 session = requests.Session()
                 session.verify = True
@@ -69,10 +79,10 @@ class myCall:
                 response.raise_for_status()
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
-                log.info("====== Appel http !!! headers : %s =====" % (headers))
-                log.info("====== Appel http !!! data : %s =====" % (data))
-                log.info("====== Appel http !!! reponse : %s =====" % (dataAnswer))
-                try_again = False
+                log.info(f"====== Appel http !!! headers : {headers} =====")
+                log.info(f"====== Appel http !!! data : {data} =====")
+                log.info(f"====== Appel http !!! reponse : {dataAnswer} =====")
+                maxTriesToGo = 0  # Done
             except requests.exceptions.Timeout as error:
                 # a ajouter raison de l'erreur !!!
                 log.error("====== Appel http !!! requests.exceptions.Timeout")
@@ -83,8 +93,6 @@ class myCall:
                     }
                 }
                 self.setLastAnswer(dataAnswer)
-                if nbEssai >= 4:
-                    try_again = False
             except requests.exceptions.HTTPError as error:
                 log.info("====== Appel http !!! requests.exceptions.HTTPError")
                 if ("ADAM-ERR0069" not in response.text) and (
@@ -100,12 +108,15 @@ class myCall:
                 #    json.dump(response.json(), outfile)
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
-                try_again = False
-                if "usage_point_id parameter must be 14 digits long." in response.text:
-                    try_again = True  # si le nombre de digit n'est pas de 14 ...lié à une erreur coté enedis
-            if (try_again):
-                import time
-                time.sleep(60)  # on attend quelques secondes
+
+                # Ne pas retenter l'appel,
+                # Sauf si erreur côté enedis ("si le nombre de digit n'est pas de 14"),
+                if (
+                    "usage_point_id parameter must be 14 digits long."
+                    not in response.text
+                ):
+                    maxTriesToGo = 0  # Fatal error, do not try again
+
         # if ( "enedis_return" in dataAnswer.keys() ):
         #    if ( type( dataAnswer["enedis_return"] ) is dict ):
         #        if ( "error" in dataAnswer["enedis_return"].keys()):
