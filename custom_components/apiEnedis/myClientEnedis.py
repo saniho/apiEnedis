@@ -958,6 +958,11 @@ class myClientEnedis:
             lastCallHier = False
         return lastCallHier
 
+    def getGitVersion(self):
+        if self._gitVersion is None:
+            self.updateGitVersion()
+        return self._gitVersion
+
     def updateGitVersion(self):
         gitInfo = gitinformation.gitinformation("saniho/apiEnedis")
         gitInfo.getInformation()
@@ -1023,9 +1028,6 @@ class myClientEnedis:
             log.info(f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
             log.info(f"myEnedis ...<< call Possible >> : {callpossible}??")
         return callpossible
-
-    def getGitVersion(self):
-        return self._gitVersion
 
     def callConsommation(self):
         if self.isConsommation():
