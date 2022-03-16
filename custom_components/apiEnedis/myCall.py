@@ -58,7 +58,7 @@ class myCall:
                 session.verify = True
                 # print("ici", params, headers, data)
                 log.info("====== Appel http !!! =====")
-                #raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
+                # raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 response = session.post(
                     url,
                     params=params,
