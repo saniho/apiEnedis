@@ -200,8 +200,6 @@ def test_update_last7days(caplog):
         myE.getLast7DaysDetails().getDaysHP(),
         myE.getLast7DaysDetails().getDaysHC(),
     )
-    print(data)
-
     dataExpected = (
         {
             "2022-03-01": 13199.0,

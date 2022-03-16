@@ -58,6 +58,7 @@ class myCall:
                 session.verify = True
                 # print("ici", params, headers, data)
                 log.info("====== Appel http !!! =====")
+                #raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 response = session.post(
                     url,
                     params=params,
@@ -71,7 +72,6 @@ class myCall:
                 log.info("====== Appel http !!! headers : %s =====" % (headers))
                 log.info("====== Appel http !!! data : %s =====" % (data))
                 log.info("====== Appel http !!! reponse : %s =====" % (dataAnswer))
-                # raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 try_again = False
             except requests.exceptions.Timeout as error:
                 # a ajouter raison de l'erreur !!!
@@ -83,6 +83,8 @@ class myCall:
                     }
                 }
                 self.setLastAnswer(dataAnswer)
+                if nbEssai >= 4:
+                    try_again = False
             except requests.exceptions.HTTPError as error:
                 log.info("====== Appel http !!! requests.exceptions.HTTPError")
                 if ("ADAM-ERR0069" not in response.text) and (
@@ -101,11 +103,9 @@ class myCall:
                 try_again = False
                 if "usage_point_id parameter must be 14 digits long." in response.text:
                     try_again = True  # si le nombre de digit n'est pas de 14 ...lié à une erreur coté enedis
-            if (try_again) and (nbEssai > 2):
+            if (try_again):
                 import time
-
-                time.sleep(30)  # on attend quelques secondes
-                try_again = False
+                time.sleep(60)  # on attend quelques secondes
         # if ( "enedis_return" in dataAnswer.keys() ):
         #    if ( type( dataAnswer["enedis_return"] ) is dict ):
         #        if ( "error" in dataAnswer["enedis_return"].keys()):
