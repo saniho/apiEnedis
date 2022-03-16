@@ -72,7 +72,7 @@ def testMulti():
         )
 
         # SORTIE OUTPUT
-        #writeDataJson(myDataEnedis)
+        # writeDataJson(myDataEnedis)
 
         # ***********************************
         # ***********************************
