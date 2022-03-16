@@ -110,7 +110,8 @@ def patch_datetime_now(request, monkeypatch):
     monkeypatch.setattr(datetime, "date", mydate)
 
 
-def test_init_contract(patch_datetime_now):
+def test_init_contract(patch_datetime_now, caplog):
+    caplog.set_level(logging.DEBUG)  # Aide au debogue
     dataFile = loadFile(contractJsonFile)
 
     with requests_mock.Mocker() as m:

@@ -11,15 +11,23 @@ except ImportError:
     )
 
 import logging
+import re
+import sys
 
-log = logging.getLogger(__nameMyEnedis__)
+_LOGGER = logging.getLogger(__nameMyEnedis__)
 
 # Min and Max Delays for initial call and subsequent calls.
 # The purpose is to make some random distribution between client calls
 # so that clients do not sollicit the gateway at the sime time.
-INITIAL_CALL_DELAY = 1  # Minimum time to wait for first call
-NEXT_MIN_CALL_DELAY = 55  # Minimum Time to wait for second call and next calls
-MAX_CALL_DELAY = 125  # Maximum Time to wait for call
+INITIAL_CALL_DELAY = 1.0  # Minimum time to wait for first call
+NEXT_MIN_CALL_DELAY = 55.0  # Minimum Time to wait for second call and next calls
+MAX_CALL_DELAY = 125.0  # Maximum Time to wait for call
+
+if any(re.findall(r"pytest|py.test", sys.argv[0])):
+    # Shorter delays during test
+    INITIAL_CALL_DELAY = 0.250
+    NEXT_MIN_CALL_DELAY = 0.5
+    MAX_CALL_DELAY = 1.0
 
 
 class myCall:
@@ -61,13 +69,15 @@ class myCall:
             try:
                 # Wait some random time so that clients are not making requests
                 # in the same second.
-                time.sleep(random.uniform(minDelay, MAX_CALL_DELAY))
+                sleepDuration = random.uniform(minDelay, MAX_CALL_DELAY)
+                _LOGGER.debug(f"Sleeping {sleepDuration}s")
+                time.sleep(sleepDuration)
                 minDelay = NEXT_MIN_CALL_DELAY
 
                 session = requests.Session()
                 session.verify = True
                 # print("ici", params, headers, data)
-                log.info("====== Appel http !!! =====")
+                _LOGGER.info("====== Appel http !!! =====")
                 # raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 response = session.post(
                     url,
@@ -79,13 +89,13 @@ class myCall:
                 response.raise_for_status()
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
-                log.info(f"====== Appel http !!! headers : {headers} =====")
-                log.info(f"====== Appel http !!! data : {data} =====")
-                log.info(f"====== Appel http !!! reponse : {dataAnswer} =====")
+                _LOGGER.info(f"====== Appel http !!! headers : {headers} =====")
+                _LOGGER.info(f"====== Appel http !!! data : {data} =====")
+                _LOGGER.info(f"====== Appel http !!! reponse : {dataAnswer} =====")
                 maxTriesToGo = 0  # Done
             except requests.exceptions.Timeout as error:
                 # a ajouter raison de l'erreur !!!
-                log.error("====== Appel http !!! requests.exceptions.Timeout")
+                _LOGGER.error("====== Appel http !!! requests.exceptions.Timeout")
                 dataAnswer = {
                     "enedis_return": {
                         "error": "UNKERROR_TIMEOUT",
@@ -94,16 +104,16 @@ class myCall:
                 }
                 self.setLastAnswer(dataAnswer)
             except requests.exceptions.HTTPError as error:
-                log.info("====== Appel http !!! requests.exceptions.HTTPError")
+                _LOGGER.info("====== Appel http !!! requests.exceptions.HTTPError")
                 if ("ADAM-ERR0069" not in response.text) and (
                     "__token_refresh_401" not in response.text
                 ):
-                    log.error("*" * 60)
-                    log.error(f"header : {headers} ")
-                    log.error(f"params : {params} ")
-                    log.error(f"data : {json.dumps(data)} ")
-                    log.error(f"Error JSON : {response.text} ")
-                    log.error("*" * 60)
+                    _LOGGER.error("*" * 60)
+                    _LOGGER.error(f"header : {headers} ")
+                    _LOGGER.error(f"params : {params} ")
+                    _LOGGER.error(f"data : {json.dumps(data)} ")
+                    _LOGGER.error(f"Error JSON : {response.text} ")
+                    _LOGGER.error("*" * 60)
                 # with open('error.json', 'w') as outfile:
                 #    json.dump(response.json(), outfile)
                 dataAnswer = response.json()
@@ -126,7 +136,7 @@ class myCall:
 
     def getDataPeriod(self, deb: str, fin: str | None) -> tuple[str, bool]:
         if fin is not None:
-            log.info(f"--get dataPeriod : {deb} => {fin} --")
+            _LOGGER.info(f"--get dataPeriod : {deb} => {fin} --")
             payload = {
                 "type": "daily_consumption",
                 "usage_point_id": self._PDL_ID,
@@ -147,7 +157,7 @@ class myCall:
 
     def getDataPeriodConsumptionMaxPower(self, deb, fin):
         if fin is not None:
-            log.info(f"--get dataPeriod : {deb} => {fin} --")
+            _LOGGER.info(f"--get dataPeriod : {deb} => {fin} --")
             payload = {
                 "type": "daily_consumption_max_power",
                 "usage_point_id": self._PDL_ID,
