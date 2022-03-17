@@ -110,7 +110,8 @@ def patch_datetime_now(request, monkeypatch):
     monkeypatch.setattr(datetime, "date", mydate)
 
 
-def test_init_contract(patch_datetime_now):
+def test_init_contract(patch_datetime_now, caplog):
+    caplog.set_level(logging.DEBUG)  # Aide au debogue
     dataFile = loadFile(contractJsonFile)
 
     with requests_mock.Mocker() as m:
@@ -200,8 +201,6 @@ def test_update_last7days(caplog):
         myE.getLast7DaysDetails().getDaysHP(),
         myE.getLast7DaysDetails().getDaysHC(),
     )
-    print(data)
-
     dataExpected = (
         {
             "2022-03-01": 13199.0,
