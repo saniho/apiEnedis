@@ -1,6 +1,7 @@
 # myEnedis
 
 [![HACS Supported](https://img.shields.io/badge/HACS-Supported-green.svg)](https://github.com/custom-components/hacs)
+![](https://img.shields.io/github/downloads/saniho/apiEnedis/latest/total.svg)
 
 **Cette integration est compatible avec la carte :
 https://github.com/saniho/content-card-linky**
