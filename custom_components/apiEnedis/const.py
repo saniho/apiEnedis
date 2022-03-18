@@ -24,7 +24,10 @@ except ImportError:
             pass
 
 
-ISSUE_URL = "https://github.com/saniho/apiEnedis/issues"
+GITHUB_PRJ = "saniho/apiEnedis"
+GITHUB_URL = f"https://github.com/{GITHUB_PRJ}"
+ISSUE_URL = f"{GITHUB_URL}/issues"
+
 myENEDIS_SERVICE = "myEnedis"
 # nom du repertoire
 DOMAIN = "myEnedis"
