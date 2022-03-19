@@ -73,6 +73,8 @@ from .const import (  # isort:skip
     HEURESCREUSES_ON,
     HEURES_CREUSES,
     UNDO_UPDATE_LISTENER,
+    UPDATE_LISTENER,
+    EVENT_UPDATE_ENEDIS,
     COORDINATOR_ENEDIS,
     PLATFORMS,
     DEFAULT_REPRISE_ERR,
@@ -137,6 +139,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL)
         await coordinator_enedis.async_refresh()
 
+    async def _update():
+        async coordinator_enedis._async_update_data_enedis()
+
+
     if hass.state == CoreState.running:
         await _enable_scheduled_myEnedis()
         if not coordinator_enedis.last_update_success:
@@ -148,9 +154,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
 
     undo_listener = entry.add_update_listener(_async_update_listener)
+    update_listener = hass.bus.async_listen(EVENT_UPDATE_ENEDIS, _update)
     hass.data[DOMAIN][entry.entry_id] = {
         COORDINATOR_ENEDIS: coordinator_enedis,
         UNDO_UPDATE_LISTENER: undo_listener,
+        UPDATE_LISTENER: update_listener,
     }
 
     for platform in PLATFORMS:
@@ -173,6 +181,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
     if unload_ok:
         hass.data[DOMAIN][entry.entry_id][UNDO_UPDATE_LISTENER]()
+        hass.data[DOMAIN][entry.entry_id][UPDATE_LISTENER]()
         hass.data[DOMAIN].pop(entry.entry_id)
         if not hass.data[DOMAIN]:
             hass.data.pop(DOMAIN)

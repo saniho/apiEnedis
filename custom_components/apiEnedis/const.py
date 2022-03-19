@@ -55,6 +55,8 @@ DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60 * 10  # 1 fois toutes les 10 minutes
 
 HEURESCREUSES_ON = "heuresCreusesON"
 UNDO_UPDATE_LISTENER = "undo_update_listener"
+UPDATE_LISTENER = "update_listener"
+EVENT_UPDATE_ENEDIS = "update_enedis"
 COORDINATOR_ENEDIS = "coordinator_enedis"
 
 __nameMyEnedis__ = "myEnedis"
