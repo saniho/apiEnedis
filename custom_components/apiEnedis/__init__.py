@@ -9,10 +9,7 @@ from datetime import timedelta
 
 try:
     from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
-    from homeassistant.const import (
-        CONF_SCAN_INTERVAL,
-        EVENT_HOMEASSISTANT_STARTED,
-    )
+    from homeassistant.const import CONF_SCAN_INTERVAL, EVENT_HOMEASSISTANT_STARTED
     from homeassistant.core import CoreState, HomeAssistant, callback
     from homeassistant.exceptions import ConfigEntryNotReady
     from homeassistant.helpers.typing import ConfigType
@@ -140,8 +137,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await coordinator_enedis.async_refresh()
 
     async def _update():
-        async coordinator_enedis._async_update_data_enedis()
-
+        await coordinator_enedis._async_update_data_enedis()
 
     if hass.state == CoreState.running:
         await _enable_scheduled_myEnedis()
