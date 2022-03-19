@@ -105,7 +105,7 @@ class manageSensorState:
         return status_counts, state
 
     def getExistsRecentVersion(self, versionCurrent, versionGit):
-        import packaging.version
+        import packaging
 
         # If only one of the versions exists, result is False
         if (versionCurrent is None) or (versionGit is None):
