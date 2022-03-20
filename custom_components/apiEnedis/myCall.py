@@ -10,6 +10,7 @@ except ImportError:
         __nameMyEnedis__,
     )
 
+import datetime
 import logging
 import re
 import sys
@@ -31,11 +32,28 @@ if any(re.findall(r"pytest|py.test", sys.argv[0])):
 
 
 class myCall:
+    _MyCallsSinceRestart = 0
+    _MyCallsUpdateDay = ""
+
+
     def __init__(self):
         self._lastAnswer = None
         self._contentType = "application/json"
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
         self._serverName = "https://enedisgateway.tech/api"
+
+    @staticmethod
+    def increaseCallCounter() -> int:
+        # Check if new day to reset the counter
+        day = datetime.date.today().strftime("%Y-%m-%d")
+        if day != myCall._MyCallsUpdateDay:
+            # New day, reset counter
+            myCall._MyCallsSinceRestart = 0
+            myCall._MyCallsUpdateDay = day
+    
+        myCall._MyCallsSinceRestart += 1
+        return myCall._MyCallsSinceRestart
+
 
     def setParam(self, PDL_ID: str, token: str, version: str):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version
@@ -77,7 +95,11 @@ class myCall:
                 session = requests.Session()
                 session.verify = True
                 # print("ici", params, headers, data)
-                _LOGGER.info("====== Appel http !!! =====")
+                counter = myCall.increaseCallCounter()
+                _LOGGER.debug(f"counter %s", counter)
+                logPrefix = f"====== Appel http #{counter} !!! "
+                _LOGGER.debug(f"{logPrefix}=====")
+                _LOGGER.info(f"{logPrefix}=====")
                 # raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 response = session.post(
                     url,
@@ -89,13 +111,13 @@ class myCall:
                 response.raise_for_status()
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
-                _LOGGER.info(f"====== Appel http !!! headers : {headers} =====")
-                _LOGGER.info(f"====== Appel http !!! data : {data} =====")
-                _LOGGER.info(f"====== Appel http !!! reponse : {dataAnswer} =====")
+                _LOGGER.info(f"{logPrefix}headers : {headers} =====")
+                _LOGGER.info(f"{logPrefix}data : {data} =====")
+                _LOGGER.info(f"{logPrefix}reponse : {dataAnswer} =====")
                 maxTriesToGo = 0  # Done
             except requests.exceptions.Timeout as error:
                 # a ajouter raison de l'erreur !!!
-                _LOGGER.error("====== Appel http !!! requests.exceptions.Timeout")
+                _LOGGER.error(f"{logPrefix}requests.exceptions.Timeout")
                 dataAnswer = {
                     "enedis_return": {
                         "error": "UNKERROR_TIMEOUT",
@@ -104,7 +126,7 @@ class myCall:
                 }
                 self.setLastAnswer(dataAnswer)
             except requests.exceptions.HTTPError as error:
-                _LOGGER.info("====== Appel http !!! requests.exceptions.HTTPError")
+                _LOGGER.error(f"{logPrefix}requests.exceptions.HTTPError")
                 if ("ADAM-ERR0069" not in response.text) and (
                     "__token_refresh_401" not in response.text
                 ):
