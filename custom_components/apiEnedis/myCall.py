@@ -35,7 +35,6 @@ class myCall:
     _MyCallsSinceRestart = 0
     _MyCallsUpdateDay = ""
 
-
     def __init__(self):
         self._lastAnswer = None
         self._contentType = "application/json"
@@ -50,10 +49,9 @@ class myCall:
             # New day, reset counter
             myCall._MyCallsSinceRestart = 0
             myCall._MyCallsUpdateDay = day
-    
+
         myCall._MyCallsSinceRestart += 1
         return myCall._MyCallsSinceRestart
-
 
     def setParam(self, PDL_ID: str, token: str, version: str):
         self._PDL_ID, self._token, self._version = PDL_ID, token, version
@@ -94,12 +92,12 @@ class myCall:
 
                 session = requests.Session()
                 session.verify = True
-                # print("ici", params, headers, data)
+
+                # Set up log prefix, with counter
                 counter = myCall.increaseCallCounter()
-                _LOGGER.debug(f"counter %s", counter)
                 logPrefix = f"====== Appel http #{counter} !!! "
-                _LOGGER.debug(f"{logPrefix}=====")
                 _LOGGER.info(f"{logPrefix}=====")
+
                 # raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 response = session.post(
                     url,
