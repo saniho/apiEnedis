@@ -6,6 +6,7 @@ import logging
 import os
 
 import pytest
+import requests
 import requests_mock
 
 from custom_components.apiEnedis.myClientEnedis import myClientEnedis
@@ -138,6 +139,74 @@ def test_update_contract():
     assert myE.contract.getLastActivationDate() == "2007-07-06", "bad date activation"
     dataCompare = [["23:30", "23:59"], ["00:00", "07:30"]]
     assert myE.contract.getcleanoffpeak_hours() == dataCompare, "erreur format HC/HP"
+
+
+@pytest.mark.usefixtures("patch_datetime_now")
+@pytest.mark.parametrize(
+    "patch_datetime_now", [(datetime.datetime(2020, 12, 9, 11, 22, 00))], indirect=True
+)
+def test_update_data(caplog, tmpdir):
+    caplog.set_level(logging.DEBUG)  # Aide au debogue
+    myE = myClientEnedis(
+        "myToken",
+        "myPDL",
+        heuresCreuses=eval("[['00:00','05:00'], ['22:00', '24:00']]"),
+        heuresCreusesON=True,
+    )
+    myE.setPathArchive(tmpdir)
+
+    with requests_mock.Mocker() as m:
+        URL = "https://enedisgateway.tech/api"
+        SEQUENCE = [
+            {"exc": requests.exceptions.ConnectTimeout},
+            {
+                "text": loadFile("Contract/contract1.json"),
+            },
+            {"exc": requests.exceptions.ConnectTimeout},
+            {"text": loadFile("Error/error.json")},
+            {"text": loadFile("Error/error1.json")},
+            {"text": loadFile("Error/error2.json")},
+            {"text": loadFile("Error/errorContrat.json")},
+            {"text": loadFile("Error/errorContrat2.json")},
+            {"text": loadFile("Month/currentMonth1.json")},
+            {"text": loadFile("Month/currentMonthError1.json")},
+            {"text": loadFile("Month/month1.json")},
+            {"text": loadFile("Production/error1.json")},
+            {"text": loadFile("Production/error2.json")},
+            {"text": loadFile("Week/week1.json")},
+            {"text": loadFile("Week/week2.json")},
+            {"text": loadFile("Yesterday/yesterday1.json")},
+            {"text": loadFile("Yesterday/yesterdayDetail1.json")},
+        ]
+
+        m.register_uri("POST", URL, SEQUENCE)
+
+        success = myE.getData()
+
+    assert success is True
+
+    data = {
+        "DaysHP": myE.getLast7DaysDetails().getDaysHP(),
+        "DaysHC": myE.getLast7DaysDetails().getDaysHC(),
+    }
+    dataExpected = {
+        "DaysHP": {
+            "2022-03-01": 13199.0,
+            "2022-03-02": 14112.0,
+            "2022-03-05": 21588.0,
+            "2022-03-06": 23683.0,
+            "2022-03-07": 34041.0,
+        },
+        "DaysHC": {
+            "2022-03-01": 14793.0,
+            "2022-03-02": 8245.0,
+            "2022-03-05": 10011.0,
+            "2022-03-06": 8533.0,
+            "2022-03-07": 8852.0,
+        },
+    }
+    LOGGER.debug("Last7Days Data = %s", data)
+    assert dataExpected == data, "Error last7Days"
 
 
 def test_heures_creuses():
