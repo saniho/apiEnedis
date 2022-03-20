@@ -1,0 +1,1 @@
+{"tag":"limit_reached","error_code":500,"description":" Limite de 50 demandes par jour atteinte. Merci de mettre à jour vos intégrations afin de réduire  le nombre de demandes par jour","alert_user":true,"enedis_return":false,"support":"https://discord.gg/DfVJZme"}
