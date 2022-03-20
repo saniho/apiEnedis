@@ -37,6 +37,7 @@ def test_version():
     assert __VERSION__ == manifest["version"]
 
     import packaging
+    import packaging.version
 
     # Ensure 'v' in version does not interfere
     assert packaging.version.parse("v1.5.0.3") == packaging.version.parse("1.5.0.3")
