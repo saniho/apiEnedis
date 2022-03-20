@@ -73,6 +73,7 @@ class myCall:
     def saveApiReturn(self, idx: int, data: str):
         """Save return from API to index file to produce test data"""
         import os
+
         fname = os.path.dirname(__file__) + f"/myEnedis/test_data/data_{idx}.txt"
         os.mkdir(os.path.dirname(fname))
         with open(fname, "w") as f:
@@ -115,7 +116,7 @@ class myCall:
                     timeout=30,
                 )
                 # Generate test data with next line
-                self.saveApiReturn(counter,response.text) 
+                self.saveApiReturn(counter, response.text)
 
                 response.raise_for_status()
                 dataAnswer = response.json()
