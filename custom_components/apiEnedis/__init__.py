@@ -136,7 +136,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL)
         await coordinator_enedis.async_refresh()
 
-    async def _update():
+    async def _update(*_):
         await coordinator_enedis._async_update_data_enedis()
 
     if hass.state == CoreState.running:
