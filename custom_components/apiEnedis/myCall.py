@@ -74,6 +74,7 @@ class myCall:
         """Save return from API to index file to produce test data"""
         import os
         fname = os.path.dirname(__file__) + f"/myEnedis/test_data/data_{idx}.txt"
+        os.mkdir(os.path.dirname(fname))
         with open(fname, "w") as f:
             f.write(data)
 
