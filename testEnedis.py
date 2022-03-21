@@ -1,4 +1,13 @@
+#!/usr/bin/env python3.8
+from __future__ import annotations
+
 import logging
+from typing import Any
+
+LOGGER = logging.getLogger("testEnedis")
+LOGGER.setLevel(
+    logging.DEBUG
+)  # Aide au debogue, à définir avant le chargement du reste
 
 from custom_components.apiEnedis import myClientEnedis
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
@@ -7,13 +16,12 @@ __version__ = "test_saniho"
 
 from custom_components.apiEnedis.const import _consommation
 
+myClientEnedis.log.setLevel(logging.DEBUG)  # Aide au debogue
+
 
 def getLocalDirectory(PDL, dateRepertoire):
     directory = f"../myCredential/{PDL}/{dateRepertoire}/"
     return directory
-
-
-log = logging.getLogger("testEnedis")
 
 
 def writeDataJson(myEne):
@@ -27,7 +35,7 @@ def testMulti():
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
     for qui in ["ENEDIS"]:
-        log.info("*** traitement de %s " % (qui))
+        LOGGER.info(f"*** traitement de {qui} ")
         token = mon_conteneur[qui]["TOKEN"]
         PDL_ID = mon_conteneur[qui]["CODE"]
         print(mon_conteneur[qui]["QUI"])
@@ -46,29 +54,30 @@ def testMulti():
             heuresCreusesON=heuresCreusesON,
         )
         path = getLocalDirectory(PDL_ID, "20220308")
+        LOGGER.info("Archive path: '%s'", path)
         myDataEnedis.setPathArchive(path)
-        dataJson = {}
+        dataJson: dict[str, Any] = {}
         # dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault(dataJsonDefault=dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
-        log.info("** on tente une maj ??")
+        LOGGER.info("** on tente une maj ??")
         myDataEnedis.getData()
-        log.info(
-            "=================< on a fini le call : %s ============"
-            % (myDataEnedis.getNbCall())
+        LOGGER.info(
+            "=================< on a fini le call : %s ============",
+            myDataEnedis.getNbCall(),
         )
 
-        # log.info("" )
-        log.info("=================>>>> 2 <<<<============")
+        # LOGGER.info("" )
+        LOGGER.info("=================>>>> 2 <<<<============")
         # time = datetime.datetime.now() + datetime.timedelta(hours=1)
         callPossible = myDataEnedis.getCallPossible()
-        log.info("possible ? %s " % callPossible)
-        log.info("** on tente une maj ??")
+        LOGGER.info(f"possible ? {callPossible} ")
+        LOGGER.info("** on tente une maj ??")
         myDataEnedis.getData()
-        log.info(
-            "=================< on a fini le call : %s ============"
-            % myDataEnedis.getNbCall()
+        LOGGER.info(
+            "=================< on a fini le call : %s ============",
+            myDataEnedis.getNbCall(),
         )
 
         # SORTIE OUTPUT
@@ -82,30 +91,30 @@ def testMulti():
         status_counts, state = myDataSensorEnedis.getStatus(typeSensor)
         # lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )
         # lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
-        log.info("****")
-        log.info(status_counts)
+        LOGGER.info("****")
+        LOGGER.info(status_counts)
         for clef in status_counts.keys():
-            log.info(f"{clef} = {status_counts[clef]}")
+            LOGGER.info(f"{clef} = {status_counts[clef]}")
         #
         # typeSensor = _production
         # status_counts, state = myDataSensorEnedis.getStatus( typeSensor )
-        # log.info("****")
-        # log.info(status_counts)
+        # LOGGER.info("****")
+        # LOGGER.info(status_counts)
         # for clef in status_counts.keys():
-        #     log.info( "%s = %s" %(clef, status_counts[clef]))
+        #     LOGGER.info( "%s = %s" %(clef, status_counts[clef]))
         #
         # typeSensor = _consommation
         # laDate = datetime.datetime.today() - datetime.timedelta(3)
         # status_counts, state = myDataSensorEnedis.getStatusHistory( laDate, detail = "ALL" )
-        # log.info("**** : %s" %state)
-        # log.info(status_counts)
+        # LOGGER.info("**** : %s" %state)
+        # LOGGER.info(status_counts)
         # for clef in status_counts.keys():
-        #     log.info( "%s = %s" %(clef, status_counts[clef]))
+        #     LOGGER.info( "%s = %s" %(clef, status_counts[clef]))
 
         # laDate = datetime.datetime.today() - datetime.timedelta(2)
         # status_counts, state = myDataSensorEnedis.getStatusHistory(laDate, "ALL")
-        # log.info("****")
-        # log.info(status_counts, "/", state)
+        # LOGGER.info("****")
+        # LOGGER.info(status_counts, "/", state)
 
 
 def testMono():
@@ -116,7 +125,7 @@ def testMono():
     qui = "ENEDIS"
     token = mon_conteneur[qui]["TOKEN"]
     PDL_ID = mon_conteneur[qui]["CODE"]
-    log.info(token, PDL_ID)
+    LOGGER.info("TOken: '%s', PDL_ID: '%s'", token, PDL_ID)
 
     heureCreusesCh = "[['00:00','05:00'], ['22:00', '24:00']]"
     myDataEnedis = myClientEnedis.myClientEnedis(
@@ -129,13 +138,13 @@ def testMono():
         version=__version__,
     )
     myDataEnedis.getData()
-    log.info(myDataEnedis.contract)
+    LOGGER.info(myDataEnedis.contract)
     # myDataEnedis.updateProductionYesterday()
     # retour = myDataEnedis.getProductionYesterday()
-    # log.info("retour", retour)
+    # LOGGER.info("retour %s", retour)
     myDataEnedis.updateYesterday()
     retour = myDataEnedis.getYesterday()
-    log.info("retour", retour)
+    LOGGER.info("retour %s", retour)
 
 
 def testGitInformation():
@@ -143,7 +152,7 @@ def testGitInformation():
 
     git = gitinformation.gitinformation("saniho/apiEnedis")
     git.getInformation()
-    log.info(git.getVersion())
+    LOGGER.info(git.getVersion())
 
 
 def main():

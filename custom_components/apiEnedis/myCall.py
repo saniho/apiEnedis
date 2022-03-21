@@ -23,7 +23,7 @@ INITIAL_CALL_DELAY = 1.0  # Minimum time to wait for first call
 NEXT_MIN_CALL_DELAY = 55.0  # Minimum Time to wait for second call and next calls
 MAX_CALL_DELAY = 125.0  # Maximum Time to wait for call
 
-if any(re.findall(r"pytest|py.test", sys.argv[0])):
+if any(re.findall(r"pytest|py.test|testEnedis", sys.argv[0])):
     # Shorter delays during test
     INITIAL_CALL_DELAY = 0.250
     NEXT_MIN_CALL_DELAY = 0.5
@@ -127,6 +127,7 @@ class myCall:
                 ):
                     maxTriesToGo = 0  # Fatal error, do not try again
 
+        _LOGGER.debug("Data answer: %r", dataAnswer)
         # if ( "enedis_return" in dataAnswer.keys() ):
         #    if ( type( dataAnswer["enedis_return"] ) is dict ):
         #        if ( "error" in dataAnswer["enedis_return"].keys()):
