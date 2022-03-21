@@ -2,7 +2,7 @@
   "tag": "enedis_return_ko",
   "error_code": 500,
   "description": "Les API d'Enedis sont indisponible.",
-  "alert_user": "True",
+  "alert_user": true,
   "support": "https://discord.gg/DfVJZme",
   "enedis_return": {
     "error": "result_400",
