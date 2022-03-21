@@ -30,10 +30,14 @@ if any(re.findall(r"pytest|py.test", sys.argv[0])):
     NEXT_MIN_CALL_DELAY = 0.5
     MAX_CALL_DELAY = 1.0
 
+MAX_CALLS = 50
+MAX_PREVIOUS_TIMEOUT = 50
 
 class myCall:
     _MyCallsSinceRestart = 0
     _MyCallsUpdateDay = ""
+    _lastTimeout = 0
+    _noRecentTimeout = True
 
     def __init__(self):
         self._lastAnswer = None
@@ -42,13 +46,20 @@ class myCall:
         self._serverName = "https://enedisgateway.tech/api"
 
     @staticmethod
-    def increaseCallCounter() -> int:
+    def sanitizeCounter() -> int:
         # Check if new day to reset the counter
         day = datetime.date.today().strftime("%Y-%m-%d")
         if day != myCall._MyCallsUpdateDay:
             # New day, reset counter
             myCall._MyCallsSinceRestart = 0
             myCall._MyCallsUpdateDay = day
+
+        return myCall._MyCallsSinceRestart
+
+    @staticmethod
+    def increaseCallCounter() -> int:
+        """Increase an get the number of service calls"""
+        myCall.sanitizeCounter()
 
         myCall._MyCallsSinceRestart += 1
         return myCall._MyCallsSinceRestart
@@ -69,6 +80,30 @@ class myCall:
 
     def getLastAnswer(self):
         return self._lastAnswer
+
+    @staticmethod
+    def isAvailable() -> bool:
+        """Return true if the service is available"""
+        # The serice is considered not available when:
+        # - There were too many recent Timeouts
+        # - The number of daily requests is exceeded
+        if myCall.sanitizeCounter() >= MAX_CALLS:
+            return False
+
+        if not myCall._noRecentTimeout:
+            timestamp = datetime.datetime.now().timestamp()
+            if timestamp - myCall._lastTimeout > MAX_PREVIOUS_TIMEOUT:
+                myCall._noRecentTimeout = True
+        
+        return myCall._noRecentTimeout
+
+    @staticmethod
+    def handletimeout():
+        timestamp = datetime.datetime.now().timestamp()
+        if timestamp - myCall._lastTimeout < MAX_PREVIOUS_TIMEOUT:
+            myCall._noRecentTimeout = False
+        myCall._lastTimeout = timeout
+
 
     def saveApiReturn(self, idx: int, data: str):
         """Save return from API to index file to produce test data"""
@@ -92,6 +127,16 @@ class myCall:
         while maxTriesToGo > 0:
             maxTriesToGo -= 1
             try:
+                if not myCall.isAvailable():
+                    dataAnswer = {
+                        "enedis_return": {
+                            "error": "UNAVAILABLE",
+                            "message": "Indisponible, essayez plus tard",
+                        }
+                    }
+                    maxTriesToGo = 0
+                    continue  # Next loop, so exit.
+
                 # Wait some random time so that clients are not making requests
                 # in the same second.
                 sleepDuration = random.uniform(minDelay, MAX_CALL_DELAY)
@@ -116,7 +161,7 @@ class myCall:
                     timeout=30,
                 )
                 # Generate test data with next line
-                # self.saveApiReturn(counter, response.text)
+                self.saveApiReturn(counter, response.text)
 
                 response.raise_for_status()
                 dataAnswer = response.json()
@@ -126,6 +171,7 @@ class myCall:
                 _LOGGER.info(f"{logPrefix}reponse : {dataAnswer} =====")
                 maxTriesToGo = 0  # Done
             except requests.exceptions.Timeout as error:
+                myCall.handleTimeout()
                 # a ajouter raison de l'erreur !!!
                 _LOGGER.error(f"{logPrefix}requests.exceptions.Timeout")
                 dataAnswer = {
