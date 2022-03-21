@@ -31,12 +31,14 @@ if any(re.findall(r"pytest|py.test|testEnedis", sys.argv[0])):
     MAX_CALL_DELAY = 1.0
 
 MAX_CALLS = 50
-MAX_PREVIOUS_TIMEOUT = 50
+# In seconds - delay required since previous timeout to try a new call
+MAX_PREVIOUS_TIMEOUT = 3600
+
 
 class myCall:
     _MyCallsSinceRestart = 0
     _MyCallsUpdateDay = ""
-    _lastTimeout = 0
+    _lastTimeout = 0.0
     _noRecentTimeout = True
 
     def __init__(self):
@@ -94,16 +96,16 @@ class myCall:
             timestamp = datetime.datetime.now().timestamp()
             if timestamp - myCall._lastTimeout > MAX_PREVIOUS_TIMEOUT:
                 myCall._noRecentTimeout = True
-        
+
         return myCall._noRecentTimeout
 
     @staticmethod
-    def handletimeout():
+    def handleTimeout():
         timestamp = datetime.datetime.now().timestamp()
         if timestamp - myCall._lastTimeout < MAX_PREVIOUS_TIMEOUT:
             myCall._noRecentTimeout = False
-        myCall._lastTimeout = timeout
 
+        myCall._lastTimeout = timestamp
 
     def saveApiReturn(self, idx: int, data: str):
         """Save return from API to index file to produce test data"""
