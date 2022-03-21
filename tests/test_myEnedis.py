@@ -37,6 +37,7 @@ def test_version():
     manifest = loadJsonFile("../../custom_components/apiEnedis/manifest.json")
     assert __VERSION__ == manifest["version"]
 
+    import packaging
     import packaging.version
 
     # Ensure 'v' in version does not interfere
