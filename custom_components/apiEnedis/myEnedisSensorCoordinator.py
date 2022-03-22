@@ -63,18 +63,18 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def unique_id(self):
         "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.%s.production" % (self._myDataSensorEnedis.get_PDL_ID(),)
+            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
         else:
-            name = "myEnedis.%s" % (self._myDataSensorEnedis.get_PDL_ID(),)
+            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
         return name
 
     @property
     def name(self):
         """Return the name of the sensor."""
         if self._typeSensor == _production:
-            name = "myEnedis.%s.production" % (self._myDataSensorEnedis.get_PDL_ID(),)
+            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
         else:
-            name = "myEnedis.%s" % (self._myDataSensorEnedis.get_PDL_ID(),)
+            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
         return name
 
     @property
@@ -114,7 +114,6 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
 
         self.async_on_remove(self.coordinator.async_add_listener(update))
         asyncio.create_task(self._async_update())
-
 
     def _update_state(self):
         """Update sensors state."""

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import json
 import datetime
+import json
 import logging
 from typing import Any
 
@@ -22,16 +22,19 @@ class gitinformation:
         else:
             # Ensure the entry exists
             gitinformation._lastInfos[self._repo] = {}
-           
 
     def getInformation(self) -> None:
         timestamp = datetime.datetime.now().timestamp()
-        if self._repo not in gitinformation._lastUpdates or gitinformation._lastUpdates[self._repo] < timestamp - 3600:
+        if (
+            self._repo not in gitinformation._lastUpdates
+            or gitinformation._lastUpdates[self._repo] < timestamp - 3600
+        ):
             gitinformation._lastUpdates[self._repo] = timestamp
             # raise Exception('Reading git information')  # Raise exception to fine location
 
             try:
                 from urllib.request import urlopen
+
                 myURL = urlopen(self._serverName)
                 s = myURL.read()
                 gitinformation._lastInfos[self._repo] = json.loads(s)
