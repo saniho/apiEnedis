@@ -98,15 +98,31 @@ def test_no_contract():
 
 @pytest.fixture(params=[datetime.datetime(2020, 12, 25, 17, 5, 55)])
 def patch_datetime_now(request, monkeypatch):
+    def _delta(timedelta=None, **kwargs):
+        """Moves time fwd/bwd by the delta"""
+        from datetime import timedelta as td
+
+        if not timedelta:
+            timedelta = td(**kwargs)
+        request.param += timedelta
+
     class mydatetime(datetime.datetime):
         @classmethod
         def now(cls):
             return request.param
 
+        @classmethod
+        def delta(cls, *args, **kwargs):
+            _delta(*args, **kwargs)
+
     class mydate(datetime.date):
         @classmethod
         def today(cls):
             return request.param.date()
+
+        @classmethod
+        def delta(cls, *args, **kwargs):
+            _delta(*args, **kwargs)
 
     monkeypatch.setattr(datetime, "datetime", mydatetime)
     monkeypatch.setattr(datetime, "date", mydate)
@@ -158,12 +174,16 @@ def test_update_data(caplog, tmpdir):
 
     with requests_mock.Mocker() as m:
         URL = "https://enedisgateway.tech/api"
-        SEQUENCE = [
+
+        # Two timeouts, requests will be aborted
+        SEQUENCE_1 = [
             {"exc": requests.exceptions.ConnectTimeout},
-            {
-                "text": loadFile("Contract/contract1.json"),
-            },
+            {"text": loadFile("Contract/contract1.json")},
             {"exc": requests.exceptions.ConnectTimeout},
+        ]
+
+        SEQUENCE_2 = [
+            {"text": loadFile("Contract/contract1.json")},
             {"text": loadFile("Error/limite50.json"), "status_code": 500},
             {"text": loadFile("Error/limite50.json"), "status_code": 500},
             {"text": loadFile("Error/limite50.json"), "status_code": 500},
@@ -183,8 +203,18 @@ def test_update_data(caplog, tmpdir):
             {"text": loadFile("Yesterday/yesterdayDetail1.json")},
         ]
 
-        m.register_uri("POST", URL, SEQUENCE)
+        # Failing getData because of timeouts
+        m.register_uri("POST", URL, SEQUENCE_1)
+        success = myE.getData()
 
+        # Failing getData because of previous timeouts, less than hour later
+        datetime.datetime.delta(minutes=30)  # type: ignore[attr-defined]
+        m.register_uri("POST", URL, SEQUENCE_2)
+        success = myE.getData()
+
+        # Failing getData because of previous timeouts, more than hour later
+        datetime.datetime.delta(minutes=30, seconds=10)  # type: ignore[attr-defined]
+        m.register_uri("POST", URL, SEQUENCE_2)
         success = myE.getData()
 
     assert success is True
