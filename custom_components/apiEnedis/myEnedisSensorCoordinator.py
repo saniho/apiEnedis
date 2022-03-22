@@ -1,6 +1,7 @@
 """Sensor for my first"""
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import timedelta
 
@@ -101,16 +102,17 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         except:
             _LOGGER.info("Redemarrage mais rien de present")
 
-        @callback
-        def update():
-            """Update state."""
+        async def _async_update(self):
             self._update_state()
             self.async_write_ha_state()
 
+        @callback
+        def update():
+            """Update state."""
+            asyncio.create_task(self._async_update())
+
         self.async_on_remove(self.coordinator.async_add_listener(update))
         self._update_state()
-        if not state:
-            return
 
     def _update_state(self):
         """Update sensors state."""
