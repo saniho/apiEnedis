@@ -1119,7 +1119,7 @@ class myClientEnedis:
             log.info("mise à jour effectuee production")
 
     def update(self):  # noqa C901
-        log.info("myEnedis ...new update ?? %s" % self._PDL_ID)
+        log.info(f"myEnedis ...new update ?? {self._PDL_ID}")
         if self.contract.isLoaded:
             if self.getCallPossible():
                 try:
