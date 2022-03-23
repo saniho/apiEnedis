@@ -208,11 +208,13 @@ def test_update_data(caplog, tmpdir):
         success = myE.getData()
 
         # Failing getData because of previous timeouts, less than hour later
+        LOGGER.debug("Test that fetches fail because of previous timeout")
         datetime.datetime.delta(minutes=30)  # type: ignore[attr-defined]
         m.register_uri("POST", URL, SEQUENCE_2)
         success = myE.getData()
 
         # Failing getData because of previous timeouts, more than hour later
+        LOGGER.debug("Test that fetches succeed because previous timeout is old")
         datetime.datetime.delta(minutes=30, seconds=10)  # type: ignore[attr-defined]
         m.register_uri("POST", URL, SEQUENCE_2)
         success = myE.getData()

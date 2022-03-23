@@ -90,10 +90,16 @@ class myCall:
         # - There were too many recent Timeouts
         # - The number of daily requests is exceeded
         if myCall.sanitizeCounter() >= MAX_CALLS:
+            _LOGGER.debug("Nombre d'appels maximum journalier dépassé")
             return False
 
         if not myCall._noRecentTimeout:
             timestamp = datetime.datetime.now().timestamp()
+            _LOGGER.debug(
+                f"Ancien timeout? {timestamp}-{myCall._lastTimeout}"
+                "={timestamp-myCall._lastTimeout}"
+                "> {MAX_PREVIOUS_TIMEOUT} ?"
+            )
             if timestamp - myCall._lastTimeout > MAX_PREVIOUS_TIMEOUT:
                 myCall._noRecentTimeout = True
 
