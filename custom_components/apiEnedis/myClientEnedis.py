@@ -74,7 +74,7 @@ class myClientEnedis:
         import random
 
         self._horaireMin = datetime.datetime(2021, 7, 21, 9, 30) + datetime.timedelta(
-            minutes=random.randrange(180)
+            minutes=random.randrange(360)
         )
 
         self._myCalli.setParam(PDL_ID, token, version)
