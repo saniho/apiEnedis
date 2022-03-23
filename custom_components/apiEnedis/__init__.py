@@ -117,7 +117,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     heurescreuses = entry.options.get(HEURES_CREUSES, None)
     if heurescreuses == "":
         heurescreuses = None
-    _LOGGER.info("**enedis**_conf heurescreuses *%s*" % (heurescreuses,))
+    _LOGGER.info(f"**enedis**_conf heurescreuses *{heurescreuses}*")
     delai_interval = entry.options.get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
     token = entry.options.get(CONF_TOKEN, "")
     code = str(entry.options.get(CONF_CODE, ""))
@@ -273,7 +273,12 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         self._PDL_ID = code
         _LOGGER.info(
             "options - proc -- %s %s %s %s %s %s",
-            token, code, hccost, hpcost, heurescreusesON, heurescreuses
+            token,
+            code,
+            hccost,
+            hpcost,
+            heurescreusesON,
+            heurescreuses,
         )
 
         import os
@@ -283,9 +288,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         try:
             path = str(dir_path)
             if not os.path.isdir(path):
-                _LOGGER.info("creation repertoire  ? %s" % (path,))
+                _LOGGER.info(f"creation repertoire  ? {path}")
                 os.mkdir(path)
-                _LOGGER.info("repertoire cree %s" % (path,))
+                _LOGGER.info(f"repertoire cree {path}")
         except:
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
