@@ -85,8 +85,6 @@ try:
 except ImportError:
     from const import __nameMyEnedis__  # type: ignore[no-redef]
 
-log = logging.getLogger(__nameMyEnedis__)
-
 _LOGGER = logging.getLogger(__name__)
 
 SCAN_INTERVAL = timedelta(
@@ -119,8 +117,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     heurescreuses = entry.options.get(HEURES_CREUSES, None)
     if heurescreuses == "":
         heurescreuses = None
-    _LOGGER.info("**enedis**_conf heurescreuses *%s*" % heurescreuses)
-    delai_interval = entry.options.get(SCAN_INTERVAL)
+    _LOGGER.info("**enedis**_conf heurescreuses *%s*" % (heurescreuses,))
+    delai_interval = entry.options.get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
     token = entry.options.get(CONF_TOKEN, "")
     code = str(entry.options.get(CONF_CODE, ""))
     hpcost = float(entry.options.get(HP_COST, "0.0"))
@@ -136,7 +134,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL)
         await coordinator_enedis.async_refresh()
 
-    async def _update(*_):
+    async def _update(call):
+        _LOGGER.info("Event received: %s", call.data)
         await coordinator_enedis._async_update_data_enedis()
 
     if hass.state == CoreState.running:
@@ -221,7 +220,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
 
     def update_data(self) -> bool:
         """Get the latest data from myEnedis."""
-        log.info(f"** update_data {self._PDL_ID} **")
+        _LOGGER.info(f"** update_data {self._PDL_ID} **")
         self.clientEnedis.getData()
         return True
 
@@ -273,8 +272,8 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         heurescreuses = ast.literal_eval(heurescreusesch)
         self._PDL_ID = code
         _LOGGER.info(
-            "options - proc -- %s %s %s %s %s %s"
-            % (token, code, hccost, hpcost, heurescreusesON, heurescreuses)
+            "options - proc -- %s %s %s %s %s %s",
+            token, code, hccost, hpcost, heurescreusesON, heurescreuses
         )
 
         import os
@@ -284,9 +283,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         try:
             path = str(dir_path)
             if not os.path.isdir(path):
-                _LOGGER.info("creation repertoire  ? %s" % path)
+                _LOGGER.info("creation repertoire  ? %s" % (path,))
                 os.mkdir(path)
-                _LOGGER.info("repertoire cree %s" % path)
+                _LOGGER.info("repertoire cree %s" % (path,))
         except:
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
