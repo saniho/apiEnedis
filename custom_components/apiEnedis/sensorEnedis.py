@@ -189,7 +189,7 @@ class manageSensorState:
         return lastResetIso, status_counts, state
 
     def getStatus(self, typeSensor=_consommation):  # noqa C901
-        # Raccourci pour self._myDataEnedit (lignes plus court)
+        # Raccourci pour self._myDataEnedis (lignes plus court)
         data = self._myDataEnedis
 
         state = "unavailable"
