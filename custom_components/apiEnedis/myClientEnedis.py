@@ -74,7 +74,7 @@ class myClientEnedis:
         import random
 
         self._horaireMin = datetime.datetime(2021, 7, 21, 9, 30) + datetime.timedelta(
-            minutes=random.randrange(90)
+            minutes=random.randrange(360)
         )
 
         self._myCalli.setParam(PDL_ID, token, version)
@@ -233,9 +233,15 @@ class myClientEnedis:
                 data = {}
                 nomfichier = directory + clef + ".json"
                 data = self.getDataJsonValue(clef)
+                # si la date est du timeout, alors on ecrit
+                nePasEcrire = False
+                if "enedis_return" in data:
+                    if "error" in data["enedis_return"]:
+                        nePasEcrire = (data.get("enedis_return").get("error") == "UNKERROR_TIMEOUT")
                 log.info(f" >>>> ecriture : {nomfichier} / {data}")
-                with open(nomfichier, "w") as outfile:
-                    json.dump(data, outfile)
+                if not nePasEcrire:
+                    with open(nomfichier, "w") as outfile:
+                        json.dump(data, outfile)
             except:
                 log.error(f" >>>> erreur ecriture : {nomfichier} / {data}")
 
