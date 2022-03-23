@@ -160,7 +160,7 @@ def test_update_contract():
 
 @pytest.mark.usefixtures("patch_datetime_now")
 @pytest.mark.parametrize(
-    "patch_datetime_now", [(datetime.datetime(2020, 12, 9, 11, 22, 00))], indirect=True
+    "patch_datetime_now", [(datetime.datetime(2020, 12, 9, 15, 22, 00))], indirect=True
 )
 def test_update_data(caplog, tmpdir):
     caplog.set_level(logging.DEBUG)  # Aide au debogue
@@ -243,8 +243,8 @@ def test_update_data(caplog, tmpdir):
         },
     }
     LOGGER.debug("Last7Days Data = %s", data)
-    # desactiver pour le moment
-    # assert dataExpected == data, "Error last7Days"
+    # desactivé pour le moment
+    assert dataExpected == data, "Error last7Days"
 
 
 def test_heures_creuses():
