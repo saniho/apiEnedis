@@ -136,6 +136,7 @@ class myCall:
                             "message": "Indisponible, essayez plus tard",
                         }
                     }
+                    self.setLastAnswer(dataAnswer)
                     maxTriesToGo = 0
                     continue  # Next loop, so exit.
 
