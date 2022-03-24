@@ -204,7 +204,7 @@ def test_update_data(caplog, tmpdir):
         ]
 
         # Failing getData because of timeouts
-        if 0:
+        if False:
             # Ne fonctionne pas si on démarre avec 2 timeout
             m.register_uri("POST", URL, SEQUENCE_1)
         else:
