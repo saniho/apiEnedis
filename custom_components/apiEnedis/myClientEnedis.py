@@ -236,8 +236,9 @@ class myClientEnedis:
                 # si la date est du timeout, alors on ecrit
                 nePasEcrire = False
                 if "enedis_return" in data:
-                    if "error" in data["enedis_return"]:
-                        nePasEcrire = (data.get("enedis_return").get("error") == "UNKERROR_TIMEOUT")
+                    enedis_return = data["enedis_return"]
+                    if "error" in enedis_return:
+                        nePasEcrire = enedis_return["error"] == "UNKERROR_TIMEOUT"
                 log.info(f" >>>> ecriture : {nomfichier} / {data}")
                 if not nePasEcrire:
                     with open(nomfichier, "w") as outfile:
@@ -926,14 +927,12 @@ class myClientEnedis:
         return self._delai
 
     def getDelaiIsGoodAfterError(self, currentDateTime):
-        log.info(
-            "TimeLastCall : %s" % (self.getTimeLastCall()),
-        )
+        log.info("TimeLastCall : %s", self.getTimeLastCall())
         ecartOk = True
         if self.getTimeLastCall() is not None:
             ecartOk = (
-                currentDateTime - self.getTimeLastCall()
-            ).total_seconds() > self.getDelaiError()
+                currentDateTime.timestamp() - self.getTimeLastCall().timestamp()
+            ) > self.getDelaiError()
         # test
         # ecartOk = True
         return ecartOk
