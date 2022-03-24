@@ -238,7 +238,10 @@ class myClientEnedis:
                 if "enedis_return" in data:
                     enedis_return = data["enedis_return"]
                     if "error" in enedis_return:
-                        nePasEcrire = enedis_return["error"] == "UNKERROR_TIMEOUT"
+                        nePasEcrire = enedis_return["error"] in (
+                            "UNKERROR_TIMEOUT",
+                            "UNAVAILABLE",
+                        )
                 log.info(f" >>>> ecriture : {nomfichier} / {data}")
                 if not nePasEcrire:
                     with open(nomfichier, "w") as outfile:

@@ -137,10 +137,11 @@ class myCall:
             try:
                 if not myCall.isAvailable():
                     dataAnswer = {
+                        "error_code": "UNAVAILABLE",
                         "enedis_return": {
                             "error": "UNAVAILABLE",
                             "message": "Indisponible, essayez plus tard",
-                        }
+                        },
                     }
                     self.setLastAnswer(dataAnswer)
                     maxTriesToGo = 0

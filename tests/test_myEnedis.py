@@ -204,12 +204,7 @@ def test_update_data(caplog, tmpdir):
         ]
 
         # Failing getData because of timeouts
-        if False:
-            # Ne fonctionne pas si on démarre avec 2 timeout
-            m.register_uri("POST", URL, SEQUENCE_1)
-        else:
-            # Fonctionne
-            m.register_uri("POST", URL, SEQUENCE_2)
+        m.register_uri("POST", URL, SEQUENCE_1)
         success = myE.getData()
 
         # Failing getData because of previous timeouts, less than hour later
@@ -252,7 +247,7 @@ def test_update_data(caplog, tmpdir):
         },
     }
 
-    LOGGER.debug("Last7Days Data = %s", data)
+    LOGGER.debug("Data = %s", data)
     # desactivé pour le moment
     assert dataExpected == data, "Error data_update"
 
