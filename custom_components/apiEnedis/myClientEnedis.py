@@ -958,7 +958,7 @@ class myClientEnedis:
                 hour=23, minute=40
             )
             lastCall = self.getTimeLastCall()
-            lastCallHier = lastCall < hier
+            lastCallHier = lastCall.timestamp() < hier.timestamp()
         else:
             lastCallHier = False
         return lastCallHier
