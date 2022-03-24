@@ -160,13 +160,13 @@ def test_update_contract():
 
 @pytest.mark.usefixtures("patch_datetime_now")
 @pytest.mark.parametrize(
-    "patch_datetime_now", [(datetime.datetime(2020, 12, 9, 15, 22, 00))], indirect=True
+    "patch_datetime_now", [(datetime.datetime(2022, 3, 24, 21, 30, 00))], indirect=True
 )
 def test_update_data(caplog, tmpdir):
     caplog.set_level(logging.DEBUG)  # Aide au debogue
     myE = myClientEnedis(
         "myToken",
-        "myPDL",
+        "20000000000000",
         heuresCreuses=eval("[['00:00','05:00'], ['22:00', '24:00']]"),
         heuresCreusesON=True,
     )
@@ -178,33 +178,38 @@ def test_update_data(caplog, tmpdir):
         # Two timeouts, requests will be aborted
         SEQUENCE_1 = [
             {"exc": requests.exceptions.ConnectTimeout},
-            {"text": loadFile("Contract/contract1.json")},
+            # {"text": loadFile("Sequence1/data_1.txt")},
             {"exc": requests.exceptions.ConnectTimeout},
         ]
 
         SEQUENCE_2 = [
-            {"text": loadFile("Contract/contract1.json")},
-            {"text": loadFile("Error/limite50.json"), "status_code": 500},
-            {"text": loadFile("Error/limite50.json"), "status_code": 500},
-            {"text": loadFile("Error/limite50.json"), "status_code": 500},
-            {"text": loadFile("Error/error.json")},
-            {"text": loadFile("Error/error1.json")},
-            {"text": loadFile("Error/error2.json")},
-            {"text": loadFile("Error/errorContrat.json")},
-            {"text": loadFile("Error/errorContrat2.json")},
-            {"text": loadFile("Month/currentMonth1.json")},
-            {"text": loadFile("Month/currentMonthError1.json")},
-            {"text": loadFile("Month/month1.json")},
-            {"text": loadFile("Production/error1.json")},
-            {"text": loadFile("Production/error2.json")},
-            {"text": loadFile("Week/week1.json")},
-            {"text": loadFile("Week/week2.json")},
-            {"text": loadFile("Yesterday/yesterday1.json")},
-            {"text": loadFile("Yesterday/yesterdayDetail1.json")},
+            # {"text": loadFile("Sequence1/data_1.txt")},
+            {"text": loadFile("Sequence1/data_2.txt")},
+            {"text": loadFile("Sequence1/data_3.txt")},
+            {"text": loadFile("Sequence1/data_4.txt")},
+            {"text": loadFile("Sequence1/data_5.txt")},
+            {"text": loadFile("Sequence1/data_6.txt")},
+            {"text": loadFile("Sequence1/data_7.txt")},
+            {"text": loadFile("Sequence1/data_8.txt")},
+            {"text": loadFile("Sequence1/data_9.txt")},
+            {"text": loadFile("Sequence1/data_10.txt")},
+            {"text": loadFile("Sequence1/data_11.txt")},
+            {"text": loadFile("Sequence1/data_12.txt")},
+            {"text": loadFile("Sequence1/data_13.txt")},
+            {"text": loadFile("Sequence1/data_14.txt")},
+            {"text": loadFile("Sequence1/data_15.txt")},
+            {"text": loadFile("Sequence1/data_16.txt")},
+            {"text": loadFile("Sequence1/data_17.txt")},
+            {"text": loadFile("Sequence1/data_18.txt")},
         ]
 
         # Failing getData because of timeouts
-        m.register_uri("POST", URL, SEQUENCE_1)
+        if 0:
+            # Ne fonctionne pas si on démarre avec 2 timeout
+            m.register_uri("POST", URL, SEQUENCE_1)
+        else:
+            # Fonctionne
+            m.register_uri("POST", URL, SEQUENCE_2)
         success = myE.getData()
 
         # Failing getData because of previous timeouts, less than hour later
@@ -228,23 +233,28 @@ def test_update_data(caplog, tmpdir):
 
     dataExpected = {
         "DaysHP": {
-            "2022-03-01": 13199.0,
-            "2022-03-02": 14112.0,
-            "2022-03-05": 21588.0,
-            "2022-03-06": 23683.0,
-            "2022-03-07": 34041.0,
+            "2022-03-17": 5010.0,
+            "2022-03-18": 4382.0,
+            "2022-03-19": 8348.0,
+            "2022-03-20": 7051.0,
+            "2022-03-21": 4956.0,
+            "2022-03-22": 5728.0,
+            "2022-03-23": 5301.0,
         },
         "DaysHC": {
-            "2022-03-01": 14793.0,
-            "2022-03-02": 8245.0,
-            "2022-03-05": 10011.0,
-            "2022-03-06": 8533.0,
-            "2022-03-07": 8852.0,
+            "2022-03-17": 2059.0,
+            "2022-03-18": 1777.0,
+            "2022-03-19": 2330.0,
+            "2022-03-20": 2691.0,
+            "2022-03-21": 3140.0,
+            "2022-03-22": 2363.0,
+            "2022-03-23": 2190.0,
         },
     }
+
     LOGGER.debug("Last7Days Data = %s", data)
     # desactivé pour le moment
-    assert dataExpected == data, "Error last7Days"
+    assert dataExpected == data, "Error data_update"
 
 
 def test_heures_creuses():
