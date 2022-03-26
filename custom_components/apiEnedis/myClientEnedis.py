@@ -29,6 +29,7 @@ except ImportError:
     )
     import gitinformation  # type: ignore[no-redef]
 
+from . import const
 from .myCall import myCall
 from .myContrat import myContrat
 from .myDataEnedis import myDataEnedis
@@ -161,8 +162,10 @@ class myClientEnedis:
         data = {}
         dataRepertoire = self.getPathArchive()
         log.info(
-            "%s - %s - fichier lu dataRepertoire : %s"
-            % (self.contract.get_PDL_ID(), self._PDL_ID, dataRepertoire)
+            "%s - %s - fichier lu dataRepertoire : %s",
+            self.contract.get_PDL_ID(),
+            self._PDL_ID,
+            dataRepertoire,
         )
         directory = f"{dataRepertoire}/*.json"
         log.info(f"fichier lu directory : {directory}")
@@ -950,12 +953,11 @@ class myClientEnedis:
         horairePossible = (hourNow >= hourMin) and (hourNow < 2330)
         # for test
         # horairePossible = ( hourNow >= 11 ) and ( hourNow < 23 )
-        log.info(
-            f"HorairePossible : {hourMin} <= {hourNow} < 2330 => {horairePossible}"
-        )
+        log.info(f"HorairePossible: {hourMin}<={hourNow}<2330 => {horairePossible}")
         return horairePossible
 
     def getLastCallHier(self):
+        """Return true if the last call was for yesterday"""
         if self.getTimeLastCall() is not None:
             hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(
                 hour=23, minute=40
@@ -972,7 +974,7 @@ class myClientEnedis:
         return self._gitVersion
 
     def updateGitVersion(self):
-        gitInfo = gitinformation.gitinformation("saniho/apiEnedis")
+        gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
         gitInfo.getInformation()
         self._gitVersion = gitInfo.getVersion()
 
@@ -989,52 +991,35 @@ class myClientEnedis:
         # si on doit prendre les informations des fichiers de sauvegarde
         if self._forceCallJson:
             callpossible = True
-        if trace:
-            log.error(
-                "myEnedis ...new update self.getHorairePossible() : %s ??"
-                % (self.getHorairePossible(),)
-            )
-            log.error(
-                "myEnedis ...new update self.getLastCallHier() : %s ??"
-                % (self.getLastCallHier(),)
-            )
-            log.error(
-                "myEnedis ...new update self.getTimeLastCall() : %s ??"
-                % (self.getTimeLastCall(),)
-            )
-            log.error(
-                "myEnedis ...new update self.getStatusLastCall() : %s??"
-                % (self.getStatusLastCall(),)
-            )
-            log.error(
-                "myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??"
-                % (self.getDelaiIsGoodAfterError(currentDateTime),)
-            )
-            log.error(f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
-            log.error(f"myEnedis ...<< call Possible >> : {callpossible}??")
-        else:
-            log.info(
-                "myEnedis ...new update self.getHorairePossible() : %s ??"
-                % (self.getHorairePossible(),)
-            )
-            log.info(
-                "myEnedis ...new update self.getLastCallHier() : %s ??"
-                % (self.getLastCallHier(),)
-            )
-            log.info(
-                "myEnedis ...new update self.getTimeLastCall() : %s ??"
-                % (self.getTimeLastCall(),)
-            )
-            log.info(
-                "myEnedis ...new update self.getStatusLastCall() : %s??"
-                % (self.getStatusLastCall(),)
-            )
-            log.info(
-                "myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??"
-                % (self.getDelaiIsGoodAfterError(currentDateTime),)
-            )
-            log.info(f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
-            log.info(f"myEnedis ...<< call Possible >> : {callpossible}??")
+
+        level = logging.ERROR if trace else logging.INFO
+        log.log(
+            level,
+            "myEnedis ...new update self.getHorairePossible() : %s ??",
+            self.getHorairePossible(),
+        )
+        log.log(
+            level,
+            "myEnedis ...new update self.getLastCallHier() : %s ??",
+            self.getLastCallHier(),
+        )
+        log.log(
+            level,
+            "myEnedis ...new update self.getTimeLastCall() : %s ??",
+            self.getTimeLastCall(),
+        )
+        log.log(
+            level,
+            "myEnedis ...new update self.getStatusLastCall() : %s??",
+            self.getStatusLastCall(),
+        )
+        log.log(
+            level,
+            "myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??",
+            self.getDelaiIsGoodAfterError(currentDateTime),
+        )
+        log.log(level, f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
+        log.log(level, f"myEnedis ...<< call Possible >> : {callpossible}??")
         return callpossible
 
     def callConsommation(self):
@@ -1132,14 +1117,12 @@ class myClientEnedis:
             if self.getCallPossible():
                 try:
                     log.info(
-                        "myEnedis(%s) ...%s update lancé, status precedent : %s, lastMethodCall :%s, forcejson :%s"
-                        % (
-                            self.getVersion(),
-                            self.contract.get_PDL_ID(),
-                            self.getStatusLastCall(),
-                            self.lastMethodCallError,
-                            self._forceCallJson,
-                        )
+                        "myEnedis(%s) ...%s update lancé, status precedent : %s, lastMethodCall :%s, forcejson :%s",
+                        self.getVersion(),
+                        self.contract.get_PDL_ID(),
+                        self.getStatusLastCall(),
+                        self.lastMethodCallError,
+                        self._forceCallJson,
                     )
                     # self.getCallPossible()
                     self._nbCall = 0
@@ -1159,14 +1142,12 @@ class myClientEnedis:
                             self.setDataJsonDefault({})
 
                         log.info(
-                            "myEnedis(%s) ... %s update termine, status courant : %s, lastCall :%s, nbCall :%s"
-                            % (
-                                self.getVersion(),
-                                self.contract.get_PDL_ID(),
-                                self.getStatusLastCall(),
-                                self.lastMethodCallError,
-                                self.getNbCall(),
-                            )
+                            "myEnedis(%s) ... %s update termine, status courant : %s, lastCall :%s, nbCall :%s",
+                            self.getVersion(),
+                            self.contract.get_PDL_ID(),
+                            self.getStatusLastCall(),
+                            self.lastMethodCallError,
+                            self.getNbCall(),
                         )
                     except Exception as inst:
                         # pour eviter de boucler le call en permanence
@@ -1178,37 +1159,36 @@ class myClientEnedis:
                             "error",
                         ):  # gestion que c'est pas une erreur de contrat trop recent ?
                             log.error(
-                                "%s - Erreur call ERROR %s"
-                                % (self.contract.get_PDL_ID(), inst)
+                                "%s - Erreur call ERROR %s",
+                                self.contract.get_PDL_ID(),
+                                inst,
                             )
                             # Erreur lors du call...
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
                             self.updateErrorLastCall(
-                                "%s - %s"
-                                % (
+                                "{} - {}".format(
                                     messages.getMessage(inst.args[2]),
                                     self._myCalli.getLastAnswer(),
                                 )
                             )
                             log.error(
-                                "%s - last call : %s"
-                                % (
-                                    self.contract.get_PDL_ID(),
-                                    self.lastMethodCall,
-                                )
+                                "%s - last call : %s",
+                                self.contract.get_PDL_ID(),
+                                self.lastMethodCall,
                             )
                             log.error(
-                                "myEnedis ...%s update termine, on retentera plus tard(A)"
-                                % (self.contract.get_PDL_ID())
+                                "myEnedis ...%s update termine, on retentera plus tard(A1)",
+                                self.contract.get_PDL_ID(),
                             )
                         elif inst.args[:2] == (
                             "call",
                             "error_user_alert",
                         ):  # gestion que c'est pas une erreur de contrat trop recent ?
                             log.error(
-                                "%s - Erreur call ERROR %s"
-                                % (self.contract.get_PDL_ID(), inst)
+                                "%s - Erreur call ERROR %s",
+                                self.contract.get_PDL_ID(),
+                                inst,
                             )
                             # Erreur lors du call...
                             self.updateTimeLastCall()
@@ -1222,32 +1202,26 @@ class myClientEnedis:
                                 )
                             )
                             log.error(
-                                "%s - last call : %s"
-                                % (
-                                    self.contract.get_PDL_ID(),
-                                    self.lastMethodCall,
-                                )
+                                "%s - last call : %s",
+                                self.contract.get_PDL_ID(),
+                                self.lastMethodCall,
                             )
                             log.error(
-                                "myEnedis ...%s update termine, on retentera plus tard(A)"
-                                % (self.contract.get_PDL_ID(),)
+                                "myEnedis ...%s update termine, on retentera plus tard(A2)",
+                                self.contract.get_PDL_ID(),
                             )
                         else:
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
-                            self.updateErrorLastCall(
-                                "%s" % (self._myCalli.getLastAnswer())
+                            self.updateErrorLastCall(str(self._myCalli.getLastAnswer()))
+                            log.error(
+                                "%s - last call : %s",
+                                self.contract.get_PDL_ID(),
+                                self.lastMethodCall,
                             )
                             log.error(
-                                "%s - last call : %s"
-                                % (
-                                    self.contract.get_PDL_ID(),
-                                    self.lastMethodCall,
-                                )
-                            )
-                            log.error(
-                                "myEnedis ...%s update termine, on retentera plus tard(B)"
-                                % (self.contract.get_PDL_ID(),)
+                                "myEnedis ...%s update termine, on retentera plus tard(B)",
+                                self.contract.get_PDL_ID(),
                             )
                             raise Exception(inst)
 
@@ -1263,16 +1237,14 @@ class myClientEnedis:
                         )
                         self.updateErrorLastCall(message)
                         log.error(
-                            "%s - %s"
-                            % (
-                                self.contract.get_PDL_ID(),
-                                self.lastMethodCall,
-                            )
+                            "%s - %s",
+                            self.contract.get_PDL_ID(),
+                            self.lastMethodCall,
                         )
                     else:
                         log.error("-" * 60)
-                        log.error("Erreur inconnue call ERROR %s" % (inst))
-                        log.error("Erreur last answer %s" % (inst))
+                        log.error("Erreur inconnue call ERROR %s", inst)
+                        log.error("Erreur last answer %s", inst)
                         log.error(f"Erreur last call {self.lastMethodCall}")
                         log.error(f"Erreur last answer {self._myCalli.getLastAnswer()}")
                         log.error(traceback.format_exc())
@@ -1285,12 +1257,11 @@ class myClientEnedis:
                         log.error(f"LastMethodCall : {self.lastMethodCall}")
             else:
                 self.setUpdateRealise(False)
-                # log.info("%s pas d'update trop tot !!!" % (self.contract.get_PDL_ID(),))
+                # log.info("%s pas d'update trop tot !!!", self.contract.get_PDL_ID())
         else:
             self.setUpdateRealise(False)
             log.info(
-                "%s update impossible contrat non trouve!!!"
-                % (self.contract.get_PDL_ID(),)
+                "%s update impossible contrat non trouve!!!", self.contract.get_PDL_ID()
             )
         self.updateLastUpdate()
         return True
