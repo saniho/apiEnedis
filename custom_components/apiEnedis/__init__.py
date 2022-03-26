@@ -199,7 +199,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         self._PDL_ID: str
         # client = myClientEnedis.myClientEnedis(token=_client.get("token"),
         #                                        PDL_ID=_client.get("code"),
-        #                                        delai=_client.get("DEFAULT_REPRISE_ERR"),
+        #                                        delay=_client.get("DEFAULT_REPRISE_ERR"),
         #                                        heuresCreuses=_client.get("heurescreuses"),
         #                                        heuresCreusesCost=_client.get("hccost"),
         #                                        heuresPleinesCost=_client.get("hpcost"),
@@ -316,7 +316,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         self.clientEnedis = myClientEnedis.myClientEnedis(
             token,
             code,
-            delai=DEFAULT_REPRISE_ERR,
+            delay=DEFAULT_REPRISE_ERR,
             heuresCreuses=heurescreuses,
             heuresCreusesCost=hccost,
             heuresPleinesCost=hpcost,

@@ -46,7 +46,7 @@ class myClientEnedis:
         self,
         token: str,
         PDL_ID: str,
-        delai: int = 3600,
+        delay: int = 3600,
         heuresCreuses=None,
         heuresCreusesCost: float = 0,
         heuresPleinesCost: float = 0,
@@ -62,7 +62,7 @@ class myClientEnedis:
         self._errorLastCall = None
         self._lastMethodCall: str = ""
         self._lastMethodCallError = None
-        self._delai = delai
+        self._delay = delay
         self._heuresCreusesCost: float = heuresCreusesCost
         self._heuresPleinesCost: float = heuresPleinesCost
         self._updateRealise: bool = False
@@ -929,16 +929,25 @@ class myClientEnedis:
     def setErrorLastCall(self, errorMessage):
         self._errorLastCall = errorMessage
 
-    def getDelaiError(self):
-        return self._delai
+    def getDelayError(self):
+        return self._delay
 
-    def getDelaiIsGoodAfterError(self, currentDateTime):
-        log.info("TimeLastCall : %s", self.getTimeLastCall())
-        ecartOk = True
-        if self.getTimeLastCall() is not None:
+    def getDelayIsGoodAfterError(self, currentDateTime):
+        timeLastCall = self.getTimeLastCall()
+        if timeLastCall is not None:
+            minDelay = self.getDelayError()
             ecartOk = (
-                currentDateTime.timestamp() - self.getTimeLastCall().timestamp()
-            ) > self.getDelaiError()
+                currentDateTime.timestamp() - timeLastCall.timestamp()
+            ) > minDelay
+            log.info(
+                "DelayIsGoodAfterError: '%s' vs. '%s' Δ%s %s",
+                timeLastCall,
+                minDelay,
+                ecartOk,
+            )
+        else:
+            ecartOk = True
+            log.info("DelayIsGoodAfterError: TimeLastCall is None, True")
         # test
         # ecartOk = True
         return ecartOk
@@ -984,7 +993,7 @@ class myClientEnedis:
             or (self.getTimeLastCall() is None)
             or (
                 self.getStatusLastCall() is False
-                and self.getDelaiIsGoodAfterError(currentDateTime)
+                and self.getDelayIsGoodAfterError(currentDateTime)
             )
         )
 
@@ -1015,8 +1024,8 @@ class myClientEnedis:
         )
         log.log(
             level,
-            "myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??",
-            self.getDelaiIsGoodAfterError(currentDateTime),
+            "myEnedis ...new update self.getDelayIsGoodAfterError() : %s??",
+            self.getDelayIsGoodAfterError(currentDateTime),
         )
         log.log(level, f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
         log.log(level, f"myEnedis ...<< call Possible >> : {callpossible}??")
