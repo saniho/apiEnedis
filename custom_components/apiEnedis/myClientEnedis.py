@@ -942,6 +942,7 @@ class myClientEnedis:
             log.info(
                 "DelayIsGoodAfterError: '%s' vs. '%s' Δ%s %s",
                 timeLastCall,
+                currentDateTime,
                 minDelay,
                 ecartOk,
             )
