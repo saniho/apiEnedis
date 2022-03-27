@@ -1,5 +1,10 @@
-FLAKE_EXCLUDES=W503,B001,B008,E266,E401,E402,E501,E722,F401,F841
-BANDIT_EXCLUDES=B101,B105,B110,B307,B310,B311
+FLAKE_EXCLUDES=B001,W503,E722
+# B001 Do not use bare `except:`, it also catches unexpected events like memory errors, interrupts, system exit, and so on.  Prefer `except Exception:`.  If you're sure what you're doing, be explicit and write `except BaseException:`.
+# W503 line break before binary operator
+# E722 do not use bare 'except'
+
+BANDIT_EXCLUDES=B101,B105,B110,B310,B311
+PIP:=pip3
 
 lint_python:
 	-shopt -s globstar && pyupgrade --py36-plus **/*.py
@@ -17,17 +22,20 @@ lint_python:
 	-mdformat --wrap 75 README.md --number
 
 
+prodtest:
+	python3 ./testEnedis.py |& tee prodtest.log
 
 test:
 	pytest -sv tests/
 
 
 install_requirements:
-	pip install --upgrade pip wheel
-	pip install bandit black codespell flake8 flake8-2020 flake8-bugbear \
+	$(PIP) install --upgrade pip wheel
+	$(PIP) install bandit black codespell flake8 flake8-2020 flake8-bugbear \
                   flake8-comprehensions isort mypy pytest pyupgrade safety \
-                  autoflake8 mdformat requests_mock mock
+                  autoflake8 mdformat requests_mock mock packaging
+	$(PIP) install -r requirements.txt
 
 setup_precommit:
-	pip install --upgrade pip pre-commit tox
+	$(PIP) install --upgrade pip pre-commit tox
 	pre-commit install

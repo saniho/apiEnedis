@@ -56,6 +56,9 @@ jobs:
       # Move the tag
       - name: Move Release Tag to include updated manifest
         uses: EndBug/latest-tag@latest
+        # Continue anyway if moving the tag failes (protected
+        # branch for instance) - the ZIP will be fine.
+        continue-on-error: true
         with:
           tag-name: ${{ steps.get-ref.outputs.tag }}
         env:

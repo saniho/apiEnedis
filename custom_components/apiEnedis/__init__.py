@@ -9,10 +9,7 @@ from datetime import timedelta
 
 try:
     from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
-    from homeassistant.const import (
-        CONF_SCAN_INTERVAL,
-        EVENT_HOMEASSISTANT_STARTED,
-    )
+    from homeassistant.const import CONF_SCAN_INTERVAL, EVENT_HOMEASSISTANT_STARTED
     from homeassistant.core import CoreState, HomeAssistant, callback
     from homeassistant.exceptions import ConfigEntryNotReady
     from homeassistant.helpers.typing import ConfigType
@@ -61,32 +58,20 @@ from .const import (  # isort:skip
     CONF_TOKEN,
     CONF_CODE,
     DOMAIN,
-    PLATFORM,
     HP_COST,
     HC_COST,
     DEFAULT_SCAN_INTERVAL,
-    DEFAULT_SENSOR_INTERVAL,
-    myENEDIS_SERVICE,
     __VERSION__,
     __name__,
-    CONF_DELAY,
     HEURESCREUSES_ON,
     HEURES_CREUSES,
     UNDO_UPDATE_LISTENER,
+    UPDATE_LISTENER,
+    EVENT_UPDATE_ENEDIS,
     COORDINATOR_ENEDIS,
     PLATFORMS,
     DEFAULT_REPRISE_ERR,
 )
-
-try:
-    from .const import (  # isort:skip
-        __nameMyEnedis__,
-    )
-
-except ImportError:
-    from const import __nameMyEnedis__  # type: ignore[no-redef]
-
-log = logging.getLogger(__nameMyEnedis__)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -120,13 +105,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     heurescreuses = entry.options.get(HEURES_CREUSES, None)
     if heurescreuses == "":
         heurescreuses = None
-    _LOGGER.info("**enedis**_conf heurescreuses *%s*" % heurescreuses)
-    delai_interval = entry.options.get(SCAN_INTERVAL)
-    token = entry.options.get(CONF_TOKEN, "")
-    code = str(entry.options.get(CONF_CODE, ""))
-    hpcost = float(entry.options.get(HP_COST, "0.0"))
-    hccost = float(entry.options.get(HC_COST, "0.0"))
-    heurescreusesON = bool(entry.options.get(HEURESCREUSES_ON, True))
+    _LOGGER.info(f"**enedis**_conf heurescreuses *{heurescreuses}*")
+    # TODO: Next line was unused, check if CONF_SCAN_INTERVAL setting is used
+    # delai_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    # token = entry.options.get(CONF_TOKEN, "")
+    # code = str(entry.options.get(CONF_CODE, ""))
+    # hpcost = float(entry.options.get(HP_COST, "0.0"))
+    # hccost = float(entry.options.get(HC_COST, "0.0"))
+    # heurescreusesON = bool(entry.options.get(HEURESCREUSES_ON, True))
 
     coordinator_enedis = sensorEnedisCoordinator(hass, entry)
 
@@ -136,6 +122,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         """Activate the data update coordinator."""
         coordinator_enedis.update_interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL)
         await coordinator_enedis.async_refresh()
+
+    async def _update(call):
+        _LOGGER.info("Event received: %s", call.data)
+        await coordinator_enedis._async_update_data_enedis()
 
     if hass.state == CoreState.running:
         await _enable_scheduled_myEnedis()
@@ -148,9 +138,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
 
     undo_listener = entry.add_update_listener(_async_update_listener)
+    update_listener = hass.bus.async_listen(EVENT_UPDATE_ENEDIS, _update)
     hass.data[DOMAIN][entry.entry_id] = {
         COORDINATOR_ENEDIS: coordinator_enedis,
         UNDO_UPDATE_LISTENER: undo_listener,
+        UPDATE_LISTENER: update_listener,
     }
 
     for platform in PLATFORMS:
@@ -173,6 +165,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
     if unload_ok:
         hass.data[DOMAIN][entry.entry_id][UNDO_UPDATE_LISTENER]()
+        hass.data[DOMAIN][entry.entry_id][UPDATE_LISTENER]()
         hass.data[DOMAIN].pop(entry.entry_id)
         if not hass.data[DOMAIN]:
             hass.data.pop(DOMAIN)
@@ -195,7 +188,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         self._PDL_ID: str
         # client = myClientEnedis.myClientEnedis(token=_client.get("token"),
         #                                        PDL_ID=_client.get("code"),
-        #                                        delai=_client.get("DEFAULT_REPRISE_ERR"),
+        #                                        delay=_client.get("DEFAULT_REPRISE_ERR"),
         #                                        heuresCreuses=_client.get("heurescreuses"),
         #                                        heuresCreusesCost=_client.get("hccost"),
         #                                        heuresPleinesCost=_client.get("hpcost"),
@@ -216,7 +209,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
 
     def update_data(self) -> bool:
         """Get the latest data from myEnedis."""
-        log.info(f"** update_data {self._PDL_ID} **")
+        _LOGGER.info(f"** update_data {self._PDL_ID} **")
         self.clientEnedis.getData()
         return True
 
@@ -268,8 +261,13 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         heurescreuses = ast.literal_eval(heurescreusesch)
         self._PDL_ID = code
         _LOGGER.info(
-            "options - proc -- %s %s %s %s %s %s"
-            % (token, code, hccost, hpcost, heurescreusesON, heurescreuses)
+            "options - proc -- %s %s %s %s %s %s",
+            token,
+            code,
+            hccost,
+            hpcost,
+            heurescreusesON,
+            heurescreuses,
         )
 
         import os
@@ -279,9 +277,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         try:
             path = str(dir_path)
             if not os.path.isdir(path):
-                _LOGGER.info("creation repertoire  ? %s" % path)
+                _LOGGER.info(f"creation repertoire  ? {path}")
                 os.mkdir(path)
-                _LOGGER.info("repertoire cree %s" % path)
+                _LOGGER.info(f"repertoire cree {path}")
         except:
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
@@ -307,7 +305,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         self.clientEnedis = myClientEnedis.myClientEnedis(
             token,
             code,
-            delai=DEFAULT_REPRISE_ERR,
+            delay=DEFAULT_REPRISE_ERR,
             heuresCreuses=heurescreuses,
             heuresCreusesCost=hccost,
             heuresPleinesCost=hpcost,
@@ -326,7 +324,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         try:
             _LOGGER.info("run apiEnedis")
             # ne sert plus normalement ...
-            # self.myEnedis = await self.hass.async_add_executor_job(self.clientEnedis.getData)
+            # self.myEnedis = (
+            #        await self.hass.async_add_executor_job(self.clientEnedis.getData)
+            #    )
             _LOGGER.info("run apiEnedis - done -- ")
         except Exception as inst:
             raise Exception(inst)

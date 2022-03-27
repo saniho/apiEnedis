@@ -8,7 +8,8 @@ listeMessages = {
     "result_500": "Erreur interne Enedis(500)",
     "UNKERROR_001": "Erreur interne Enedis(001)",
     "UNKERROR_002": "Erreur timeout",
-    "UNKERROR_003": "Client inconnu, veuillez valider vos consentements avant d'utiliser nos services",
+    "UNKERROR_003": "Client inconnu, "
+    "veuillez valider vos consentements avant d'utiliser nos services",
 }
 
 

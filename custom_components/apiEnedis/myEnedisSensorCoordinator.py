@@ -1,6 +1,7 @@
 """Sensor for my first"""
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import timedelta
 
@@ -19,19 +20,10 @@ except ImportError:
     pass
 
 
-from .const import (  # isort:skip
-    DOMAIN,
-    __VERSION__,
-    __name__,
-    _consommation,
-    _production,
-    SENSOR_TYPES,
-    COORDINATOR_ENEDIS,
-    ENTITY_DELAI,
-)
+from .const import __VERSION__, ENTITY_DELAI, __name__, _consommation, _production
+from .sensorEnedis import manageSensorState
 
 _LOGGER = logging.getLogger(__name__)
-from .sensorEnedis import manageSensorState
 
 ICON = "mdi:package-variant-closed"
 
@@ -62,18 +54,18 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def unique_id(self):
         "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.%s.production" % (self._myDataSensorEnedis.get_PDL_ID())
+            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
         else:
-            name = "myEnedis.%s" % (self._myDataSensorEnedis.get_PDL_ID())
+            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
         return name
 
     @property
     def name(self):
         """Return the name of the sensor."""
         if self._typeSensor == _production:
-            name = "myEnedis.%s.production" % (self._myDataSensorEnedis.get_PDL_ID())
+            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
         else:
-            name = "myEnedis.%s" % (self._myDataSensorEnedis.get_PDL_ID())
+            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
         return name
 
     @property
@@ -85,6 +77,11 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
     def unit_of_measurement(self):
         """Return the unit of measurement of this entity, if any."""
         return self._unit
+
+    async def _async_update(self):
+        """Update state asynchronously"""
+        self._update_state()
+        self.async_write_ha_state()
 
     async def async_added_to_hass(self):
         """Handle entity which will be added."""
@@ -104,13 +101,10 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         @callback
         def update():
             """Update state."""
-            self._update_state()
-            self.async_write_ha_state()
+            asyncio.create_task(self._async_update())
 
         self.async_on_remove(self.coordinator.async_add_listener(update))
-        self._update_state()
-        if not state:
-            return
+        asyncio.create_task(self._async_update())
 
     def _update_state(self):
         """Update sensors state."""

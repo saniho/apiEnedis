@@ -1,0 +1,1 @@
+{"meter_reading":{"usage_point_id":"20000000000000","start":"2022-03-21","end":"2022-03-24","quality":"BRUT","reading_type":{"unit":"Wh","measurement_kind":"energy","aggregate":"sum","measuring_period":"P1D"},"interval_reading":[{"value":"8096","date":"2022-03-21"},{"value":"8091","date":"2022-03-22"},{"value":"7491","date":"2022-03-23"}]}}

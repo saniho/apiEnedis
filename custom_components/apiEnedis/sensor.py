@@ -15,10 +15,7 @@ except ImportError:
 
 from .const import (  # isort:skip
     DOMAIN,
-    __VERSION__,
     __name__,
-    _consommation,
-    _production,
     SENSOR_TYPES,
     COORDINATOR_ENEDIS,
     CONF_TOKEN,
@@ -27,6 +24,19 @@ from .const import (  # isort:skip
     HP_COST,
     HEURESCREUSES_ON,
     HEURES_CREUSES,
+)
+
+from .myEnedisSensorCoordinator import myEnedisSensorCoordinator
+from .myEnedisSensorCoordinatorEnergy import myEnedisSensorCoordinatorEnergy
+from .myEnedisSensorCoordinatorEnergyDetailHours import (
+    myEnedisSensorCoordinatorEnergyDetailHours,
+)
+from .myEnedisSensorCoordinatorEnergyDetailHoursCost import (
+    myEnedisSensorCoordinatorEnergyDetailHoursCost,
+)
+from .myEnedisSensorCoordinatorHistory import myEnedisSensorCoordinatorHistory
+from .myEnedisSensorYesterdayCostCoordinator import (
+    myEnedisSensorYesterdayCostCoordinator,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -44,19 +54,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 ICON = "mdi:package-variant-closed"
-
-from .myEnedisSensorCoordinator import myEnedisSensorCoordinator
-from .myEnedisSensorCoordinatorEnergy import myEnedisSensorCoordinatorEnergy
-from .myEnedisSensorCoordinatorEnergyDetailHours import (
-    myEnedisSensorCoordinatorEnergyDetailHours,
-)
-from .myEnedisSensorCoordinatorEnergyDetailHoursCost import (
-    myEnedisSensorCoordinatorEnergyDetailHoursCost,
-)
-from .myEnedisSensorCoordinatorHistory import myEnedisSensorCoordinatorHistory
-from .myEnedisSensorYesterdayCostCoordinator import (
-    myEnedisSensorYesterdayCostCoordinator,
-)
 
 
 async def async_setup_entry(

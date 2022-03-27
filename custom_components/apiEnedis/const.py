@@ -28,7 +28,6 @@ GITHUB_PRJ = "saniho/apiEnedis"
 GITHUB_URL = f"https://github.com/{GITHUB_PRJ}"
 ISSUE_URL = f"{GITHUB_URL}/issues"
 
-myENEDIS_SERVICE = "myEnedis"
 # nom du repertoire
 DOMAIN = "myEnedis"
 DATA_UPDATED = f"{DOMAIN}_data_updated"
@@ -47,14 +46,14 @@ HP_COST = "hp_cout"
 HC_COST = "hc_cout"
 HEURES_CREUSES = "heures_creuses"
 
-CONF_DELAY = 60 * 60 * 6  # verification enedis toutes les 6 heures
 DEFAULT_REPRISE_ERR = 60 * 60  # verification enedis toutes les heures
 DEFAULT_SCAN_INTERVAL = 2 * 60  # verification enedis toutes les 60 secondes
-DEFAULT_SENSOR_INTERVAL = 60  # 60 secondes verifications du coordinator
 DEFAULT_SCAN_INTERVAL_HISTORIQUE = 60 * 10  # 1 fois toutes les 10 minutes
 
 HEURESCREUSES_ON = "heuresCreusesON"
 UNDO_UPDATE_LISTENER = "undo_update_listener"
+UPDATE_LISTENER = "update_listener"
+EVENT_UPDATE_ENEDIS = "update_enedis"
 COORDINATOR_ENEDIS = "coordinator_enedis"
 
 __nameMyEnedis__ = "myEnedis"
