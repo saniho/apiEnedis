@@ -258,6 +258,22 @@ def test_update_data(caplog, tmpdir):
     assert dataExpected == data, "Error data_update"
 
 
+@pytest.mark.usefixtures("patch_datetime_now")
+@pytest.mark.parametrize(
+    "patch_datetime_now",
+    [(datetime.datetime(2022, 3, 27, 9, 52, 37, 939458))],
+    indirect=True,
+)
+def test_delay_after_error(caplog):
+    caplog.set_level(logging.DEBUG)  # Aide au debogue
+
+    lastTime = datetime.datetime(2022, 3, 26, 23, 27, 29, 20309)
+    myE = myClientEnedis("myToken", "myPDL")
+    myE.updateTimeLastCall(t=lastTime)
+    result = myE.getDelayIsGoodAfterError(datetime.datetime.now())
+    assert result is True
+
+
 def test_heures_creuses():
     myE = myClientEnedis("myToken", "myPDL")
     heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")

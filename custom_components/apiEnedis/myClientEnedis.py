@@ -940,7 +940,7 @@ class myClientEnedis:
                 currentDateTime.timestamp() - timeLastCall.timestamp()
             ) > minDelay
             log.info(
-                "DelayIsGoodAfterError: '%s' vs. '%s' Δ%s %s",
+                "DelayIsGoodAfterError: Last:'%s' vs. Now:'%s' Δ%s %s",
                 timeLastCall,
                 currentDateTime,
                 minDelay,
