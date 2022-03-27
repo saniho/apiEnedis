@@ -58,15 +58,11 @@ from .const import (  # isort:skip
     CONF_TOKEN,
     CONF_CODE,
     DOMAIN,
-    PLATFORM,
     HP_COST,
     HC_COST,
     DEFAULT_SCAN_INTERVAL,
-    DEFAULT_SENSOR_INTERVAL,
-    myENEDIS_SERVICE,
     __VERSION__,
     __name__,
-    CONF_DELAY,
     HEURESCREUSES_ON,
     HEURES_CREUSES,
     UNDO_UPDATE_LISTENER,
@@ -76,14 +72,6 @@ from .const import (  # isort:skip
     PLATFORMS,
     DEFAULT_REPRISE_ERR,
 )
-
-try:
-    from .const import (  # isort:skip
-        __nameMyEnedis__,
-    )
-
-except ImportError:
-    from const import __nameMyEnedis__  # type: ignore[no-redef]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -118,12 +106,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if heurescreuses == "":
         heurescreuses = None
     _LOGGER.info(f"**enedis**_conf heurescreuses *{heurescreuses}*")
-    delai_interval = entry.options.get(CONF_SCAN_INTERVAL, SCAN_INTERVAL)
-    token = entry.options.get(CONF_TOKEN, "")
-    code = str(entry.options.get(CONF_CODE, ""))
-    hpcost = float(entry.options.get(HP_COST, "0.0"))
-    hccost = float(entry.options.get(HC_COST, "0.0"))
-    heurescreusesON = bool(entry.options.get(HEURESCREUSES_ON, True))
+    # TODO: Next line was unused, check if CONF_SCAN_INTERVAL setting is used
+    # delai_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    # token = entry.options.get(CONF_TOKEN, "")
+    # code = str(entry.options.get(CONF_CODE, ""))
+    # hpcost = float(entry.options.get(HP_COST, "0.0"))
+    # hccost = float(entry.options.get(HC_COST, "0.0"))
+    # heurescreusesON = bool(entry.options.get(HEURESCREUSES_ON, True))
 
     coordinator_enedis = sensorEnedisCoordinator(hass, entry)
 
@@ -335,7 +324,9 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         try:
             _LOGGER.info("run apiEnedis")
             # ne sert plus normalement ...
-            # self.myEnedis = await self.hass.async_add_executor_job(self.clientEnedis.getData)
+            # self.myEnedis = (
+            #        await self.hass.async_add_executor_job(self.clientEnedis.getData)
+            #    )
             _LOGGER.info("run apiEnedis - done -- ")
         except Exception as inst:
             raise Exception(inst)

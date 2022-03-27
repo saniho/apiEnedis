@@ -4,25 +4,21 @@ try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
         _formatDateYmd,
-        _formatDateYm01,
-        _formatDateY0101,
     )
 
 except ImportError:
     from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
         _formatDateYmd,
-        _formatDateYm01,
-        _formatDateY0101,
     )
 
 import datetime
 import logging
 
-log = logging.getLogger(__nameMyEnedis__)
-
 from .myCheckData import myCheckData
 from .myDataControl import getInformationDataControl, okDataControl
+
+log = logging.getLogger(__nameMyEnedis__)
 
 
 class myDataEnedisByDayDetail:
@@ -118,7 +114,7 @@ class myDataEnedisByDayDetail:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info(
-                f"--updateData {clefFunction} ( du {self._dateDeb} au {self._dateFin} )--"
+                f"--updateData {clefFunction} (du {self._dateDeb} au {self._dateFin})--"
             )
             self._data = data
             if self._data is None:
@@ -151,12 +147,12 @@ class myDataEnedisByDayDetail:
                         self._HC, self._HP = 0, 0
                     self._callOk = callDone
             log.info(
-                f"with update !! {clefFunction} ( du {self._dateDeb} au {self._dateFin} )--"
+                f"with update !! {clefFunction} (du {self._dateDeb} au {self._dateFin})"
             )
-            log.info("updateData : data %s" % (self._data))
+            log.info(f"updateData : data {self._data}")
         else:
-            log.info(f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
-            log.info("no updateData : data %s" % (self._data))
+            log.info(f"noupdate !! {clefFunction} (du {dateDeb} au {dateFin})")
+            log.info(f"no updateData : data {self._data}")
         return self._data
 
     def getCoeffIntervalLength(self):
@@ -180,7 +176,7 @@ class myDataEnedisByDayDetail:
     def createMultiDaysHCHP(self, data):
         joursHC = {}
         joursHP = {}
-        dateDuJour = (datetime.date.today()).strftime(_formatDateYmd)
+        # dateDuJour = (datetime.date.today()).strftime(_formatDateYmd)
         for x in data["meter_reading"]["interval_reading"]:
             self._interval_length = x["interval_length"]
             date = x["date"][:10]

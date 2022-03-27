@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import datetime
 import json
 import logging
@@ -167,7 +168,7 @@ def test_update_data(caplog, tmpdir):
     myE = myClientEnedis(
         "myToken",
         "20000000000000",
-        heuresCreuses=eval("[['00:00','05:00'], ['22:00', '24:00']]"),
+        heuresCreuses=ast.literal_eval("[['00:00','05:00'], ['22:00', '24:00']]"),
         heuresCreusesON=True,
     )
     myE.setPathArchive(tmpdir)
@@ -276,7 +277,7 @@ def test_delay_after_error(caplog):
 
 def test_heures_creuses():
     myE = myClientEnedis("myToken", "myPDL")
-    heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
+    heureCreusesCh = ast.literal_eval("[['00:00','05:00'], ['22:00', '24:00']]")
     heuresCreusesON = True
     myE = myClientEnedis(
         "myToken",
@@ -314,7 +315,7 @@ def test_update_last7days(caplog):
     myE = myClientEnedis(
         "myToken",
         "myPDL",
-        heuresCreuses=eval("[['00:00','05:00'], ['22:00', '24:00']]"),
+        heuresCreuses=ast.literal_eval("[['00:00','05:00'], ['22:00', '24:00']]"),
         heuresCreusesON=True,
     )
 

@@ -30,7 +30,6 @@ class gitinformation:
             or gitinformation._lastUpdates[self._repo] < timestamp - 3600
         ):
             gitinformation._lastUpdates[self._repo] = timestamp
-            # raise Exception('Reading git information')  # Raise exception to fine location
 
             try:
                 from urllib.request import urlopen

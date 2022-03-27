@@ -21,7 +21,10 @@ from .const import (  # isort:skip
 _LOGGER = logging.getLogger(__name__)
 
 
-class myEnedisFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
+class myEnedisFlowHandler(  # type: ignore[call-arg]
+    config_entries.ConfigFlow, domain=DOMAIN
+):
+
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
     def __init__(self):

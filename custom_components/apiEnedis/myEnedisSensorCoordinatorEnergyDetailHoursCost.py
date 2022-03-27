@@ -19,16 +19,10 @@ except ImportError:
     pass
 
 
-from .const import (  # isort:skip
-    __VERSION__,
-    __name__,
-    _consommation,
-    _production,
-    ENTITY_DELAI,
-)
+from .const import __VERSION__, ENTITY_DELAI, __name__, _consommation, _production
+from .sensorEnedis import manageSensorState
 
 _LOGGER = logging.getLogger(__name__)
-from .sensorEnedis import manageSensorState
 
 ICON = "mdi:package-variant-closed"
 

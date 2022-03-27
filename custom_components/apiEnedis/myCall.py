@@ -180,7 +180,7 @@ class myCall:
                 _LOGGER.info(f"{logPrefix}data : {data} =====")
                 _LOGGER.info(f"{logPrefix}reponse : {dataAnswer} =====")
                 maxTriesToGo = 0  # Done
-            except requests.exceptions.Timeout as error:
+            except requests.exceptions.Timeout:
                 myCall.handleTimeout()
                 # a ajouter raison de l'erreur !!!
                 _LOGGER.error(f"{logPrefix}requests.exceptions.Timeout")
@@ -191,7 +191,7 @@ class myCall:
                     }
                 }
                 self.setLastAnswer(dataAnswer)
-            except requests.exceptions.HTTPError as error:
+            except requests.exceptions.HTTPError:
                 _LOGGER.error(f"{logPrefix}requests.exceptions.HTTPError")
                 if ("ADAM-ERR0069" not in response.text) and (
                     "__token_refresh_401" not in response.text

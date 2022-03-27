@@ -44,7 +44,6 @@ class manageSensorState:
         dataAvailable = False
         yesterdayDate = None
         if self._myDataEnedis.contract is not None:
-            # if self._myDataEnedis.getYesterday().getValue() != 0: # on a eut des données
             if (
                 self._myDataEnedis.getYesterdayHCHP().getHC()
                 + self._myDataEnedis.getYesterdayHCHP().getHP()
@@ -137,7 +136,7 @@ class manageSensorState:
         laDate = laDate.replace(minute=0, second=0, microsecond=0)
         lastReset = laDate
         if self._myDataEnedis.getTimeLastCall() is not None:
-            DateHeureDetail = {}
+            # DateHeureDetail = {}
             DateHeureDetailHP = (
                 self._myDataEnedis.getLast7DaysDetails().getDateHeureDetailHP()
             )
@@ -165,7 +164,7 @@ class manageSensorState:
         laDate = laDate.replace(minute=0, second=0, microsecond=0)
         lastReset = laDate
         if self._myDataEnedis.getTimeLastCall() is not None:
-            DateHeureDetail = {}
+            # DateHeureDetail = {}
             DateHeureDetailHP = (
                 self._myDataEnedis.getLast7DaysDetails().getDateHeureDetailHP()
             )
@@ -179,8 +178,8 @@ class manageSensorState:
             if clefDate in DateHeureDetailHC.keys():
                 valeurHC = DateHeureDetailHC[clefDate]
 
-            costHC = f"{0.001 * self._myDataEnedis.getHCCost(valeurHC):.3f}"
-            costHP = f"{0.001 * self._myDataEnedis.getHPCost(valeurHP):.3f}"
+            # costHC = f"{0.001 * self._myDataEnedis.getHCCost(valeurHC):.3f}"
+            # costHP = f"{0.001 * self._myDataEnedis.getHPCost(valeurHP):.3f}"
             cost = self._myDataEnedis.getHCCost(
                 valeurHC
             ) + self._myDataEnedis.getHPCost(valeurHP)
@@ -482,13 +481,15 @@ class manageSensorState:
                         status["yesterday_production"] = 0
                     if typeSensor == _consommation:  # data.isConsommation():
                         valeurstate = (
-                            status["yesterday"] * 0.001  # type:ignore[operator]
-                        )  # type:ignore[operator]
+                            float(status["yesterday"]) * 0.001  # type:ignore[arg-type]
+                        )
                     else:
                         valeurstate = (
-                            status["yesterday_production"]
-                            * 0.001  # type:ignore[operator]
-                        )  # type:ignore[operator]
+                            float(
+                                status["yesterday_production"]  # type:ignore[arg-type]
+                            )
+                            * 0.001
+                        )
                     state = f"{valeurstate:.3f}"
 
                 except Exception:
@@ -502,9 +503,7 @@ class manageSensorState:
                     )
 
                     self._LOGGER.error(msg)
-                    self._LOGGER.error(
-                        "errorLastCall : %s " % (data.getErrorLastCall())
-                    )
+                    self._LOGGER.error("errorLastCall : %s ", data.getErrorLastCall())
             else:
                 status["errorLastCall"] = data.getCardErrorLastCall()
                 status["errorLastCallInterne"] = data.getErrorLastCall()

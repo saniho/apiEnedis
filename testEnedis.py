@@ -1,20 +1,22 @@
 #!/usr/bin/env python3.8
 from __future__ import annotations
 
+import ast
 import logging
 from typing import Any
+
+from custom_components.apiEnedis import myClientEnedis
+from custom_components.apiEnedis.const import _consommation
+from custom_components.apiEnedis.sensorEnedis import manageSensorState
 
 LOGGER = logging.getLogger("testEnedis")
 LOGGER.setLevel(
     logging.DEBUG
 )  # Aide au debogue, à définir avant le chargement du reste
 
-from custom_components.apiEnedis import myClientEnedis
-from custom_components.apiEnedis.sensorEnedis import manageSensorState
 
 __version__ = "test_saniho"
 
-from custom_components.apiEnedis.const import _consommation
 
 myClientEnedis.log.setLevel(logging.DEBUG)  # Aide au debogue
 
@@ -39,7 +41,7 @@ def testMulti():
         token = mon_conteneur[qui]["TOKEN"]
         PDL_ID = mon_conteneur[qui]["CODE"]
         print(mon_conteneur[qui]["QUI"])
-        heureCreusesCh = eval("[['00:00','05:00'], ['22:00', '24:00']]")
+        heureCreusesCh = ast.literal_eval("[['00:00','05:00'], ['22:00', '24:00']]")
         heuresCreusesON = True
 
         # Lecture fichier Json de sortie
@@ -89,8 +91,12 @@ def testMulti():
         myDataSensorEnedis.init(myDataEnedis)
         typeSensor = _consommation
         status_counts, state = myDataSensorEnedis.getStatus(typeSensor)
-        # lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )
-        # lastReset, status_counts, state = myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
+        # lastReset, status_counts, state = (
+        #         myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )
+        #     )
+        # lastReset, status_counts, state = (
+        #         myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
+        #     )
         LOGGER.info("****")
         LOGGER.info(status_counts)
         for clef in status_counts.keys():
@@ -105,7 +111,9 @@ def testMulti():
         #
         # typeSensor = _consommation
         # laDate = datetime.datetime.today() - datetime.timedelta(3)
-        # status_counts, state = myDataSensorEnedis.getStatusHistory( laDate, detail = "ALL" )
+        # status_counts, state = (
+        #     myDataSensorEnedis.getStatusHistory( laDate, detail = "ALL" )
+        # )
         # LOGGER.info("**** : %s" %state)
         # LOGGER.info(status_counts)
         # for clef in status_counts.keys():
@@ -132,7 +140,7 @@ def testMono():
         token=token,
         PDL_ID=PDL_ID,
         delai=10,
-        heuresCreuses=eval(heureCreusesCh),
+        heuresCreuses=ast.literal_eval(heureCreusesCh),
         heuresCreusesCost=0.20,
         heuresPleinesCost=1.30,
         version=__version__,
