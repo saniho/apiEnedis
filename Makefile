@@ -12,9 +12,7 @@ lint_python:
 	bandit --recursive --skip $(BANDIT_EXCLUDES) .
 	black -l 88 .
 	# codespell --ignore-words-list="hass" custom_components
-	flake8 . --count --ignore $(FLAKE_EXCLUDES) \
-                  --max-complexity=18 --max-line-length=88 \
-                  --show-source --statistics
+	flake8 .
 	mypy --show-error-codes --ignore-missing-imports --install-types \
               --non-interactive \
               custom_components test*
