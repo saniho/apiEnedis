@@ -258,6 +258,97 @@ def test_update_data(caplog, tmpdir):
     # desactivé pour le moment
     assert dataExpected == data, "Error data_update"
 
+    stateExpected = {}
+    gitVersion = myE.getGitVersion()
+    stateExpected = {
+        "version": "v1.4.0.3",
+        "versionGit": gitVersion,
+        "versionUpdateAvailable": True,
+        "nbCall": 16,
+        "typeCompteur": "consommation",
+        "numPDL": "20000000000000",
+        "horaireMinCall": 1106,
+        "activationDate": "2000-02-17",
+        "lastUpdate": datetime.datetime(2022, 3, 24, 22, 30, 10),
+        "timeLastCall": datetime.datetime(2022, 3, 24, 22, 30, 10),
+        "yesterday": 7491,
+        "last_week": 58459,
+        "yesterdayDate": "2022-03-23",
+        "yesterdayLastYear": 9378,
+        "yesterdayLastYearDate": "2022-03-23",
+        "yesterdayConsumptionMaxPower": 1798,
+        "day_1_HP": 5301.0,
+        "day_2_HP": 5728.0,
+        "day_3_HP": 4956.0,
+        "day_4_HP": 7051.0,
+        "day_5_HP": 8348.0,
+        "day_6_HP": 4382.0,
+        "day_7_HP": 5010.0,
+        "day_1_HC": 2190.0,
+        "day_2_HC": 2363.0,
+        "day_3_HC": 3140.0,
+        "day_4_HC": 2691.0,
+        "day_5_HC": 2330.0,
+        "day_6_HC": 1777.0,
+        "day_7_HC": 2059.0,
+        "dailyweek_cost": ["0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00"],
+        "dailyweek_costHC": ["0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00"],
+        "dailyweek_HC": ["2.190", "2.363", "3.140", "2.691", "2.330", "1.777", "2.059"],
+        "dailyweek": [
+            "2022-03-23",
+            "2022-03-22",
+            "2022-03-21",
+            "2022-03-20",
+            "2022-03-19",
+            "2022-03-18",
+            "2022-03-17",
+        ],
+        "dailyweek_costHP": ["0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00"],
+        "dailyweek_HP": ["5.301", "5.728", "4.956", "7.051", "8.348", "4.382", "5.010"],
+        "day_1": "7.49",
+        "day_2": "8.09",
+        "day_3": "8.10",
+        "day_4": "9.74",
+        "day_5": "10.68",
+        "day_6": "6.16",
+        "day_7": "7.07",
+        "daily": ["7.49", "8.09", "8.10", "9.74", "10.68", "6.16", "7.07"],
+        "halfhourly": [],
+        "offpeak_hours": [["00:00", "05:00"], ["22:00", "24:00"]],
+        "peak_hours": "5.301",
+        "peak_offpeak_percent": "70.76",
+        "yesterday_HC_cost": "0.000",
+        "yesterday_HP_cost": "0.000",
+        "daily_cost": "0.00",
+        "yesterday_HC": "2.190",
+        "yesterday_HP": "5.301",
+        "yesterday_HCHP": "7.491",
+        "current_week": "23.678",
+        "current_week_number": 12,
+        "current_week_last_year": "26.878",
+        "last_month": "256.446",
+        "last_month_last_year": "267.103",
+        "current_month": "193.788",
+        "current_month_last_year": "208.641",
+        "last_year": "3373.658",
+        "current_year": "741.429",
+        "errorLastCall": "",
+        "errorLastCallInterne": "",
+        "monthly_evolution": "-3.990",
+        "current_week_evolution": "-11.906",
+        "current_month_evolution": "-7.119",
+        "yesterday_evolution": "-20.122",
+        "subscribed_power": "6 kVA",
+        "offpeak_hours_enedis": "HC (0H54-6H54;11H54-13H54)",
+        "yesterday_production": 0,
+    }
+
+    mSS = manageSensorState()
+    mSS.init(myE, version="v1.4.0.3")
+    state, other = mSS.getStatus()
+    stateExpected["horaireMinCall"] = state["horaireMinCall"]
+    assert stateExpected == state
+
 
 @pytest.mark.usefixtures("patch_datetime_now")
 @pytest.mark.parametrize(
