@@ -988,7 +988,9 @@ class myClientEnedis:
         gitInfo.getInformation()
         self._gitVersion = gitInfo.getVersion()
 
-    def getCallPossible(self, currentDateTime=datetime.datetime.now(), trace=False):
+    def getCallPossible(self, trace=False):
+        currentDateTime = datetime.datetime.now()
+
         callpossible = self.getHorairePossible() and (
             self.getLastCallHier()
             or (self.getTimeLastCall() is None)
