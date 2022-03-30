@@ -8,8 +8,6 @@ from typing import Any
 
 try:
     from .const import (  # isort:skip
-        _consommation,
-        _production,
         __nameMyEnedis__,
         _formatDateYmd,
         _formatDateYm01,
@@ -20,8 +18,6 @@ try:
 except ImportError:
     import messages  # type: ignore[no-redef]
     from const import (  # type: ignore[no-redef]
-        _consommation,
-        _production,
         __nameMyEnedis__,
         _formatDateYmd,
         _formatDateYm01,
@@ -29,6 +25,7 @@ except ImportError:
     )
     import gitinformation  # type: ignore[no-redef]
 
+from . import const
 from .myCall import myCall
 from .myContrat import myContrat
 from .myDataEnedis import myDataEnedis
@@ -45,7 +42,7 @@ class myClientEnedis:
         self,
         token: str,
         PDL_ID: str,
-        delai: int = 3600,
+        delay: int = 3600,
         heuresCreuses=None,
         heuresCreusesCost: float = 0,
         heuresPleinesCost: float = 0,
@@ -61,7 +58,7 @@ class myClientEnedis:
         self._errorLastCall = None
         self._lastMethodCall: str = ""
         self._lastMethodCallError = None
-        self._delai = delai
+        self._delay = delay
         self._heuresCreusesCost: float = heuresCreusesCost
         self._heuresPleinesCost: float = heuresPleinesCost
         self._updateRealise: bool = False
@@ -161,8 +158,10 @@ class myClientEnedis:
         data = {}
         dataRepertoire = self.getPathArchive()
         log.info(
-            "%s - %s - fichier lu dataRepertoire : %s"
-            % (self.contract.get_PDL_ID(), self._PDL_ID, dataRepertoire)
+            "%s - %s - fichier lu dataRepertoire : %s",
+            self.contract.get_PDL_ID(),
+            self._PDL_ID,
+            dataRepertoire,
         )
         directory = f"{dataRepertoire}/*.json"
         log.info(f"fichier lu directory : {directory}")
@@ -212,7 +211,7 @@ class myClientEnedis:
         return self._path
 
     def setlastCallJson(self):
-        import json
+        pass
 
         data = {
             "timeLastCall": str(self.getTimeLastCall()),
@@ -221,7 +220,7 @@ class myClientEnedis:
             "version": self.getVersion(),
             # 'timeLastUpdate':self.getTimeLastCall()
         }
-        jsonData = json.dumps(data)
+        # jsonData = json.dumps(data)
         self.setDataJsonValue("lastCall", data)
 
     def writeDataJson(self):
@@ -236,8 +235,12 @@ class myClientEnedis:
                 # si la date est du timeout, alors on ecrit
                 nePasEcrire = False
                 if "enedis_return" in data:
-                    if "error" in data["enedis_return"]:
-                        nePasEcrire = (data.get("enedis_return").get("error") == "UNKERROR_TIMEOUT")
+                    enedis_return = data["enedis_return"]
+                    if "error" in enedis_return:
+                        nePasEcrire = enedis_return["error"] in (
+                            "UNKERROR_TIMEOUT",
+                            "UNAVAILABLE",
+                        )
                 log.info(f" >>>> ecriture : {nomfichier} / {data}")
                 if not nePasEcrire:
                     with open(nomfichier, "w") as outfile:
@@ -246,8 +249,8 @@ class myClientEnedis:
                 log.error(f" >>>> erreur ecriture : {nomfichier} / {data}")
 
     def getData(self) -> bool:
-        ### A VOIR ###
-        ## supprimer test ecrire sur ok present ou non !!! pas d'interet
+        # ### A VOIR ###
+        # # supprimer test ecrire sur ok present ou non !!! pas d'interet
         #   self.setDataJsonCopy() # pourquoi cela ? vu qu'on l'a mis juste
         #   avant ... pas besoin du default !!!!
         log.debug(f" {self._PDL_ID} >>>> getData, self._dataJson ? {self._dataJson}")
@@ -346,17 +349,13 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
-        cejour = (datetime.date.today()).strftime(_formatDateYmd)
+        cejour = today.strftime(_formatDateYmd)
         firstdateofweek = (
-            datetime.date.today()
-            - datetime.timedelta(days=datetime.datetime.today().weekday() % 7)
+            today - datetime.timedelta(days=today.weekday() % 7)
         ).strftime(_formatDateYmd)
-        # if (cejour == firstdateofweek):
-        #    return 0, False  # cas lundi = premier jour de la semaine et donc rien de dispo
-        # else:
-        #    return self.getDataPeriod(firstdateofweek, cejour)
+
         deb = self.contract.minCompareDateContract(firstdateofweek)
         fin = self.contract.maxCompareDateContract(cejour)
         data = self._currentWeek.updateData(
@@ -377,7 +376,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         start_date = (today + datetime.timedelta(-today.weekday(), weeks=-1)).strftime(
             _formatDateYmd
@@ -405,7 +404,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         start_date = (today - datetime.timedelta(7)).strftime(_formatDateYmd)
         end_date = (datetime.date.today()).strftime(_formatDateYmd)
@@ -429,11 +428,11 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, yesterdayDate = self.getDataJsonValue(clefFunction), None
-        if _yesterdayDate is not None:
-            yesterdayDate = _yesterdayDate
-        hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
-        cejour = (datetime.date.today()).strftime(_formatDateYmd)
+            data = self.getDataJsonValue(clefFunction)
+
+        today = datetime.date.today()
+        hier = (today - datetime.timedelta(1)).strftime(_formatDateYmd)
+        cejour = today.strftime(_formatDateYmd)
         # return self.getDataPeriodCLC(hier, cejour), hier
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(cejour)
@@ -455,7 +454,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, yesterdayDate = self.getDataJsonValue(clefFunction), None
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         start_date = (today - datetime.timedelta(7)).strftime(_formatDateYmd)
         end_date = (datetime.date.today()).strftime(_formatDateYmd)
@@ -479,7 +478,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         debCurrentMonth = today.strftime(_formatDateYm01)
         cejour = (datetime.date.today()).strftime(_formatDateYmd)
@@ -507,8 +506,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
-        import datetime
+            data = self.getDataJsonValue(clefFunction)
 
         today = datetime.date.today()
         first = today.replace(day=1)
@@ -535,7 +533,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         first = today.replace(day=1, year=today.year - 1)
         lastMonthLastYear = first - datetime.timedelta(days=1)
@@ -561,7 +559,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         debCurrentMonth = today.strftime(_formatDateY0101)
         cejour = (datetime.date.today()).strftime(_formatDateYmd)
@@ -585,7 +583,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         first = today.replace(day=1, month=1)
         lastYear = first - datetime.timedelta(days=1)
@@ -611,7 +609,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         todayLastYear = today.replace(year=today.year - 1)
         hier = (todayLastYear - datetime.timedelta(1)).strftime(_formatDateYmd)
@@ -631,33 +629,31 @@ class myClientEnedis:
         self.setDataRequestJson(clefFunction, self._yesterdayLastYear)
         self.setNbCall(self._yesterdayLastYear.getNbCall())
 
-    def updateCurrentWeekLastYear(self, data=None, withControl=True):
+    def updateCurrentWeekLastYear(self, data=None, withControl=True) -> None:
         clefFunction = "updateCurrentWeekLastYear"
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
 
         today = datetime.date.today()
         numWeek = today.isocalendar()[1]  # numero de la semaine
         previousYear = datetime.datetime.today().year - 1
         d = f"{previousYear}-W{numWeek}"
         rfirstdateofweek = datetime.datetime.strptime(d + "-1", "%G-W%V-%u")
-        # on recule d'un jour, car on a pas les données du jours, vs on a celle de l'an passé
+        # on recule d'un jour, car on a pas les données du jours,
+        #   vs on a celle de l'an passé
         r = rfirstdateofweek + datetime.timedelta(
             days=datetime.datetime.today().weekday()
         )  # car on a pas les données du jour...
-        cejour = r.strftime(_formatDateYmd)
+        # cejour = r.strftime(_formatDateYmd)
         r = rfirstdateofweek + datetime.timedelta(
             days=datetime.datetime.today().weekday()
         )  # car on a pas les données du jour...
         cejourmoins1 = r.strftime(_formatDateYmd)
 
         firstdateofweek = rfirstdateofweek.strftime(_formatDateYmd)
-        # if (cejour == firstdateofweek) or ( firstdateofweek > cejour ):
-        #    return 0, False  # cas lundi = premier jour de la semaine et donc rien de dispo
-        # else:
-        #    return self.getDataPeriod(firstdateofweek, cejourmoins1)
+
         deb = self.contract.minCompareDateContract(firstdateofweek)
         fin = self.contract.maxCompareDateContract(cejourmoins1)
         data = self._currentWeekLastYear.updateData(
@@ -678,7 +674,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         today = today.replace(year=datetime.date.today().year - 1)
         debCurrentMonthPreviousYear = today.strftime(_formatDateYm01)
@@ -705,7 +701,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
         cejour = (datetime.date.today()).strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
@@ -729,7 +725,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
         cejour = (datetime.date.today()).strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
@@ -752,7 +748,7 @@ class myClientEnedis:
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
-            data, callDone = self.getDataJsonValue(clefFunction), True
+            data = self.getDataJsonValue(clefFunction)
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
         cejour = (datetime.date.today()).strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
@@ -817,8 +813,6 @@ class myClientEnedis:
         return self._currentMonth
 
     # def CallgetCurrentMonthDetails(self):
-    #     import datetime
-
     #    today = datetime.date.today()
     #    debCurrentMonth = today.strftime(_formatDateYm01)
     #    cejour = (datetime.date.today()).strftime(_formatDateYmd)
@@ -836,7 +830,9 @@ class myClientEnedis:
     def getLastUpdate(self):
         return self._lastUpdate
 
-    def updateLastUpdate(self, t=datetime.datetime.now()):
+    def updateLastUpdate(self, t="_unset"):
+        if t == "_unset":
+            t = datetime.datetime.now()
         self._lastUpdate = t
 
     def getTimeLastCall(self):
@@ -922,18 +918,26 @@ class myClientEnedis:
     def setErrorLastCall(self, errorMessage):
         self._errorLastCall = errorMessage
 
-    def getDelaiError(self):
-        return self._delai
+    def getDelayError(self):
+        return self._delay
 
-    def getDelaiIsGoodAfterError(self, currentDateTime):
-        log.info(
-            "TimeLastCall : %s" % (self.getTimeLastCall()),
-        )
-        ecartOk = True
-        if self.getTimeLastCall() is not None:
+    def getDelayIsGoodAfterError(self, currentDateTime):
+        timeLastCall = self.getTimeLastCall()
+        if timeLastCall is not None:
+            minDelay = self.getDelayError()
             ecartOk = (
-                currentDateTime - self.getTimeLastCall()
-            ).total_seconds() > self.getDelaiError()
+                currentDateTime.timestamp() - timeLastCall.timestamp()
+            ) > minDelay
+            log.info(
+                "DelayIsGoodAfterError: Last:'%s' vs. Now:'%s' Δ%s %s",
+                timeLastCall,
+                currentDateTime,
+                minDelay,
+                ecartOk,
+            )
+        else:
+            ecartOk = True
+            log.info("DelayIsGoodAfterError: TimeLastCall is None, True")
         # test
         # ecartOk = True
         return ecartOk
@@ -948,18 +952,17 @@ class myClientEnedis:
         horairePossible = (hourNow >= hourMin) and (hourNow < 2330)
         # for test
         # horairePossible = ( hourNow >= 11 ) and ( hourNow < 23 )
-        log.info(
-            f"HorairePossible : {hourMin} <= {hourNow} < 2330 => {horairePossible}"
-        )
+        log.info(f"HorairePossible: {hourMin}<={hourNow}<2330 => {horairePossible}")
         return horairePossible
 
     def getLastCallHier(self):
+        """Return true if the last call was for yesterday"""
         if self.getTimeLastCall() is not None:
             hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(
                 hour=23, minute=40
             )
             lastCall = self.getTimeLastCall()
-            lastCallHier = lastCall < hier
+            lastCallHier = lastCall.timestamp() < hier.timestamp()
         else:
             lastCallHier = False
         return lastCallHier
@@ -970,69 +973,54 @@ class myClientEnedis:
         return self._gitVersion
 
     def updateGitVersion(self):
-        gitInfo = gitinformation.gitinformation("saniho/apiEnedis")
+        gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
         gitInfo.getInformation()
         self._gitVersion = gitInfo.getVersion()
 
-    def getCallPossible(self, currentDateTime=datetime.datetime.now(), trace=False):
+    def getCallPossible(self, trace=False):
+        currentDateTime = datetime.datetime.now()
+
         callpossible = self.getHorairePossible() and (
             self.getLastCallHier()
             or (self.getTimeLastCall() is None)
             or (
                 self.getStatusLastCall() is False
-                and self.getDelaiIsGoodAfterError(currentDateTime)
+                and self.getDelayIsGoodAfterError(currentDateTime)
             )
         )
 
         # si on doit prendre les informations des fichiers de sauvegarde
         if self._forceCallJson:
             callpossible = True
-        if trace:
-            log.error(
-                "myEnedis ...new update self.getHorairePossible() : %s ??"
-                % (self.getHorairePossible(),)
-            )
-            log.error(
-                "myEnedis ...new update self.getLastCallHier() : %s ??"
-                % (self.getLastCallHier(),)
-            )
-            log.error(
-                "myEnedis ...new update self.getTimeLastCall() : %s ??"
-                % (self.getTimeLastCall(),)
-            )
-            log.error(
-                "myEnedis ...new update self.getStatusLastCall() : %s??"
-                % (self.getStatusLastCall(),)
-            )
-            log.error(
-                "myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??"
-                % (self.getDelaiIsGoodAfterError(currentDateTime),)
-            )
-            log.error(f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
-            log.error(f"myEnedis ...<< call Possible >> : {callpossible}??")
-        else:
-            log.info(
-                "myEnedis ...new update self.getHorairePossible() : %s ??"
-                % (self.getHorairePossible(),)
-            )
-            log.info(
-                "myEnedis ...new update self.getLastCallHier() : %s ??"
-                % (self.getLastCallHier(),)
-            )
-            log.info(
-                "myEnedis ...new update self.getTimeLastCall() : %s ??"
-                % (self.getTimeLastCall(),)
-            )
-            log.info(
-                "myEnedis ...new update self.getStatusLastCall() : %s??"
-                % (self.getStatusLastCall(),)
-            )
-            log.info(
-                "myEnedis ...new update self.getDelaiIsGoodAfterError() : %s??"
-                % (self.getDelaiIsGoodAfterError(currentDateTime),)
-            )
-            log.info(f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
-            log.info(f"myEnedis ...<< call Possible >> : {callpossible}??")
+
+        level = logging.ERROR if trace else logging.INFO
+        log.log(
+            level,
+            "myEnedis ...new update self.getHorairePossible() : %s ??",
+            self.getHorairePossible(),
+        )
+        log.log(
+            level,
+            "myEnedis ...new update self.getLastCallHier() : %s ??",
+            self.getLastCallHier(),
+        )
+        log.log(
+            level,
+            "myEnedis ...new update self.getTimeLastCall() : %s ??",
+            self.getTimeLastCall(),
+        )
+        log.log(
+            level,
+            "myEnedis ...new update self.getStatusLastCall() : %s??",
+            self.getStatusLastCall(),
+        )
+        log.log(
+            level,
+            "myEnedis ...new update self.getDelayIsGoodAfterError() : %s??",
+            self.getDelayIsGoodAfterError(currentDateTime),
+        )
+        log.log(level, f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
+        log.log(level, f"myEnedis ...<< call Possible >> : {callpossible}??")
         return callpossible
 
     def callConsommation(self):
@@ -1130,14 +1118,14 @@ class myClientEnedis:
             if self.getCallPossible():
                 try:
                     log.info(
-                        "myEnedis(%s) ...%s update lancé, status precedent : %s, lastMethodCall :%s, forcejson :%s"
-                        % (
-                            self.getVersion(),
-                            self.contract.get_PDL_ID(),
-                            self.getStatusLastCall(),
-                            self.lastMethodCallError,
-                            self._forceCallJson,
-                        )
+                        "myEnedis(%s) ...%s update lancé,"
+                        " status precedent : %s, lastMethodCall :%s,"
+                        " forcejson :%s",
+                        self.getVersion(),
+                        self.contract.get_PDL_ID(),
+                        self.getStatusLastCall(),
+                        self.lastMethodCallError,
+                        self._forceCallJson,
                     )
                     # self.getCallPossible()
                     self._nbCall = 0
@@ -1157,14 +1145,13 @@ class myClientEnedis:
                             self.setDataJsonDefault({})
 
                         log.info(
-                            "myEnedis(%s) ... %s update termine, status courant : %s, lastCall :%s, nbCall :%s"
-                            % (
-                                self.getVersion(),
-                                self.contract.get_PDL_ID(),
-                                self.getStatusLastCall(),
-                                self.lastMethodCallError,
-                                self.getNbCall(),
-                            )
+                            "myEnedis(%s) ... %s update termine,"
+                            " status courant : %s, lastCall :%s, nbCall :%s",
+                            self.getVersion(),
+                            self.contract.get_PDL_ID(),
+                            self.getStatusLastCall(),
+                            self.lastMethodCallError,
+                            self.getNbCall(),
                         )
                     except Exception as inst:
                         # pour eviter de boucler le call en permanence
@@ -1176,37 +1163,37 @@ class myClientEnedis:
                             "error",
                         ):  # gestion que c'est pas une erreur de contrat trop recent ?
                             log.error(
-                                "%s - Erreur call ERROR %s"
-                                % (self.contract.get_PDL_ID(), inst)
+                                "%s - Erreur call ERROR %s",
+                                self.contract.get_PDL_ID(),
+                                inst,
                             )
                             # Erreur lors du call...
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
                             self.updateErrorLastCall(
-                                "%s - %s"
-                                % (
+                                "{} - {}".format(
                                     messages.getMessage(inst.args[2]),
                                     self._myCalli.getLastAnswer(),
                                 )
                             )
                             log.error(
-                                "%s - last call : %s"
-                                % (
-                                    self.contract.get_PDL_ID(),
-                                    self.lastMethodCall,
-                                )
+                                "%s - last call : %s",
+                                self.contract.get_PDL_ID(),
+                                self.lastMethodCall,
                             )
                             log.error(
-                                "myEnedis ...%s update termine, on retentera plus tard(A)"
-                                % (self.contract.get_PDL_ID())
+                                "myEnedis ...%s update termine,"
+                                " on retentera plus tard(A1)",
+                                self.contract.get_PDL_ID(),
                             )
                         elif inst.args[:2] == (
                             "call",
                             "error_user_alert",
                         ):  # gestion que c'est pas une erreur de contrat trop recent ?
                             log.error(
-                                "%s - Erreur call ERROR %s"
-                                % (self.contract.get_PDL_ID(), inst)
+                                "%s - Erreur call ERROR %s",
+                                self.contract.get_PDL_ID(),
+                                inst,
                             )
                             # Erreur lors du call...
                             self.updateTimeLastCall()
@@ -1220,32 +1207,28 @@ class myClientEnedis:
                                 )
                             )
                             log.error(
-                                "%s - last call : %s"
-                                % (
-                                    self.contract.get_PDL_ID(),
-                                    self.lastMethodCall,
-                                )
+                                "%s - last call : %s",
+                                self.contract.get_PDL_ID(),
+                                self.lastMethodCall,
                             )
                             log.error(
-                                "myEnedis ...%s update termine, on retentera plus tard(A)"
-                                % (self.contract.get_PDL_ID(),)
+                                "myEnedis ...%s update termine,"
+                                " on retentera plus tard(A2)",
+                                self.contract.get_PDL_ID(),
                             )
                         else:
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
-                            self.updateErrorLastCall(
-                                "%s" % (self._myCalli.getLastAnswer())
+                            self.updateErrorLastCall(str(self._myCalli.getLastAnswer()))
+                            log.error(
+                                "%s - last call : %s",
+                                self.contract.get_PDL_ID(),
+                                self.lastMethodCall,
                             )
                             log.error(
-                                "%s - last call : %s"
-                                % (
-                                    self.contract.get_PDL_ID(),
-                                    self.lastMethodCall,
-                                )
-                            )
-                            log.error(
-                                "myEnedis ...%s update termine, on retentera plus tard(B)"
-                                % (self.contract.get_PDL_ID(),)
+                                "myEnedis ...%s update termine,"
+                                " on retentera plus tard(B)",
+                                self.contract.get_PDL_ID(),
                             )
                             raise Exception(inst)
 
@@ -1261,16 +1244,14 @@ class myClientEnedis:
                         )
                         self.updateErrorLastCall(message)
                         log.error(
-                            "%s - %s"
-                            % (
-                                self.contract.get_PDL_ID(),
-                                self.lastMethodCall,
-                            )
+                            "%s - %s",
+                            self.contract.get_PDL_ID(),
+                            self.lastMethodCall,
                         )
                     else:
                         log.error("-" * 60)
-                        log.error("Erreur inconnue call ERROR %s" % (inst))
-                        log.error("Erreur last answer %s" % (inst))
+                        log.error("Erreur inconnue call ERROR %s", inst)
+                        log.error("Erreur last answer %s", inst)
                         log.error(f"Erreur last call {self.lastMethodCall}")
                         log.error(f"Erreur last answer {self._myCalli.getLastAnswer()}")
                         log.error(traceback.format_exc())
@@ -1283,12 +1264,11 @@ class myClientEnedis:
                         log.error(f"LastMethodCall : {self.lastMethodCall}")
             else:
                 self.setUpdateRealise(False)
-                # log.info("%s pas d'update trop tot !!!" % (self.contract.get_PDL_ID(),))
+                # log.info("%s pas d'update trop tot !!!", self.contract.get_PDL_ID())
         else:
             self.setUpdateRealise(False)
             log.info(
-                "%s update impossible contrat non trouve!!!"
-                % (self.contract.get_PDL_ID(),)
+                "%s update impossible contrat non trouve!!!", self.contract.get_PDL_ID()
             )
         self.updateLastUpdate()
         return True

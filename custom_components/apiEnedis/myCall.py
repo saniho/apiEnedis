@@ -90,10 +90,16 @@ class myCall:
         # - There were too many recent Timeouts
         # - The number of daily requests is exceeded
         if myCall.sanitizeCounter() >= MAX_CALLS:
+            _LOGGER.debug("Nombre d'appels maximum journalier dépassé")
             return False
 
         if not myCall._noRecentTimeout:
             timestamp = datetime.datetime.now().timestamp()
+            _LOGGER.debug(
+                f"Ancien timeout? {timestamp}-{myCall._lastTimeout}"
+                f"={timestamp-myCall._lastTimeout}"
+                f"> {MAX_PREVIOUS_TIMEOUT} ?"
+            )
             if timestamp - myCall._lastTimeout > MAX_PREVIOUS_TIMEOUT:
                 myCall._noRecentTimeout = True
 
@@ -131,10 +137,11 @@ class myCall:
             try:
                 if not myCall.isAvailable():
                     dataAnswer = {
+                        "error_code": "UNAVAILABLE",
                         "enedis_return": {
                             "error": "UNAVAILABLE",
                             "message": "Indisponible, essayez plus tard",
-                        }
+                        },
                     }
                     self.setLastAnswer(dataAnswer)
                     maxTriesToGo = 0
@@ -173,7 +180,7 @@ class myCall:
                 _LOGGER.info(f"{logPrefix}data : {data} =====")
                 _LOGGER.info(f"{logPrefix}reponse : {dataAnswer} =====")
                 maxTriesToGo = 0  # Done
-            except requests.exceptions.Timeout as error:
+            except requests.exceptions.Timeout:
                 myCall.handleTimeout()
                 # a ajouter raison de l'erreur !!!
                 _LOGGER.error(f"{logPrefix}requests.exceptions.Timeout")
@@ -184,7 +191,7 @@ class myCall:
                     }
                 }
                 self.setLastAnswer(dataAnswer)
-            except requests.exceptions.HTTPError as error:
+            except requests.exceptions.HTTPError:
                 _LOGGER.error(f"{logPrefix}requests.exceptions.HTTPError")
                 if ("ADAM-ERR0069" not in response.text) and (
                     "__token_refresh_401" not in response.text

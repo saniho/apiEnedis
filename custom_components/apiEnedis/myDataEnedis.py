@@ -3,26 +3,21 @@ from __future__ import annotations
 try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
-        _formatDateYmd,
-        _formatDateYm01,
-        _formatDateY0101,
     )
 
 except ImportError:
     from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
-        _formatDateYmd,
-        _formatDateYm01,
-        _formatDateY0101,
     )
 
 import logging
 
-log = logging.getLogger(__nameMyEnedis__)
 from .myCall import myCall
 from .myCheckData import myCheckData
 from .myContrat import myContrat
 from .myDataControl import okDataControl
+
+log = logging.getLogger(__nameMyEnedis__)
 
 
 class myDataEnedis:
@@ -76,17 +71,24 @@ class myDataEnedis:
             else:
                 if not horairePossible:
                     onLance = False
-                    # si horaire non ok, on garde quand meme ce qui était passé en parametre..cas du reboot
+                    # si horaire non ok, on garde quand meme ce qui était
+                    #   passé en parametre..cas du reboot
                     self._data = data
                 else:
                     self._callOk = None
-                    data = None  # si on doit mettre à jour .... sauf si on est pas la
+                    # si on doit mettre à jour .... sauf si on est pas la
+                    data = None
         if onLance:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info(
                 "--updateData %s ( du %s au %s ) data:%s--"
-                % (clefFunction, dateDeb, dateFin, data)
+                % (
+                    clefFunction,
+                    dateDeb,
+                    dateFin,
+                    data,
+                )
             )
             self._data = data
             if self._data is None:

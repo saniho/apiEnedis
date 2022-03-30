@@ -7,9 +7,6 @@ try:
         _consommation,
         _production,
         __nameMyEnedis__,
-        _formatDateYmd,
-        _formatDateYm01,
-        _formatDateY0101,
     )
 
 except ImportError:
@@ -17,9 +14,6 @@ except ImportError:
         _consommation,
         _production,
         __nameMyEnedis__,
-        _formatDateYmd,
-        _formatDateYm01,
-        _formatDateY0101,
     )
 
 import logging

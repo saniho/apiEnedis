@@ -1,0 +1,1 @@
+{"tag":"enedis_return_ko","error_code":"Invalid_request","description":"usage_point_id parameter must be 14 digits long.","alert_user":true,"enedis_return":true,"support":"https://discord.gg/DfVJZme"}

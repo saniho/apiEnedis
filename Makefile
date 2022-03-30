@@ -1,5 +1,9 @@
-FLAKE_EXCLUDES=W503,B001,B008,E266,E401,E402,E501,E722,F401,F841
-BANDIT_EXCLUDES=B101,B105,B110,B307,B310,B311
+FLAKE_EXCLUDES=B001,W503,E722
+# B001 Do not use bare `except:`, it also catches unexpected events like memory errors, interrupts, system exit, and so on.  Prefer `except Exception:`.  If you're sure what you're doing, be explicit and write `except BaseException:`.
+# W503 line break before binary operator
+# E722 do not use bare 'except'
+
+BANDIT_EXCLUDES=B101,B105,B110,B310,B311
 PIP:=pip3
 
 lint_python:
@@ -8,9 +12,7 @@ lint_python:
 	bandit --recursive --skip $(BANDIT_EXCLUDES) .
 	black -l 88 .
 	# codespell --ignore-words-list="hass" custom_components
-	flake8 . --count --ignore $(FLAKE_EXCLUDES) \
-                  --max-complexity=18 --max-line-length=88 \
-                  --show-source --statistics
+	flake8 .
 	mypy --show-error-codes --ignore-missing-imports --install-types \
               --non-interactive \
               custom_components test*
