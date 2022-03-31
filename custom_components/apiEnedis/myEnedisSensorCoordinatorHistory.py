@@ -50,7 +50,7 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity):
             interval = 60.0
             _LOGGER.warn(f"{ENTITY_DELAI} non defini pour le sensor")
         self.update = Throttle(timedelta(seconds=interval))(self._update)
-        _LOGGER.info("frequence mise à jour en seconde : %s" % (interval))
+        _LOGGER.info("frequence mise à jour en seconde : %s", (interval))
         self._attributes: dict[str, int | str] = {}
         self._state: str
         self._unit = "kWh"
