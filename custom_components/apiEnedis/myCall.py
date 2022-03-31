@@ -15,6 +15,8 @@ import logging
 import re
 import sys
 
+from . import apiconst as API
+
 _LOGGER = logging.getLogger(__nameMyEnedis__)
 
 # Min and Max Delays for initial call and subsequent calls.
@@ -137,10 +139,10 @@ class myCall:
             try:
                 if not myCall.isAvailable():
                     dataAnswer = {
-                        "error_code": "UNAVAILABLE",
-                        "enedis_return": {
-                            "error": "UNAVAILABLE",
-                            "message": "Indisponible, essayez plus tard",
+                        API.ERROR_CODE: "UNAVAILABLE",
+                        API.ENEDIS_RETURN: {
+                            API.ENEDIS_RETURN_ERROR: "UNAVAILABLE",
+                            API.ENEDIS_RETURN_MESSAGE: "Indisponible, essayez plus tard",
                         },
                     }
                     self.setLastAnswer(dataAnswer)
@@ -185,9 +187,9 @@ class myCall:
                 # a ajouter raison de l'erreur !!!
                 _LOGGER.error(f"{logPrefix}requests.exceptions.Timeout")
                 dataAnswer = {
-                    "enedis_return": {
-                        "error": "UNKERROR_TIMEOUT",
-                        "message": "Timeout",
+                    API.ENEDIS_RETURN: {
+                        API.ENEDIS_RETURN_ERROR: "UNKERROR_TIMEOUT",
+                        API.ENEDIS_RETURN_MESSAGE: "Timeout",
                     }
                 }
                 self.setLastAnswer(dataAnswer)
@@ -216,10 +218,10 @@ class myCall:
                     maxTriesToGo = 0  # Fatal error, do not try again
 
         _LOGGER.debug("Data answer: %r", dataAnswer)
-        # if ( "enedis_return" in dataAnswer.keys() ):
-        #    if ( type( dataAnswer["enedis_return"] ) is dict ):
-        #        if ( "error" in dataAnswer["enedis_return"].keys()):
-        #            if ( dataAnswer["enedis_return"]["error"] == "UNKERROR_TIMEOUT"):
+        # if ( API.ENEDIS_RETURN in dataAnswer.keys() ):
+        #    if ( type( dataAnswer[API.ENEDIS_RETURN] ) is dict ):
+        #        if ( "error" in dataAnswer[API.ENEDIS_RETURN].keys()):
+        #            if ( dataAnswer[API.ENEDIS_RETURN]["error"] == "UNKERROR_TIMEOUT"):
         #                raise error
         return dataAnswer
 

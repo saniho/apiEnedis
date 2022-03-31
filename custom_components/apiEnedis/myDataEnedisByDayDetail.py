@@ -122,7 +122,7 @@ class myDataEnedisByDayDetail:
                 self._nbCall = 1
             else:
                 callDone = True
-            log.info("updateData : data %s" % (self._data))
+            log.info("updateData : data %s", self._data)
             if self._multiDays:
                 if self._dateDeb == self._dateFin:
                     self._HC, self._HP = {}, {}

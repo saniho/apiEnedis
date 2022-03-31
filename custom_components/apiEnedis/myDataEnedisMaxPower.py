@@ -87,7 +87,7 @@ class myDataEnedisMaxPower:
                 self._nbCall = 1
             else:
                 callDone = True
-            log.info("updateData : data %s" % (self._data))
+            log.info("updateData : data %s", self._data)
             if (callDone) and (myCheckData().checkData(self._data)):
                 self._value = myCheckData().analyseValue(self._data)
                 self._callOk = True
@@ -95,8 +95,8 @@ class myDataEnedisMaxPower:
                 self._value = 0
             self._callOk = callDone
             log.info(f"with update !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
-            log.info("updateData : data %s" % (self._data))
+            log.info("updateData : data %s", (self._data))
         else:
             log.info(f"noupdate !! {clefFunction} ( du {dateDeb} au {dateFin} )--")
-            log.info("no updateData : data %s" % (self._data))
+            log.info("no updateData : data %s", (self._data))
         return self._data

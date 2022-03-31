@@ -27,7 +27,7 @@ def okDataControl(
     log.info(
         "--okDataControl / fin : {} / {}".format(dataControl.get("fin", None), dateFin)
     )
-    log.info("--okDataControl / callok : %s " % (dataControl.get("callok", True)))
+    log.info("--okDataControl / callok : %s ", (dataControl.get("callok", True)))
     deb = dataControl.get("deb", None)
     fin = dataControl.get("fin", None)
     callOk = dataControl.get("callok", True)
