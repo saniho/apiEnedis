@@ -201,7 +201,7 @@ class manageSensorState:
 
         if data.getTimeLastCall() is not None:
             self._LOGGER.info(
-                "-- ** on va mettre à jour : %s" % data.contract.get_PDL_ID()
+                "-- ** on va mettre à jour : %s", data.contract.get_PDL_ID()
             )
             status["nbCall"] = data.getNbCall()
             status["typeCompteur"] = typeSensor
@@ -261,7 +261,7 @@ class manageSensorState:
                             valeur = -1
                             if clef in last7daysHC.keys():
                                 valeur = last7daysHC[clef]
-                            status["day_%s_HC" % (niemejour)] = valeur
+                            status[f"day_{niemejour}_HC"] = valeur
                         # gestion du cout par jour ....
 
                         niemejour = 0
@@ -511,7 +511,7 @@ class manageSensorState:
             status["errorLastCall"] = data.getCardErrorLastCall()
             status["errorLastCallInterne"] = data.getErrorLastCall()
         self._LOGGER.info("*** SENSOR ***")
-        self._LOGGER.info("status :%s" % status)
-        self._LOGGER.info("state :%s" % state)
+        self._LOGGER.info("status :%s", status)
+        self._LOGGER.info("state :%s", state)
         self._LOGGER.info("*** FIN SENSOR ***")
         return status, state

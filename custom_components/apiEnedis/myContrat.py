@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import logging
 from typing import Any
+
+from . import apiconst as API
 
 try:
     from .const import (  # isort:skip
@@ -11,12 +14,11 @@ try:
 
 except ImportError:
     from const import (  # type: ignore[no-redef]
+        __nameMyEnedis__,
         _consommation,
         _production,
-        __nameMyEnedis__,
     )
 
-import logging
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -67,14 +69,14 @@ class myContrat:
             return myContrat._NULL_CONTRACT[clef]
 
     def __checkDataContract(self, dataAnswer):
-        if "error_code" in dataAnswer.keys():
-            if dataAnswer["error_code"] == "UNKERROR_001":
+        if API.ERROR_CODE in dataAnswer.keys():
+            if dataAnswer[API.ERROR_CODE] == "UNKERROR_001":
                 return False
             raise Exception("call", "error", dataAnswer)
-        elif dataAnswer.get("error_code", 200) != 200:
-            raise Exception("call", "error", dataAnswer["tag"])
+        elif dataAnswer.get(API.ERROR_CODE, 200) != 200:
+            raise Exception("call", "error", dataAnswer[API.TAG])
         elif dataAnswer.get("error", "") == "token_refresh_401":
-            raise Exception("call", "error", dataAnswer["description"])
+            raise Exception("call", "error", dataAnswer[API.DESCRIPTION])
         return True
 
     def getUsagePointStatus(self):
@@ -142,14 +144,14 @@ class myContrat:
 
     def minCompareDateContract(self, datePeriod):
         minDate = self.getLastActivationDate()
-        if (minDate is not None) and (minDate > "%s" % datePeriod):
+        if (minDate is not None) and (minDate > str(datePeriod)):
             return minDate
         else:
             return datePeriod
 
     def maxCompareDateContract(self, datePeriod):
         dateContract = self.getLastActivationDate()
-        if (dateContract is not None) and (dateContract < "%s" % datePeriod):
+        if (dateContract is not None) and (dateContract < str(datePeriod)):
             return datePeriod
         else:
             return None

@@ -25,6 +25,7 @@ except ImportError:
     )
     import gitinformation  # type: ignore[no-redef]
 
+from . import apiconst as API
 from . import const
 from .myCall import myCall
 from .myContrat import myContrat
@@ -234,10 +235,10 @@ class myClientEnedis:
                 data = self.getDataJsonValue(clef)
                 # si la date est du timeout, alors on ecrit
                 nePasEcrire = False
-                if "enedis_return" in data:
-                    enedis_return = data["enedis_return"]
-                    if "error" in enedis_return:
-                        nePasEcrire = enedis_return["error"] in (
+                if API.ENEDIS_RETURN in data:
+                    enedis_return = data[API.ENEDIS_RETURN]
+                    if API.ENEDIS_RETURN_ERROR in enedis_return:
+                        nePasEcrire = enedis_return[API.ENEDIS_RETURN_ERROR] in (
                             "UNKERROR_TIMEOUT",
                             "UNAVAILABLE",
                         )
@@ -869,24 +870,26 @@ class myClientEnedis:
         return self._errorLastCall
 
     def getCardErrorLastCall(self):
-        if self._myCalli.getLastAnswer() is None:
+        lastAnswer = self._myCalli.getLastAnswer()
+        if lastAnswer is None:
             return ""
-        if "alert_user" not in self._myCalli.getLastAnswer():
+        if API.ALERT_USER not in lastAnswer:
             return self.getErrorLastCall()
-        if not self._myCalli.getLastAnswer()["alert_user"]:
+        if not lastAnswer[API.ALERT_USER]:
             return ""
         if (
-            "description" in self._myCalli.getLastAnswer()
-            and "tag" in self._myCalli.getLastAnswer()
+            API.DESCRIPTION in lastAnswer
+            and API.TAG in lastAnswer
+            and API.ERROR_CODE in lastAnswer
         ):
             # si erreur autre que mauvais sens de lecture...
-            if self._myCalli.getLastAnswer()["error_code"] == "ADAM-ERR0069":
+            if lastAnswer[API.ERROR_CODE] == "ADAM-ERR0069":
                 return ""
             else:
                 return "{} ({}-{})".format(
-                    self._myCalli.getLastAnswer()["description"],
-                    self._myCalli.getLastAnswer()["error_code"],
-                    self._myCalli.getLastAnswer()["tag"],
+                    lastAnswer[API.DESCRIPTION],
+                    lastAnswer[API.ERROR_CODE],
+                    lastAnswer[API.TAG],
                 )
         else:
             return self.getErrorLastCall()
