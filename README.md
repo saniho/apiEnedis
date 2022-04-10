@@ -36,7 +36,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_01.png" height="300"/>
+<img src="./img/HACS_add_repo_01.png" height="300"/>
  <br>
  </p>
 
@@ -44,7 +44,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_02.png" width="600"/>
+<img src="./img/HACS_add_repo_02.png" width="600"/>
  <br>
  </p>
 
@@ -53,7 +53,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_01.png" width="400"/>
+<img src="./img/HACS_install_integration_01.png" width="400"/>
  <br>
  </p>
 
@@ -61,7 +61,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_02.png" width="600"/>
+<img src="./img/HACS_install_integration_02.png" width="600"/>
  <br>
  </p>
 
@@ -70,7 +70,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_03.png" width="400"/>
+<img src="./img/HACS_install_integration_03.png" width="400"/>
  <br>
  </p>
 
@@ -80,7 +80,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_04.png" width="400"/>
+<img src="./img/HACS_install_integration_04.png" width="400"/>
  <br>
  </p>
 
@@ -110,7 +110,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_01.png" height="500"/>
+<img src="./img/HACS_add_integration_01.png" height="500"/>
  <br>
  </p>
 
@@ -119,7 +119,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_02.png" height="300"/>
+<img src="./img/HACS_add_integration_02.png" height="300"/>
  <br>
  </p>
 
@@ -139,7 +139,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_03.png" width="300"/>
+<img src="./img/HACS_add_integration_03.png" width="300"/>
  <br>
  </p>
 
@@ -162,9 +162,13 @@ L'intégration crée l'entité `sensor.myenedis_<<votrecode>>`
 
 <br>
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/sensor_v2.png"/>
+<img src="./img/sensor_v2.png"/>
  <br>
  </p>
+
+## "Ca ne marche pas"
+
+### Forum HACF.FR
 
 ______________________________________________________________________
 
@@ -174,6 +178,53 @@ d'informations
 https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359
 
 ______________________________________________________________________
+
+
+### Activer le débogue
+
+<details>
+  <summary><b>Via l'interface, pour l'exécution en cours) : </b></summary><br>
+
+Avec des traces de débogue il est généralement plus facile d'identifier
+la cause d'un problème de fonctionnement.
+
+Une manière c'est d'activer les messages de débogue dans le fichier
+`config/home-assistant.log` en l'activant depuis l'interface.  Pour cela aller
+directement vers [Outils de Développement > Services](https://my.home-assistant.io/redirect/developer_services/).
+
+Puis, passer en mode `YAML` et copiez-collez le code suivant, puis exécutez:
+
+```yaml
+service: logger.set_level
+data:
+  myEnedis: debug
+
+```
+
+En image:
+
+<p align="center"><img src="./img/ha_debug.png" width="300"/></p>
+
+Le fichier `config/home-assistant.log` se remplit alors de pleins de traces
+de débogue lié à `apiEnedis` connu comme `myEnedis` dans Home Assistant.
+
+
+Ceci continue jusqu'au redémarrage de Home Assistant ou jusqu'à ce que vous
+exécutez de la même manière que pour l'activation:
+
+
+```yaml
+service: logger.set_level
+data:
+  myEnedis: warning
+
+```
+</details>
+
+
+## Historique des versions
+
+Cette partie n'est pas tenu à jour.
 
 <details>
   <summary><b>VERSION</b></summary>
