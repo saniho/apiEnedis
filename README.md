@@ -26,7 +26,7 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 ## Installer l'intégration
 
 <details>
-  <summary><b>Via HACS (mise à jour en un clic) : </b></summary><br>
+  <summary><b>Via HACS (mise à jour en un clic) : </b></summary><br />
 
 - Ouvrez HACS, cliquez sur `Intégration`, puis selectionnez le menu 3
   points en haut à droite.
@@ -34,54 +34,54 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 \*si vous n'avez pas HACS, pour l'installer cela se passe ici :
 [HACS : Ajoutez des modules et des cartes personnalisées](https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359)
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_01.png" height="300"/>
- <br>
+<img src="./img/HACS_add_repo_01.png" height="300"/>
+ <br />
  </p>
 
 - Ajoutez le dépot personnalisé : `https://github.com/saniho/apiEnedis`
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_repo_02.png" width="600"/>
- <br>
+<img src="./img/HACS_add_repo_02.png" width="600"/>
+ <br />
  </p>
 
 - Cliquez sur le bouton `Installer` de la carte correspondant à
   l'intégration
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_01.png" width="400"/>
- <br>
+<img src="./img/HACS_install_integration_01.png" width="400"/>
+ <br />
  </p>
 
 - Cliquez sur le bouton `Installer` de la popup
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_02.png" width="600"/>
- <br>
+<img src="./img/HACS_install_integration_02.png" width="600"/>
+ <br />
  </p>
 
 - La carte de l'intégration est maintenant rouge, signifiant qu'un
   redémarrage du serveur Home Assistant est nécessaire
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_03.png" width="400"/>
- <br>
+<img src="./img/HACS_install_integration_03.png" width="400"/>
+ <br />
  </p>
 
 - Accédez à la vue `Contrôle du serveur` (`Configuration` ->
   `Contrôle du serveur`), puis cliquez sur le bouton `Redémarrer` dans la
   zone `Gestion du serveur`
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_install_integration_04.png" width="400"/>
- <br>
+<img src="./img/HACS_install_integration_04.png" width="400"/>
+ <br />
  </p>
 
 </details>
@@ -108,19 +108,19 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 - Appuyez sur le bouton bleu `Ajouter l'intégration` en bas à droite de la
   vue
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_01.png" height="500"/>
- <br>
+<img src="./img/HACS_add_integration_01.png" height="500"/>
+ <br />
  </p>
 
 - Tapez dans le champ de recherche qui vient d'apparaître : `myenedis` et
   cliquez sur l'intégration
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_02.png" height="300"/>
- <br>
+<img src="./img/HACS_add_integration_02.png" height="300"/>
+ <br />
  </p>
 
 - Renseigner :
@@ -137,10 +137,10 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
 
 - Validez la saisie avec le bouton `Soumettre`
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/HACS_add_integration_03.png" width="300"/>
- <br>
+<img src="./img/HACS_add_integration_03.png" width="300"/>
+ <br />
  </p>
 
 - Fermez la popup de confirmation en cliquant sur le bouton `Terminer`
@@ -160,11 +160,15 @@ votre navigateur en faisant la combinaison de touche `CTRL+F5` ou
 
 L'intégration crée l'entité `sensor.myenedis_<<votrecode>>`
 
-<br>
+<br />
  <p align="center">
-<img src="https://raw.githubusercontent.com/saniho/apiEnedis/main/img/sensor_v2.png"/>
- <br>
+<img src="./img/sensor_v2.png"/>
+ <br />
  </p>
+
+## "Ca ne marche pas"
+
+### Forum HACF.FR
 
 ______________________________________________________________________
 
@@ -174,6 +178,54 @@ d'informations
 https://forum.hacf.fr/t/hacs-ajoutez-des-modules-et-des-cartes-personnalisees/359
 
 ______________________________________________________________________
+
+
+### Activer le débogue
+
+<details>
+  <summary><b>Via l'interface, temporairement : </b></summary><br />
+
+Avec des traces de débogue il est généralement plus facile d'identifier
+la cause d'un problème de fonctionnement.
+
+Une manière c'est d'activer les messages de débogue dans le fichier
+`config/home-assistant.log` en l'activant depuis l'interface.  Pour cela allez
+directement vers [Outils de Développement > Services](https://my.home-assistant.io/redirect/developer_services/).
+
+Puis, passer en mode `YAML` et copiez-collez le code suivant, puis cliquez
+`APPELER LE SERVICE`:
+
+```yaml
+service: logger.set_level
+data:
+  myEnedis: debug
+
+```
+
+En image:
+
+<p align="center"><img src="./img/ha_debug.png" width="300"/></p>
+
+Le fichier `config/home-assistant.log` se remplit alors de pleins de traces
+de débogue lié à `apiEnedis` connu comme `myEnedis` dans Home Assistant.
+
+
+Ceci continue jusqu'au redémarrage de Home Assistant ou jusqu'à ce que vous
+exécutez de la même manière que pour l'activation:
+
+
+```yaml
+service: logger.set_level
+data:
+  myEnedis: warning
+
+```
+</details>
+
+
+## Historique des versions
+
+Cette partie n'est pas tenu à jour.
 
 <details>
   <summary><b>VERSION</b></summary>
