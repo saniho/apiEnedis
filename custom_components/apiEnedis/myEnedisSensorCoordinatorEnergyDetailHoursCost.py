@@ -53,12 +53,12 @@ class myEnedisSensorCoordinatorEnergyDetailHoursCost(CoordinatorEntity, RestoreE
     def unique_id(self):
         "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.energy.Hours.cost.%s.production" % (
-                self._myDataSensorEnedis.get_PDL_ID()
+            name = "myEnedis.energy.Hours.cost.{}.production".format(
+                self._myDataSensorEnedis.get_PDL_ID(),
             )
         else:
-            name = "myEnedis.energy.Hours.cost.%s" % (
-                self._myDataSensorEnedis.get_PDL_ID()
+            name = "myEnedis.energy.Hours.cost.{}".format(
+                self._myDataSensorEnedis.get_PDL_ID(),
             )
         return name
 
@@ -66,12 +66,12 @@ class myEnedisSensorCoordinatorEnergyDetailHoursCost(CoordinatorEntity, RestoreE
     def name(self):
         """Return the name of the sensor."""
         if self._typeSensor == _production:
-            name = "myEnedis.energy.Hours.cost.%s.production" % (
-                self._myDataSensorEnedis.get_PDL_ID()
+            name = "myEnedis.energy.Hours.cost.{}.production".format(
+                self._myDataSensorEnedis.get_PDL_ID(),
             )
         else:
-            name = "myEnedis.energy.Hours.cost.%s" % (
-                self._myDataSensorEnedis.get_PDL_ID()
+            name = "myEnedis.energy.Hours.cost.{}".format(
+                self._myDataSensorEnedis.get_PDL_ID(),
             )
         return name
 

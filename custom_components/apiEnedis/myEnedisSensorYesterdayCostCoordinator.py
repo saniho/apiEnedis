@@ -55,12 +55,12 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
     def unique_id(self):
         "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.cost.yesterday.%s.production" % (
-                self._myDataSensorEnedis.get_PDL_ID()
+            name = "myEnedis.cost.yesterday.{}.production".format(
+                self._myDataSensorEnedis.get_PDL_ID(),
             )
         else:
-            name = "myEnedis.cost.yesterday.%s" % (
-                self._myDataSensorEnedis.get_PDL_ID()
+            name = "myEnedis.cost.yesterday.{}".format(
+                self._myDataSensorEnedis.get_PDL_ID(),
             )
         return name
 
@@ -68,12 +68,12 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
     def name(self):
         """Return the name of the sensor."""
         if self._typeSensor == _production:
-            name = "myEnedis.cost.yesterday.%s.production" % (
-                self._myDataSensorEnedis.get_PDL_ID()
+            name = "myEnedis.cost.yesterday.{}.production".format(
+                self._myDataSensorEnedis.get_PDL_ID(),
             )
         else:
-            name = "myEnedis.cost.yesterday.%s" % (
-                self._myDataSensorEnedis.get_PDL_ID()
+            name = "myEnedis.cost.yesterday.{}".format(
+                self._myDataSensorEnedis.get_PDL_ID(),
             )
         return name
 

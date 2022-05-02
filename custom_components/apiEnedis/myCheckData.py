@@ -1,3 +1,6 @@
+from . import apiconst as API
+
+
 class myCheckData:
     def __init__(self):
         # pas d'init defini
@@ -9,8 +12,8 @@ class myCheckData:
             raise Exception("call", None)
         else:
             tot = 0
-            if "meter_reading" in data.keys():  # meter reading present
-                for x in data["meter_reading"]["interval_reading"]:
+            if API.METER_READING in data.keys():  # meter reading present
+                for x in data[API.METER_READING]["interval_reading"]:
                     tot += int(x["value"])
             return tot
 
@@ -20,8 +23,8 @@ class myCheckData:
             raise Exception("call", None)
         else:
             niemejour = 0
-            if "meter_reading" in data.keys():  # meter reading present
-                for x in reversed(data["meter_reading"]["interval_reading"]):
+            if API.METER_READING in data.keys():  # meter reading present
+                for x in reversed(data[API.METER_READING]["interval_reading"]):
                     niemejour += 1
                     days = {}
                     days["date"] = x["date"]
@@ -34,74 +37,74 @@ class myCheckData:
         if data is None:  # pas de valeur
             return None
         else:
-            if "meter_reading" in data.keys():
-                return int(data["meter_reading"]["interval_reading"][0]["value"])
+            if API.METER_READING in data.keys():
+                return int(data[API.METER_READING]["interval_reading"][0]["value"])
             else:
                 return None
 
     def checkData(self, dataAnswer):
         # new version de la réponse
         # si erreur 500
-        if dataAnswer.get("error_code", 200) == 500:
+        if dataAnswer.get(API.ERROR_CODE, 200) == 500:
             return False
-        if "error_code" in dataAnswer.keys():
+        if API.ERROR_CODE in dataAnswer.keys():
             # point dans le mauvais sens de lecture
-            if dataAnswer["error_code"] == "ADAM-ERR0069":
+            if dataAnswer[API.ERROR_CODE] == "ADAM-ERR0069":
                 return False
             # collecte horaire non activée
-            if dataAnswer["error_code"] == "ADAM-ERR0075":
+            if dataAnswer[API.ERROR_CODE] == "ADAM-ERR0075":
                 return False
             # no_data_found
-            if dataAnswer["error_code"] == "no_data_found":
+            if dataAnswer[API.ERROR_CODE] == "no_data_found":
                 raise Exception(
                     "call",
                     "error",
                     "Collecte de données non activée sur le site enedis.fr",
                 )
             # No consent can be found for this customer and this usage point
-            if dataAnswer["error_code"] in [
+            if dataAnswer[API.ERROR_CODE] in [
                 "ADAM-DC-0008",
                 "ADAM-ERR0069",
                 "UNKERROR_002",
             ]:
                 return False
-            if dataAnswer["error_code"] == "Internal Server error":
+            if dataAnswer[API.ERROR_CODE] == "Internal Server error":
                 # erreur interne enedis
                 raise Exception("call", "error", "UNKERROR_001")
             else:
-                raise Exception("call", "error", dataAnswer["error_code"])
-        if "_error" in dataAnswer.keys():  # a reactiver plus tard !!!
+                raise Exception("call", "error", dataAnswer[API.ERROR_CODE])
+        if "_error" in dataAnswer.keys():  # TODO a reactiver plus tard !!!
             # y a t il une erreur de consentement
-            if dataAnswer["user_alert"]:
+            if dataAnswer[API.USER_ALERT]:
                 raise Exception(
                     "call",
                     "error_user_alert",
-                    dataAnswer["error"],
-                    dataAnswer["description"],
+                    dataAnswer[API.ERROR],
+                    dataAnswer[API.DESCRIPTION],
                 )
-        if "meter_reading" not in dataAnswer.keys():
+        if API.METER_READING not in dataAnswer.keys():
             return False
         return True
 
     def checkDataPeriod(self, dataAnswer):
-        if dataAnswer.get("error_code", 200) == 500:
+        if dataAnswer.get(API.ERROR_CODE, 200) == 500:
             return False
-        if "error_code" in dataAnswer.keys():
+        if API.ERROR_CODE in dataAnswer.keys():
             if (
-                (dataAnswer["error_code"] == "ADAM-ERR0123")
-                or (dataAnswer["error_code"] == "no_data_found")
-                or (dataAnswer["error_code"] == "ADAM-ERR0069")
-                or (dataAnswer["error_code"] == "UNKERROR_002")
+                (dataAnswer[API.ERROR_CODE] == "ADAM-ERR0123")
+                or (dataAnswer[API.ERROR_CODE] == "no_data_found")
+                or (dataAnswer[API.ERROR_CODE] == "ADAM-ERR0069")
+                or (dataAnswer[API.ERROR_CODE] == "UNKERROR_002")
             ):
                 return False
             # collecte horaire non activée
-            if dataAnswer["error_code"] == "ADAM-ERR0075":
+            if dataAnswer[API.ERROR_CODE] == "ADAM-ERR0075":
                 return False
-            if dataAnswer["error_code"] == "Internal Server error":
+            if dataAnswer[API.ERROR_CODE] == "Internal Server error":
                 # erreur interne enedis
                 raise Exception("call", "error", "UNKERROR_001")
             else:
-                raise Exception("call", "error", dataAnswer["error_code"])
-        if "meter_reading" not in dataAnswer.keys():
+                raise Exception("call", "error", dataAnswer[API.ERROR_CODE])
+        if API.METER_READING not in dataAnswer.keys():
             return False
         return True

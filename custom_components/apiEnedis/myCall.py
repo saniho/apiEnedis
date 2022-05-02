@@ -15,6 +15,8 @@ import logging
 import re
 import sys
 
+from . import apiconst as API
+
 _LOGGER = logging.getLogger(__nameMyEnedis__)
 
 # Min and Max Delays for initial call and subsequent calls.
@@ -134,13 +136,18 @@ class myCall:
         minDelay: float = INITIAL_CALL_DELAY
         while maxTriesToGo > 0:
             maxTriesToGo -= 1
+            hasError = True  # Suppose error, will be set to False if no exception
             try:
                 if not myCall.isAvailable():
+                    _LOGGER.warning(
+                        "Nombre d'appels à l'API dépassé,"
+                        " ou dernière erreur trop récente"
+                    )
                     dataAnswer = {
-                        "error_code": "UNAVAILABLE",
-                        "enedis_return": {
-                            "error": "UNAVAILABLE",
-                            "message": "Indisponible, essayez plus tard",
+                        API.ERROR_CODE: "UNAVAILABLE",
+                        API.ENEDIS_RETURN: {
+                            API.ENEDIS_RETURN_ERROR: "UNAVAILABLE",
+                            API.ENEDIS_RETURN_MESSAGE: "Indisponible, essayez plus tard",
                         },
                     }
                     self.setLastAnswer(dataAnswer)
@@ -162,7 +169,6 @@ class myCall:
                 logPrefix = f"====== Appel http #{counter} !!! "
                 _LOGGER.info(f"{logPrefix}=====")
 
-                # raise(requests.exceptions.Timeout) # pour raiser un timeout de test ;)
                 response = session.post(
                     url,
                     params=params,
@@ -170,7 +176,7 @@ class myCall:
                     headers=headers,
                     timeout=30,
                 )
-                # Generate test data with next line
+                # Write API result to file (test generation, debug)
                 self.saveApiReturn(counter, response.text)
 
                 response.raise_for_status()
@@ -180,14 +186,15 @@ class myCall:
                 _LOGGER.info(f"{logPrefix}data : {data} =====")
                 _LOGGER.info(f"{logPrefix}reponse : {dataAnswer} =====")
                 maxTriesToGo = 0  # Done
+                hasError = False
             except requests.exceptions.Timeout:
                 myCall.handleTimeout()
                 # a ajouter raison de l'erreur !!!
                 _LOGGER.error(f"{logPrefix}requests.exceptions.Timeout")
                 dataAnswer = {
-                    "enedis_return": {
-                        "error": "UNKERROR_TIMEOUT",
-                        "message": "Timeout",
+                    API.ENEDIS_RETURN: {
+                        API.ENEDIS_RETURN_ERROR: "UNKERROR_TIMEOUT",
+                        API.ENEDIS_RETURN_MESSAGE: "Timeout",
                     }
                 }
                 self.setLastAnswer(dataAnswer)
@@ -202,8 +209,7 @@ class myCall:
                     _LOGGER.error(f"data : {json.dumps(data)} ")
                     _LOGGER.error(f"Error JSON : {response.text} ")
                     _LOGGER.error("*" * 60)
-                # with open('error.json', 'w') as outfile:
-                #    json.dump(response.json(), outfile)
+
                 dataAnswer = response.json()
                 self.setLastAnswer(dataAnswer)
 
@@ -215,12 +221,13 @@ class myCall:
                 ):
                     maxTriesToGo = 0  # Fatal error, do not try again
 
-        _LOGGER.debug("Data answer: %r", dataAnswer)
-        # if ( "enedis_return" in dataAnswer.keys() ):
-        #    if ( type( dataAnswer["enedis_return"] ) is dict ):
-        #        if ( "error" in dataAnswer["enedis_return"].keys()):
-        #            if ( dataAnswer["enedis_return"]["error"] == "UNKERROR_TIMEOUT"):
-        #                raise error
+            # Log result as error in case of exception, or as debug otherwise
+            _LOGGER.log(
+                logging.ERROR if hasError else logging.DEBUG,
+                "Data answer: %r",
+                dataAnswer,
+            )
+
         return dataAnswer
 
     def getDataPeriod(self, deb: str, fin: str | None) -> tuple[str, bool]:
