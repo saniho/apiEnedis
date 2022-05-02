@@ -113,6 +113,18 @@ def patch_datetime_now(request, monkeypatch):
             return request.param
 
         @classmethod
+        def today(cls):
+            # Recommend using now or date.today to use a single method
+            raise Exception("Use now() or date.today()")
+            return cls.now()
+
+        @classmethod
+        def utcnow(cls):
+            # Recommend using now or date.today to use a single method
+            raise Exception("Use now()")
+            return cls.now()
+
+        @classmethod
         def delta(cls, *args, **kwargs):
             _delta(*args, **kwargs)
 
