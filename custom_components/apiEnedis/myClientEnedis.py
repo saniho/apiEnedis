@@ -10,8 +10,6 @@ try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
         _formatDateYmd,
-        _formatDateYm01,
-        _formatDateY0101,
     )
     from . import gitinformation, messages
 
@@ -20,8 +18,6 @@ except ImportError:
     from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
         _formatDateYmd,
-        _formatDateYm01,
-        _formatDateY0101,
     )
     import gitinformation  # type: ignore[no-redef]
 
@@ -481,8 +477,8 @@ class myClientEnedis:
         if data is None:
             data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
-        debCurrentMonth = today.strftime(_formatDateYm01)
-        cejour = (datetime.date.today()).strftime(_formatDateYmd)
+        debCurrentMonth = today.replace(day=1).strftime(_formatDateYmd)
+        cejour = today.strftime(_formatDateYmd)
         # if (debCurrentMonth != cejour):
         #    return self.getDataPeriod(debCurrentMonth, cejour)
         # else:
@@ -512,8 +508,8 @@ class myClientEnedis:
         today = datetime.date.today()
         first = today.replace(day=1)
         lastMonth = first - datetime.timedelta(days=1)
-        debPreviousMonth = lastMonth.strftime(_formatDateYm01)
-        debCurrentMonth = first.strftime(_formatDateYm01)
+        debPreviousMonth = lastMonth.replace(day=1).strftime(_formatDateYmd)
+        debCurrentMonth = first.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(debPreviousMonth)
         fin = self.contract.maxCompareDateContract(debCurrentMonth)
         data = self._lastMonth.updateData(
@@ -538,8 +534,8 @@ class myClientEnedis:
         today = datetime.date.today()
         first = today.replace(day=1, year=today.year - 1)
         lastMonthLastYear = first - datetime.timedelta(days=1)
-        debPreviousMonth = lastMonthLastYear.strftime(_formatDateYm01)
-        debCurrentMonth = first.strftime(_formatDateYm01)
+        debPreviousMonth = lastMonthLastYear.replace(day=1).strftime(_formatDateYmd)
+        debCurrentMonth = first.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(debPreviousMonth)
         fin = self.contract.maxCompareDateContract(debCurrentMonth)
         data = self._lastMonthLastYear.updateData(
@@ -562,8 +558,8 @@ class myClientEnedis:
         if data is None:
             data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
-        debCurrentMonth = today.strftime(_formatDateY0101)
-        cejour = (datetime.date.today()).strftime(_formatDateYmd)
+        debCurrentMonth = today.replace(month=1, day=1).strftime(_formatDateYmd)
+        cejour = today.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(debCurrentMonth)
         fin = self.contract.maxCompareDateContract(cejour)
         data = self._currentYear.updateData(
@@ -588,8 +584,8 @@ class myClientEnedis:
         today = datetime.date.today()
         first = today.replace(day=1, month=1)
         lastYear = first - datetime.timedelta(days=1)
-        debPreviousYear = lastYear.strftime(_formatDateY0101)
-        debCurrentYear = today.strftime(_formatDateY0101)
+        debPreviousYear = lastYear.replace(month=1, day=1).strftime(_formatDateYmd)
+        debCurrentYear = today.replace(month=1, day=1).strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(debPreviousYear)
         fin = self.contract.maxCompareDateContract(debCurrentYear)
         data = self._lastYear.updateData(
@@ -614,7 +610,7 @@ class myClientEnedis:
         today = datetime.date.today()
         todayLastYear = today.replace(year=today.year - 1)
         hier = (todayLastYear - datetime.timedelta(1)).strftime(_formatDateYmd)
-        cejour = (todayLastYear).strftime(_formatDateYmd)
+        cejour = todayLastYear.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(cejour)
         data = self._yesterdayLastYear.updateData(
@@ -639,17 +635,17 @@ class myClientEnedis:
 
         today = datetime.date.today()
         numWeek = today.isocalendar()[1]  # numero de la semaine
-        previousYear = datetime.datetime.today().year - 1
+        previousYear = today.year - 1
         d = f"{previousYear}-W{numWeek}"
         rfirstdateofweek = datetime.datetime.strptime(d + "-1", "%G-W%V-%u")
         # on recule d'un jour, car on a pas les données du jours,
         #   vs on a celle de l'an passé
         r = rfirstdateofweek + datetime.timedelta(
-            days=datetime.datetime.today().weekday()
+            days=today.weekday()
         )  # car on a pas les données du jour...
         # cejour = r.strftime(_formatDateYmd)
         r = rfirstdateofweek + datetime.timedelta(
-            days=datetime.datetime.today().weekday()
+            days=today.weekday()
         )  # car on a pas les données du jour...
         cejourmoins1 = r.strftime(_formatDateYmd)
 
@@ -676,14 +672,17 @@ class myClientEnedis:
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
             data = self.getDataJsonValue(clefFunction)
+
         today = datetime.date.today()
-        today = today.replace(year=datetime.date.today().year - 1)
-        debCurrentMonthPreviousYear = today.strftime(_formatDateYm01)
-        oneYearAgo = datetime.date.today()
-        oneYearAgo = oneYearAgo.replace(year=datetime.date.today().year - 1)
-        cejourPreviousYear = oneYearAgo.strftime(_formatDateYmd)
+
+        debCurrentMonthPreviousYear = today.replace(
+            day=1, year=today.year - 1
+        ).strftime(_formatDateYmd)
+        cejourPreviousYear = today.replace(year=today.year - 1).strftime(_formatDateYmd)
+
         deb = self.contract.minCompareDateContract(debCurrentMonthPreviousYear)
         fin = self.contract.maxCompareDateContract(cejourPreviousYear)
+
         data = self._currentMonthLastYear.updateData(
             clefFunction,
             self.getHorairePossible(),
@@ -703,8 +702,9 @@ class myClientEnedis:
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
             data = self.getDataJsonValue(clefFunction)
-        hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
-        cejour = (datetime.date.today()).strftime(_formatDateYmd)
+        today = datetime.date.today()
+        hier = (today - datetime.timedelta(1)).strftime(_formatDateYmd)
+        cejour = today.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(cejour)
         # print("data :", data)
@@ -815,8 +815,8 @@ class myClientEnedis:
 
     # def CallgetCurrentMonthDetails(self):
     #    today = datetime.date.today()
-    #    debCurrentMonth = today.strftime(_formatDateYm01)
-    #    cejour = (datetime.date.today()).strftime(_formatDateYmd)
+    #    debCurrentMonth = today.replace(day=1).strftime(_formatDateYmd)
+    #    cejour = today.strftime(_formatDateYmd)
     #    if debCurrentMonth != cejour:
     #        return self.getDataPeriodCLC(debCurrentMonth, cejour)
     #    else:
