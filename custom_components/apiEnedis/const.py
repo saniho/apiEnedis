@@ -63,8 +63,6 @@ _production = "production"
 PLATFORMS = ["sensor"]
 
 _formatDateYmd = "%Y-%m-%d"
-_formatDateYm01 = "%Y-%m-01"
-_formatDateY0101 = "%Y-01-01"
 
 ENTITY_NAME = "name"
 ENTITY_DELAI = "delai"
