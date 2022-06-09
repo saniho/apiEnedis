@@ -82,13 +82,11 @@ class myDataEnedis:
             self._dateDeb = dateDeb
             self._dateFin = dateFin
             log.info(
-                "--updateData %s ( du %s au %s ) data:%s--"
-                % (
-                    clefFunction,
-                    dateDeb,
-                    dateFin,
-                    data,
-                )
+                "--updateData %s ( du %s au %s ) data:%s--",
+                clefFunction,
+                dateDeb,
+                dateFin,
+                data,
             )
             self._data = data
             if self._data is None:
