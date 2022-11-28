@@ -244,6 +244,8 @@ class myClientEnedis:
                         json.dump(data, outfile)
             except:
                 log.error(f" >>>> erreur ecriture : {nomfichier} / {data}")
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                log.error(sys.exc_info())
 
     def getData(self) -> bool:
         # ### A VOIR ###
