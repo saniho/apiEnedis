@@ -133,7 +133,7 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
         token = "monToken"
         code = "monCode"
-        serviceEnedis = "monServiceEnedis"
+        serviceEnedis = "enedisGateway"
         val_heures_creuses = ""
         data_schema = vol.Schema(
             {
