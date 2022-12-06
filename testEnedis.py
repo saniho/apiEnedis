@@ -36,10 +36,14 @@ def testMulti():
 
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS"]:
+    for qui in ["ENEDIS100"]:
         LOGGER.info(f"*** traitement de {qui} ")
         token = mon_conteneur[qui]["TOKEN"]
         PDL_ID = mon_conteneur[qui]["CODE"]
+        serviceEnedis = "enedisGateway"
+        if ( "SERVICE" in mon_conteneur[qui].keys()):
+            serviceEnedis = mon_conteneur[qui]["SERVICE"]
+
         print(mon_conteneur[qui]["QUI"])
         heureCreusesCh = ast.literal_eval("[['00:00','05:00'], ['22:00', '24:00']]")
         heuresCreusesON = True
@@ -48,12 +52,13 @@ def testMulti():
         myDataEnedis = myClientEnedis.myClientEnedis(
             token=token,
             PDL_ID=PDL_ID,
-            delai=7200,
+            delay=7200,
             heuresCreuses=heureCreusesCh,
             heuresCreusesCost=0.0797,
             heuresPleinesCost=0.1175,
             version=__version__,
             heuresCreusesON=heuresCreusesON,
+            serviceEnedis=serviceEnedis
         )
         path = getLocalDirectory(PDL_ID, "20220308")
         LOGGER.info("Archive path: '%s'", path)

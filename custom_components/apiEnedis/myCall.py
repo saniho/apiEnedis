@@ -47,7 +47,9 @@ class myCall:
         self._lastAnswer = None
         self._contentType = "application/json"
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
-        self._serverName = "https://enedisgateway.tech/api"
+        self._serviceEnedis = None
+        self._serverNameUrl = { 'enedisGateway' : "https://enedisgateway.tech/api", \
+            'myElectricalData' : "https://www.myelectricaldata.fr" }
 
     @staticmethod
     def sanitizeCounter() -> int:
@@ -68,8 +70,9 @@ class myCall:
         myCall._MyCallsSinceRestart += 1
         return myCall._MyCallsSinceRestart
 
-    def setParam(self, PDL_ID: str, token: str, version: str):
-        self._PDL_ID, self._token, self._version = PDL_ID, token, version
+    def setParam(self, PDL_ID: str, token: str, version: str, serviceEnedis: str):
+        self._PDL_ID, self._token, self._version, self._serviceEnedis = \
+            PDL_ID, token, version, serviceEnedis
 
     def getDefaultHeader(self) -> dict[str, str]:
         return {
@@ -78,7 +81,12 @@ class myCall:
             "call-service": self._contentHeaderMyEnedis,
             "ha_sensor_myenedis_version": self._version,
         }
-
+    def getServiceEnedis(self):
+        return self._serviceEnedis
+    def isMyElectricData(self, serviceEnedis):
+        return serviceEnedis == "myElectricalData"
+    def isEnedisGateway(self, serviceEnedis):
+        return serviceEnedis == "enedisGateway"
     def setLastAnswer(self, lastanswer):
         self._lastAnswer = lastanswer
 
@@ -123,8 +131,34 @@ class myCall:
         os.makedirs(os.path.dirname(fname), exist_ok=True)
         with open(fname, "w") as f:
             f.write(data)
-
-    def post_and_get_json(self, url, params=None, data=None, headers=None):
+    def getUrl(self, serviceEnedis, data):
+        if ( self.isMyElectricData(serviceEnedis)):
+            url = self._serverNameUrl[serviceEnedis]
+            if ( data["type"] == "contracts"):
+                url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/"
+            elif ( data["type"] == "daily_consumption"):
+                url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
+                    "start" + "/" + data["start"] + "/" + \
+                    "end" + "/" + data["end"] + "/"
+            elif ( data["type"] == "daily_consumption_max_power"):
+                url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
+                    "start" + "/" + data["start"] + "/" + \
+                    "end" + "/" + data["end"] + "/"
+            elif ( data["type"] == "daily_production"):
+                url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
+                    "start" + "/" + data["start"] + "/" + \
+                    "end" + "/" + data["end"] + "/"
+            elif ( data["type"] == "consumption_load_curve"):
+                url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
+                    "start" + "/" + data["start"] + "/" + \
+                    "end" + "/" + data["end"] + "/"
+            return "get", url
+        elif ( self.isEnedisGateway(serviceEnedis)):
+            url = self._serverNameUrl[serviceEnedis]
+            return "post", url
+        else:
+            return None
+    def post_and_get_json(self, serviceEnedis=None, params=None, data=None, headers=None):
         import json
         import random
         import time
@@ -168,14 +202,23 @@ class myCall:
                 counter = myCall.increaseCallCounter()
                 logPrefix = f"====== Appel http #{counter} !!! "
                 _LOGGER.info(f"{logPrefix}=====")
-
-                response = session.post(
-                    url,
-                    params=params,
-                    data=json.dumps(data),
-                    headers=headers,
-                    timeout=30,
-                )
+                #url  = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/"
+                method, url = self.getUrl(serviceEnedis, data)
+                if ( method == "post" ):
+                    response = session.post(
+                        url,
+                        params=params,
+                        data=json.dumps(data),
+                        headers=headers,
+                        timeout=30,
+                    )
+                else:
+                    response = session.get(
+                        url,
+                        params=params,
+                        data=json.dumps(data),
+                        headers=headers,
+                        timeout=30,)
                 # Write API result to file (test generation, debug)
                 self.saveApiReturn(counter, response.text)
 
@@ -241,7 +284,7 @@ class myCall:
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
-                self._serverName, data=payload, headers=headers
+                self.getServiceEnedis(), data=payload, headers=headers
             )
             callDone = True
         else:
@@ -262,7 +305,7 @@ class myCall:
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
-                self._serverName, data=payload, headers=headers
+                self.getServiceEnedis(), data=payload, headers=headers
             )
             callDone = True
         else:
@@ -282,7 +325,7 @@ class myCall:
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
-                self._serverName, data=payload, headers=headers
+                self.getServiceEnedis(), data=payload, headers=headers
             )
             callDone = True
         else:
@@ -302,7 +345,7 @@ class myCall:
             }
             headers = self.getDefaultHeader()
             dataAnswer = self.post_and_get_json(
-                self._serverName, data=payload, headers=headers
+                self.getServiceEnedis(), data=payload, headers=headers
             )
             callDone = True
         else:
@@ -319,6 +362,6 @@ class myCall:
         }
         headers = self.getDefaultHeader()
         dataAnswer = self.post_and_get_json(
-            self._serverName, data=payload, headers=headers
+            self.getServiceEnedis(), data=payload, headers=headers
         )
         return dataAnswer

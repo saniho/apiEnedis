@@ -45,6 +45,7 @@ class myClientEnedis:
         heuresPleinesCost: float = 0,
         version: str = "0.0.0",
         heuresCreusesON: bool = True,
+        serviceEnedis: str = "enedisGateway"
     ):
         self._myCalli = myCall()
         self._token: str = token
@@ -64,6 +65,7 @@ class myClientEnedis:
         self._version: str = version
         self._forceCallJson: bool = False
         self._path: str | None = None
+        self._serviceEnedis: str = serviceEnedis
 
         import random
 
@@ -71,7 +73,7 @@ class myClientEnedis:
             minutes=random.randrange(360)
         )
 
-        self._myCalli.setParam(PDL_ID, token, version)
+        self._myCalli.setParam(PDL_ID, token, version, serviceEnedis)
         self.contract = myContrat(
             self._myCalli,
             self._token,

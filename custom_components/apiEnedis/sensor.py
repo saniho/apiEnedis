@@ -20,6 +20,7 @@ from .const import (  # isort:skip
     COORDINATOR_ENEDIS,
     CONF_TOKEN,
     CONF_CODE,
+    CONF_SERVICE_ENEDIS,
     HC_COST,
     HP_COST,
     HEURESCREUSES_ON,
@@ -41,11 +42,12 @@ from .myEnedisSensorYesterdayCostCoordinator import (
 
 _LOGGER = logging.getLogger(__name__)
 
-# pour gerer les anciennes config via yaml et le message d'ereur
+# pour gerer les anciennes config via yaml et le message d'erreur
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
+        vol.Required(CONF_SERVICE_ENEDIS): cv.string,
         vol.Required(CONF_TOKEN): cv.string,
-        vol.Required(CONF_CODE): cv.string,
+        vol.Optional(CONF_CODE, default="enedisGateway"): cv.string,
         vol.Optional(HC_COST, default="0.0"): cv.string,
         vol.Optional(HP_COST, default="0.0"): cv.string,
         vol.Optional(HEURESCREUSES_ON, default=True): cv.boolean,
