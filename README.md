@@ -230,6 +230,12 @@ Cette partie n'est pas tenu à jour.
 <details>
   <summary><b>VERSION</b></summary>
 
+**2.0.0.0** myElectricData
+
+**ajout de la possibilité d'utiliser myEnectricData**
+
+Attention le service enedisGateway sera desactivé en 2023
+
 **1.2.0.0** refactoring du code
 
 **suppression de la configuration possible par le fichier yaml, uniquement

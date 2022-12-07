@@ -4,7 +4,8 @@
         "step": {
             "user": {
                 "data": {
-                    "token": "Votre Token",
+                    "serviceEnedis": "serviceEnedis",
+                    "token",: "Votre Token",
                     "code": "Votre Code",
                     "hc_cout": "prix HC ( ex : 0.01 )",
                     "hp_cout": "prix HP ( ex : 0.01 )",
@@ -19,6 +20,7 @@
         "step": {
             "init": {
                 "data": {
+                    "serviceEnedis": "serviceEnedis",
                     "token": "Votre Token",
                     "code": "Votre Code",
                     "hc_cout": "prix HC ( ex : 0.01 )",

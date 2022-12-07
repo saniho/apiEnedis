@@ -149,6 +149,8 @@ class myClientEnedis:
     def setPathArchive(self, path: str):
         self._path = path
 
+    def getServiceEnedis(self):
+        return self._serviceEnedis
     def readDataJson(self):
         import glob
         import json

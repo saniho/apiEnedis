@@ -194,6 +194,7 @@ class manageSensorState:
         status: dict[str, int | float | str | list] = defaultdict(int)
         status["version"] = self.version
         status["versionGit"] = data.getGitVersion()
+        status["serviceEnedis"] = data.getServiceEnedis()
         status["versionUpdateAvailable"] = self.getExistsRecentVersion(
             self.version, data.getGitVersion()
         )
