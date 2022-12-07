@@ -49,7 +49,7 @@ class myCall:
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
         self._serviceEnedis = None
         self._serverNameUrl = {'enedisGateway': "https://enedisgateway.tech/api",
-                                'myElectricalData': "https://www.myelectricaldata.fr"}
+                               'myElectricalData': "https://www.myelectricaldata.fr"}
 
     @staticmethod
     def sanitizeCounter() -> int:
@@ -87,8 +87,10 @@ class myCall:
 
     def isMyElectricData(self, serviceEnedis):
         return serviceEnedis == "myElectricalData"
+
     def isEnedisGateway(self, serviceEnedis):
         return serviceEnedis == "enedisGateway"
+
     def setLastAnswer(self, lastanswer):
         self._lastAnswer = lastanswer
 
@@ -162,7 +164,8 @@ class myCall:
         else:
             return None
 
-    def post_and_get_json(self, serviceEnedis=None, params=None, data=None, headers=None):
+    def post_and_get_json(self, serviceEnedis=None, params=None,
+                          data=None, headers=None):
         import json
         import random
         import time
@@ -206,9 +209,8 @@ class myCall:
                 counter = myCall.increaseCallCounter()
                 logPrefix = f"====== Appel http #{counter} !!! "
                 _LOGGER.info(f"{logPrefix}=====")
-                #url  = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/"
                 method, url = self.getUrl(serviceEnedis, data)
-                if ( method == "post" ):
+                if method == "post":
                     response = session.post(
                         url,
                         params=params,

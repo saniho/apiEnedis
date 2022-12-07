@@ -41,7 +41,7 @@ def testMulti():
         token = mon_conteneur[qui]["TOKEN"]
         PDL_ID = mon_conteneur[qui]["CODE"]
         serviceEnedis = "enedisGateway"
-        if ( "SERVICE" in mon_conteneur[qui].keys()):
+        if "SERVICE" in mon_conteneur[qui].keys():
             serviceEnedis = mon_conteneur[qui]["SERVICE"]
 
         print(mon_conteneur[qui]["QUI"])

@@ -136,13 +136,14 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
         code = "monCode"
         serviceEnedis = "enedisGateway"
         val_heures_creuses = ""
-        all_repos = [ "enedisGateway", "myElectricalData" ]
+        all_repos = ["enedisGateway", "myElectricalData"]
 
         data_schema = vol.Schema(
             {
                 vol.Required(
                     CONF_SERVICE_ENEDIS,
-                    default=self.config_entry.options.get(CONF_SERVICE_ENEDIS, serviceEnedis),
+                    default=
+                    self.config_entry.options.get(CONF_SERVICE_ENEDIS, serviceEnedis),
                 ): vol.In(all_repos),
                 vol.Required(
                     CONF_TOKEN,

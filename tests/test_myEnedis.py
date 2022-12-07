@@ -353,6 +353,7 @@ def test_update_data(caplog, tmpdir):
         "subscribed_power": "6 kVA",
         "offpeak_hours_enedis": "HC (0H54-6H54;11H54-13H54)",
         "yesterday_production": 0,
+        "serviceEnedis": "enedisGateway",
     }
 
     mSS = manageSensorState()
@@ -360,7 +361,6 @@ def test_update_data(caplog, tmpdir):
     state, other = mSS.getStatus()
     stateExpected["horaireMinCall"] = state["horaireMinCall"]
     assert stateExpected == state
-
 
 @pytest.mark.usefixtures("patch_datetime_now")
 @pytest.mark.parametrize(

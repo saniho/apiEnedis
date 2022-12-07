@@ -151,6 +151,7 @@ class myClientEnedis:
 
     def getServiceEnedis(self):
         return self._serviceEnedis
+
     def readDataJson(self):
         import glob
         import json
