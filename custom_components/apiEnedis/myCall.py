@@ -48,8 +48,8 @@ class myCall:
         self._contentType = "application/json"
         self._contentHeaderMyEnedis = "home-assistant-myEnedis"
         self._serviceEnedis = None
-        self._serverNameUrl = { 'enedisGateway' : "https://enedisgateway.tech/api", \
-            'myElectricalData' : "https://www.myelectricaldata.fr" }
+        self._serverNameUrl = {'enedisGateway': "https://enedisgateway.tech/api",
+                                'myElectricalData': "https://www.myelectricaldata.fr"}
 
     @staticmethod
     def sanitizeCounter() -> int:
@@ -81,8 +81,10 @@ class myCall:
             "call-service": self._contentHeaderMyEnedis,
             "ha_sensor_myenedis_version": self._version,
         }
+
     def getServiceEnedis(self):
         return self._serviceEnedis
+
     def isMyElectricData(self, serviceEnedis):
         return serviceEnedis == "myElectricalData"
     def isEnedisGateway(self, serviceEnedis):
@@ -131,33 +133,35 @@ class myCall:
         os.makedirs(os.path.dirname(fname), exist_ok=True)
         with open(fname, "w") as f:
             f.write(data)
+
     def getUrl(self, serviceEnedis, data):
-        if ( self.isMyElectricData(serviceEnedis)):
+        if self.isMyElectricData(serviceEnedis):
             url = self._serverNameUrl[serviceEnedis]
-            if ( data["type"] == "contracts"):
+            if data["type"] == "contracts":
                 url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/"
-            elif ( data["type"] == "daily_consumption"):
+            elif data["type"] == "daily_consumption":
                 url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
                     "start" + "/" + data["start"] + "/" + \
                     "end" + "/" + data["end"] + "/"
-            elif ( data["type"] == "daily_consumption_max_power"):
+            elif data["type"] == "daily_consumption_max_power":
                 url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
                     "start" + "/" + data["start"] + "/" + \
                     "end" + "/" + data["end"] + "/"
-            elif ( data["type"] == "daily_production"):
+            elif data["type"] == "daily_production":
                 url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
                     "start" + "/" + data["start"] + "/" + \
                     "end" + "/" + data["end"] + "/"
-            elif ( data["type"] == "consumption_load_curve"):
+            elif data["type"] == "consumption_load_curve":
                 url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
                     "start" + "/" + data["start"] + "/" + \
                     "end" + "/" + data["end"] + "/"
             return "get", url
-        elif ( self.isEnedisGateway(serviceEnedis)):
+        elif self.isEnedisGateway(serviceEnedis):
             url = self._serverNameUrl[serviceEnedis]
             return "post", url
         else:
             return None
+
     def post_and_get_json(self, serviceEnedis=None, params=None, data=None, headers=None):
         import json
         import random
