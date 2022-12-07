@@ -232,9 +232,11 @@ Cette partie n'est pas tenu à jour.
 
 **2.0.0.0** myElectricData
 
-**ajout de la possibilité d'utiliser myEnectricData**
+**ajout de la possibilité d'utiliser myElectricData**
 
-Attention le service enedisGateway sera desactivé en 2023
+Attention le service enedisGateway sera desactivé en mai 2023, mais myElectricData prendra la releve.
+
+Pensez à vous enregistrer sur https://www.myelectricaldata.fr/
 
 **1.2.0.0** refactoring du code
 
