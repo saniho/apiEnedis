@@ -362,6 +362,7 @@ def test_update_data(caplog, tmpdir):
     stateExpected["horaireMinCall"] = state["horaireMinCall"]
     assert stateExpected == state
 
+
 @pytest.mark.usefixtures("patch_datetime_now")
 @pytest.mark.parametrize(
     "patch_datetime_now",
