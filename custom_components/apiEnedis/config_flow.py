@@ -58,7 +58,7 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
             {
                 vol.Required(
                     CONF_SERVICE_ENEDIS,
-                    default=self.config_entry.options.get(CONF_SERVICE_ENEDIS,
+                    default=user_input.get(CONF_SERVICE_ENEDIS,
                                                           serviceEnedis),
                 ): vol.In(all_repos),
                 vol.Required(
