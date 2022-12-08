@@ -58,8 +58,7 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
             {
                 vol.Required(
                     CONF_SERVICE_ENEDIS,
-                    default=user_input.get(CONF_SERVICE_ENEDIS,
-                                                          serviceEnedis),
+                    default=user_input.get(CONF_SERVICE_ENEDIS, serviceEnedis),
                 ): vol.In(all_repos),
                 vol.Required(
                     CONF_TOKEN, default=user_input.get(CONF_TOKEN, token)
