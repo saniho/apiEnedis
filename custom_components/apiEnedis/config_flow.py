@@ -52,13 +52,15 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
         val_hp_cost = "0.0"
         val_heures_creuses = ""
         val_heurescreuses_on = True
+        all_repos = ["enedisGateway", "myElectricalData"]
 
         data_schema = vol.Schema(
             {
                 vol.Required(
                     CONF_SERVICE_ENEDIS,
-                    default=user_input(CONF_SERVICE_ENEDIS, serviceEnedis)
-                ): str,
+                    default=self.config_entry.options.get(CONF_SERVICE_ENEDIS,
+                                                          serviceEnedis),
+                ): vol.In(all_repos),
                 vol.Required(
                     CONF_TOKEN, default=user_input.get(CONF_TOKEN, token)
                 ): str,
