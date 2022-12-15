@@ -52,7 +52,7 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
         val_hp_cost = "0.0"
         val_heures_creuses = ""
         val_heurescreuses_on = True
-        #all_repos = ["enedisGateway", "myElectricalData"]
+        # all_repos = ["enedisGateway", "myElectricalData"]
         all_repos = ["enedisGateway"]
         _LOGGER.error("user_input : %s "%user_input)
         data_schema = vol.Schema(
@@ -138,7 +138,7 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
         code = "monCode"
         serviceEnedis = "enedisGateway"
         val_heures_creuses = ""
-        #all_repos = ["enedisGateway", "myElectricalData"]
+        # all_repos = ["enedisGateway", "myElectricalData"]
         all_repos = ["enedisGateway"]
 
         data_schema = vol.Schema(
