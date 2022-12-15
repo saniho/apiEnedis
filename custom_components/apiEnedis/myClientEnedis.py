@@ -978,14 +978,15 @@ class myClientEnedis:
         return lastCallHier
 
     def getGitVersion(self):
-        if self._gitVersion is None:
-            self.updateGitVersion()
+        # if self._gitVersion is None:
+        #     await self.hass.async_add_executor_job(self.updateGitVersion())
         return self._gitVersion
 
     def updateGitVersion(self):
-        gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
-        gitInfo.getInformation()
-        self._gitVersion = gitInfo.getVersion()
+        # gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
+        # gitInfo.getInformation()
+        # self._gitVersion = gitInfo.getVersion()
+        self._gitVersion = ""
 
     def getCallPossible(self, trace=False):
         currentDateTime = datetime.datetime.now()

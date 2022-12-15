@@ -47,13 +47,13 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
             user_input = {}
         token = ""
         code = ""
-        serviceEnedis = ""
+        serviceEnedis = "enedisGateway"
         val_hc_cost = "0.0"
         val_hp_cost = "0.0"
         val_heures_creuses = ""
         val_heurescreuses_on = True
         all_repos = ["enedisGateway", "myElectricalData"]
-
+        _LOGGER.error( "user_input : %s "%(user_input))
         data_schema = vol.Schema(
             {
                 vol.Required(

@@ -144,7 +144,7 @@ def testMono():
     myDataEnedis = myClientEnedis.myClientEnedis(
         token=token,
         PDL_ID=PDL_ID,
-        delai=10,
+        delay=10,
         heuresCreuses=ast.literal_eval(heureCreusesCh),
         heuresCreusesCost=0.20,
         heuresPleinesCost=1.30,
