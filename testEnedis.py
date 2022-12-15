@@ -159,18 +159,8 @@ def testMono():
     retour = myDataEnedis.getYesterday()
     LOGGER.info("retour %s", retour)
 
-
-def testGitInformation():
-    from custom_components.apiEnedis import gitinformation
-
-    git = gitinformation.gitinformation("saniho/apiEnedis")
-    git.getInformation()
-    LOGGER.info(git.getVersion())
-
-
 def main():
     testMulti()
-    testGitInformation()
     # testMono()
 
 

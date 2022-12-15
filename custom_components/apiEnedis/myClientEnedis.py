@@ -11,7 +11,7 @@ try:
         __nameMyEnedis__,
         _formatDateYmd,
     )
-    from . import gitinformation, messages
+    from . import messages
 
 except ImportError:
     import messages  # type: ignore[no-redef]
@@ -19,10 +19,8 @@ except ImportError:
         __nameMyEnedis__,
         _formatDateYmd,
     )
-    import gitinformation  # type: ignore[no-redef]
 
 from . import apiconst as API
-from . import const
 from .myCall import myCall
 from .myContrat import myContrat
 from .myDataEnedis import myDataEnedis
