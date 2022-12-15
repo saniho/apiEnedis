@@ -159,6 +159,7 @@ def testMono():
     retour = myDataEnedis.getYesterday()
     LOGGER.info("retour %s", retour)
 
+
 def main():
     testMulti()
     # testMono()
