@@ -104,18 +104,24 @@ class manageSensorState:
         return status_counts, state
 
     def getExistsRecentVersion(self, versionCurrent, versionGit):
-        import packaging
-        import packaging.version
-
-        # If only one of the versions exists, result is False
-        if (versionCurrent is None) or (versionGit is None):
-            return False
-
-        # Get version representations
-        currVersionObj = packaging.version.parse(versionCurrent)
-        gitVersionObj = packaging.version.parse(versionGit)
-
-        return currVersionObj < gitVersionObj
+        # import packaging.version
+        #
+        # # If only one of the versions exists, result is False
+        # if (versionCurrent is None) or (versionGit is None) or (versionGit == ""):
+        #     return False
+        #
+        # # self._LOGGER.error(
+        # #    "-- ** versionGit : %s, versionGit : %s" %( versionCurrent, versionGit )
+        # # )
+        # # Get version representations
+        # currVersionObj = packaging.version.parse(versionCurrent)
+        # try:
+        #     # version par encore disponible
+        #     gitVersionObj = packaging.version.parse(versionGit)
+        # except:
+        #     return False
+        # return currVersionObj < gitVersionObj
+        return False
 
     def getStatusEnergy(self, typeSensor=_consommation):
         state = "unavailable"
@@ -195,6 +201,7 @@ class manageSensorState:
         status: dict[str, int | float | str | list] = defaultdict(int)
         status["version"] = self.version
         status["versionGit"] = data.getGitVersion()
+        status["serviceEnedis"] = data.getServiceEnedis()
         status["versionUpdateAvailable"] = self.getExistsRecentVersion(
             self.version, data.getGitVersion()
         )

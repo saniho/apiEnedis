@@ -11,6 +11,7 @@ from .const import (  # isort:skip
     DOMAIN,
     CONF_TOKEN,
     CONF_CODE,
+    CONF_SERVICE_ENEDIS,
     HC_COST,
     HP_COST,
     HEURESCREUSES_ON,
@@ -46,13 +47,19 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
             user_input = {}
         token = ""
         code = ""
+        serviceEnedis = "enedisGateway"
         val_hc_cost = "0.0"
         val_hp_cost = "0.0"
         val_heures_creuses = ""
         val_heurescreuses_on = True
-
+        # all_repos = ["enedisGateway", "myElectricalData"]
+        all_repos = ["enedisGateway"]
         data_schema = vol.Schema(
             {
+                vol.Required(
+                    CONF_SERVICE_ENEDIS,
+                    default=user_input.get(CONF_SERVICE_ENEDIS, serviceEnedis),
+                ): vol.In(all_repos),
                 vol.Required(
                     CONF_TOKEN, default=user_input.get(CONF_TOKEN, token)
                 ): str,
@@ -86,6 +93,7 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
 
         token = user_input[CONF_TOKEN]  # Might be a city name or a postal code
         code = user_input.get(CONF_CODE)
+        serviceEnedis = user_input.get(CONF_SERVICE_ENEDIS)
         hc_cost = user_input.get(HC_COST)
         hp_cost = user_input.get(HP_COST)
         heures_creuses_on = user_input.get(HEURESCREUSES_ON)
@@ -100,6 +108,7 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
             data={
                 CONF_TOKEN: token,
                 CONF_CODE: code,
+                CONF_SERVICE_ENEDIS: serviceEnedis,
                 HC_COST: hc_cost,
                 HP_COST: hp_cost,
                 HEURESCREUSES_ON: heures_creuses_on,
@@ -126,9 +135,18 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
         token = "monToken"
         code = "monCode"
+        serviceEnedis = "enedisGateway"
         val_heures_creuses = ""
+        # all_repos = ["enedisGateway", "myElectricalData"]
+        all_repos = ["enedisGateway"]
+
         data_schema = vol.Schema(
             {
+                vol.Required(
+                    CONF_SERVICE_ENEDIS,
+                    default=self.config_entry.options.get(CONF_SERVICE_ENEDIS,
+                                                          serviceEnedis),
+                ): vol.In(all_repos),
                 vol.Required(
                     CONF_TOKEN,
                     default=self.config_entry.options.get(CONF_TOKEN, token),

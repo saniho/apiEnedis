@@ -38,6 +38,8 @@ PLATFORM = "sensor"
 # Configuration
 CONF_TOKEN = "token"
 CONF_CODE = "code"
+# defaut
+CONF_SERVICE_ENEDIS = "enedisGateway"
 
 # 60 secondes verifications du coordinator
 CONF_SCAN_INTERVAL = "conf_scan_interval"

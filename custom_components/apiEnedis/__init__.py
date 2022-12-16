@@ -57,6 +57,7 @@ from . import myClientEnedis
 from .const import (  # isort:skip
     CONF_TOKEN,
     CONF_CODE,
+    CONF_SERVICE_ENEDIS,
     DOMAIN,
     HP_COST,
     HC_COST,
@@ -232,6 +233,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
                 CONF_SCAN_INTERVAL: data.pop(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
                 CONF_TOKEN: data.pop(CONF_TOKEN, ""),
                 CONF_CODE: str(data.pop(CONF_CODE, "")),
+                CONF_SERVICE_ENEDIS: str(data.pop(CONF_SERVICE_ENEDIS, "")),
                 HP_COST: str(data.pop(HP_COST, "0.0")),
                 HC_COST: str(data.pop(HC_COST, "0.0")),
                 HEURESCREUSES_ON: bool(data.pop(HEURESCREUSES_ON, True)),
@@ -250,9 +252,10 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         _LOGGER.info("getInit()")
         hccost = float(self.entry.options.get(HC_COST, "0.0"))
         hpcost = float(self.entry.options.get(HP_COST, "0.0"))
+        serviceEnedis = self.entry.options.get(CONF_SERVICE_ENEDIS, "enedisGateway")
         token, code = (
             self.entry.options[CONF_TOKEN],
-            self.entry.options[CONF_CODE],
+            self.entry.options[CONF_CODE]
         )
         heurescreusesON = self.entry.options[HEURESCREUSES_ON]
         heurescreusesch = self.entry.options.get(HEURES_CREUSES, "[]")
@@ -261,7 +264,8 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         heurescreuses = ast.literal_eval(heurescreusesch)
         self._PDL_ID = code
         _LOGGER.info(
-            "options - proc -- %s %s %s %s %s %s",
+            "options - proc -- %s %s %s %s %s %s %s",
+            serviceEnedis,
             token,
             code,
             hccost,
@@ -311,6 +315,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             heuresPleinesCost=hpcost,
             version=__VERSION__,
             heuresCreusesON=heurescreusesON,
+            serviceEnedis=serviceEnedis,
         )
         self.clientEnedis.setPathArchive(path)
         dataJson = self.clientEnedis.readDataJson()

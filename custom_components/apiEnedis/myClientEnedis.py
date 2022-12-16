@@ -11,7 +11,7 @@ try:
         __nameMyEnedis__,
         _formatDateYmd,
     )
-    from . import gitinformation, messages
+    from . import messages
 
 except ImportError:
     import messages  # type: ignore[no-redef]
@@ -19,10 +19,8 @@ except ImportError:
         __nameMyEnedis__,
         _formatDateYmd,
     )
-    import gitinformation  # type: ignore[no-redef]
 
 from . import apiconst as API
-from . import const
 from .myCall import myCall
 from .myContrat import myContrat
 from .myDataEnedis import myDataEnedis
@@ -45,6 +43,7 @@ class myClientEnedis:
         heuresPleinesCost: float = 0,
         version: str = "0.0.0",
         heuresCreusesON: bool = True,
+        serviceEnedis: str = "enedisGateway"
     ):
         self._myCalli = myCall()
         self._token: str = token
@@ -64,6 +63,7 @@ class myClientEnedis:
         self._version: str = version
         self._forceCallJson: bool = False
         self._path: str | None = None
+        self._serviceEnedis: str = serviceEnedis
 
         import random
 
@@ -71,7 +71,7 @@ class myClientEnedis:
             minutes=random.randrange(360)
         )
 
-        self._myCalli.setParam(PDL_ID, token, version)
+        self._myCalli.setParam(PDL_ID, token, version, serviceEnedis)
         self.contract = myContrat(
             self._myCalli,
             self._token,
@@ -146,6 +146,9 @@ class myClientEnedis:
 
     def setPathArchive(self, path: str):
         self._path = path
+
+    def getServiceEnedis(self):
+        return self._serviceEnedis
 
     def readDataJson(self):
         import glob
@@ -244,6 +247,8 @@ class myClientEnedis:
                         json.dump(data, outfile)
             except:
                 log.error(f" >>>> erreur ecriture : {nomfichier} / {data}")
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                log.error(sys.exc_info())
 
     def getData(self) -> bool:
         # ### A VOIR ###
@@ -971,14 +976,15 @@ class myClientEnedis:
         return lastCallHier
 
     def getGitVersion(self):
-        if self._gitVersion is None:
-            self.updateGitVersion()
+        # if self._gitVersion is None:
+        #     await self.hass.async_add_executor_job(self.updateGitVersion())
         return self._gitVersion
 
     def updateGitVersion(self):
-        gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
-        gitInfo.getInformation()
-        self._gitVersion = gitInfo.getVersion()
+        # gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
+        # gitInfo.getInformation()
+        # self._gitVersion = gitInfo.getVersion()
+        self._gitVersion = ""
 
     def getCallPossible(self, trace=False):
         currentDateTime = datetime.datetime.now()

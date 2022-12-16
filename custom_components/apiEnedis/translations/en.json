@@ -4,6 +4,7 @@
     "step": {
       "user": {
         "data": {
+          "serviceEnedis": "serviceEnedis",
           "token": "Your Token",
           "code": "Your Code",
           "hc_cout": "Off-peak hours price (ex: 0.01)",
@@ -19,6 +20,7 @@
     "step": {
       "init": {
         "data": {
+          "serviceEnedis": "serviceEnedis",
           "token": "Your Token",
           "code": "Your Code",
           "hc_cout": "Off-peak hours price (ex: 0.01)",

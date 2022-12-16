@@ -230,6 +230,16 @@ Cette partie n'est pas tenu à jour.
 <details>
   <summary><b>VERSION</b></summary>
 
+**2.0.3.0** preparation pour myElectricData & corrections mineures
+
+**ajout de la possibilité d'utiliser myElectricData d'ici peu**
+
+Attention le service enedisGateway sera desactivé en mai 2023, mais myElectricData prendra la releve.
+
+Pensez à vous enregistrer sur https://www.myelectricaldata.fr/
+
+ps : le token myelectridata n'est pas compatible avec celui de enedsgateway ...
+
 **1.2.0.0** refactoring du code
 
 **suppression de la configuration possible par le fichier yaml, uniquement
