@@ -348,6 +348,7 @@ def test_update_data(caplog, tmpdir):
         "errorLastCall": "",
         "errorLastCallInterne": "",
         "monthly_evolution": "-3.990",
+        "year_evolution": "-3.990",
         "current_week_evolution": "-11.906",
         "current_month_evolution": "-7.119",
         "yesterday_evolution": "-20.122",
