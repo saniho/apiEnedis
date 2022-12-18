@@ -36,7 +36,7 @@ def testMulti():
 
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS100"]:
+    for qui in ["ENEDIS102"]:
         LOGGER.info(f"*** traitement de {qui} ")
         token = mon_conteneur[qui]["TOKEN"]
         PDL_ID = mon_conteneur[qui]["CODE"]
@@ -44,7 +44,7 @@ def testMulti():
         if "SERVICE" in mon_conteneur[qui].keys():
             serviceEnedis = mon_conteneur[qui]["SERVICE"]
 
-        print(mon_conteneur[qui]["QUI"])
+        print(mon_conteneur[qui]["QUI"], serviceEnedis)
         heureCreusesCh = ast.literal_eval("[['00:00','05:00'], ['22:00', '24:00']]")
         heuresCreusesON = True
 

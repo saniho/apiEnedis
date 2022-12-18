@@ -414,6 +414,20 @@ class manageSensorState:
                         status["errorLastCallInterne"] = data.getErrorLastCall()
 
                         if (
+                            (lastYear is not None)
+                            and (lastYear != 0)
+                            and (currYear is not None)
+                        ):
+                            valeur = (
+                                100
+                                * (currYear - lastYear)
+                                / lastYear
+                            )
+                            status["year_evolution"] = f"{valeur:.3f}"
+                        else:
+                            status["year_evolution"] = 0
+
+                        if (
                             (lastMonthLastYear is not None)
                             and (lastMonthLastYear != 0)
                             and (lastMonth is not None)
