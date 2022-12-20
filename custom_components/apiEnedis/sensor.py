@@ -71,8 +71,8 @@ async def async_setup_entry(
         if sensor_type == "principal":
             entities.append(myEnedisSensorCoordinator(mysensor, coordinator_enedis))
         elif sensor_type == "principal_production":
-            entities.append(myEnedisSensorCoordinator(mysensor, coordinator_enedis,
-                _production))
+            entities.append(myEnedisSensorCoordinator(
+                mysensor, coordinator_enedis, _production))
         elif sensor_type == "history_all":
             entities.append(
                 myEnedisSensorCoordinatorHistory(
