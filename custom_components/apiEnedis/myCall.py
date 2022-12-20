@@ -157,7 +157,7 @@ class myCall:
                 url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
                     "start" + "/" + data["start"] + "/" + \
                     "end" + "/" + data["end"] + "/"
-            return "get", url + "cache"
+            return "get", url # + "cache"
         elif self.isEnedisGateway(serviceEnedis):
             url = self._serverNameUrl[serviceEnedis]
             return "post", url
