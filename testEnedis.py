@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 from custom_components.apiEnedis import myClientEnedis
-from custom_components.apiEnedis.const import _consommation
+from custom_components.apiEnedis.const import _consommation, _production
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
 
 LOGGER = logging.getLogger("testEnedis")
@@ -95,6 +95,8 @@ def testMulti():
         myDataSensorEnedis = manageSensorState()
         myDataSensorEnedis.init(myDataEnedis)
         typeSensor = _consommation
+        status_counts, state = myDataSensorEnedis.getStatus(typeSensor)
+        typeSensor = _production
         status_counts, state = myDataSensorEnedis.getStatus(typeSensor)
         # lastReset, status_counts, state = (
         #         myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )

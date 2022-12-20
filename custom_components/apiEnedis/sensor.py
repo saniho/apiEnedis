@@ -25,6 +25,7 @@ from .const import (  # isort:skip
     HP_COST,
     HEURESCREUSES_ON,
     HEURES_CREUSES,
+    _production,
 )
 
 from .myEnedisSensorCoordinator import myEnedisSensorCoordinator
@@ -69,6 +70,8 @@ async def async_setup_entry(
         mysensor = SENSOR_TYPES[sensor_type]
         if sensor_type == "principal":
             entities.append(myEnedisSensorCoordinator(mysensor, coordinator_enedis))
+        elif sensor_type == "principal_production":
+            entities.append(myEnedisSensorCoordinator(mysensor, coordinator_enedis, _production))
         elif sensor_type == "history_all":
             entities.append(
                 myEnedisSensorCoordinatorHistory(
