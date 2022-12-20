@@ -232,6 +232,8 @@ Cette partie n'est pas tenu à jour.
 <details>
   <summary><b>VERSION</b></summary>
 
+**2.2.0** activation de myElectricData & du production sensor
+
 **2.0.3.0** preparation pour myElectricData & corrections mineures
 
 **ajout de la possibilité d'utiliser myElectricData d'ici peu**
