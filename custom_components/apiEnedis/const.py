@@ -74,7 +74,7 @@ SENSOR_TYPES: dict[str, dict[str, int | str]] = {
         ENTITY_NAME: "principal",
         ENTITY_DELAI: 60,
     },
-    "principal": {
+    "principal_production": {
         ENTITY_NAME: "principal_production",
         ENTITY_DELAI: 60,
     },
