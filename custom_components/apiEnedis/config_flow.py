@@ -22,6 +22,7 @@ from .const import (  # isort:skip
 _LOGGER = logging.getLogger(__name__)
 all_repos_Gateway = ["enedisGateway", "myElectricalData"]
 
+
 class myEnedisFlowHandler(  # type: ignore[call-arg]
     config_entries.ConfigFlow, domain=DOMAIN
 ):
