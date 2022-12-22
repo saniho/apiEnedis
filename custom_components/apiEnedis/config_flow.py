@@ -20,6 +20,7 @@ from .const import (  # isort:skip
 
 
 _LOGGER = logging.getLogger(__name__)
+all_repos_Gateway = ["enedisGateway", "myElectricalData"]
 
 
 class myEnedisFlowHandler(  # type: ignore[call-arg]
@@ -52,8 +53,7 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
         val_hp_cost = "0.0"
         val_heures_creuses = ""
         val_heurescreuses_on = True
-        # all_repos = ["enedisGateway", "myElectricalData"]
-        all_repos = ["enedisGateway"]
+        all_repos = all_repos_Gateway
         data_schema = vol.Schema(
             {
                 vol.Required(
@@ -137,8 +137,7 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
         code = "monCode"
         serviceEnedis = "enedisGateway"
         val_heures_creuses = ""
-        # all_repos = ["enedisGateway", "myElectricalData"]
-        all_repos = ["enedisGateway"]
+        all_repos = all_repos_Gateway
 
         data_schema = vol.Schema(
             {

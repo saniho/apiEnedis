@@ -13,7 +13,7 @@ sur le [forum HACF](https://forum.hacf.fr/).**
 ## Bienvenue !
 
 Cette intégration fonctionne à l'aide de la passerelle fournie par
-https://enedisgateway.tech/.
+https://enedisgateway.tech/ et avec https://myelectricaldata.fr/
 
 Avant de pouvoir utiliser cette intégration, assurez vous :
 
@@ -23,6 +23,8 @@ Avant de pouvoir utiliser cette intégration, assurez vous :
   [espace privé Enedis](https://mon-compte-client.enedis.fr/) la remontée
   des informations de votre linky.
 
+Remarque : 
+- La passerelle myElectriqueData est encore en test mais viendra à remplace EnedisGateway qui va disparaitre courant 2023
 ## Installer l'intégration
 
 <details>
@@ -229,6 +231,8 @@ Cette partie n'est pas tenu à jour.
 
 <details>
   <summary><b>VERSION</b></summary>
+
+**2.2.0** activation de myElectricData & du production sensor
 
 **2.0.3.0** preparation pour myElectricData & corrections mineures
 
