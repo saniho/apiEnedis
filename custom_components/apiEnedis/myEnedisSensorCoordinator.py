@@ -44,7 +44,7 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         interval = sensor_type[ENTITY_DELAI]
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         self._attributes: dict[str, str] = {}
-        self._state: str
+        self._state: str = None
         self._unit = "kWh"
         self._lastState = None
         self._lastAttributes = None

@@ -36,7 +36,7 @@ def testMulti():
 
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS102"]:
+    for qui in ["ENEDIS100"]:
         LOGGER.info(f"*** traitement de {qui} ")
         token = mon_conteneur[qui]["TOKEN"]
         PDL_ID = mon_conteneur[qui]["CODE"]
