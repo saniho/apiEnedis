@@ -64,7 +64,7 @@ def testMulti():
         LOGGER.info("Archive path: '%s'", path)
         myDataEnedis.setPathArchive(path)
         dataJson: dict[str, Any] = {}
-        # dataJson = myDataEnedis.readDataJson()
+        dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault(dataJsonDefault=dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
@@ -104,6 +104,7 @@ def testMulti():
         # lastReset, status_counts, state = (
         #         myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
         #     )
+        status_counts, state = myDataSensorEnedis.getStatusEcoWatt()
         LOGGER.info("****")
         LOGGER.info(status_counts)
         for clef in status_counts.keys():

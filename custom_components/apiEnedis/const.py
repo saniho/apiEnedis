@@ -106,6 +106,10 @@ SENSOR_TYPES: dict[str, dict[str, int | str]] = {
         ENTITY_NAME: "energyDetailHoursCost",
         ENTITY_DELAI: 60,
     },
+    "ecowatt": {
+        ENTITY_NAME: "ecowatt",
+        ENTITY_DELAI: 60,
+    },
 }
 
 

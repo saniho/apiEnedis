@@ -41,6 +41,8 @@ from .myEnedisSensorYesterdayCostCoordinator import (
     myEnedisSensorYesterdayCostCoordinator,
 )
 
+from .myEnedisSensorCoordinatorEcoWatt import myEnedisSensorCoordinatorEcoWatt
+
 _LOGGER = logging.getLogger(__name__)
 
 # pour gerer les anciennes config via yaml et le message d'erreur
@@ -108,6 +110,10 @@ async def async_setup_entry(
                 myEnedisSensorCoordinatorEnergyDetailHoursCost(
                     mysensor, coordinator_enedis
                 )
+            )
+        elif sensor_type == "ecowatt":
+            entities.append(
+                myEnedisSensorCoordinatorEcoWatt(mysensor, coordinator_enedis)
             )
         else:
             pass
