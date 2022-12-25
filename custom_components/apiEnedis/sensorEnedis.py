@@ -134,26 +134,29 @@ class manageSensorState:
         return status_counts, state
 
     def getStatusEcoWatt(self):
+        import random
         state = "unavailable"
         state = "123456"
         status_counts: dict[str, str] = defaultdict(str)
 
         status_counts["version"] = self.version
         status_counts["forecast_time_ref"] = "2022-12-23T20:50:00+00:00"
+
+        self._myDataEnedis.getEcoWatt().getValue() # gerer le calcul de l'heure ....
         status_counts["1_hour_forecast"] = {
-            "0 h":1,
-            "1 h":1,
-            "2 h":1,
-            "3 h":2,
-            "4 h":1,
-            "5 h":1,
-            "6 h":2,
-            "7 h":2,
-            "8 h":3,
-            "9 h":1,
-            "10 h":1,
-            "11 h":1,
-            "12 h":1,
+            "0 h": 1,
+            "1 h": 1,
+            "2 h": 1,
+            "3 h": random.randrange(3) + 1,
+            "4 h": 1,
+            "5 h": random.randrange(3) + 1,
+            "6 h": random.randrange(3) + 1,
+            "7 h": random.randrange(3) + 1,
+            "8 h": random.randrange(3) + 1,
+            "9 h": 1,
+            "10 h": 1,
+            "11 h": 1,
+            "12 h": 1,
         }
         if self._myDataEnedis.getTimeLastCall() is not None:
             state = "{:.3f}".format(
