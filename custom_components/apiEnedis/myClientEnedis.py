@@ -761,9 +761,9 @@ class myClientEnedis:
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
             data = self.getDataJsonValue(clefFunction)
-        cejour = (datetime.date.today()).strftime(_formatDateYmd)
+        hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
         demain = (datetime.date.today() + datetime.timedelta(1)).strftime(_formatDateYmd)
-        deb = self.contract.minCompareDateContract(cejour)
+        deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(demain)
         data = self._ecoWatt.updateData(
             clefFunction,
@@ -1190,8 +1190,8 @@ class myClientEnedis:
                     ):  # si pas un forcage alors on reset le last call...
                         self.updateStatusLastCall(True)
                     try:
-                        #self.callConsommation()
-                        #self.callProduction()
+                        self.callConsommation()
+                        self.callProduction()
                         self.callEcoWatt()
                         if self._forceCallJson:
                             self._forceCallJson = False

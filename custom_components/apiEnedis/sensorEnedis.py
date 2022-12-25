@@ -142,7 +142,10 @@ class manageSensorState:
         status_counts["version"] = self.version
         status_counts["forecast_time_ref"] = "2022-12-23T20:50:00+00:00"
 
-        self._myDataEnedis.getEcoWatt().getValue() # gerer le calcul de l'heure ....
+        status_counts["getEcoWatt"] = \
+            self._myDataEnedis.getEcoWatt().getValue() # gerer le calcul de l'heure ....
+        status_counts["lastSensorCall"] = datetime.datetime.now().strftime( format="%Y-%m-%d %H:%M:%S")
+        # ajout last update du sensor
         status_counts["1_hour_forecast"] = {
             "0 h": 1,
             "1 h": 1,
