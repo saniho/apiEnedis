@@ -1,3 +1,5 @@
+import datetime
+
 from . import apiconst as API
 
 
@@ -47,9 +49,11 @@ class myCheckData:
         if data is None:  # pas de valeur
             return None
         else:
+            from datetime import datetime
             for date in data.keys():
                 for detailDate in data[date]["detail"]:
-                    listeEcoWattDate[detailDate] = data[date]["detail"][detailDate]
+                    detailDatekey = datetime.strptime(detailDate, "%Y-%m-%d %H:%M:%S")
+                    listeEcoWattDate[detailDatekey] = data[date]["detail"][detailDate]
             return listeEcoWattDate
 
     def checkData(self, dataAnswer):

@@ -140,27 +140,22 @@ class manageSensorState:
         status_counts: dict[str, str] = defaultdict(str)
 
         status_counts["version"] = self.version
-        status_counts["forecast_time_ref"] = "2022-12-23T20:50:00+00:00"
 
-        status_counts["getEcoWatt"] = \
-            self._myDataEnedis.getEcoWatt().getValue() # gerer le calcul de l'heure ....
-        status_counts["lastSensorCall"] = datetime.datetime.now().strftime( format="%Y-%m-%d %H:%M:%S")
-        # ajout last update du sensor
-        status_counts["1_hour_forecast"] = {
-            "0 h": 1,
-            "1 h": 1,
-            "2 h": 1,
-            "3 h": random.randrange(3) + 1,
-            "4 h": 1,
-            "5 h": random.randrange(3) + 1,
-            "6 h": random.randrange(3) + 1,
-            "7 h": random.randrange(3) + 1,
-            "8 h": random.randrange(3) + 1,
-            "9 h": 1,
-            "10 h": 1,
-            "11 h": 1,
-            "12 h": 1,
-        }
+        status_counts["lastSensorCall"] = datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
+
+        today = datetime.datetime.today().replace(minute=0, second=0, microsecond=0)
+        end = datetime.datetime.now() + datetime.timedelta(hours=12)
+        end = end.replace(minute=0, second=0, microsecond=0)
+        status_counts["forecast"] = {}
+        for maDate in self._myDataEnedis.getEcoWatt().getValue().keys():
+            if (maDate>=today) and (maDate<end):
+                clef = maDate.strftime(format="%H h")
+                valeur = self._myDataEnedis.getEcoWatt().getValue()[maDate]
+                valeur = random.randrange(3) + 1
+                status_counts["forecast"][ clef ] = valeur
+        status_counts["begin"] = today
+        status_counts["end"] = end
+        # ajout last update du sensor a
         if self._myDataEnedis.getTimeLastCall() is not None:
             state = "{:.3f}".format(
                 123456
