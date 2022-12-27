@@ -1155,11 +1155,8 @@ class myClientEnedis:
             log.info("mise à jour effectuee production")
 
     def callEcoWatt(self):
-        if (
-                ( self.getStatusLastCall()
-            or self.lastMethodCallError == "updateEcoWatt"
-            ) and ( self.getServiceEnedis() == _ENEDIS_MyElectricData)
-        ):
+        if ((self.getStatusLastCall() or self.lastMethodCallError == "updateEcoWatt")
+                and (self.getServiceEnedis() == _ENEDIS_MyElectricData)):
             self.updateEcoWatt()
         self.updateTimeLastCall()
         self.updateStatusLastCall(True)

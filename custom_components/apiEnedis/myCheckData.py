@@ -1,5 +1,6 @@
 from . import apiconst as API
 
+
 class myCheckData:
     def __init__(self):
         # pas d'init defini
