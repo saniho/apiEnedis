@@ -62,6 +62,9 @@ __nameMyEnedis__ = "myEnedis"
 _consommation = "consommation"
 _production = "production"
 
+_ENEDIS_MyElectricData = "myElectricData"
+_ENEDIS_EnedisGateway = "enedisGateway"
+
 PLATFORMS = ["sensor"]
 
 _formatDateYmd = "%Y-%m-%d"

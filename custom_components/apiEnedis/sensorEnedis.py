@@ -141,18 +141,19 @@ class manageSensorState:
 
         status_counts["version"] = self.version
 
-        status_counts["lastSensorCall"] = datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
+        status_counts["lastSensorCall"] = \
+            datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
 
         today = datetime.datetime.today().replace(minute=0, second=0, microsecond=0)
         end = datetime.datetime.now() + datetime.timedelta(hours=12)
         end = end.replace(minute=0, second=0, microsecond=0)
         status_counts["forecast"] = {}
         for maDate in self._myDataEnedis.getEcoWatt().getValue().keys():
-            if (maDate>=today) and (maDate<end):
+            if (maDate >= today) and (maDate < end):
                 clef = maDate.strftime(format="%H h")
-                valeur = self._myDataEnedis.getEcoWatt().getValue()[maDate]
+                # valeur = self._myDataEnedis.getEcoWatt().getValue()[maDate]
                 valeur = random.randrange(3) + 1
-                status_counts["forecast"][ clef ] = valeur
+                status_counts["forecast"][clef] = valeur
         status_counts["begin"] = today
         status_counts["end"] = end
         # ajout last update du sensor a

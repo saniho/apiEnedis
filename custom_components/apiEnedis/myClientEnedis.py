@@ -10,6 +10,7 @@ try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
         _formatDateYmd,
+        _ENEDIS_MyElectricData,
     )
     from . import messages
 
@@ -778,7 +779,6 @@ class myClientEnedis:
         self.setDataRequestJson(clefFunction, self._ecoWatt)
         self.setNbCall(self._ecoWatt.getNbCall())
 
-
     def updateYesterdayConsumptionMaxPower(self, data=None, withControl=True):
         clefFunction = "updateYesterdayConsumptionMaxPower"
         self.lastMethodCall = clefFunction
@@ -1156,8 +1156,9 @@ class myClientEnedis:
 
     def callEcoWatt(self):
         if (
-            self.getStatusLastCall()
+                ( self.getStatusLastCall()
             or self.lastMethodCallError == "updateEcoWatt"
+            ) and ( self.getServiceEnedis() == _ENEDIS_MyElectricData)
         ):
             self.updateEcoWatt()
         self.updateTimeLastCall()

@@ -16,11 +16,13 @@ from .const import (  # isort:skip
     HP_COST,
     HEURESCREUSES_ON,
     HEURES_CREUSES,
+    _ENEDIS_EnedisGateway,
+    _ENEDIS_MyElectricData,
 )
 
 
 _LOGGER = logging.getLogger(__name__)
-all_repos_Gateway = ["enedisGateway", "myElectricalData"]
+all_repos_Gateway = [_ENEDIS_EnedisGateway, _ENEDIS_MyElectricData]
 
 
 class myEnedisFlowHandler(  # type: ignore[call-arg]

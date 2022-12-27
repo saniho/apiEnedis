@@ -3,6 +3,8 @@ from __future__ import annotations
 try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
+        _ENEDIS_MyElectricData,
+        _ENEDIS_EnedisGateway,
     )
 
 except ImportError:
@@ -86,10 +88,10 @@ class myCall:
         return self._serviceEnedis
 
     def isMyElectricData(self, serviceEnedis):
-        return serviceEnedis == "myElectricalData"
+        return serviceEnedis == _ENEDIS_MyElectricData
 
     def isEnedisGateway(self, serviceEnedis):
-        return serviceEnedis == "enedisGateway"
+        return serviceEnedis == _ENEDIS_EnedisGateway
 
     def setLastAnswer(self, lastanswer):
         self._lastAnswer = lastanswer

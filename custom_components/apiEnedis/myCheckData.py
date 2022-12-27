@@ -1,7 +1,4 @@
-import datetime
-
 from . import apiconst as API
-
 
 class myCheckData:
     def __init__(self):
@@ -122,7 +119,6 @@ class myCheckData:
         if API.METER_READING not in dataAnswer.keys():
             return False
         return True
-
 
     def checkDataEcoWatt(self, dataAnswer):
         if dataAnswer.get(API.ERROR_CODE, 200) == 500:
