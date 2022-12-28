@@ -151,8 +151,8 @@ class manageSensorState:
         for maDate in self._myDataEnedis.getEcoWatt().getValue().keys():
             if (maDate >= today) and (maDate < end):
                 clef = maDate.strftime(format="%H h")
-                # valeur = self._myDataEnedis.getEcoWatt().getValue()[maDate]
-                valeur = random.randrange(3) + 1
+                valeur = self._myDataEnedis.getEcoWatt().getValue()[maDate]
+                # valeur = random.randrange(3) + 1 # pour mettre des valeurs aléatoire
                 status_counts["forecast"][clef] = valeur
         status_counts["begin"] = today
         status_counts["end"] = end
