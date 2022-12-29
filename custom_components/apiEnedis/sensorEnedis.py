@@ -134,9 +134,9 @@ class manageSensorState:
         return status_counts, state
 
     def getStatusEcoWatt(self):
-        import random
-        state = "unavailable"
-        state = "123456"
+        #import random
+        #state = "unavailable"
+        state = ""
         status_counts: dict[str, str] = defaultdict(str)
 
         status_counts["version"] = self.version
