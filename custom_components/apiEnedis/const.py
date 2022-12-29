@@ -62,6 +62,9 @@ __nameMyEnedis__ = "myEnedis"
 _consommation = "consommation"
 _production = "production"
 
+_ENEDIS_MyElectricData = "myElectricalData"
+_ENEDIS_EnedisGateway = "enedisGateway"
+
 PLATFORMS = ["sensor"]
 
 _formatDateYmd = "%Y-%m-%d"
@@ -104,6 +107,10 @@ SENSOR_TYPES: dict[str, dict[str, int | str]] = {
     },
     "energyDetailHoursCost": {
         ENTITY_NAME: "energyDetailHoursCost",
+        ENTITY_DELAI: 60,
+    },
+    "ecowatt": {
+        ENTITY_NAME: "ecowatt",
         ENTITY_DELAI: 60,
     },
 }

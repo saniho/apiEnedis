@@ -3,6 +3,8 @@ from __future__ import annotations
 try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
+        _ENEDIS_MyElectricData,
+        _ENEDIS_EnedisGateway,
     )
 
 except ImportError:
@@ -86,10 +88,10 @@ class myCall:
         return self._serviceEnedis
 
     def isMyElectricData(self, serviceEnedis):
-        return serviceEnedis == "myElectricalData"
+        return serviceEnedis == _ENEDIS_MyElectricData
 
     def isEnedisGateway(self, serviceEnedis):
-        return serviceEnedis == "enedisGateway"
+        return serviceEnedis == _ENEDIS_EnedisGateway
 
     def setLastAnswer(self, lastanswer):
         self._lastAnswer = lastanswer
@@ -157,6 +159,10 @@ class myCall:
                 url = url + "/" + data["type"] + "/" + data["usage_point_id"] + "/" + \
                     "start" + "/" + data["start"] + "/" + \
                     "end" + "/" + data["end"] + "/"
+            elif data["type"] == "rte/ecowatt":
+                url = url + "/" + data["type"] + "/" + \
+                    data["start"] + "/" + \
+                    data["end"] + "/"
             return "get", url
             # return "get", url + "cache"
         elif self.isEnedisGateway(serviceEnedis):
@@ -326,6 +332,26 @@ class myCall:
         if fin is not None:
             payload = {
                 "type": "daily_production",
+                "usage_point_id": self._PDL_ID,
+                "start": str(deb),
+                "end": str(fin),
+            }
+            headers = self.getDefaultHeader()
+            dataAnswer = self.post_and_get_json(
+                self.getServiceEnedis(), data=payload, headers=headers
+            )
+            callDone = True
+        else:
+            # pas de donnée
+            callDone = False
+            dataAnswer = ""
+        self.setLastAnswer(dataAnswer)
+        return dataAnswer, callDone
+
+    def getDataEcoWatt(self, deb, fin):
+        if fin is not None:
+            payload = {
+                "type": "rte/ecowatt",
                 "usage_point_id": self._PDL_ID,
                 "start": str(deb),
                 "end": str(fin),

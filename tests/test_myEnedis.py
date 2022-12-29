@@ -17,6 +17,8 @@ JSON_DIR = os.path.dirname(__file__) + "/Json/"
 
 contractJsonFile = "Contract/contract1.json"
 
+ecoWattJsonFile = "EcoWatt/updateEcoWatt.json"
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -546,6 +548,61 @@ def test_updateProductionYesterday2():
     dataJson = loadJsonFile("Production/error2.json")
     myE.updateYesterdayProduction(dataJson, withControl=False)
     assert myE.getProductionYesterday().getValue() == 0, "Erreur production Value"
+
+
+def test_updateEcoWatt():
+    dataExpected = {datetime.datetime(2022, 12, 27, 0, 0): 1,
+                    datetime.datetime(2022, 12, 27, 1, 0): 1,
+                    datetime.datetime(2022, 12, 27, 2, 0): 1,
+                    datetime.datetime(2022, 12, 27, 3, 0): 1,
+                    datetime.datetime(2022, 12, 27, 4, 0): 1,
+                    datetime.datetime(2022, 12, 27, 5, 0): 1,
+                    datetime.datetime(2022, 12, 27, 6, 0): 1,
+                    datetime.datetime(2022, 12, 27, 7, 0): 1,
+                    datetime.datetime(2022, 12, 27, 8, 0): 1,
+                    datetime.datetime(2022, 12, 27, 9, 0): 1,
+                    datetime.datetime(2022, 12, 27, 10, 0): 1,
+                    datetime.datetime(2022, 12, 27, 11, 0): 1,
+                    datetime.datetime(2022, 12, 27, 12, 0): 1,
+                    datetime.datetime(2022, 12, 27, 13, 0): 1,
+                    datetime.datetime(2022, 12, 27, 14, 0): 1,
+                    datetime.datetime(2022, 12, 27, 15, 0): 1,
+                    datetime.datetime(2022, 12, 27, 16, 0): 1,
+                    datetime.datetime(2022, 12, 27, 17, 0): 1,
+                    datetime.datetime(2022, 12, 27, 18, 0): 1,
+                    datetime.datetime(2022, 12, 27, 19, 0): 1,
+                    datetime.datetime(2022, 12, 27, 20, 0): 1,
+                    datetime.datetime(2022, 12, 27, 21, 0): 1,
+                    datetime.datetime(2022, 12, 27, 22, 0): 1,
+                    datetime.datetime(2022, 12, 27, 23, 0): 1,
+                    datetime.datetime(2022, 12, 28, 0, 0): 1,
+                    datetime.datetime(2022, 12, 28, 1, 0): 1,
+                    datetime.datetime(2022, 12, 28, 2, 0): 1,
+                    datetime.datetime(2022, 12, 28, 3, 0): 1,
+                    datetime.datetime(2022, 12, 28, 4, 0): 1,
+                    datetime.datetime(2022, 12, 28, 5, 0): 1,
+                    datetime.datetime(2022, 12, 28, 6, 0): 1,
+                    datetime.datetime(2022, 12, 28, 7, 0): 1,
+                    datetime.datetime(2022, 12, 28, 8, 0): 1,
+                    datetime.datetime(2022, 12, 28, 9, 0): 1,
+                    datetime.datetime(2022, 12, 28, 10, 0): 1,
+                    datetime.datetime(2022, 12, 28, 11, 0): 1,
+                    datetime.datetime(2022, 12, 28, 12, 0): 1,
+                    datetime.datetime(2022, 12, 28, 13, 0): 1,
+                    datetime.datetime(2022, 12, 28, 14, 0): 1,
+                    datetime.datetime(2022, 12, 28, 15, 0): 1,
+                    datetime.datetime(2022, 12, 28, 16, 0): 1,
+                    datetime.datetime(2022, 12, 28, 17, 0): 1,
+                    datetime.datetime(2022, 12, 28, 18, 0): 1,
+                    datetime.datetime(2022, 12, 28, 19, 0): 1,
+                    datetime.datetime(2022, 12, 28, 20, 0): 1,
+                    datetime.datetime(2022, 12, 28, 21, 0): 1,
+                    datetime.datetime(2022, 12, 28, 22, 0): 1,
+                    datetime.datetime(2022, 12, 28, 23, 0): 1}
+    myE = myClientEnedis("myToken", "myPDL")
+    dataJsonEcoWatt = loadJsonFile(ecoWattJsonFile)
+    myE.updateEcoWatt(dataJsonEcoWatt, withControl=False)
+    assert myE.getEcoWatt().getValue() == dataExpected, "Erreur EcoWatt Value"
 
 
 def test_horaire_surcharge():

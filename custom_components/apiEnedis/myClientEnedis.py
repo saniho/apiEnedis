@@ -10,6 +10,7 @@ try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
         _formatDateYmd,
+        _ENEDIS_MyElectricData,
     )
     from . import messages
 
@@ -28,6 +29,7 @@ from .myDataEnedisByDay import myDataEnedisByDay
 from .myDataEnedisByDayDetail import myDataEnedisByDayDetail
 from .myDataEnedisMaxPower import myDataEnedisMaxPower
 from .myDataEnedisProduction import myDataEnedisProduction
+from .myDataEnedisEcoWatt import myDataEnedisEcoWatt
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -130,6 +132,11 @@ class myClientEnedis:
         self._yesterdayConsumptionMaxPower = myDataEnedisMaxPower(
             self._myCalli, self._token, self._version, self.contract
         )
+
+        self._ecoWatt = myDataEnedisEcoWatt(
+            self._myCalli, self._token, self._version, self.contract
+        )
+
         log.info("run myEnedis")
         self._gitVersion: str | None = None
         self._dataJsonDefault: dict[str, Any] = {}
@@ -749,6 +756,29 @@ class myClientEnedis:
         self.setDataRequestJson(clefFunction, self._productionYesterday)
         self.setNbCall(self._productionYesterday.getNbCall())
 
+    def updateEcoWatt(self, data=None, withControl=True):
+        clefFunction = "updateEcoWatt"
+        self.lastMethodCall = clefFunction
+        requestJson = self.getDataRequestJson(clefFunction)
+        if data is None:
+            data = self.getDataJsonValue(clefFunction)
+        hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
+        demain = (datetime.date.today() + datetime.timedelta(1)).strftime(_formatDateYmd)
+        deb = self.contract.minCompareDateContract(hier)
+        fin = self.contract.maxCompareDateContract(demain)
+        data = self._ecoWatt.updateData(
+            clefFunction,
+            self.getHorairePossible(),
+            data,
+            deb,
+            fin,
+            withControl=withControl,
+            dataControl=requestJson,
+        )
+        self.setDataJsonValue(clefFunction, data)
+        self.setDataRequestJson(clefFunction, self._ecoWatt)
+        self.setNbCall(self._ecoWatt.getNbCall())
+
     def updateYesterdayConsumptionMaxPower(self, data=None, withControl=True):
         clefFunction = "updateYesterdayConsumptionMaxPower"
         self.lastMethodCall = clefFunction
@@ -832,6 +862,9 @@ class myClientEnedis:
 
     def getCurrentYear(self):
         return self._currentYear
+
+    def getEcoWatt(self):
+        return self._ecoWatt
 
     def getLastUpdate(self):
         return self._lastUpdate
@@ -1121,6 +1154,14 @@ class myClientEnedis:
             self.updateStatusLastCall(True)
             log.info("mise à jour effectuee production")
 
+    def callEcoWatt(self):
+        if ((self.getStatusLastCall() or self.lastMethodCallError == "updateEcoWatt")
+                and (self.getServiceEnedis() == _ENEDIS_MyElectricData)):
+            self.updateEcoWatt()
+        self.updateTimeLastCall()
+        self.updateStatusLastCall(True)
+        log.info("mise à jour effectuee EcoWatt")
+
     def update(self):  # noqa C901
         log.info(f"myEnedis ...new update ?? {self._PDL_ID}")
         if self.contract.isLoaded:
@@ -1149,6 +1190,7 @@ class myClientEnedis:
                     try:
                         self.callConsommation()
                         self.callProduction()
+                        self.callEcoWatt()
                         if self._forceCallJson:
                             self._forceCallJson = False
                             self.setDataJsonDefault({})
