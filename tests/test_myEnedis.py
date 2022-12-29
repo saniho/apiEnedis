@@ -604,6 +604,7 @@ def test_updateEcoWatt():
     myE.updateEcoWatt(dataJsonEcoWatt, withControl=False)
     assert myE.getEcoWatt().getValue() == dataExpected, "Erreur EcoWatt Value"
 
+
 def test_horaire_surcharge():
     hc = [["23:30", "23:59"], ["00:00", "07:35"]]
     myE = myClientEnedis("myToken", "myPDL", heuresCreuses=hc)
