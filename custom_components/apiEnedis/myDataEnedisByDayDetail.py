@@ -11,7 +11,7 @@ except ImportError:
     from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
         _formatDateYmd,
-        __formatDateYmdHMS,
+        _formatDateYmdHMS,
     )
 
 import datetime
@@ -183,12 +183,10 @@ class myDataEnedisByDayDetail:
             self._interval_length = x["interval_length"]
             # date est la date de fin de la plage
             # on recule d'une minute .. car la date et l'heure est la fin de la plage
-            if ( x["date"][:13] == "2022-12-27 21") or ( x["date"][:16] == "2022-12-27 22:00"):
-                pass
-            newDate = x["date"]
             newDate = (
-                    datetime.datetime.strptime(x["date"], "%Y-%m-%d %H:%M:%S") - datetime.timedelta(minutes=1)
-            ).strftime(_formatDateYmdHMS)
+                    datetime.datetime.strptime(x["date"], "%Y-%m-%d %H:%M:%S") -
+                    datetime.timedelta(minutes=1)
+                ).strftime(_formatDateYmdHMS)
             date = newDate[:10]
             heure = newDate[11:16]
             if (
