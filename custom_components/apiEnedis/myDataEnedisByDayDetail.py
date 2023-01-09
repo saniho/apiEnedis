@@ -183,8 +183,8 @@ class myDataEnedisByDayDetail:
             self._interval_length = x["interval_length"]
             # date est la date de fin de la plage
             # on recule d'une minute .. car la date et l'heure est la fin de la plage
-            newDate = ( datetime.datetime.strptime(x["date"], "%Y-%m-%d %H:%M:%S") -
-                        datetime.timedelta(minutes=1)
+            newDate = (datetime.datetime.strptime(x["date"], "%Y-%m-%d %H:%M:%S")
+                       - datetime.timedelta(minutes=1)
                         ).strftime(_formatDateYmdHMS)
             date = newDate[:10]
             heure = newDate[11:16]
