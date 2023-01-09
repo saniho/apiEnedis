@@ -6,10 +6,10 @@ import traceback
 from collections import defaultdict
 
 try:
-    from .const import _consommation, _production
+    from .const import _consommation, _production, _formatDateYmdHMS
 
 except ImportError:
-    from const import _consommation, _production  # type: ignore[no-redef]
+    from const import _consommation, _production, _formatDateYmdHMS  # type: ignore[no-redef]
 
 __nameManageSensorState__ = "manageSensorState"
 import logging
@@ -141,7 +141,7 @@ class manageSensorState:
         status_counts["version"] = self.version
 
         status_counts["lastSensorCall"] = \
-            datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
+            datetime.datetime.now().strftime(format=_formatDateYmdHMS)
 
         today = datetime.datetime.today().replace(minute=0, second=0, microsecond=0)
         end = datetime.datetime.now() + datetime.timedelta(hours=12)
