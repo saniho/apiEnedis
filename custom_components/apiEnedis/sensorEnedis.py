@@ -162,7 +162,6 @@ class manageSensorState:
             )
         return status_counts, state
 
-
     def getStatusTempo(self):
         # import random
         state = ""
@@ -177,7 +176,7 @@ class manageSensorState:
         end = datetime.datetime.now() + datetime.timedelta(hours=12)
         end = end.replace(minute=0, second=0, microsecond=0)
         status_counts["forecast"] = {}
-        print(1/0)
+        print(1 / 0)
         for maDate in self._myDataEnedis.getTempo().getValue().keys():
             if (maDate >= today) and (maDate < end):
                 clef = maDate.strftime(format="%H h")
