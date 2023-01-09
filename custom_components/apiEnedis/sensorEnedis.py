@@ -172,7 +172,8 @@ class manageSensorState:
         status_counts["lastSensorCall"] = \
             datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
 
-        today = datetime.datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+        today = datetime.datetime.today().replace(
+            hour=0, minute=0, second=0, microsecond=0)
         end = datetime.datetime.now() + datetime.timedelta(days=3)
         end = end.replace(minute=0, second=0, microsecond=0)
         status_counts["forecast"] = {}
@@ -182,7 +183,7 @@ class manageSensorState:
                 valeur = self._myDataEnedis.getTempo().getValue()[maDate]
                 # valeur = random.randrange(3) + 1 # pour mettre des valeurs aléatoire
                 status_counts["forecast"][clef] = valeur
-                if (maDate == today):
+                if maDate == today:
                     state = valeur
         status_counts["begin"] = today
         status_counts["end"] = end
