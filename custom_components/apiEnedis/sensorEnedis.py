@@ -173,14 +173,13 @@ class manageSensorState:
             datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
 
         today = datetime.datetime.today().replace(minute=0, second=0, microsecond=0)
-        end = datetime.datetime.now() + datetime.timedelta(hours=12)
+        end = datetime.datetime.now() + datetime.timedelta(days=3)
         end = end.replace(minute=0, second=0, microsecond=0)
         status_counts["forecast"] = {}
-        print(1 / 0)
         for maDate in self._myDataEnedis.getTempo().getValue().keys():
             if (maDate >= today) and (maDate < end):
-                clef = maDate.strftime(format="%H h")
-                valeur = self._myDataEnedis.getEcoWatt().getValue()[maDate]
+                clef = maDate.strftime(format="%Y-%m-%d")
+                valeur = self._myDataEnedis.getTempo().getValue()[maDate]
                 # valeur = random.randrange(3) + 1 # pour mettre des valeurs aléatoire
                 status_counts["forecast"][clef] = valeur
         status_counts["begin"] = today

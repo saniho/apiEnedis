@@ -42,6 +42,7 @@ from .myEnedisSensorYesterdayCostCoordinator import (
 )
 
 from .myEnedisSensorCoordinatorEcoWatt import myEnedisSensorCoordinatorEcoWatt
+from .myEnedisSensorCoordinatorTempo import myEnedisSensorCoordinatorTempo
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -114,6 +115,10 @@ async def async_setup_entry(
         elif sensor_type == "ecowatt":
             entities.append(
                 myEnedisSensorCoordinatorEcoWatt(mysensor, coordinator_enedis)
+            )
+        elif sensor_type == "tempo":
+            entities.append(
+                myEnedisSensorCoordinatorTempo(mysensor, coordinator_enedis)
             )
         else:
             pass

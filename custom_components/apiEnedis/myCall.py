@@ -163,6 +163,10 @@ class myCall:
                 url = url + "/" + data["type"] + "/" + \
                     data["start"] + "/" + \
                     data["end"] + "/"
+            elif data["type"] == "rte/tempo":
+                url = url + "/" + data["type"] + "/" + \
+                    data["start"] + "/" + \
+                    data["end"] + "/"
             return "get", url
             # return "get", url + "cache"
         elif self.isEnedisGateway(serviceEnedis):

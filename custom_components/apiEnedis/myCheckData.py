@@ -54,6 +54,17 @@ class myCheckData:
                     listeEcoWattDate[detailDatekey] = data[date]["detail"][detailDate]
             return listeEcoWattDate
 
+    def analyseValueTempo(self, data):
+        listeEcoWattDate = {}
+        if data is None:  # pas de valeur
+            return None
+        else:
+            from datetime import datetime
+            for date in data.keys():
+                detailDatekey = datetime.strptime(date, "%Y-%m-%d")
+                listeEcoWattDate[detailDatekey] = data[date]
+            return listeEcoWattDate
+
     def checkData(self, dataAnswer):
         # new version de la réponse
         # si erreur 500
@@ -122,6 +133,27 @@ class myCheckData:
         return True
 
     def checkDataEcoWatt(self, dataAnswer):
+        if dataAnswer.get(API.ERROR_CODE, 200) == 500:
+            return False
+        if API.ERROR_CODE in dataAnswer.keys():
+            if (
+                (dataAnswer[API.ERROR_CODE] == "ADAM-ERR0123")
+                or (dataAnswer[API.ERROR_CODE] == "no_data_found")
+                or (dataAnswer[API.ERROR_CODE] == "ADAM-ERR0069")
+                or (dataAnswer[API.ERROR_CODE] == "UNKERROR_002")
+            ):
+                return False
+            # collecte horaire non activée
+            if dataAnswer[API.ERROR_CODE] == "ADAM-ERR0075":
+                return False
+            if dataAnswer[API.ERROR_CODE] == "Internal Server error":
+                # erreur interne enedis
+                raise Exception("call", "error", "UNKERROR_001")
+            else:
+                raise Exception("call", "error", dataAnswer[API.ERROR_CODE])
+        return True
+
+    def checkDataTempo(self, dataAnswer):
         if dataAnswer.get(API.ERROR_CODE, 200) == 500:
             return False
         if API.ERROR_CODE in dataAnswer.keys():

@@ -104,6 +104,7 @@ def testMulti():
         #         myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
         #     )
         status_counts, state = myDataSensorEnedis.getStatusEcoWatt()
+        status_counts, state = myDataSensorEnedis.getStatusTempo()
         LOGGER.info("****")
         LOGGER.info(status_counts)
         for clef in status_counts.keys():
