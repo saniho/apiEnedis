@@ -4,12 +4,14 @@ try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
         _formatDateYmd,
+        _formatDateYmdHMS,
     )
 
 except ImportError:
     from const import (  # type: ignore[no-redef]
         __nameMyEnedis__,
         _formatDateYmd,
+        _formatDateYmdHMS,
     )
 
 import datetime
@@ -179,11 +181,16 @@ class myDataEnedisByDayDetail:
         # dateDuJour = (datetime.date.today()).strftime(_formatDateYmd)
         for x in data["meter_reading"]["interval_reading"]:
             self._interval_length = x["interval_length"]
-            date = x["date"][:10]
-            heure = x["date"][11:16]
+            # date est la date de fin de la plage
+            # on recule d'une minute .. car la date et l'heure est la fin de la plage
+            newDate = (datetime.datetime.strptime(x["date"], "%Y-%m-%d %H:%M:%S")
+                       - datetime.timedelta(minutes=1))\
+                .strftime(_formatDateYmdHMS)
+            date = newDate[:10]
+            heure = newDate[11:16]
             if (
                 heure == "00:00"
-            ):  # alors sur la veille, var c'est la fin de la tranche du jour precedent
+            ):  # alors sur la veille, car c'est la fin de la tranche du jour precedent
                 date = (
                     datetime.datetime.strptime(date, "%Y-%m-%d") - datetime.timedelta(1)
                 ).strftime(_formatDateYmd)
@@ -198,6 +205,7 @@ class myDataEnedisByDayDetail:
                 if date not in joursHP:
                     joursHP[date] = 0
                 heurePleine = self._contrat._getHCHPfromHour(heure)
+                # clef contient la date et l'heure .. pas les minutes
                 clef = x["date"][:13]
                 if clef not in self._dateHeureDetail.keys():
                     self._dateHeureDetail[clef] = 0

@@ -68,6 +68,7 @@ _ENEDIS_EnedisGateway = "enedisGateway"
 PLATFORMS = ["sensor"]
 
 _formatDateYmd = "%Y-%m-%d"
+_formatDateYmdHMS = "%Y-%m-%d %H:%M:%S"
 
 ENTITY_NAME = "name"
 ENTITY_DELAI = "delai"

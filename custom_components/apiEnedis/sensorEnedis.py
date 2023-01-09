@@ -188,7 +188,8 @@ class manageSensorState:
 
             total = valeurHP + valeurHC
             state = f"{0.001 * total:.3f}"
-        lastResetIso = lastReset.isoformat()
+        # on recule d'une heure, car il faut indiquer le dernier "changement"
+        lastResetIso = (lastReset - datetime.timedelta(hours=1)).isoformat()
         return lastResetIso, status_counts, state
 
     def getStatusEnergyDetailHoursCost(self, typeSensor=_consommation):
