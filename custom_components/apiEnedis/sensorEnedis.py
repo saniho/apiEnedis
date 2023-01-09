@@ -182,13 +182,10 @@ class manageSensorState:
                 valeur = self._myDataEnedis.getTempo().getValue()[maDate]
                 # valeur = random.randrange(3) + 1 # pour mettre des valeurs aléatoire
                 status_counts["forecast"][clef] = valeur
+                if (maDate == today):
+                    state = valeur
         status_counts["begin"] = today
         status_counts["end"] = end
-        # ajout last update du sensor a
-        if self._myDataEnedis.getTimeLastCall() is not None:
-            state = "{:.3f}".format(
-                123456
-            )
         return status_counts, state
 
     def getStatusEnergyDetailHours(self, typeSensor=_consommation):
