@@ -6,10 +6,12 @@ import traceback
 from collections import defaultdict
 
 try:
-    from .const import _consommation, _production, _formatDateYmdHMS
+    from .const import _consommation, _production, \
+        _formatDateYmdHMS
 
 except ImportError:
-    from const import _consommation, _production, _formatDateYmdHMS  # type: ignore[no-redef]
+    from const import _consommation, _production, \
+        _formatDateYmdHMS  # type: ignore[no-redef]
 
 __nameManageSensorState__ = "manageSensorState"
 import logging
