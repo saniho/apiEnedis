@@ -98,9 +98,8 @@ def testMulti():
         status_counts, state = myDataSensorEnedis.getStatus(typeSensor)
         typeSensor = _production
         status_counts, state = myDataSensorEnedis.getStatus(typeSensor)
-        lastReset, status_counts, state = (
-                  myDataSensorEnedis.getStatusEnergyDetailHours(typeSensor)
-             )
+        lastReset, status_counts, state = \
+            myDataSensorEnedis.getStatusEnergyDetailHours(typeSensor)
         # lastReset, status_counts, state = (
         #         myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
         #     )

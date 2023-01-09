@@ -183,10 +183,9 @@ class myDataEnedisByDayDetail:
             self._interval_length = x["interval_length"]
             # date est la date de fin de la plage
             # on recule d'une minute .. car la date et l'heure est la fin de la plage
-            newDate = (
-                    datetime.datetime.strptime(x["date"], "%Y-%m-%d %H:%M:%S") -
-                    datetime.timedelta(minutes=1)
-                ).strftime(_formatDateYmdHMS)
+            newDate = ( datetime.datetime.strptime(x["date"], "%Y-%m-%d %H:%M:%S") -
+                        datetime.timedelta(minutes=1)
+                        ).strftime(_formatDateYmdHMS)
             date = newDate[:10]
             heure = newDate[11:16]
             if (
@@ -206,7 +205,8 @@ class myDataEnedisByDayDetail:
                 if date not in joursHP:
                     joursHP[date] = 0
                 heurePleine = self._contrat._getHCHPfromHour(heure)
-                clef = x["date"][:13] # clef contient la date et l'heure .. pas les minutes
+                # clef contient la date et l'heure .. pas les minutes
+                clef = x["date"][:13]
                 if clef not in self._dateHeureDetail.keys():
                     self._dateHeureDetail[clef] = 0
                 self._dateHeureDetail[clef] += (
