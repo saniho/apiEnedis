@@ -278,8 +278,8 @@ def test_update_data(caplog, tmpdir):
             '2022-03-22': 2210.0,
             '2022-03-23': 2004.0
         },
-         'DaysHP': {
-             '2022-03-17': 5163.0,
+        'DaysHP': {
+            '2022-03-17': 5163.0,
             '2022-03-18': 4465.0,
             '2022-03-19': 8500.0,
             '2022-03-20': 7244.0,
@@ -294,7 +294,7 @@ def test_update_data(caplog, tmpdir):
     assert dataExpected == data, "Error data_update"
 
     stateExpected = {}
-    #gitVersion = myE.getGitVersion()
+    # gitVersion = myE.getGitVersion()
     # stateExpected = {
     #     "version": "v1.4.0.3",
     #     "versionGit": gitVersion,
