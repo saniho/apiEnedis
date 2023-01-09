@@ -30,6 +30,7 @@ from .myDataEnedisByDayDetail import myDataEnedisByDayDetail
 from .myDataEnedisMaxPower import myDataEnedisMaxPower
 from .myDataEnedisProduction import myDataEnedisProduction
 from .myDataEnedisEcoWatt import myDataEnedisEcoWatt
+from .myDataEnedisTempo import myDataEnedisTempo
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -134,6 +135,10 @@ class myClientEnedis:
         )
 
         self._ecoWatt = myDataEnedisEcoWatt(
+            self._myCalli, self._token, self._version, self.contract
+        )
+
+        self._tempo = myDataEnedisTempo(
             self._myCalli, self._token, self._version, self.contract
         )
 
@@ -779,6 +784,29 @@ class myClientEnedis:
         self.setDataRequestJson(clefFunction, self._ecoWatt)
         self.setNbCall(self._ecoWatt.getNbCall())
 
+    def updateTempo(self, data=None, withControl=True):
+        clefFunction = "updateTempo"
+        self.lastMethodCall = clefFunction
+        requestJson = self.getDataRequestJson(clefFunction)
+        if data is None:
+            data = self.getDataJsonValue(clefFunction)
+        hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
+        demain = (datetime.date.today() + datetime.timedelta(1)).strftime(_formatDateYmd)
+        deb = self.contract.minCompareDateContract(hier)
+        fin = self.contract.maxCompareDateContract(demain)
+        data = self._tempo.updateData(
+            clefFunction,
+            self.getHorairePossible(),
+            data,
+            deb,
+            fin,
+            withControl=withControl,
+            dataControl=requestJson,
+        )
+        self.setDataJsonValue(clefFunction, data)
+        self.setDataRequestJson(clefFunction, self._tempo)
+        self.setNbCall(self._tempo.getNbCall())
+
     def updateYesterdayConsumptionMaxPower(self, data=None, withControl=True):
         clefFunction = "updateYesterdayConsumptionMaxPower"
         self.lastMethodCall = clefFunction
@@ -865,6 +893,9 @@ class myClientEnedis:
 
     def getEcoWatt(self):
         return self._ecoWatt
+
+    def getTempo(self):
+        return self._tempo
 
     def getLastUpdate(self):
         return self._lastUpdate
@@ -1162,6 +1193,14 @@ class myClientEnedis:
         self.updateStatusLastCall(True)
         log.info("mise à jour effectuee EcoWatt")
 
+    def callTempo(self):
+        if ((self.getStatusLastCall() or self.lastMethodCallError == "updateTempo")
+                and (self.getServiceEnedis() == _ENEDIS_MyElectricData)):
+            self.updateTempo()
+        self.updateTimeLastCall()
+        self.updateStatusLastCall(True)
+        log.info("mise à jour effectuee Tempo")
+
     def update(self):  # noqa C901
         log.info(f"myEnedis ...new update ?? {self._PDL_ID}")
         if self.contract.isLoaded:
@@ -1191,6 +1230,7 @@ class myClientEnedis:
                         self.callConsommation()
                         self.callProduction()
                         self.callEcoWatt()
+                        self.callTempo()
                         if self._forceCallJson:
                             self._forceCallJson = False
                             self.setDataJsonDefault({})

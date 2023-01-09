@@ -368,6 +368,26 @@ class myCall:
         self.setLastAnswer(dataAnswer)
         return dataAnswer, callDone
 
+    def getDataTempo(self, deb, fin):
+        if fin is not None:
+            payload = {
+                "type": "rte/tempo",
+                "usage_point_id": self._PDL_ID,
+                "start": str(deb),
+                "end": str(fin),
+            }
+            headers = self.getDefaultHeader()
+            dataAnswer = self.post_and_get_json(
+                self.getServiceEnedis(), data=payload, headers=headers
+            )
+            callDone = True
+        else:
+            # pas de donnée
+            callDone = False
+            dataAnswer = ""
+        self.setLastAnswer(dataAnswer)
+        return dataAnswer, callDone
+
     def getDataPeriodCLC(self, deb, fin):
         if fin is not None:
             payload = {
