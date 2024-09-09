@@ -49,6 +49,8 @@ class myCheckData:
         else:
             from datetime import datetime
             for date in data.keys():
+                # si pas de données
+                if ( "detail" in data.keys()): return listeEcoWattDate
                 for detailDate in data[date]["detail"]:
                     detailDatekey = datetime.strptime(detailDate, "%Y-%m-%d %H:%M:%S")
                     listeEcoWattDate[detailDatekey] = data[date]["detail"][detailDate]
