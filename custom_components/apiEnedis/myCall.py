@@ -113,7 +113,7 @@ class myCall:
             timestamp = datetime.datetime.now().timestamp()
             _LOGGER.debug(
                 f"Ancien timeout? {timestamp}-{myCall._lastTimeout}"
-                f"={timestamp-myCall._lastTimeout}"
+                f"={timestamp - myCall._lastTimeout}"
                 f"> {MAX_PREVIOUS_TIMEOUT} ?"
             )
             if timestamp - myCall._lastTimeout > MAX_PREVIOUS_TIMEOUT:
