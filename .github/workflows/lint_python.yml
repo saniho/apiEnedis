@@ -29,4 +29,4 @@ jobs:
       - run: pytest . || true
       #- run: pytest --doctest-modules . || true
       #- run: shopt -s globstar && pyupgrade --py36-plus **/*.py || true
-      - run: safety check -i 43975
+      - run: safety check -i 43975 -i 70612

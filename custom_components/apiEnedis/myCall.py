@@ -113,7 +113,7 @@ class myCall:
             timestamp = datetime.datetime.now().timestamp()
             _LOGGER.debug(
                 f"Ancien timeout? {timestamp}-{myCall._lastTimeout}"
-                f"={timestamp-myCall._lastTimeout}"
+                f"={timestamp - myCall._lastTimeout}"
                 f"> {MAX_PREVIOUS_TIMEOUT} ?"
             )
             if timestamp - myCall._lastTimeout > MAX_PREVIOUS_TIMEOUT:
@@ -160,6 +160,10 @@ class myCall:
                     "start" + "/" + data["start"] + "/" + \
                     "end" + "/" + data["end"] + "/"
             elif data["type"] == "rte/ecowatt":
+                url = url + "/" + data["type"] + "/" + \
+                    data["start"] + "/" + \
+                    data["end"] + "/"
+            elif data["type"] == "rte/tempo":
                 url = url + "/" + data["type"] + "/" + \
                     data["start"] + "/" + \
                     data["end"] + "/"
@@ -352,6 +356,26 @@ class myCall:
         if fin is not None:
             payload = {
                 "type": "rte/ecowatt",
+                "usage_point_id": self._PDL_ID,
+                "start": str(deb),
+                "end": str(fin),
+            }
+            headers = self.getDefaultHeader()
+            dataAnswer = self.post_and_get_json(
+                self.getServiceEnedis(), data=payload, headers=headers
+            )
+            callDone = True
+        else:
+            # pas de donnée
+            callDone = False
+            dataAnswer = ""
+        self.setLastAnswer(dataAnswer)
+        return dataAnswer, callDone
+
+    def getDataTempo(self, deb, fin):
+        if fin is not None:
+            payload = {
+                "type": "rte/tempo",
                 "usage_point_id": self._PDL_ID,
                 "start": str(deb),
                 "end": str(fin),

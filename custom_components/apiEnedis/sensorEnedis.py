@@ -6,10 +6,12 @@ import traceback
 from collections import defaultdict
 
 try:
-    from .const import _consommation, _production
+    from .const import _consommation, _production, \
+        _formatDateYmdHMS
 
 except ImportError:
-    from const import _consommation, _production  # type: ignore[no-redef]
+    from const import _consommation, _production, \
+        _formatDateYmdHMS  # type: ignore[no-redef]
 
 __nameManageSensorState__ = "manageSensorState"
 import logging
@@ -141,7 +143,7 @@ class manageSensorState:
         status_counts["version"] = self.version
 
         status_counts["lastSensorCall"] = \
-            datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
+            datetime.datetime.now().strftime(format=_formatDateYmdHMS)
 
         today = datetime.datetime.today().replace(minute=0, second=0, microsecond=0)
         end = datetime.datetime.now() + datetime.timedelta(hours=12)
@@ -160,7 +162,33 @@ class manageSensorState:
             state = "{:.3f}".format(
                 123456
             )
+        return status_counts, state
 
+    def getStatusTempo(self):
+        # import random
+        state = ""
+        status_counts: dict[str, str] = defaultdict(str)
+
+        status_counts["version"] = self.version
+
+        status_counts["lastSensorCall"] = \
+            datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
+
+        today = datetime.datetime.today().replace(
+            hour=0, minute=0, second=0, microsecond=0)
+        end = datetime.datetime.now() + datetime.timedelta(days=3)
+        end = end.replace(minute=0, second=0, microsecond=0)
+        status_counts["forecast"] = {}
+        for maDate in self._myDataEnedis.getTempo().getValue().keys():
+            if (maDate >= today) and (maDate < end):
+                clef = maDate.strftime(format="%Y-%m-%d")
+                valeur = self._myDataEnedis.getTempo().getValue()[maDate]
+                # valeur = random.randrange(3) + 1 # pour mettre des valeurs aléatoire
+                status_counts["forecast"][clef] = valeur
+                if maDate == today:
+                    state = valeur
+        status_counts["begin"] = today
+        status_counts["end"] = end
         return status_counts, state
 
     def getStatusEnergyDetailHours(self, typeSensor=_consommation):
