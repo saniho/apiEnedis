@@ -20,10 +20,12 @@ from .const import (  # isort:skip
     COORDINATOR_ENEDIS,
     CONF_TOKEN,
     CONF_CODE,
+    CONF_SERVICE_ENEDIS,
     HC_COST,
     HP_COST,
     HEURESCREUSES_ON,
     HEURES_CREUSES,
+    _production,
 )
 
 from .myEnedisSensorCoordinator import myEnedisSensorCoordinator
@@ -39,13 +41,17 @@ from .myEnedisSensorYesterdayCostCoordinator import (
     myEnedisSensorYesterdayCostCoordinator,
 )
 
+from .myEnedisSensorCoordinatorEcoWatt import myEnedisSensorCoordinatorEcoWatt
+from .myEnedisSensorCoordinatorTempo import myEnedisSensorCoordinatorTempo
+
 _LOGGER = logging.getLogger(__name__)
 
-# pour gerer les anciennes config via yaml et le message d'ereur
+# pour gerer les anciennes config via yaml et le message d'erreur
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
+        vol.Required(CONF_SERVICE_ENEDIS): cv.string,
         vol.Required(CONF_TOKEN): cv.string,
-        vol.Required(CONF_CODE): cv.string,
+        vol.Optional(CONF_CODE, default="enedisGateway"): cv.string,
         vol.Optional(HC_COST, default="0.0"): cv.string,
         vol.Optional(HP_COST, default="0.0"): cv.string,
         vol.Optional(HEURESCREUSES_ON, default=True): cv.boolean,
@@ -67,6 +73,9 @@ async def async_setup_entry(
         mysensor = SENSOR_TYPES[sensor_type]
         if sensor_type == "principal":
             entities.append(myEnedisSensorCoordinator(mysensor, coordinator_enedis))
+        elif sensor_type == "principal_production":
+            entities.append(myEnedisSensorCoordinator(
+                mysensor, coordinator_enedis, _production))
         elif sensor_type == "history_all":
             entities.append(
                 myEnedisSensorCoordinatorHistory(
@@ -102,6 +111,14 @@ async def async_setup_entry(
                 myEnedisSensorCoordinatorEnergyDetailHoursCost(
                     mysensor, coordinator_enedis
                 )
+            )
+        elif sensor_type == "ecowatt":
+            entities.append(
+                myEnedisSensorCoordinatorEcoWatt(mysensor, coordinator_enedis)
+            )
+        elif sensor_type == "tempo":
+            entities.append(
+                myEnedisSensorCoordinatorTempo(mysensor, coordinator_enedis)
             )
         else:
             pass

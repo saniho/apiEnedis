@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 from custom_components.apiEnedis import myClientEnedis
-from custom_components.apiEnedis.const import _consommation
+from custom_components.apiEnedis.const import _consommation, _production
 from custom_components.apiEnedis.sensorEnedis import manageSensorState
 
 LOGGER = logging.getLogger("testEnedis")
@@ -36,11 +36,15 @@ def testMulti():
 
     mon_conteneur = configparser.ConfigParser()
     mon_conteneur.read("../myCredential/security.txt")
-    for qui in ["ENEDIS"]:
+    for qui in ["ENEDIS100"]:
         LOGGER.info(f"*** traitement de {qui} ")
         token = mon_conteneur[qui]["TOKEN"]
         PDL_ID = mon_conteneur[qui]["CODE"]
-        print(mon_conteneur[qui]["QUI"])
+        serviceEnedis = "enedisGateway"
+        if "SERVICE" in mon_conteneur[qui].keys():
+            serviceEnedis = mon_conteneur[qui]["SERVICE"]
+
+        print(mon_conteneur[qui]["QUI"], serviceEnedis)
         heureCreusesCh = ast.literal_eval("[['00:00','05:00'], ['22:00', '24:00']]")
         heuresCreusesON = True
 
@@ -48,18 +52,19 @@ def testMulti():
         myDataEnedis = myClientEnedis.myClientEnedis(
             token=token,
             PDL_ID=PDL_ID,
-            delai=7200,
+            delay=7200,
             heuresCreuses=heureCreusesCh,
             heuresCreusesCost=0.0797,
             heuresPleinesCost=0.1175,
             version=__version__,
             heuresCreusesON=heuresCreusesON,
+            serviceEnedis=serviceEnedis
         )
         path = getLocalDirectory(PDL_ID, "20220308")
         LOGGER.info("Archive path: '%s'", path)
         myDataEnedis.setPathArchive(path)
         dataJson: dict[str, Any] = {}
-        # dataJson = myDataEnedis.readDataJson()
+        dataJson = myDataEnedis.readDataJson()
         myDataEnedis.setDataJsonDefault(dataJsonDefault=dataJson)
         myDataEnedis.setDataJsonCopy()
         myDataEnedis.manageLastCallJson()
@@ -91,12 +96,15 @@ def testMulti():
         myDataSensorEnedis.init(myDataEnedis)
         typeSensor = _consommation
         status_counts, state = myDataSensorEnedis.getStatus(typeSensor)
-        # lastReset, status_counts, state = (
-        #         myDataSensorEnedis.getStatusEnergyDetailHours( typeSensor )
-        #     )
+        typeSensor = _production
+        status_counts, state = myDataSensorEnedis.getStatus(typeSensor)
+        lastReset, status_counts, state = \
+            myDataSensorEnedis.getStatusEnergyDetailHours(typeSensor)
         # lastReset, status_counts, state = (
         #         myDataSensorEnedis.getStatusEnergyDetailHoursCost( typeSensor )
         #     )
+        status_counts, state = myDataSensorEnedis.getStatusEcoWatt()
+        status_counts, state = myDataSensorEnedis.getStatusTempo()
         LOGGER.info("****")
         LOGGER.info(status_counts)
         for clef in status_counts.keys():
@@ -139,7 +147,7 @@ def testMono():
     myDataEnedis = myClientEnedis.myClientEnedis(
         token=token,
         PDL_ID=PDL_ID,
-        delai=10,
+        delay=10,
         heuresCreuses=ast.literal_eval(heureCreusesCh),
         heuresCreusesCost=0.20,
         heuresPleinesCost=1.30,
@@ -155,17 +163,8 @@ def testMono():
     LOGGER.info("retour %s", retour)
 
 
-def testGitInformation():
-    from custom_components.apiEnedis import gitinformation
-
-    git = gitinformation.gitinformation("saniho/apiEnedis")
-    git.getInformation()
-    LOGGER.info(git.getVersion())
-
-
 def main():
     testMulti()
-    testGitInformation()
     # testMono()
 
 

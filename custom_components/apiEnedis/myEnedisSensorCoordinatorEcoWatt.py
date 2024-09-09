@@ -20,7 +20,7 @@ except ImportError:
     pass
 
 
-from .const import __VERSION__, ENTITY_DELAI, __name__, _consommation, _production
+from .const import __VERSION__, ENTITY_DELAI, __name__
 from .sensorEnedis import manageSensorState
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,14 +28,13 @@ _LOGGER = logging.getLogger(__name__)
 ICON = "mdi:package-variant-closed"
 
 
-class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
+class myEnedisSensorCoordinatorEcoWatt(CoordinatorEntity, RestoreEntity):
     """."""
 
     def __init__(
         self,
         sensor_type,
         coordinator: DataUpdateCoordinator,
-        typeSensor=_consommation,
     ):
         """Initialize the sensor."""
         super().__init__(coordinator)
@@ -45,27 +44,20 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         self.update = Throttle(timedelta(seconds=interval))(self._update)
         self._attributes: dict[str, str] = {}
         self._state: str = None
-        self._unit = "kWh"
+        self._unit = ""
         self._lastState = None
         self._lastAttributes = None
-        self._typeSensor = typeSensor
 
     @property
     def unique_id(self):
         "Return a unique_id for this entity."
-        if self._typeSensor == _production:
-            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
-        else:
-            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
+        name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.EcoWatt"
         return name
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        if self._typeSensor == _production:
-            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
-        else:
-            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
+        name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.EcoWatt"
         return name
 
     @property
@@ -111,7 +103,7 @@ class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity):
         self._attributes = {
             ATTR_ATTRIBUTION: "",
         }
-        status_counts, state = self._myDataSensorEnedis.getStatus(self._typeSensor)
+        status_counts, state = self._myDataSensorEnedis.getStatusEcoWatt()
         self._attributes.update(status_counts)
         self._state = state
 

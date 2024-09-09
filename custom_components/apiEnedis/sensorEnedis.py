@@ -6,10 +6,12 @@ import traceback
 from collections import defaultdict
 
 try:
-    from .const import _consommation, _production
+    from .const import _consommation, _production, \
+        _formatDateYmdHMS
 
 except ImportError:
-    from const import _consommation, _production  # type: ignore[no-redef]
+    from const import _consommation, _production, \
+        _formatDateYmdHMS  # type: ignore[no-redef]
 
 __nameManageSensorState__ = "manageSensorState"
 import logging
@@ -104,18 +106,24 @@ class manageSensorState:
         return status_counts, state
 
     def getExistsRecentVersion(self, versionCurrent, versionGit):
-        import packaging
-        import packaging.version
-
-        # If only one of the versions exists, result is False
-        if (versionCurrent is None) or (versionGit is None):
-            return False
-
-        # Get version representations
-        currVersionObj = packaging.version.parse(versionCurrent)
-        gitVersionObj = packaging.version.parse(versionGit)
-
-        return currVersionObj < gitVersionObj
+        # import packaging.version
+        #
+        # # If only one of the versions exists, result is False
+        # if (versionCurrent is None) or (versionGit is None) or (versionGit == ""):
+        #     return False
+        #
+        # # self._LOGGER.error(
+        # #    "-- ** versionGit : %s, versionGit : %s" %( versionCurrent, versionGit )
+        # # )
+        # # Get version representations
+        # currVersionObj = packaging.version.parse(versionCurrent)
+        # try:
+        #     # version par encore disponible
+        #     gitVersionObj = packaging.version.parse(versionGit)
+        # except:
+        #     return False
+        # return currVersionObj < gitVersionObj
+        return False
 
     def getStatusEnergy(self, typeSensor=_consommation):
         state = "unavailable"
@@ -125,6 +133,62 @@ class manageSensorState:
                 self._myDataEnedis.getCurrentYear().getValue() * 0.001
             )
 
+        return status_counts, state
+
+    def getStatusEcoWatt(self):
+        # import random
+        state = ""
+        status_counts: dict[str, str] = defaultdict(str)
+
+        status_counts["version"] = self.version
+
+        status_counts["lastSensorCall"] = \
+            datetime.datetime.now().strftime(format=_formatDateYmdHMS)
+
+        today = datetime.datetime.today().replace(minute=0, second=0, microsecond=0)
+        end = datetime.datetime.now() + datetime.timedelta(hours=12)
+        end = end.replace(minute=0, second=0, microsecond=0)
+        status_counts["forecast"] = {}
+        for maDate in self._myDataEnedis.getEcoWatt().getValue().keys():
+            if (maDate >= today) and (maDate < end):
+                clef = maDate.strftime(format="%H h")
+                valeur = self._myDataEnedis.getEcoWatt().getValue()[maDate]
+                # valeur = random.randrange(3) + 1 # pour mettre des valeurs aléatoire
+                status_counts["forecast"][clef] = valeur
+        status_counts["begin"] = today
+        status_counts["end"] = end
+        # ajout last update du sensor a
+        if self._myDataEnedis.getTimeLastCall() is not None:
+            state = "{:.3f}".format(
+                123456
+            )
+        return status_counts, state
+
+    def getStatusTempo(self):
+        # import random
+        state = ""
+        status_counts: dict[str, str] = defaultdict(str)
+
+        status_counts["version"] = self.version
+
+        status_counts["lastSensorCall"] = \
+            datetime.datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
+
+        today = datetime.datetime.today().replace(
+            hour=0, minute=0, second=0, microsecond=0)
+        end = datetime.datetime.now() + datetime.timedelta(days=3)
+        end = end.replace(minute=0, second=0, microsecond=0)
+        status_counts["forecast"] = {}
+        for maDate in self._myDataEnedis.getTempo().getValue().keys():
+            if (maDate >= today) and (maDate < end):
+                clef = maDate.strftime(format="%Y-%m-%d")
+                valeur = self._myDataEnedis.getTempo().getValue()[maDate]
+                # valeur = random.randrange(3) + 1 # pour mettre des valeurs aléatoire
+                status_counts["forecast"][clef] = valeur
+                if maDate == today:
+                    state = valeur
+        status_counts["begin"] = today
+        status_counts["end"] = end
         return status_counts, state
 
     def getStatusEnergyDetailHours(self, typeSensor=_consommation):
@@ -152,7 +216,8 @@ class manageSensorState:
 
             total = valeurHP + valeurHC
             state = f"{0.001 * total:.3f}"
-        lastResetIso = lastReset.isoformat()
+        # on recule d'une heure, car il faut indiquer le dernier "changement"
+        lastResetIso = (lastReset - datetime.timedelta(hours=1)).isoformat()
         return lastResetIso, status_counts, state
 
     def getStatusEnergyDetailHoursCost(self, typeSensor=_consommation):
@@ -195,6 +260,7 @@ class manageSensorState:
         status: dict[str, int | float | str | list] = defaultdict(int)
         status["version"] = self.version
         status["versionGit"] = data.getGitVersion()
+        status["serviceEnedis"] = data.getServiceEnedis()
         status["versionUpdateAvailable"] = self.getExistsRecentVersion(
             self.version, data.getGitVersion()
         )
@@ -405,6 +471,20 @@ class manageSensorState:
 
                         status["errorLastCall"] = data.getCardErrorLastCall()
                         status["errorLastCallInterne"] = data.getErrorLastCall()
+
+                        if (
+                            (lastYear is not None)
+                            and (lastYear != 0)
+                            and (currYear is not None)
+                        ):
+                            valeur = (
+                                100
+                                * (currYear - lastYear)
+                                / lastYear
+                            )
+                            status["year_evolution"] = f"{valeur:.3f}"
+                        else:
+                            status["year_evolution"] = 0
 
                         if (
                             (lastMonthLastYear is not None)

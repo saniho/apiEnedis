@@ -38,6 +38,8 @@ PLATFORM = "sensor"
 # Configuration
 CONF_TOKEN = "token"
 CONF_CODE = "code"
+# defaut
+CONF_SERVICE_ENEDIS = "enedisGateway"
 
 # 60 secondes verifications du coordinator
 CONF_SCAN_INTERVAL = "conf_scan_interval"
@@ -60,9 +62,13 @@ __nameMyEnedis__ = "myEnedis"
 _consommation = "consommation"
 _production = "production"
 
+_ENEDIS_MyElectricData = "myElectricalData"
+_ENEDIS_EnedisGateway = "enedisGateway"
+
 PLATFORMS = ["sensor"]
 
 _formatDateYmd = "%Y-%m-%d"
+_formatDateYmdHMS = "%Y-%m-%d %H:%M:%S"
 
 ENTITY_NAME = "name"
 ENTITY_DELAI = "delai"
@@ -70,6 +76,10 @@ ENTITY_DELAI = "delai"
 SENSOR_TYPES: dict[str, dict[str, int | str]] = {
     "principal": {
         ENTITY_NAME: "principal",
+        ENTITY_DELAI: 60,
+    },
+    "principal_production": {
+        ENTITY_NAME: "principal_production",
         ENTITY_DELAI: 60,
     },
     "history_all": {
@@ -98,6 +108,14 @@ SENSOR_TYPES: dict[str, dict[str, int | str]] = {
     },
     "energyDetailHoursCost": {
         ENTITY_NAME: "energyDetailHoursCost",
+        ENTITY_DELAI: 60,
+    },
+    "ecowatt": {
+        ENTITY_NAME: "ecowatt",
+        ENTITY_DELAI: 60,
+    },
+    "tempo": {
+        ENTITY_NAME: "tempo",
         ENTITY_DELAI: 60,
     },
 }

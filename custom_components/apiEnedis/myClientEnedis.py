@@ -10,8 +10,9 @@ try:
     from .const import (  # isort:skip
         __nameMyEnedis__,
         _formatDateYmd,
+        _ENEDIS_MyElectricData,
     )
-    from . import gitinformation, messages
+    from . import messages
 
 except ImportError:
     import messages  # type: ignore[no-redef]
@@ -19,10 +20,8 @@ except ImportError:
         __nameMyEnedis__,
         _formatDateYmd,
     )
-    import gitinformation  # type: ignore[no-redef]
 
 from . import apiconst as API
-from . import const
 from .myCall import myCall
 from .myContrat import myContrat
 from .myDataEnedis import myDataEnedis
@@ -30,6 +29,8 @@ from .myDataEnedisByDay import myDataEnedisByDay
 from .myDataEnedisByDayDetail import myDataEnedisByDayDetail
 from .myDataEnedisMaxPower import myDataEnedisMaxPower
 from .myDataEnedisProduction import myDataEnedisProduction
+from .myDataEnedisEcoWatt import myDataEnedisEcoWatt
+from .myDataEnedisTempo import myDataEnedisTempo
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -45,6 +46,7 @@ class myClientEnedis:
         heuresPleinesCost: float = 0,
         version: str = "0.0.0",
         heuresCreusesON: bool = True,
+        serviceEnedis: str = "enedisGateway"
     ):
         self._myCalli = myCall()
         self._token: str = token
@@ -64,6 +66,7 @@ class myClientEnedis:
         self._version: str = version
         self._forceCallJson: bool = False
         self._path: str | None = None
+        self._serviceEnedis: str = serviceEnedis
 
         import random
 
@@ -71,7 +74,7 @@ class myClientEnedis:
             minutes=random.randrange(360)
         )
 
-        self._myCalli.setParam(PDL_ID, token, version)
+        self._myCalli.setParam(PDL_ID, token, version, serviceEnedis)
         self.contract = myContrat(
             self._myCalli,
             self._token,
@@ -130,6 +133,15 @@ class myClientEnedis:
         self._yesterdayConsumptionMaxPower = myDataEnedisMaxPower(
             self._myCalli, self._token, self._version, self.contract
         )
+
+        self._ecoWatt = myDataEnedisEcoWatt(
+            self._myCalli, self._token, self._version, self.contract
+        )
+
+        self._tempo = myDataEnedisTempo(
+            self._myCalli, self._token, self._version, self.contract
+        )
+
         log.info("run myEnedis")
         self._gitVersion: str | None = None
         self._dataJsonDefault: dict[str, Any] = {}
@@ -146,6 +158,9 @@ class myClientEnedis:
 
     def setPathArchive(self, path: str):
         self._path = path
+
+    def getServiceEnedis(self):
+        return self._serviceEnedis
 
     def readDataJson(self):
         import glob
@@ -244,6 +259,8 @@ class myClientEnedis:
                         json.dump(data, outfile)
             except:
                 log.error(f" >>>> erreur ecriture : {nomfichier} / {data}")
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                log.error(sys.exc_info())
 
     def getData(self) -> bool:
         # ### A VOIR ###
@@ -744,6 +761,52 @@ class myClientEnedis:
         self.setDataRequestJson(clefFunction, self._productionYesterday)
         self.setNbCall(self._productionYesterday.getNbCall())
 
+    def updateEcoWatt(self, data=None, withControl=True):
+        clefFunction = "updateEcoWatt"
+        self.lastMethodCall = clefFunction
+        requestJson = self.getDataRequestJson(clefFunction)
+        if data is None:
+            data = self.getDataJsonValue(clefFunction)
+        hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
+        demain = (datetime.date.today() + datetime.timedelta(1)).strftime(_formatDateYmd)
+        deb = self.contract.minCompareDateContract(hier)
+        fin = self.contract.maxCompareDateContract(demain)
+        data = self._ecoWatt.updateData(
+            clefFunction,
+            self.getHorairePossible(),
+            data,
+            deb,
+            fin,
+            withControl=withControl,
+            dataControl=requestJson,
+        )
+        self.setDataJsonValue(clefFunction, data)
+        self.setDataRequestJson(clefFunction, self._ecoWatt)
+        self.setNbCall(self._ecoWatt.getNbCall())
+
+    def updateTempo(self, data=None, withControl=True):
+        clefFunction = "updateTempo"
+        self.lastMethodCall = clefFunction
+        requestJson = self.getDataRequestJson(clefFunction)
+        if data is None:
+            data = self.getDataJsonValue(clefFunction)
+        hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
+        demain = (datetime.date.today() + datetime.timedelta(1)).strftime(_formatDateYmd)
+        deb = self.contract.minCompareDateContract(hier)
+        fin = self.contract.maxCompareDateContract(demain)
+        data = self._tempo.updateData(
+            clefFunction,
+            self.getHorairePossible(),
+            data,
+            deb,
+            fin,
+            withControl=withControl,
+            dataControl=requestJson,
+        )
+        self.setDataJsonValue(clefFunction, data)
+        self.setDataRequestJson(clefFunction, self._tempo)
+        self.setNbCall(self._tempo.getNbCall())
+
     def updateYesterdayConsumptionMaxPower(self, data=None, withControl=True):
         clefFunction = "updateYesterdayConsumptionMaxPower"
         self.lastMethodCall = clefFunction
@@ -827,6 +890,12 @@ class myClientEnedis:
 
     def getCurrentYear(self):
         return self._currentYear
+
+    def getEcoWatt(self):
+        return self._ecoWatt
+
+    def getTempo(self):
+        return self._tempo
 
     def getLastUpdate(self):
         return self._lastUpdate
@@ -971,14 +1040,15 @@ class myClientEnedis:
         return lastCallHier
 
     def getGitVersion(self):
-        if self._gitVersion is None:
-            self.updateGitVersion()
+        # if self._gitVersion is None:
+        #     await self.hass.async_add_executor_job(self.updateGitVersion())
         return self._gitVersion
 
     def updateGitVersion(self):
-        gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
-        gitInfo.getInformation()
-        self._gitVersion = gitInfo.getVersion()
+        # gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
+        # gitInfo.getInformation()
+        # self._gitVersion = gitInfo.getVersion()
+        self._gitVersion = ""
 
     def getCallPossible(self, trace=False):
         currentDateTime = datetime.datetime.now()
@@ -1115,6 +1185,22 @@ class myClientEnedis:
             self.updateStatusLastCall(True)
             log.info("mise à jour effectuee production")
 
+    def callEcoWatt(self):
+        if ((self.getStatusLastCall() or self.lastMethodCallError == "updateEcoWatt")
+                and (self.getServiceEnedis() == _ENEDIS_MyElectricData)):
+            self.updateEcoWatt()
+        self.updateTimeLastCall()
+        self.updateStatusLastCall(True)
+        log.info("mise à jour effectuee EcoWatt")
+
+    def callTempo(self):
+        if ((self.getStatusLastCall() or self.lastMethodCallError == "updateTempo")
+                and (self.getServiceEnedis() == _ENEDIS_MyElectricData)):
+            self.updateTempo()
+        self.updateTimeLastCall()
+        self.updateStatusLastCall(True)
+        log.info("mise à jour effectuee Tempo")
+
     def update(self):  # noqa C901
         log.info(f"myEnedis ...new update ?? {self._PDL_ID}")
         if self.contract.isLoaded:
@@ -1143,6 +1229,8 @@ class myClientEnedis:
                     try:
                         self.callConsommation()
                         self.callProduction()
+                        self.callEcoWatt()
+                        self.callTempo()
                         if self._forceCallJson:
                             self._forceCallJson = False
                             self.setDataJsonDefault({})
