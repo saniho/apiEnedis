@@ -1,7 +1,4 @@
 {
   "name": "⚡ myEnedis sensor",
-  "content_in_root": false,
-  "homeassistant": "2021.09",
-  "persistent_directory": "myEnedis",
   "render_readme": true
 }
