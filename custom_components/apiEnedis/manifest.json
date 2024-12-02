@@ -1,16 +1,16 @@
 {
-  "domain": "myEnedis",
+  "domain": "apiEnedis",
   "name": "myEnedis sensor",
-  "documentation": "https://github.com/saniho/apiEnedis/",
-  "issue_tracker": "https://github.com/saniho/apiEnedis/issues",
-  "iot_class": "cloud_polling",
+  "codeowners": [
+    "@saniho"
+  ],
   "config_flow": true,
-  "version": "2.5.0",
+  "dependencies": [],
+  "documentation": "https://github.com/saniho/apiEnedis/",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/saniho/apiEnedis/issues",
   "requirements": [
     "packaging>=20.8"
   ],
-  "dependencies": [],
-  "codeowners": [
-    "@saniho"
-  ]
+  "version": "2.5.0"
 }
