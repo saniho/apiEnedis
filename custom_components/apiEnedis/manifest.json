@@ -1,5 +1,5 @@
 {
-  "domain": "myEnedis",
+  "domain": "apiEnedis",
   "name": "myEnedis sensor",
   "documentation": "https://github.com/saniho/apiEnedis/",
   "issue_tracker": "https://github.com/saniho/apiEnedis/issues",
