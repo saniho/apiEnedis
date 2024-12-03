@@ -1,9 +1,10 @@
 {
   "name": "⚡ myEnedis sensor",
   "description": "sensor pour votre compteur Linky Enedis.",
-  "category": "integration",  // Ou "plugin", "theme", etc.
+  "category": "integration",
   "content_in_root": false,
-  "homeassistant": "2024.01",
+  "homeassistant": "2024.05",
+  "hacs": "2.0.0",
   "persistent_directory": "myEnedis",
   "zip_release": true,
   "filename": "apiEnedis.zip",
