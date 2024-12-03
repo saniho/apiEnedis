@@ -3,7 +3,7 @@
   "description": "sensor pour votre compteur Linky Enedis.",
   "category": "integration",  // Ou "plugin", "theme", etc.
   "content_in_root": false,
-  "homeassistant": "2021.09",
+  "homeassistant": "2024.01",
   "persistent_directory": "myEnedis",
   "zip_release": true,
   "filename": "apiEnedis.zip",
