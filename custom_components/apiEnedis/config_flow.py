@@ -56,8 +56,7 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
         val_heures_creuses = ""
         val_heurescreuses_on = True
         all_repos = all_repos_Gateway
-        data_schema = vol.Schema(
-            {
+        data_schema = {
                 vol.Required(
                     CONF_SERVICE_ENEDIS,
                     default=user_input.get(CONF_SERVICE_ENEDIS, serviceEnedis),
@@ -81,7 +80,6 @@ class myEnedisFlowHandler(  # type: ignore[call-arg]
                     default=user_input.get(HEURES_CREUSES, val_heures_creuses),
                 ): cv.string,
             }
-        )
         return self.async_show_form(
             step_id="user",
             data_schema=data_schema,
@@ -141,8 +139,7 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
         val_heures_creuses = ""
         all_repos = all_repos_Gateway
 
-        data_schema = vol.Schema(
-            {
+        data_schema = {
                 vol.Required(
                     CONF_SERVICE_ENEDIS,
                     default=self.config_entry.options.get(CONF_SERVICE_ENEDIS,
@@ -175,5 +172,4 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
                     ),
                 ): cv.string,
             }
-        )
         return self.async_show_form(step_id="init", data_schema=data_schema)
