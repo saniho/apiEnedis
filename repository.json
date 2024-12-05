@@ -1,5 +1,8 @@
 {
     "name": "myEnedis",
     "url": "https://github.com/saniho/apiEnedis/",
-    "maintainer": "saniho"
+    "maintainer": "saniho",  
+    "content_in_root": true,
+    "zip_release": true,
+    "filename": "apiEnedis.zip"
   }
