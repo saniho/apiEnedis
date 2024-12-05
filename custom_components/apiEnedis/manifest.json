@@ -12,5 +12,5 @@
   "requirements": [
     "packaging>=20.8"
   ],
-  "version": "2.5.0"
+  "version": "2.5.9"
 }
