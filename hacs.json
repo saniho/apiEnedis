@@ -2,7 +2,7 @@
   "name": "⚡ myEnedis sensor",
   "content_in_root": false,
   "domains": ["sensor"],
-  "homeassistant": "2021.09",
+  "homeassistant": "2024.1",
   "render_readme": true,
   "zip_release": true
 }
