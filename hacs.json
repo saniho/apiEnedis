@@ -3,6 +3,5 @@
   "content_in_root": false,
   "domains": ["sensor"],
   "homeassistant": "2021.09",
-  "persistent_directory": "myEnedis",
   "render_readme": true
 }
