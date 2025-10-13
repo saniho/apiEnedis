@@ -5,5 +5,6 @@
   "homeassistant": "2021.09",
   "persistent_directory": "myEnedis",
   "zip_release": true,
-  "render_readme": true
+  "render_readme": true,
+  "filename": "myEnedis.zip",
 }
