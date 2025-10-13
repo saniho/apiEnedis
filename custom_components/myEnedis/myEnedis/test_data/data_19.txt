@@ -1,0 +1,1 @@
+{"tag":"enedis_return_ko","error_code":"ADAM-ERR0069","description":"Le sens de la mesure ne correspond pas pour le PRM demandé","alert_user":true,"enedis_return":true,"support":"https://discord.gg/DfVJZme"}
