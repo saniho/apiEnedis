@@ -4,6 +4,5 @@
   "domains": ["sensor"],
   "homeassistant": "2021.09",
   "render_readme": true,
-  "zip_release": true,
-  "filename": "apiEnedis.zip"
+  "zip_release": true
 }
