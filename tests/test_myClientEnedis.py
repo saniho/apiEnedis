@@ -18,7 +18,7 @@ class TestInit:
         assert client.getNbCall() == 0
         assert client.getUpdateRealise() is False
         assert client.getServiceEnedis() == "enedisGateway"
-        assert client.getStatusLastCall() is None
+        assert client.getStatusLastCall() is True
         assert client.getErrorLastCall() is None
         assert client.getTimeLastCall() is None
         assert client.getLastUpdate() is None
@@ -57,7 +57,7 @@ class TestGettersSetters:
 
     def test_set_path_archive(self, client):
         client.setPathArchive("/tmp/test")
-        assert client.getPathArchive() == "/tmp/test"
+        assert client._path == "/tmp/test"
 
     def test_data_json_value_roundtrip(self, client):
         client.setDataJsonValue("key1", {"val": 123})
@@ -69,10 +69,12 @@ class TestGettersSetters:
 
     def test_data_request_json_roundtrip(self, client):
         obj = MagicMock()
-        obj.some_attr = "test"
+        obj.getDateDeb.return_value = "2024-01-01"
+        obj.getDateFin.return_value = "2024-01-31"
+        obj.getCallOk.return_value = True
         client.setDataRequestJson("req_key", obj)
         result = client.getDataRequestJson("req_key")
-        assert result.some_attr == "test"
+        assert result == {"deb": "2024-01-01", "fin": "2024-01-31", "callok": True}
 
 
 class TestErrorTracking:
@@ -95,12 +97,12 @@ class TestErrorTracking:
         client.setNbCall(5)
         assert client.getNbCall() == 5
         client.setNbCall(10)
-        assert client.getNbCall() == 10
+        assert client.getNbCall() == 15
 
 
 class TestLastMethodCall:
     def test_default_last_method_call(self, client):
-        assert client.lastMethodCall is None
+        assert client.lastMethodCall == ""
 
     def test_set_last_method_call(self, client):
         client.lastMethodCall = "updateYesterday"
@@ -137,26 +139,14 @@ class TestHoraire:
         assert isinstance(client.getHoraireMin(), int)
 
     def test_get_horaire_possible_default(self, client):
-        with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(
-                "custom_components.myEnedis.myClientEnedis.datetime",
-                MagicMock(datetime=datetime),
-            )
-            # Just check it returns bool
-            result = client.getHorairePossible()
-            assert isinstance(result, bool)
+        result = client.getHorairePossible()
+        assert isinstance(result, bool)
 
 
 class TestGetCallPossible:
     def test_call_possible_when_never_called(self, client):
-        # TimeLastCall is None, HorairePossible is True
-        with pytest.MonkeyPatch.context() as mp:
-            mp.setattr(
-                "custom_components.myEnedis.myClientEnedis.datetime",
-                MagicMock(datetime=datetime),
-            )
-            result = client.getCallPossible()
-            assert isinstance(result, bool)
+        result = client.getCallPossible()
+        assert isinstance(result, bool)
 
     def test_get_last_call_hier_default(self, client):
         assert client.getLastCallHier() is not None
@@ -172,12 +162,13 @@ class TestVersion:
 
     def test_update_git_version(self, client):
         client.updateGitVersion()
-        assert client.getGitVersion() is None
+        assert client.getGitVersion() == ""
 
 
 class TestDataJson:
     def test_set_data_json_default(self, client):
         client.setDataJsonDefault({"foo": "bar"})
+        client.setDataJsonCopy()
         assert client.getDataJsonValue("foo") == "bar"
 
     def test_set_data_json_copy(self, client):

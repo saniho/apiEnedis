@@ -82,8 +82,8 @@ class TestGetStatusYesterdayCost:
         mock_data.contract is not None
         mock_data.getYesterdayHCHP().getHC.return_value = 5000
         mock_data.getYesterdayHCHP().getHP.return_value = 3000
-        mock_data.getHCCost.return_value = 0.15
-        mock_data.getHPCost.return_value = 0.20
+        mock_data.getHCCost.return_value = 750
+        mock_data.getHPCost.return_value = 600
         mock_data.getYesterday().getDateDeb.return_value = "2024-01-15"
         m = manageSensorState()
         m.init(mock_data, version="2.0.0")

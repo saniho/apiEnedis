@@ -487,6 +487,8 @@ class manageSensorState:
         else:
             status["errorLastCall"] = data.getCardErrorLastCall()
             status["errorLastCallInterne"] = data.getErrorLastCall()
+        status.setdefault("yesterday_production", 0)
+        status.setdefault("yesterday", 0)
         self._LOGGER.info("*** SENSOR ***")
         self._LOGGER.info("status :%s", status)
         self._LOGGER.info("state :%s", state)

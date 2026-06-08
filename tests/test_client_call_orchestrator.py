@@ -109,13 +109,13 @@ class TestCallProduction:
 
 
 class TestCallEcoWatt:
-    def test_calls_update_when_enedis_service(self, client):
-        client.getServiceEnedis.return_value = "enedisGateway"
+    def test_calls_update_when_myelectricaldata_service(self, client):
+        client.getServiceEnedis.return_value = "myElectricalData"
         call_ecowatt(client)
         assert client.updateEcoWatt.called
 
     def test_skips_when_wrong_service(self, client):
-        client.getServiceEnedis.return_value = "other"
+        client.getServiceEnedis.return_value = "enedisGateway"
         call_ecowatt(client)
         assert client.updateEcoWatt.called is False
 
@@ -126,13 +126,13 @@ class TestCallEcoWatt:
 
 
 class TestCallTempo:
-    def test_calls_update_when_enedis_service(self, client):
-        client.getServiceEnedis.return_value = "enedisGateway"
+    def test_calls_update_when_myelectricaldata_service(self, client):
+        client.getServiceEnedis.return_value = "myElectricalData"
         call_tempo(client)
         assert client.updateTempo.called
 
     def test_skips_when_wrong_service(self, client):
-        client.getServiceEnedis.return_value = "other"
+        client.getServiceEnedis.return_value = "enedisGateway"
         call_tempo(client)
         assert client.updateTempo.called is False
 

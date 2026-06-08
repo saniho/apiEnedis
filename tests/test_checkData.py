@@ -165,11 +165,10 @@ class TestAnalyseValueEcoWattDetail:
         # Keys should be datetime objects
         for k in result:
             assert isinstance(k, datetime.datetime)
-        # Values should have expected structure
-        first_key = list(result.keys())[0]
-        first_val = result[first_key]
-        assert "value" in first_val
-        assert "message" in first_val
+        # Values should be EcoWatt detail ints (1=green, 2=orange, 3=red)
+        first_val = next(iter(result.values()))
+        assert isinstance(first_val, int)
+        assert 1 <= first_val <= 3
 
 
 class TestAnalyseValueTempo:

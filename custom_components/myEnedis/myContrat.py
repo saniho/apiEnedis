@@ -158,34 +158,23 @@ class myContrat:
             return None
 
     def getcleanoffpeak_hours(self, offpeak=None):
-        if not isinstance(offpeak, (list, tuple)):
+        if offpeak is None:
             offpeak = self.getoffpeak_hours()
-        if isinstance(offpeak, str) and (len(offpeak) > 0):
-            offpeakClean1 = (
-                offpeak.split("(")[1]
-                .replace(")", "")
-                .replace("H", ":")
-                .replace(";", "-")
-                .split("-")
-            )
+        if isinstance(offpeak, (list, tuple)):
+            return list(offpeak)
+        if isinstance(offpeak, str) and len(offpeak) > 0:
+            clean = offpeak.split("(")[1].replace(")", "").replace("H", ":")
             opcnew = []
-            deb = ""
-            fin = ""
-            lastopc = ""
-            for opc in offpeakClean1:
-                opc = opc.rjust(5).replace(" ", "0")
-                if lastopc != "":
-                    fin = opc
-                    if lastopc > opc:
-                        fin = "23:59"
+            for slot in clean.split(";"):
+                parts = slot.split("-")
+                if len(parts) >= 2:
+                    deb = parts[0].rjust(5).replace(" ", "0")
+                    fin = parts[1].rjust(5).replace(" ", "0")
+                    if deb > fin:
+                        opcnew.append([deb, "23:59"])
+                        opcnew.append(["00:00", fin])
+                    else:
                         opcnew.append([deb, fin])
-                        deb = "00:00"
-                        fin = opc
-                    opcnew.append([deb, fin])
-                    deb = opc
-                else:
-                    deb = opc
-                lastopc = opc
         else:
             opcnew = []
         return opcnew

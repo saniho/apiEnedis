@@ -1,6 +1,7 @@
 """Tests for myCall module - HTTP calls, rate limiting, URL building."""
 import datetime
 import json
+import os
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -18,8 +19,9 @@ from custom_components.myEnedis import apiconst as API
 
 @pytest.fixture(autouse=True)
 def reset_static_state():
+    today = datetime.date.today().strftime("%Y-%m-%d")
     myCall._MyCallsSinceRestart = 0
-    myCall._MyCallsUpdateDay = ""
+    myCall._MyCallsUpdateDay = today
     myCall._lastTimeout = 0.0
     myCall._noRecentTimeout = True
 
@@ -197,10 +199,14 @@ class TestGetUrl:
 
 class TestSaveApiReturn:
     def test_writes_file(self, call, tmp_path):
-        with patch.object(call, "saveApiReturn", wraps=call.saveApiReturn) as spy:
-            with patch("os.path.dirname", return_value=str(tmp_path)):
-                call.saveApiReturn(1, '{"test": true}')
-                spy.assert_called_once_with(1, '{"test": true}')
+        dest = tmp_path / "myEnedis" / "test_data"
+        dest.mkdir(parents=True)
+        fname = str(dest / "data_1.txt")
+        with patch("os.path.dirname", return_value=str(tmp_path)):
+            call.saveApiReturn(1, '{"test": true}')
+        actual_path = str(tmp_path) + "/myEnedis/test_data/data_1.txt"
+        assert os.path.exists(actual_path)
+        assert open(actual_path).read() == '{"test": true}'
 
 
 class TestPostAndGetJson:
@@ -259,11 +265,12 @@ class TestPostAndGetJson:
         mock_resp = MagicMock()
         mock_resp.text = '{"error": "bad request"}'
         mock_resp.json.return_value = {"error": "bad request"}
-        mock_session = MagicMock()
-        mock_session.post.side_effect = [
+        mock_resp.raise_for_status.side_effect = [
             __import__("requests").exceptions.HTTPError(response=mock_resp),
-            mock_resp,
+            None,
         ]
+        mock_session = MagicMock()
+        mock_session.post.return_value = mock_resp
 
         with patch("requests.Session", return_value=mock_session):
             result = call.post_and_get_json("enedisGateway", data={"type": "test"})
@@ -275,8 +282,9 @@ class TestPostAndGetJson:
         mock_resp = MagicMock()
         mock_resp.text = "usage_point_id parameter must be 14 digits long."
         mock_resp.json.return_value = {"error": "invalid"}
+        mock_resp.raise_for_status.side_effect = __import__("requests").exceptions.HTTPError(response=mock_resp)
         mock_session = MagicMock()
-        mock_session.post.side_effect = __import__("requests").exceptions.HTTPError(response=mock_resp)
+        mock_session.post.return_value = mock_resp
 
         with patch("requests.Session", return_value=mock_session):
             result = call.post_and_get_json("enedisGateway", data={"type": "test"})
