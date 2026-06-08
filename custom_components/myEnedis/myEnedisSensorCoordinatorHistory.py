@@ -1,35 +1,23 @@
-"""Sensor for my first"""
+"""Sensor history for myEnedis."""
 from __future__ import annotations
 
 import datetime
 import logging
 
 try:
-    from homeassistant.components.sensor import SensorEntity
     from homeassistant.const import ATTR_ATTRIBUTION
-    from homeassistant.core import callback
-    from homeassistant.helpers.restore_state import RestoreEntity
-    from homeassistant.helpers.update_coordinator import (
-        CoordinatorEntity,
-        DataUpdateCoordinator,
-    )
-
 except ImportError:
-    # si py test
     pass
 
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import __VERSION__, ENTITY_DELAI, __name__, _consommation, _production
-from .sensorEnedis import manageSensorState
+from .base_enedis_coordinator import BaseEnedisCoordinatorEntity
+from .const import _consommation, _production
 
 _LOGGER = logging.getLogger(__name__)
 
-ICON = "mdi:package-variant-closed"
 
-
-class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity, SensorEntity):
-    """."""
-
+class myEnedisSensorCoordinatorHistory(BaseEnedisCoordinatorEntity):
     def __init__(
         self,
         sensor_type: dict[str, int | str],
@@ -37,88 +25,25 @@ class myEnedisSensorCoordinatorHistory(CoordinatorEntity, RestoreEntity, SensorE
         typeSensor=_consommation,
         detail="",
     ):
-        """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
-        self._attributes: dict[str, int | str] = {}
-        self._state: str
-        self._unit = "kWh"
-        self._lastState = None
-        self._lastAttributes = None
-        self._typeSensor = typeSensor
+        super().__init__(coordinator, "kWh", typeSensor)
         self._detail = detail
 
     @property
     def unique_id(self):
-        "Return a unique_id for this entity."
-        name = f"{self._myDataSensorEnedis.get_PDL_ID()}_history_{self._detail}".lower()
-        return name
+        return f"{self._myDataSensorEnedis.get_PDL_ID()}_history_{self._detail}".lower()
 
     @property
     def name(self):
-        """Return the name of the sensor."""
         if self._typeSensor == _production:
-            name = "myEnedis.history.{}.production.{}".format(
-                self._myDataSensorEnedis.get_PDL_ID(),
-                self._detail,
-            )
-        else:
-            name = "myEnedis.history.{}.{}".format(
-                self._myDataSensorEnedis.get_PDL_ID(),
-                self._detail,
-            )
-        return name
-
-    @property
-    def native_value(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def native_unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return self._unit
-
-    async def async_added_to_hass(self):
-        """Handle entity which will be added."""
-        await super().async_added_to_hass()
-        state = await self.async_get_last_state()
-        if state:
-            self._state = state.state
-
-        @callback
-        def update():
-            """Update state."""
-            self._update_state()
-            self.async_write_ha_state()
-
-        self.async_on_remove(self.coordinator.async_add_listener(update))
-        self._update_state()
-        if not state:
-            return
+            return f"myEnedis.history.{self._myDataSensorEnedis.get_PDL_ID()}.production.{self._detail}"
+        return f"myEnedis.history.{self._myDataSensorEnedis.get_PDL_ID()}.{self._detail}"
 
     def _update_state(self):
-        """Update sensors state."""
-        self._attributes = {
-            ATTR_ATTRIBUTION: "",
-        }
+        self._attributes = {ATTR_ATTRIBUTION: ""}
         laDate = datetime.datetime.today() - datetime.timedelta(2)
-        # on fait 2 jours, car les données de la veille ne sont pas encore disponible
         status_counts, state = self._myDataSensorEnedis.getStatusHistory(
             laDate, self._detail
         )
-        status_counts["lastUpdate"] = datetime.datetime.today().strftime(
-            "%Y-%m-%d %H:%M"
-        )
+        status_counts["lastUpdate"] = datetime.datetime.today().strftime("%Y-%m-%d %H:%M")
         self._attributes.update(status_counts)
         self._state = state
-
-    @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        return self._attributes
-
-    @property
-    def icon(self):
-        """Icon to use in the frontend."""

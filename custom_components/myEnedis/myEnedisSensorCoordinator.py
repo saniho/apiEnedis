@@ -1,121 +1,42 @@
-"""Sensor for my first"""
+"""Sensor principal for myEnedis."""
 from __future__ import annotations
 
-import asyncio
 import logging
-try:
-    from homeassistant.components.sensor import SensorEntity
-    from homeassistant.const import ATTR_ATTRIBUTION
-    from homeassistant.core import callback
-    from homeassistant.helpers.restore_state import RestoreEntity
-    from homeassistant.helpers.update_coordinator import (
-        CoordinatorEntity,
-        DataUpdateCoordinator,
-    )
 
+try:
+    from homeassistant.const import ATTR_ATTRIBUTION
 except ImportError:
-    # si py test
     pass
 
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import __VERSION__, ENTITY_DELAI, __name__, _consommation, _production
-from .sensorEnedis import manageSensorState
+from .base_enedis_coordinator import BaseEnedisCoordinatorEntity
+from .const import _consommation, _production
 
 _LOGGER = logging.getLogger(__name__)
 
-ICON = "mdi:package-variant-closed"
 
-
-class myEnedisSensorCoordinator(CoordinatorEntity, RestoreEntity, SensorEntity):
-    """."""
-
+class myEnedisSensorCoordinator(BaseEnedisCoordinatorEntity):
     def __init__(
         self,
         sensor_type,
         coordinator: DataUpdateCoordinator,
         typeSensor=_consommation,
     ):
-        """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
-        self._attributes: dict[str, str] = {}
-        self._state: str = None
-        self._unit = "kWh"
-        self._lastState = None
-        self._lastAttributes = None
-        self._typeSensor = typeSensor
+        super().__init__(coordinator, "kWh", typeSensor)
 
     @property
     def unique_id(self):
-        "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
-        else:
-            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
-        return name
+            return f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
+        return f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
 
     @property
     def name(self):
-        """Return the name of the sensor."""
-        if self._typeSensor == _production:
-            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}.production"
-        else:
-            name = f"myEnedis.{self._myDataSensorEnedis.get_PDL_ID()}"
-        return name
-
-    @property
-    def native_value(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def native_unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return self._unit
-
-    async def _async_update(self):
-        """Update state asynchronously"""
-        self._update_state()
-        self.async_write_ha_state()
-
-    async def async_added_to_hass(self):
-        """Handle entity which will be added."""
-        await super().async_added_to_hass()
-        state = await self.async_get_last_state()
-        if state:
-            self._state = state.state
-
-        # TEST info
-        try:
-            if "typeCompteur" in state.attributes:
-                self.attrs = state.attributes
-                _LOGGER.info("Redemarrage avec element present ??")
-        except Exception:
-            _LOGGER.info("Redemarrage mais rien de present")
-
-        @callback
-        def update():
-            """Update state."""
-            asyncio.create_task(self._async_update())
-
-        self.async_on_remove(self.coordinator.async_add_listener(update))
-        asyncio.create_task(self._async_update())
+        return self.unique_id
 
     def _update_state(self):
-        """Update sensors state."""
-        self._attributes = {
-            ATTR_ATTRIBUTION: "",
-        }
+        self._attributes = {ATTR_ATTRIBUTION: ""}
         status_counts, state = self._myDataSensorEnedis.getStatus(self._typeSensor)
         self._attributes.update(status_counts)
         self._state = state
-
-    @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        return self._attributes
-
-    @property
-    def icon(self):
-        """Icon to use in the frontend."""

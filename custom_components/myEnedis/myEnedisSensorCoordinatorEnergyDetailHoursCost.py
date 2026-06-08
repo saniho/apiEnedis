@@ -1,141 +1,54 @@
-"""Sensor for my first"""
+"""Sensor energy detail hours cost for myEnedis."""
 from __future__ import annotations
 
 import logging
 
 try:
-    from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
+    from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
     from homeassistant.const import ATTR_ATTRIBUTION
-    from homeassistant.core import callback
-    from homeassistant.helpers.restore_state import RestoreEntity
-    from homeassistant.helpers.update_coordinator import (
-        CoordinatorEntity,
-        DataUpdateCoordinator,
-    )
-
 except ImportError:
-    # si py test
     pass
 
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import __VERSION__, ENTITY_DELAI, __name__, _consommation, _production
-from .sensorEnedis import manageSensorState
+from .base_enedis_coordinator import BaseEnedisCoordinatorEntity
+from .const import _consommation, _production
 
 _LOGGER = logging.getLogger(__name__)
 
-ICON = "mdi:package-variant-closed"
 
-
-class myEnedisSensorCoordinatorEnergyDetailHoursCost(CoordinatorEntity, RestoreEntity, SensorEntity):
-    """."""
-
+class myEnedisSensorCoordinatorEnergyDetailHoursCost(BaseEnedisCoordinatorEntity):
     def __init__(
         self,
         sensor_type,
         coordinator: DataUpdateCoordinator,
         typeSensor=_consommation,
     ):
-        """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._myDataSensorEnedis = manageSensorState()
-        self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
-        self._attributes: dict[str, str] = {}
-        self._state: str
-        self._unit = "EUR"
-        self._lastState = None
-        self._lastAttributes = None
-        self._typeSensor = typeSensor
+        super().__init__(coordinator, "EUR", typeSensor)
 
     @property
     def unique_id(self):
-        "Return a unique_id for this entity."
         if self._typeSensor == _production:
-            name = "myEnedis.energy.Hours.cost.{}.production".format(
-                self._myDataSensorEnedis.get_PDL_ID(),
-            )
-        else:
-            name = "myEnedis.energy.Hours.cost.{}".format(
-                self._myDataSensorEnedis.get_PDL_ID(),
-            )
-        return name
+            return f"myEnedis.energy.Hours.cost.{self._myDataSensorEnedis.get_PDL_ID()}.production"
+        return f"myEnedis.energy.Hours.cost.{self._myDataSensorEnedis.get_PDL_ID()}"
 
     @property
     def name(self):
-        """Return the name of the sensor."""
-        if self._typeSensor == _production:
-            name = "myEnedis.energy.Hours.cost.{}.production".format(
-                self._myDataSensorEnedis.get_PDL_ID(),
-            )
-        else:
-            name = "myEnedis.energy.Hours.cost.{}".format(
-                self._myDataSensorEnedis.get_PDL_ID(),
-            )
-        return name
-
-    @property
-    def native_value(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def native_unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return self._unit
-
-    async def async_added_to_hass(self):
-        """Handle entity which will be added."""
-        await super().async_added_to_hass()
-        state = await self.async_get_last_state()
-        if state:
-            self._state = state.state
-
-        # TEST info
-        try:
-            if "typeCompteur" in state.attributes:
-                self.attrs = state.attributes
-                _LOGGER.info("Redemarrage avec element present ??")
-        except Exception:
-            _LOGGER.info("Redemarrage mais rien de present")
-
-        @callback
-        def update():
-            """Update state."""
-            self._update_state()
-            self.async_write_ha_state()
-
-        self.async_on_remove(self.coordinator.async_add_listener(update))
-        self._update_state()
-        if not state:
-            return
+        return self.unique_id
 
     def _update_state(self):
-        """Update sensors state."""
-        (
-            lastReset,
-            status_counts,
-            state,
-        ) = self._myDataSensorEnedis.getStatusEnergyDetailHoursCost(self._typeSensor)
-
-        self._attributes = {
-            ATTR_ATTRIBUTION: "",
-        }
+        self._attributes = {ATTR_ATTRIBUTION: ""}
+        _, status_counts, state = self._myDataSensorEnedis.getStatusEnergyDetailHoursCost(self._typeSensor)
         self._state = state
 
     @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        return self._attributes
-
-    @property
     def device_class(self):
-        """Return the device class."""
         return SensorDeviceClass.MONETARY
 
     @property
     def state_class(self):
-        """Return the state class."""
         return SensorStateClass.TOTAL
 
     @property
-    def icon(self):
-        """Icon to use in the frontend."""
+    def native_unit_of_measurement(self):
+        return self._unit
