@@ -316,21 +316,12 @@ class myClientEnedis:
     def getYesterday(self):
         return self._yesterday
 
-    def updateCurrentWeek(self, data=None, withControl=True):
-        clefFunction = "updateCurrentWeek"
+    def _run_update(self, clefFunction, data_obj, deb, fin, data=None, withControl=True):
         self.lastMethodCall = clefFunction
         requestJson = self.getDataRequestJson(clefFunction)
         if data is None:
             data = self.getDataJsonValue(clefFunction)
-        today = datetime.date.today()
-        cejour = today.strftime(_formatDateYmd)
-        firstdateofweek = (
-            today - datetime.timedelta(days=today.weekday() % 7)
-        ).strftime(_formatDateYmd)
-
-        deb = self.contract.minCompareDateContract(firstdateofweek)
-        fin = self.contract.maxCompareDateContract(cejour)
-        data = self._currentWeek.updateData(
+        data = data_obj.updateData(
             clefFunction,
             self.getHorairePossible(),
             data,
@@ -340,15 +331,20 @@ class myClientEnedis:
             dataControl=requestJson,
         )
         self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._currentWeek)
-        self.setNbCall(self._currentWeek.getNbCall())
+        self.setDataRequestJson(clefFunction, data_obj)
+        self.setNbCall(data_obj.getNbCall())
+
+    def updateCurrentWeek(self, data=None, withControl=True):
+        today = datetime.date.today()
+        cejour = today.strftime(_formatDateYmd)
+        firstdateofweek = (
+            today - datetime.timedelta(days=today.weekday() % 7)
+        ).strftime(_formatDateYmd)
+        deb = self.contract.minCompareDateContract(firstdateofweek)
+        fin = self.contract.maxCompareDateContract(cejour)
+        self._run_update("updateCurrentWeek", self._currentWeek, deb, fin, data, withControl)
 
     def updateLastWeek(self, data=None, withControl=True):
-        clefFunction = "updateLastWeek"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         start_date = (today + datetime.timedelta(-today.weekday(), weeks=-1)).strftime(
             _formatDateYmd
@@ -358,128 +354,41 @@ class myClientEnedis:
         )
         deb = self.contract.minCompareDateContract(start_date)
         fin = self.contract.maxCompareDateContract(end_date)
-        data = self._lastWeek.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._lastWeek)
-        self.setNbCall(self._lastWeek.getNbCall())
+        self._run_update("updateLastWeek", self._lastWeek, deb, fin, data, withControl)
 
     def updateLast7Days(self, data=None, withControl=True):
-        clefFunction = "updateLast7Days"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         start_date = (today - datetime.timedelta(7)).strftime(_formatDateYmd)
-        end_date = (datetime.date.today()).strftime(_formatDateYmd)
+        end_date = today.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(start_date)
         fin = self.contract.maxCompareDateContract(end_date)
-        data = self._last7Days.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._last7Days)
-        self.setNbCall(self._last7Days.getNbCall())
+        self._run_update("updateLast7Days", self._last7Days, deb, fin, data, withControl)
 
     def updateDataYesterdayHCHP(self, data=None, _yesterdayDate=None, withControl=True):
-        clefFunction = "updateDataYesterdayHCHP"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
-
         today = datetime.date.today()
         hier = (today - datetime.timedelta(1)).strftime(_formatDateYmd)
         cejour = today.strftime(_formatDateYmd)
-        # return self.getDataPeriodCLC(hier, cejour), hier
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(cejour)
-        data = self._yesterdayHCHP.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._yesterdayHCHP)
-        self.setNbCall(self._yesterdayHCHP.getNbCall())
+        self._run_update("updateDataYesterdayHCHP", self._yesterdayHCHP, deb, fin, data, withControl)
 
     def updateLast7DaysDetails(self, data=None, _yesterdayDate=None, withControl=True):
-        clefFunction = "updateLast7DaysDetails"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         start_date = (today - datetime.timedelta(7)).strftime(_formatDateYmd)
-        end_date = (datetime.date.today()).strftime(_formatDateYmd)
+        end_date = today.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(start_date)
         fin = self.contract.maxCompareDateContract(end_date)
-        data = self._last7DaysDetails.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._last7DaysDetails)
-        self.setNbCall(self._last7DaysDetails.getNbCall())
+        self._run_update("updateLast7DaysDetails", self._last7DaysDetails, deb, fin, data, withControl)
 
     def updateCurrentMonth(self, data=None, withControl=True):
-        clefFunction = "updateCurrentMonth"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         debCurrentMonth = today.replace(day=1).strftime(_formatDateYmd)
         cejour = today.strftime(_formatDateYmd)
-        # if (debCurrentMonth != cejour):
-        #    return self.getDataPeriod(debCurrentMonth, cejour)
-        # else:
-        #    return 0, False
         deb = self.contract.minCompareDateContract(debCurrentMonth)
         fin = self.contract.maxCompareDateContract(cejour)
-        data = self._currentMonth.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._currentMonth)
-        self.setNbCall(self._currentMonth.getNbCall())
+        self._run_update("updateCurrentMonth", self._currentMonth, deb, fin, data, withControl)
 
     def updateLastMonth(self, data=None, withControl=True):
-        clefFunction = "updateLastMonth"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
-
         today = datetime.date.today()
         first = today.replace(day=1)
         lastMonth = first - datetime.timedelta(days=1)
@@ -487,25 +396,9 @@ class myClientEnedis:
         debCurrentMonth = first.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(debPreviousMonth)
         fin = self.contract.maxCompareDateContract(debCurrentMonth)
-        data = self._lastMonth.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._lastMonth)
-        self.setNbCall(self._lastMonth.getNbCall())
+        self._run_update("updateLastMonth", self._lastMonth, deb, fin, data, withControl)
 
     def updateLastMonthLastYear(self, data=None, withControl=True):
-        clefFunction = "updateLastMonthLastYear"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         first = today.replace(day=1, year=today.year - 1)
         lastMonthLastYear = first - datetime.timedelta(days=1)
@@ -513,49 +406,17 @@ class myClientEnedis:
         debCurrentMonth = first.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(debPreviousMonth)
         fin = self.contract.maxCompareDateContract(debCurrentMonth)
-        data = self._lastMonthLastYear.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._lastMonthLastYear)
-        self.setNbCall(self._lastMonthLastYear.getNbCall())
+        self._run_update("updateLastMonthLastYear", self._lastMonthLastYear, deb, fin, data, withControl)
 
     def updateCurrentYear(self, data=None, withControl=True):
-        clefFunction = "updateCurrentYear"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
-        debCurrentMonth = today.replace(month=1, day=1).strftime(_formatDateYmd)
+        debCurrentYear = today.replace(month=1, day=1).strftime(_formatDateYmd)
         cejour = today.strftime(_formatDateYmd)
-        deb = self.contract.minCompareDateContract(debCurrentMonth)
+        deb = self.contract.minCompareDateContract(debCurrentYear)
         fin = self.contract.maxCompareDateContract(cejour)
-        data = self._currentYear.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._currentYear)
-        self.setNbCall(self._currentYear.getNbCall())
+        self._run_update("updateCurrentYear", self._currentYear, deb, fin, data, withControl)
 
     def updateLastYear(self, data=None, withControl=True):
-        clefFunction = "updateLastYear"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         first = today.replace(day=1, month=1)
         lastYear = first - datetime.timedelta(days=1)
@@ -563,231 +424,75 @@ class myClientEnedis:
         debCurrentYear = today.replace(month=1, day=1).strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(debPreviousYear)
         fin = self.contract.maxCompareDateContract(debCurrentYear)
-        data = self._lastYear.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._lastYear)
-        self.setNbCall(self._lastYear.getNbCall())
+        self._run_update("updateLastYear", self._lastYear, deb, fin, data, withControl)
 
     def updateYesterdayLastYear(self, data=None, withControl=True):
-        clefFunction = "updateYesterdayLastYear"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         todayLastYear = today.replace(year=today.year - 1)
         hier = (todayLastYear - datetime.timedelta(1)).strftime(_formatDateYmd)
         cejour = todayLastYear.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(cejour)
-        data = self._yesterdayLastYear.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._yesterdayLastYear)
-        self.setNbCall(self._yesterdayLastYear.getNbCall())
+        self._run_update("updateYesterdayLastYear", self._yesterdayLastYear, deb, fin, data, withControl)
 
     def updateCurrentWeekLastYear(self, data=None, withControl=True) -> None:
-        clefFunction = "updateCurrentWeekLastYear"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
-
         today = datetime.date.today()
-        numWeek = today.isocalendar()[1]  # numero de la semaine
+        numWeek = today.isocalendar()[1]
         previousYear = today.year - 1
         d = f"{previousYear}-W{numWeek}"
         rfirstdateofweek = datetime.datetime.strptime(d + "-1", "%G-W%V-%u")
-        # on recule d'un jour, car on a pas les données du jours,
-        #   vs on a celle de l'an passé
-        r = rfirstdateofweek + datetime.timedelta(
-            days=today.weekday()
-        )  # car on a pas les données du jour...
-        # cejour = r.strftime(_formatDateYmd)
-        r = rfirstdateofweek + datetime.timedelta(
-            days=today.weekday()
-        )  # car on a pas les données du jour...
+        r = rfirstdateofweek + datetime.timedelta(days=today.weekday())
         cejourmoins1 = r.strftime(_formatDateYmd)
-
         firstdateofweek = rfirstdateofweek.strftime(_formatDateYmd)
-
         deb = self.contract.minCompareDateContract(firstdateofweek)
         fin = self.contract.maxCompareDateContract(cejourmoins1)
-        data = self._currentWeekLastYear.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._currentWeekLastYear)
-        self.setNbCall(self._currentWeekLastYear.getNbCall())
+        self._run_update("updateCurrentWeekLastYear", self._currentWeekLastYear, deb, fin, data, withControl)
 
     def updateCurrentMonthLastYear(self, data=None, withControl=True):
-        clefFunction = "updateCurrentMonthLastYear"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
-
         today = datetime.date.today()
-
-        debCurrentMonthPreviousYear = today.replace(
-            day=1, year=today.year - 1
-        ).strftime(_formatDateYmd)
-        cejourPreviousYear = today.replace(year=today.year - 1).strftime(_formatDateYmd)
-
-        deb = self.contract.minCompareDateContract(debCurrentMonthPreviousYear)
-        fin = self.contract.maxCompareDateContract(cejourPreviousYear)
-
-        data = self._currentMonthLastYear.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
+        deb = self.contract.minCompareDateContract(
+            today.replace(day=1, year=today.year - 1).strftime(_formatDateYmd)
         )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._currentMonthLastYear)
-        self.setNbCall(self._currentMonthLastYear.getNbCall())
+        fin = self.contract.maxCompareDateContract(
+            today.replace(year=today.year - 1).strftime(_formatDateYmd)
+        )
+        self._run_update("updateCurrentMonthLastYear", self._currentMonthLastYear, deb, fin, data, withControl)
 
     def updateYesterday(self, data=None, withControl=True):
-        clefFunction = "updateYesterday"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         today = datetime.date.today()
         hier = (today - datetime.timedelta(1)).strftime(_formatDateYmd)
         cejour = today.strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(cejour)
-        # print("data :", data)
-        data = self._yesterday.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._yesterday)
-        self.setNbCall(self._yesterday.getNbCall())
+        self._run_update("updateYesterday", self._yesterday, deb, fin, data, withControl)
 
     def updateYesterdayProduction(self, data=None, withControl=True):
-        clefFunction = "updateYesterdayProduction"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
-        cejour = (datetime.date.today()).strftime(_formatDateYmd)
+        cejour = datetime.date.today().strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(cejour)
-        data = self._productionYesterday.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._productionYesterday)
-        self.setNbCall(self._productionYesterday.getNbCall())
+        self._run_update("updateYesterdayProduction", self._productionYesterday, deb, fin, data, withControl)
 
     def updateEcoWatt(self, data=None, withControl=True):
-        clefFunction = "updateEcoWatt"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
         demain = (datetime.date.today() + datetime.timedelta(1)).strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(demain)
-        data = self._ecoWatt.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._ecoWatt)
-        self.setNbCall(self._ecoWatt.getNbCall())
+        self._run_update("updateEcoWatt", self._ecoWatt, deb, fin, data, withControl)
 
     def updateTempo(self, data=None, withControl=True):
-        clefFunction = "updateTempo"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
         demain = (datetime.date.today() + datetime.timedelta(1)).strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(demain)
-        data = self._tempo.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._tempo)
-        self.setNbCall(self._tempo.getNbCall())
+        self._run_update("updateTempo", self._tempo, deb, fin, data, withControl)
 
     def updateYesterdayConsumptionMaxPower(self, data=None, withControl=True):
-        clefFunction = "updateYesterdayConsumptionMaxPower"
-        self.lastMethodCall = clefFunction
-        requestJson = self.getDataRequestJson(clefFunction)
-        if data is None:
-            data = self.getDataJsonValue(clefFunction)
         hier = (datetime.date.today() - datetime.timedelta(1)).strftime(_formatDateYmd)
-        cejour = (datetime.date.today()).strftime(_formatDateYmd)
+        cejour = datetime.date.today().strftime(_formatDateYmd)
         deb = self.contract.minCompareDateContract(hier)
         fin = self.contract.maxCompareDateContract(cejour)
-        # val1, val2 = self.getDataPeriodConsumptionMaxPower(hier, cejour)
-        data = self._yesterdayConsumptionMaxPower.updateData(
-            clefFunction,
-            self.getHorairePossible(),
-            data,
-            deb,
-            fin,
-            withControl=withControl,
-            dataControl=requestJson,
-        )
-        self.setDataJsonValue(clefFunction, data)
-        self.setDataRequestJson(clefFunction, self._yesterdayConsumptionMaxPower)
-        self.setNbCall(self._yesterdayConsumptionMaxPower.getNbCall())
+        self._run_update("updateYesterdayConsumptionMaxPower", self._yesterdayConsumptionMaxPower, deb, fin, data, withControl)
 
     def getYesterdayLastYear(self):
         return self._yesterdayLastYear
