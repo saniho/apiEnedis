@@ -259,8 +259,160 @@ class manageSensorState:
         lastResetIso = lastReset.isoformat()
         return lastResetIso, status_counts, state
 
-    def getStatus(self, typeSensor=_consommation):  # noqa C901
-        # Raccourci pour self._myDataEnedis (lignes plus court)
+    def _compute_daily_week(self, data, status):
+        last7daysHP = data.getLast7DaysDetails().getDaysHP()
+        last7daysHC = data.getLast7DaysDetails().getDaysHC()
+
+        today = datetime.date.today()
+        listeClef = [
+            (today - datetime.timedelta(i + 1)).strftime("%Y-%m-%d")
+            for i in range(7)
+        ]
+
+        cout = []
+        coutHC = []
+        coutHP = []
+        dailyHC = []
+        dailyHP = []
+        daily = []
+
+        for niemejour, clef in enumerate(listeClef, start=1):
+            hp_val = last7daysHP.get(clef)
+            hc_val = last7daysHC.get(clef)
+            in_hp = hp_val is not None
+            in_hc = hc_val is not None
+
+            status[f"day_{niemejour}_HP"] = hp_val if in_hp else -1
+            status[f"day_{niemejour}_HC"] = hc_val if in_hc else -1
+
+            if in_hp:
+                dailyHP.append(f"{0.001 * hp_val:.3f}")
+                coutHP.append(f"{0.001 * data.getHPCost(hp_val):.2f}")
+            else:
+                dailyHP.append(-1)
+                coutHP.append(-1)
+
+            if in_hc:
+                dailyHC.append(f"{0.001 * hc_val:.3f}")
+                coutHC.append(f"{0.001 * data.getHCCost(hc_val):.2f}")
+            else:
+                dailyHC.append(-1)
+                coutHC.append(-1)
+
+            if in_hp and in_hc:
+                total_cost = (
+                    0.001 * data.getHCCost(hc_val)
+                    + 0.001 * data.getHPCost(hp_val)
+                )
+                cout.append(f"{total_cost:.2f}")
+                somme = hp_val + hc_val
+                status[f"day_{niemejour}"] = f"{0.001 * somme:.2f}"
+                daily.append(f"{0.001 * somme:.2f}")
+            else:
+                cout.append(-1)
+                status[f"day_{niemejour}"] = -1
+                daily.append(-1)
+
+        status["dailyweek"] = list(listeClef)
+        status["dailyweek_cost"] = cout
+        status["dailyweek_costHC"] = coutHC
+        status["dailyweek_HC"] = dailyHC
+        status["dailyweek_costHP"] = coutHP
+        status["dailyweek_HP"] = dailyHP
+        status["daily"] = daily
+        status["halfhourly"] = []
+
+    def _compute_yesterday_cost(self, data, status):
+        prevDayHC = data.getYesterdayHCHP().getHC()
+        prevDayHCCost = data.getHCCost(prevDayHC) * 0.001
+        prevDayHP = data.getYesterdayHCHP().getHP()
+        prevDayHPCost = data.getHPCost(prevDayHP) * 0.001
+        prevDailyCost = prevDayHCCost + prevDayHPCost
+
+        status["offpeak_hours"] = f"{prevDayHC * 0.001:.3f}"
+        status["peak_hours"] = f"{prevDayHP * 0.001:.3f}"
+
+        prevDayHPHC = prevDayHC + prevDayHP
+        if prevDayHPHC != 0:
+            valeur = (prevDayHP * 100) / prevDayHPHC
+            status["peak_offpeak_percent"] = f"{valeur:.2f}"
+        else:
+            status["peak_offpeak_percent"] = 0
+
+        status["yesterday_HC_cost"] = f"{prevDayHCCost:.3f}"
+        status["yesterday_HP_cost"] = f"{prevDayHPCost:.3f}"
+        status["daily_cost"] = f"{prevDailyCost:.2f}"
+        status["yesterday_HC"] = f"{prevDayHC * 0.001:.3f}"
+        status["yesterday_HP"] = f"{prevDayHP * 0.001:.3f}"
+        status["yesterday_HCHP"] = f"{prevDayHPHC * 0.001:.3f}"
+
+        if status["yesterday"] == 0:
+            status["yesterday"] = prevDayHPHC
+        return prevDayHPHC
+
+    def _compute_period_values(self, data, status):
+        currWk = data.getCurrentWeek().getValue() * 0.001
+        currWkLastYear = data.getCurrentWeekLastYear().getValue() * 0.001
+        lastMonth = data.getLastMonth().getValue() * 0.001
+        lastMonthLastYear = data.getLastMonthLastYear().getValue() * 0.001
+        currMonth = data.getCurrentMonth().getValue() * 0.001
+        currMonthLastYear = data.getCurrentMonthLastYear().getValue() * 0.001
+        lastYear = data.getLastYear().getValue() * 0.001
+        currYear = data.getCurrentYear().getValue() * 0.001
+
+        dateDeb = data.getCurrentWeek().getDateDeb()
+        status["current_week"] = f"{currWk:.3f}"
+        if dateDeb is not None:
+            status["current_week_number"] = (
+                datetime.datetime.fromisoformat(dateDeb).isocalendar()[1]
+            )
+
+        status["current_week_last_year"] = f"{currWkLastYear:.3f}"
+        status["last_month"] = f"{lastMonth:.3f}"
+        status["last_month_last_year"] = f"{lastMonthLastYear:.3f}"
+        status["current_month"] = f"{currMonth:.3f}"
+        status["current_month_last_year"] = f"{currMonthLastYear:.3f}"
+        status["last_year"] = f"{lastYear:.3f}"
+        status["current_year"] = f"{currYear:.3f}"
+
+        _compute_evolution(currYear, lastYear, "year_evolution", status)
+        _compute_evolution(lastMonth, lastMonthLastYear, "monthly_evolution", status)
+        _compute_evolution(currWk, currWkLastYear, "current_week_evolution", status)
+        _compute_evolution(currMonth, currMonthLastYear, "current_month_evolution", status)
+
+        return currYear, lastYear, lastMonth, lastMonthLastYear, currWk, currWkLastYear, currMonth, currMonthLastYear
+
+    def _compute_yesterday_evolution(self, data, status, prevDayHPHC):
+        yesterdayLastYear = data.getYesterdayLastYear().getValue()
+        yesterday = data.getYesterday().getValue()
+
+        if (
+            (yesterdayLastYear is not None)
+            and (yesterdayLastYear != 0)
+            and (yesterday is not None)
+        ):
+            if yesterday == 0 and prevDayHPHC != 0:
+                yestValue = prevDayHPHC
+            else:
+                yestValue = yesterday
+            valeur = ((yestValue - yesterdayLastYear) / yesterdayLastYear) * 100
+            status["yesterday_evolution"] = f"{valeur:.3f}"
+        else:
+            status["yesterday_evolution"] = 0
+
+    def _compute_state(self, data, status, typeSensor):
+        if typeSensor == _consommation:
+            yesterday = status.get("yesterday", 0)
+            if yesterday is None:
+                yesterday = 0
+            return f"{float(yesterday) * 0.001:.3f}"
+        else:
+            yesterday_prod = status.get("yesterday_production", 0)
+            if yesterday_prod is None:
+                yesterday_prod = 0
+            return f"{float(yesterday_prod) * 0.001:.3f}"
+
+    def getStatus(self, typeSensor=_consommation):
         data = self._myDataEnedis
 
         state = "unavailable"
@@ -284,243 +436,54 @@ class manageSensorState:
             if data.isConsommation():
                 status["lastUpdate"] = data.getLastUpdate()
                 status["timeLastCall"] = data.getTimeLastCall()
-                # à supprimer car doublon avec j_1
                 status["yesterday"] = data.getYesterday().getValue()
                 status["last_week"] = data.getLastWeek().getValue()
 
-            if 1:  # data.getStatusLastCall():  # update avec statut ok
-                try:
-                    # typesensor ... fonction de  ?
-                    if typeSensor == _consommation:  # data.isConsommation():
-                        valeur: int | str
-
-                        status["lastUpdate"] = data.getLastUpdate()
-                        status["timeLastCall"] = data.getTimeLastCall()
-                        # à supprimer car doublon avec j_1
-                        status["yesterday"] = data.getYesterday().getValue()
-                        status["yesterdayDate"] = data.getYesterday().getDateDeb()
-                        status[
-                            "yesterdayLastYear"
-                        ] = data.getYesterdayLastYear().getValue()
-                        status[
-                            "yesterdayLastYearDate"
-                        ] = data.getYesterday().getDateDeb()
-                        status[
-                            "yesterdayConsumptionMaxPower"
-                        ] = data.getYesterdayConsumptionMaxPower().getValue()
-                        status["last_week"] = data.getLastWeek().getValue()
-                        last7daysHP = data.getLast7DaysDetails().getDaysHP()
-
-                        last7daysHC = data.getLast7DaysDetails().getDaysHC()
-
-                        today = datetime.date.today()
-                        listeClef = [
-                            (today - datetime.timedelta(i + 1)).strftime("%Y-%m-%d")
-                            for i in range(7)
-                        ]
-
-                        cout = []
-                        coutHC = []
-                        coutHP = []
-                        dailyHC = []
-                        dailyHP = []
-                        daily = []
-
-                        for niemejour, clef in enumerate(listeClef, start=1):
-                            hp_val = last7daysHP.get(clef)
-                            hc_val = last7daysHC.get(clef)
-                            in_hp = hp_val is not None
-                            in_hc = hc_val is not None
-
-                            status[f"day_{niemejour}_HP"] = hp_val if in_hp else -1
-                            status[f"day_{niemejour}_HC"] = hc_val if in_hc else -1
-
-                            if in_hp:
-                                dailyHP.append(f"{0.001 * hp_val:.3f}")
-                                coutHP.append(
-                                    f"{0.001 * data.getHPCost(hp_val):.2f}"
-                                )
-                            else:
-                                dailyHP.append(-1)
-                                coutHP.append(-1)
-
-                            if in_hc:
-                                dailyHC.append(f"{0.001 * hc_val:.3f}")
-                                coutHC.append(
-                                    f"{0.001 * data.getHCCost(hc_val):.2f}"
-                                )
-                            else:
-                                dailyHC.append(-1)
-                                coutHC.append(-1)
-
-                            if in_hp and in_hc:
-                                total_cost = (
-                                    0.001 * data.getHCCost(hc_val)
-                                    + 0.001 * data.getHPCost(hp_val)
-                                )
-                                cout.append(f"{total_cost:.2f}")
-                                somme = hp_val + hc_val
-                                status[f"day_{niemejour}"] = (
-                                    f"{0.001 * somme:.2f}"
-                                )
-                                daily.append(f"{0.001 * somme:.2f}")
-                            else:
-                                cout.append(-1)
-                                status[f"day_{niemejour}"] = -1
-                                daily.append(-1)
-
-                        status["dailyweek"] = list(listeClef)
-                        status["dailyweek_cost"] = cout
-                        status["dailyweek_costHC"] = coutHC
-                        status["dailyweek_HC"] = dailyHC
-                        status["dailyweek_costHP"] = coutHP
-                        status["dailyweek_HP"] = dailyHP
-                        status["daily"] = daily
-
-                        status["halfhourly"] = []
-
-                        # Intermediate variables
-                        prevDayHC = data.getYesterdayHCHP().getHC()
-                        prevDayHCCost = data.getHCCost(prevDayHC) * 0.001
-                        prevDayHP = data.getYesterdayHCHP().getHP()
-                        prevDayHPCost = data.getHPCost(prevDayHP) * 0.001
-                        prevDailyCost = prevDayHCCost + prevDayHPCost
-
-                        status["offpeak_hours"] = f"{prevDayHC * 0.001:.3f}"
-                        status["peak_hours"] = f"{prevDayHP * 0.001:.3f}"
-
-                        # Get Yesterday's HP/(HP+HC) in %
-                        prevDayHPHC = prevDayHC + prevDayHP
-                        if prevDayHPHC != 0:  # Pas de division par 0
-                            valeur = (prevDayHP * 100) / prevDayHPHC
-                            status["peak_offpeak_percent"] = f"{valeur:.2f}"
-                        else:
-                            status["peak_offpeak_percent"] = 0
-
-                        status["yesterday_HC_cost"] = f"{prevDayHCCost:.3f}"
-                        status["yesterday_HP_cost"] = f"{prevDayHPCost:.3f}"
-                        status["daily_cost"] = f"{prevDailyCost:.2f}"
-                        status["yesterday_HC"] = f"{prevDayHC * 0.001:.3f}"
-                        status["yesterday_HP"] = f"{prevDayHP * 0.001:.3f}"
-                        status["yesterday_HCHP"] = f"{prevDayHPHC * 0.001:.3f}"
-
-                        if status["yesterday"] == 0:
-                            status["yesterday"] = prevDayHPHC
-
-                        currWk = data.getCurrentWeek().getValue() * 0.001
-                        currWkLastYear = (
-                            data.getCurrentWeekLastYear().getValue() * 0.001
-                        )
-                        lastMonth = data.getLastMonth().getValue() * 0.001
-                        lastMonthLastYear = (
-                            data.getLastMonthLastYear().getValue() * 0.001
-                        )
-                        currMonth = data.getCurrentMonth().getValue() * 0.001
-                        currMonthLastYear = (
-                            data.getCurrentMonthLastYear().getValue() * 0.001
-                        )
-                        lastYear = data.getLastYear().getValue() * 0.001
-                        currYear = data.getCurrentYear().getValue() * 0.001
-
-                        dateDeb = data.getCurrentWeek().getDateDeb()
-
-                        status["current_week"] = f"{currWk:.3f}"
-
-                        if dateDeb is not None:
-                            status[
-                                "current_week_number"
-                            ] = datetime.datetime.fromisoformat(dateDeb).isocalendar()[
-                                1
-                            ]
-
-                        status["current_week_last_year"] = f"{currWkLastYear:.3f}"
-                        status["last_month"] = f"{lastMonth:.3f}"
-                        status["last_month_last_year"] = f"{lastMonthLastYear:.3f}"
-                        status["current_month"] = f"{currMonth:.3f}"
-                        status["current_month_last_year"] = f"{currMonthLastYear:.3f}"
-                        status["last_year"] = f"{lastYear:.3f}"
-                        status["current_year"] = f"{currYear:.3f}"
-
-                        status["errorLastCall"] = data.getCardErrorLastCall()
-                        status["errorLastCallInterne"] = data.getErrorLastCall()
-
-                        _compute_evolution(currYear, lastYear, "year_evolution", status)
-                        _compute_evolution(
-                            lastMonth, lastMonthLastYear, "monthly_evolution", status
-                        )
-                        _compute_evolution(
-                            currWk, currWkLastYear, "current_week_evolution", status
-                        )
-                        _compute_evolution(
-                            currMonth,
-                            currMonthLastYear,
-                            "current_month_evolution",
-                            status,
-                        )
-
-                        yesterdayLastYear = data.getYesterdayLastYear().getValue()
-                        yesterday = data.getYesterday().getValue()
-
-                        if (
-                            (yesterdayLastYear is not None)
-                            and (yesterdayLastYear != 0)
-                            and (yesterday is not None)
-                        ):
-                            if yesterday == 0 and prevDayHPHC != 0:
-                                yestValue = prevDayHPHC
-                            else:
-                                yestValue = yesterday
-                            valeur = (
-                                (yestValue - yesterdayLastYear) / yesterdayLastYear
-                            ) * 100
-                            status["yesterday_evolution"] = f"{valeur:.3f}"
-                        else:
-                            status["yesterday_evolution"] = 0
-                        status["subscribed_power"] = data.contract.getsubscribed_power()
-                        status[
-                            "offpeak_hours_enedis"
-                        ] = data.contract.getoffpeak_hours()
-                        status["offpeak_hours"] = data.contract.getHeuresCreuses()
-                    if typeSensor == _production:
-                        status[
-                            "yesterday_production"
-                        ] = data.getProductionYesterday().getValue()
-                        status["errorLastCall"] = data.getCardErrorLastCall()
-                        status["errorLastCallInterne"] = data.getErrorLastCall()
-                        status["lastUpdate"] = data.getLastUpdate()
-                        status["timeLastCall"] = data.getTimeLastCall()
-                    if status["yesterday"] is None:
-                        status["yesterday"] = 0
-                    if status["yesterday_production"] is None:
-                        status["yesterday_production"] = 0
-                    if typeSensor == _consommation:  # data.isConsommation():
-                        valeurstate = (
-                            float(status["yesterday"]) * 0.001  # type:ignore[arg-type]
-                        )
-                    else:
-                        valeurstate = (
-                            float(
-                                status["yesterday_production"]  # type:ignore[arg-type]
-                            )
-                            * 0.001
-                        )
-                    state = f"{valeurstate:.3f}"
-
-                except Exception:
-                    status["errorLastCall"] = data.getCardErrorLastCall()
-                    status["errorLastCallInterne"] = data.getErrorLastCall()
-                    self._LOGGER.error("-" * 60)
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    self._LOGGER.error(sys.exc_info())
-                    msg = repr(
-                        traceback.format_exception(exc_type, exc_value, exc_traceback)
+            try:
+                if typeSensor == _consommation:
+                    status["lastUpdate"] = data.getLastUpdate()
+                    status["timeLastCall"] = data.getTimeLastCall()
+                    status["yesterday"] = data.getYesterday().getValue()
+                    status["yesterdayDate"] = data.getYesterday().getDateDeb()
+                    status["yesterdayLastYear"] = data.getYesterdayLastYear().getValue()
+                    status["yesterdayLastYearDate"] = data.getYesterday().getDateDeb()
+                    status["yesterdayConsumptionMaxPower"] = (
+                        data.getYesterdayConsumptionMaxPower().getValue()
                     )
+                    status["last_week"] = data.getLastWeek().getValue()
 
-                    self._LOGGER.error(msg)
-                    self._LOGGER.error("errorLastCall : %s ", data.getErrorLastCall())
-            else:
+                    self._compute_daily_week(data, status)
+                    prevDayHPHC = self._compute_yesterday_cost(data, status)
+                    self._compute_period_values(data, status)
+                    self._compute_yesterday_evolution(data, status, prevDayHPHC)
+
+                    status["subscribed_power"] = data.contract.getsubscribed_power()
+                    status["offpeak_hours_enedis"] = data.contract.getoffpeak_hours()
+                    status["offpeak_hours"] = data.contract.getHeuresCreuses()
+
+                if typeSensor == _production:
+                    status["yesterday_production"] = (
+                        data.getProductionYesterday().getValue()
+                    )
+                    status["lastUpdate"] = data.getLastUpdate()
+                    status["timeLastCall"] = data.getTimeLastCall()
+
                 status["errorLastCall"] = data.getCardErrorLastCall()
                 status["errorLastCallInterne"] = data.getErrorLastCall()
+
+                state = self._compute_state(data, status, typeSensor)
+
+            except Exception:
+                status["errorLastCall"] = data.getCardErrorLastCall()
+                status["errorLastCallInterne"] = data.getErrorLastCall()
+                self._LOGGER.error("-" * 60)
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                self._LOGGER.error(sys.exc_info())
+                msg = repr(
+                    traceback.format_exception(exc_type, exc_value, exc_traceback)
+                )
+                self._LOGGER.error(msg)
+                self._LOGGER.error("errorLastCall : %s ", data.getErrorLastCall())
         else:
             status["errorLastCall"] = data.getCardErrorLastCall()
             status["errorLastCallInterne"] = data.getErrorLastCall()
