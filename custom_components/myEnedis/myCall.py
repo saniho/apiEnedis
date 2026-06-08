@@ -290,127 +290,40 @@ class myCall:
 
         return dataAnswer
 
-    def getDataPeriod(self, deb: str, fin: str | None) -> tuple[str, bool]:
-        if fin is not None:
-            _LOGGER.info(f"--get dataPeriod : {deb} => {fin} --")
-            payload = {
-                "type": "daily_consumption",
-                "usage_point_id": self._PDL_ID,
-                "start": str(deb),
-                "end": str(fin),
-            }
-            headers = self.getDefaultHeader()
-            dataAnswer = self.post_and_get_json(
-                self.getServiceEnedis(), data=payload, headers=headers
-            )
-            callDone = True
-        else:
-            # pas de donnée
-            callDone = False
-            dataAnswer = ""
+    def _call_api(self, type_name, deb, fin):
+        if fin is None:
+            self.setLastAnswer("")
+            return "", False
+        payload = {
+            "type": type_name,
+            "usage_point_id": self._PDL_ID,
+            "start": str(deb),
+            "end": str(fin),
+        }
+        headers = self.getDefaultHeader()
+        dataAnswer = self.post_and_get_json(
+            self.getServiceEnedis(), data=payload, headers=headers
+        )
         self.setLastAnswer(dataAnswer)
-        return dataAnswer, callDone
+        return dataAnswer, True
+
+    def getDataPeriod(self, deb: str, fin: str | None) -> tuple[str, bool]:
+        return self._call_api("daily_consumption", deb, fin)
 
     def getDataPeriodConsumptionMaxPower(self, deb, fin):
-        if fin is not None:
-            _LOGGER.info(f"--get dataPeriod : {deb} => {fin} --")
-            payload = {
-                "type": "daily_consumption_max_power",
-                "usage_point_id": self._PDL_ID,
-                "start": str(deb),
-                "end": str(fin),
-            }
-            headers = self.getDefaultHeader()
-            dataAnswer = self.post_and_get_json(
-                self.getServiceEnedis(), data=payload, headers=headers
-            )
-            callDone = True
-        else:
-            # pas de donnée
-            callDone = False
-            dataAnswer = ""
-        self.setLastAnswer(dataAnswer)
-        return dataAnswer, callDone
+        return self._call_api("daily_consumption_max_power", deb, fin)
 
     def getDataProductionPeriod(self, deb, fin):
-        if fin is not None:
-            payload = {
-                "type": "daily_production",
-                "usage_point_id": self._PDL_ID,
-                "start": str(deb),
-                "end": str(fin),
-            }
-            headers = self.getDefaultHeader()
-            dataAnswer = self.post_and_get_json(
-                self.getServiceEnedis(), data=payload, headers=headers
-            )
-            callDone = True
-        else:
-            # pas de donnée
-            callDone = False
-            dataAnswer = ""
-        self.setLastAnswer(dataAnswer)
-        return dataAnswer, callDone
+        return self._call_api("daily_production", deb, fin)
 
     def getDataEcoWatt(self, deb, fin):
-        if fin is not None:
-            payload = {
-                "type": "rte/ecowatt",
-                "usage_point_id": self._PDL_ID,
-                "start": str(deb),
-                "end": str(fin),
-            }
-            headers = self.getDefaultHeader()
-            dataAnswer = self.post_and_get_json(
-                self.getServiceEnedis(), data=payload, headers=headers
-            )
-            callDone = True
-        else:
-            # pas de donnée
-            callDone = False
-            dataAnswer = ""
-        self.setLastAnswer(dataAnswer)
-        return dataAnswer, callDone
+        return self._call_api("rte/ecowatt", deb, fin)
 
     def getDataTempo(self, deb, fin):
-        if fin is not None:
-            payload = {
-                "type": "rte/tempo",
-                "usage_point_id": self._PDL_ID,
-                "start": str(deb),
-                "end": str(fin),
-            }
-            headers = self.getDefaultHeader()
-            dataAnswer = self.post_and_get_json(
-                self.getServiceEnedis(), data=payload, headers=headers
-            )
-            callDone = True
-        else:
-            # pas de donnée
-            callDone = False
-            dataAnswer = ""
-        self.setLastAnswer(dataAnswer)
-        return dataAnswer, callDone
+        return self._call_api("rte/tempo", deb, fin)
 
     def getDataPeriodCLC(self, deb, fin):
-        if fin is not None:
-            payload = {
-                "type": "consumption_load_curve",
-                "usage_point_id": self._PDL_ID,
-                "start": str(deb),
-                "end": str(fin),
-            }
-            headers = self.getDefaultHeader()
-            dataAnswer = self.post_and_get_json(
-                self.getServiceEnedis(), data=payload, headers=headers
-            )
-            callDone = True
-        else:
-            # pas de donnée
-            callDone = False
-            dataAnswer = ""
-        self.setLastAnswer(dataAnswer)
-        return dataAnswer, callDone
+        return self._call_api("consumption_load_curve", deb, fin)
 
     def getDataContract(self):
         payload = {
