@@ -10,8 +10,8 @@ import pytest
 import requests
 import requests_mock
 
-from custom_components.apiEnedis.myClientEnedis import myClientEnedis
-from custom_components.apiEnedis.sensorEnedis import manageSensorState
+from custom_components.myEnedis.myClientEnedis import myClientEnedis
+from custom_components.myEnedis.sensorEnedis import manageSensorState
 
 JSON_DIR = os.path.dirname(__file__) + "/Json/"
 
@@ -35,9 +35,9 @@ def loadFile(filename):
 
 
 # def test_version():
-#     from custom_components.apiEnedis.const import __VERSION__
+#     from custom_components.myEnedis.const import __VERSION__
 #
-#     manifest = loadJsonFile("../../custom_components/apiEnedis/manifest.json")
+#     manifest = loadJsonFile("../../custom_components/myEnedis/manifest.json")
 #     assert __VERSION__ == manifest["version"]
 #
 #     import packaging
@@ -788,7 +788,7 @@ def test_get_message():
 
 
 def test_get_init():
-    from custom_components.apiEnedis import sensorEnedis
+    from custom_components.myEnedis import sensorEnedis
 
     se = sensorEnedis.manageSensorState()
     assert se.getInit() is False, "not False !! "

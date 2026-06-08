@@ -1052,47 +1052,33 @@ class myClientEnedis:
     def getCallPossible(self, trace=False):
         currentDateTime = datetime.datetime.now()
 
-        callpossible = self.getHorairePossible() and (
-            self.getLastCallHier()
-            or (self.getTimeLastCall() is None)
-            or (
-                self.getStatusLastCall() is False
-                and self.getDelayIsGoodAfterError(currentDateTime)
-            )
+        horairePossible = self.getHorairePossible()
+        lastCallHier = self.getLastCallHier()
+        timeLastCall = self.getTimeLastCall()
+        statusLastCall = self.getStatusLastCall()
+        delayIsGood = self.getDelayIsGoodAfterError(currentDateTime)
+
+        callpossible = horairePossible and (
+            lastCallHier
+            or (timeLastCall is None)
+            or (statusLastCall is False and delayIsGood)
         )
 
-        # si on doit prendre les informations des fichiers de sauvegarde
         if self._forceCallJson:
             callpossible = True
 
         level = logging.ERROR if trace else logging.INFO
         log.log(
             level,
-            "myEnedis ...new update self.getHorairePossible() : %s ??",
-            self.getHorairePossible(),
+            "myEnedis ...callPossible=%s horaire=%s lastCallHier=%s timeLastCall=%s statusLastCall=%s delayIsGood=%s force=%s",
+            callpossible,
+            horairePossible,
+            lastCallHier,
+            timeLastCall,
+            statusLastCall,
+            delayIsGood,
+            self._forceCallJson,
         )
-        log.log(
-            level,
-            "myEnedis ...new update self.getLastCallHier() : %s ??",
-            self.getLastCallHier(),
-        )
-        log.log(
-            level,
-            "myEnedis ...new update self.getTimeLastCall() : %s ??",
-            self.getTimeLastCall(),
-        )
-        log.log(
-            level,
-            "myEnedis ...new update self.getStatusLastCall() : %s??",
-            self.getStatusLastCall(),
-        )
-        log.log(
-            level,
-            "myEnedis ...new update self.getDelayIsGoodAfterError() : %s??",
-            self.getDelayIsGoodAfterError(currentDateTime),
-        )
-        log.log(level, f"myEnedis ..._forceCallJson : {self._forceCallJson}??")
-        log.log(level, f"myEnedis ...<< call Possible >> : {callpossible}??")
         return callpossible
 
     def callConsommation(self):

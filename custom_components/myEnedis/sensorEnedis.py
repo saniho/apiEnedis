@@ -17,6 +17,13 @@ __nameManageSensorState__ = "manageSensorState"
 import logging
 
 
+def _compute_evolution(current, previous, key, status):
+    if previous is not None and previous != 0 and current is not None:
+        status[key] = f"{100 * (current - previous) / previous:.3f}"
+    else:
+        status[key] = 0
+
+
 class manageSensorState:
     def __init__(self):
         self._init = False
@@ -304,105 +311,70 @@ class manageSensorState:
                         status["last_week"] = data.getLastWeek().getValue()
                         last7daysHP = data.getLast7DaysDetails().getDaysHP()
 
-                        # TODO: Verifier si les deux lignes suivants sont utiles!
-                        listeClef: list[str] = list(last7daysHP.keys())
-                        listeClef.reverse()
+                        last7daysHC = data.getLast7DaysDetails().getDaysHC()
 
                         today = datetime.date.today()
-                        listeClef = []
-                        for i in range(7):
-                            maDate = today - datetime.timedelta(i + 1)
-                            listeClef.append(maDate.strftime("%Y-%m-%d"))
-                        niemejour = 0
-                        for clef in listeClef:
-                            niemejour += 1
-                            valeur = -1
-                            if clef in last7daysHP.keys():
-                                valeur = last7daysHP[clef]
-                            status[f"day_{niemejour}_HP"] = valeur
-                        last7daysHC = data.getLast7DaysDetails().getDaysHC()
-                        niemejour = 0
-                        for clef in listeClef:
-                            niemejour += 1
-                            valeur = -1
-                            if clef in last7daysHC.keys():
-                                valeur = last7daysHC[clef]
-                            status[f"day_{niemejour}_HC"] = valeur
-                        # gestion du cout par jour ....
+                        listeClef = [
+                            (today - datetime.timedelta(i + 1)).strftime("%Y-%m-%d")
+                            for i in range(7)
+                        ]
 
-                        niemejour = 0
                         cout = []
-                        for clef in listeClef:
-                            niemejour += 1
-                            valeur = -1
-                            if (
-                                clef in last7daysHC.keys()
-                                and clef in last7daysHP.keys()
-                            ):
-                                valeur = 0.001 * data.getHCCost(
-                                    last7daysHC[clef]
-                                ) + 0.001 * data.getHPCost(last7daysHP[clef])
-                                valeur = f"{valeur:.2f}"
-                            cout.append(valeur)
-                        status["dailyweek_cost"] = cout
-                        niemejour = 0
                         coutHC = []
-                        for clef in listeClef:
-                            niemejour += 1
-                            valeur = -1
-                            if clef in last7daysHC.keys():
-                                valeur = 0.001 * data.getHCCost(last7daysHC[clef])
-                                valeur = f"{valeur:.2f}"
-                            coutHC.append(valeur)
-                        status["dailyweek_costHC"] = coutHC
-
-                        niemejour = 0
-                        dailyHC = []
-                        for clef in listeClef:
-                            niemejour += 1
-                            valeur = -1
-                            if clef in last7daysHC.keys():
-                                valeur = f"{0.001 * last7daysHC[clef]:.3f}"
-                            dailyHC.append(valeur)
-                        status["dailyweek_HC"] = dailyHC
-
-                        status["dailyweek"] = list(listeClef)  # listeClef -> days
-                        niemejour = 0
                         coutHP = []
-                        for clef in listeClef:
-                            niemejour += 1
-                            valeur = -1
-                            if clef in last7daysHP.keys():
-                                valeurFloat = 0.001 * data.getHPCost(last7daysHP[clef])
-                                valeur = f"{valeurFloat:.2f}"
-                            coutHP.append(valeur)
-                        status["dailyweek_costHP"] = coutHP
-                        # gestion du format : "{:.2f}".format(a)
-
-                        niemejour = 0
+                        dailyHC = []
                         dailyHP = []
-                        for clef in listeClef:
-                            niemejour += 1
-                            valeur = -1
-                            if clef in last7daysHP.keys():
-                                valeurFloat = last7daysHP[clef]
-                                valeur = f"{0.001 * valeurFloat:.3f}"
-                            dailyHP.append(valeur)
-                        status["dailyweek_HP"] = dailyHP
-
-                        niemejour = 0
                         daily = []
-                        for clef in listeClef:
-                            niemejour += 1
-                            somme: int | float | str = -1
-                            if (
-                                clef in last7daysHP.keys()
-                                and clef in last7daysHC.keys()
-                            ):
-                                sommeFloat = last7daysHP[clef] + last7daysHC[clef]
-                                somme = f"{0.001 * sommeFloat:.2f}"
-                            status[f"day_{niemejour}"] = somme
-                            daily.append(somme)
+
+                        for niemejour, clef in enumerate(listeClef, start=1):
+                            hp_val = last7daysHP.get(clef)
+                            hc_val = last7daysHC.get(clef)
+                            in_hp = hp_val is not None
+                            in_hc = hc_val is not None
+
+                            status[f"day_{niemejour}_HP"] = hp_val if in_hp else -1
+                            status[f"day_{niemejour}_HC"] = hc_val if in_hc else -1
+
+                            if in_hp:
+                                dailyHP.append(f"{0.001 * hp_val:.3f}")
+                                coutHP.append(
+                                    f"{0.001 * data.getHPCost(hp_val):.2f}"
+                                )
+                            else:
+                                dailyHP.append(-1)
+                                coutHP.append(-1)
+
+                            if in_hc:
+                                dailyHC.append(f"{0.001 * hc_val:.3f}")
+                                coutHC.append(
+                                    f"{0.001 * data.getHCCost(hc_val):.2f}"
+                                )
+                            else:
+                                dailyHC.append(-1)
+                                coutHC.append(-1)
+
+                            if in_hp and in_hc:
+                                total_cost = (
+                                    0.001 * data.getHCCost(hc_val)
+                                    + 0.001 * data.getHPCost(hp_val)
+                                )
+                                cout.append(f"{total_cost:.2f}")
+                                somme = hp_val + hc_val
+                                status[f"day_{niemejour}"] = (
+                                    f"{0.001 * somme:.2f}"
+                                )
+                                daily.append(f"{0.001 * somme:.2f}")
+                            else:
+                                cout.append(-1)
+                                status[f"day_{niemejour}"] = -1
+                                daily.append(-1)
+
+                        status["dailyweek"] = list(listeClef)
+                        status["dailyweek_cost"] = cout
+                        status["dailyweek_costHC"] = coutHC
+                        status["dailyweek_HC"] = dailyHC
+                        status["dailyweek_costHP"] = coutHP
+                        status["dailyweek_HP"] = dailyHP
                         status["daily"] = daily
 
                         status["halfhourly"] = []
@@ -472,57 +444,19 @@ class manageSensorState:
                         status["errorLastCall"] = data.getCardErrorLastCall()
                         status["errorLastCallInterne"] = data.getErrorLastCall()
 
-                        if (
-                            (lastYear is not None)
-                            and (lastYear != 0)
-                            and (currYear is not None)
-                        ):
-                            valeur = (
-                                100
-                                * (currYear - lastYear)
-                                / lastYear
-                            )
-                            status["year_evolution"] = f"{valeur:.3f}"
-                        else:
-                            status["year_evolution"] = 0
-
-                        if (
-                            (lastMonthLastYear is not None)
-                            and (lastMonthLastYear != 0)
-                            and (lastMonth is not None)
-                        ):
-                            valeur = (
-                                100
-                                * (lastMonth - lastMonthLastYear)
-                                / lastMonthLastYear
-                            )
-                            status["monthly_evolution"] = f"{valeur:.3f}"
-                        else:
-                            status["monthly_evolution"] = 0
-
-                        if (
-                            (currWkLastYear is not None)
-                            and (currWkLastYear != 0)
-                            and (currWk is not None)
-                        ):
-                            valeur = 100 * (currWk - currWkLastYear) / currWkLastYear
-                            status["current_week_evolution"] = f"{valeur:.3f}"
-                        else:
-                            status["current_week_evolution"] = 0
-
-                        if (
-                            (currMonthLastYear is not None)
-                            and (currMonthLastYear != 0)
-                            and (currMonth is not None)
-                        ):
-                            valeur = (
-                                100
-                                * (currMonth - currMonthLastYear)
-                                / currMonthLastYear
-                            )
-                            status["current_month_evolution"] = f"{valeur:.3f}"
-                        else:
-                            status["current_month_evolution"] = 0
+                        _compute_evolution(currYear, lastYear, "year_evolution", status)
+                        _compute_evolution(
+                            lastMonth, lastMonthLastYear, "monthly_evolution", status
+                        )
+                        _compute_evolution(
+                            currWk, currWkLastYear, "current_week_evolution", status
+                        )
+                        _compute_evolution(
+                            currMonth,
+                            currMonthLastYear,
+                            "current_month_evolution",
+                            status,
+                        )
 
                         yesterdayLastYear = data.getYesterdayLastYear().getValue()
                         yesterday = data.getYesterday().getValue()
