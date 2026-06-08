@@ -7,25 +7,15 @@ import traceback
 from typing import Any
 
 try:
-    from .const import (  # isort:skip
-        __nameMyEnedis__,
-        _formatDateYmd,
-        _ENEDIS_MyElectricData,
-    )
-    from . import messages
+    from .const import __nameMyEnedis__, _formatDateYmd  # isort:skip
 
 except ImportError:
-    import messages  # type: ignore[no-redef]
-    from const import (  # type: ignore[no-redef]
-        __nameMyEnedis__,
-        _formatDateYmd,
-    )
+    from const import __nameMyEnedis__, _formatDateYmd  # type: ignore[no-redef]
 
 from . import apiconst as API
 from . import client_call_orchestrator as call_orch
 from . import client_getters as getters
 from .client_file_store import FileStore
-from .exceptions import EnedisApiError, EnedisAuthError, EnedisDataError
 from .myCall import myCall
 from .myContrat import myContrat
 from .myDataEnedis import myDataEnedis
@@ -200,9 +190,6 @@ class myClientEnedis:
             except Exception:
                 pass
 
-    def getPathArchive(self):
-        return self._path
-
     def setlastCallJson(self):
         pass
 
@@ -223,10 +210,6 @@ class myClientEnedis:
         self._file_store.write_all(data)
 
     def getData(self) -> bool:
-        # ### A VOIR ###
-        # # supprimer test ecrire sur ok present ou non !!! pas d'interet
-        #   self.setDataJsonCopy() # pourquoi cela ? vu qu'on l'a mis juste
-        #   avant ... pas besoin du default !!!!
         log.debug(f" {self._PDL_ID} >>>> getData, self._dataJson ? {self._dataJson}")
         forceCallJson = self._forceCallJson
         if not self.contract.isLoaded:
