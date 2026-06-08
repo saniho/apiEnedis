@@ -22,6 +22,7 @@ except ImportError:
     )
 
 from . import apiconst as API
+from .client_file_store import FileStore
 from .exceptions import EnedisApiError, EnedisAuthError, EnedisDataError
 from .myCall import myCall
 from .myContrat import myContrat
@@ -68,6 +69,7 @@ class myClientEnedis:
         self._forceCallJson: bool = False
         self._path: str | None = None
         self._serviceEnedis: str = serviceEnedis
+        self._file_store = FileStore(self._path, self._PDL_ID)
 
         import random
 
@@ -159,35 +161,13 @@ class myClientEnedis:
 
     def setPathArchive(self, path: str):
         self._path = path
+        self._file_store = FileStore(self._path, self._PDL_ID)
 
     def getServiceEnedis(self):
         return self._serviceEnedis
 
     def readDataJson(self):
-        import glob
-        import json
-        import os
-
-        data = {}
-        dataRepertoire = self.getPathArchive()
-        log.info(
-            "%s - %s - fichier lu dataRepertoire : %s",
-            self.contract.get_PDL_ID(),
-            self._PDL_ID,
-            dataRepertoire,
-        )
-        directory = f"{dataRepertoire}/*.json"
-        log.info(f"fichier lu directory : {directory}")
-        listeFile = glob.glob(directory)
-        log.info(f"fichier lu listeFile : {listeFile}")
-        for nomFichier in listeFile:
-            try:
-                with open(nomFichier) as json_file:
-                    clef = os.path.basename(nomFichier).split(".")[0]
-                    data[clef] = json.load(json_file)
-            except Exception:
-                log.error(f" >>>> erreur lecture : {nomFichier}")
-        return data
+        return self._file_store.read_all()
 
     def manageLastCallJson(self):
         lastCallInformation = self.getDataJsonValue("lastCall")
@@ -235,31 +215,10 @@ class myClientEnedis:
         self.setDataJsonValue("lastCall", data)
 
     def writeDataJson(self):
-        import json
-
-        directory = f"{self.getPathArchive()}/"
+        data = {}
         for clef in self.getDataJsonKeys():
-            try:
-                data = {}
-                nomfichier = directory + clef + ".json"
-                data = self.getDataJsonValue(clef)
-                # si la date est du timeout, alors on ecrit
-                nePasEcrire = False
-                if API.ENEDIS_RETURN in data:
-                    enedis_return = data[API.ENEDIS_RETURN]
-                    if API.ENEDIS_RETURN_ERROR in enedis_return:
-                        nePasEcrire = enedis_return[API.ENEDIS_RETURN_ERROR] in (
-                            "UNKERROR_TIMEOUT",
-                            "UNAVAILABLE",
-                        )
-                log.info(f" >>>> ecriture : {nomfichier} / {data}")
-                if not nePasEcrire:
-                    with open(nomfichier, "w") as outfile:
-                        json.dump(data, outfile)
-            except Exception:
-                log.error(f" >>>> erreur ecriture : {nomfichier} / {data}")
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                log.error(sys.exc_info())
+            data[clef] = self.getDataJsonValue(clef)
+        self._file_store.write_all(data)
 
     def getData(self) -> bool:
         # ### A VOIR ###
