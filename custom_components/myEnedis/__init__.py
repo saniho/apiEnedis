@@ -221,9 +221,6 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
             _LOGGER.info(".config_entry.options()")
             data = {**self.entry.data}
             options = {
-                CONF_SCAN_INTERVAL: data.pop(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
-                CONF_TOKEN: data.pop(CONF_TOKEN, ""),
-                CONF_CODE: str(data.pop(CONF_CODE, "")),
                 CONF_SERVICE_ENEDIS: str(data.pop(CONF_SERVICE_ENEDIS, "")),
                 HP_COST: str(data.pop(HP_COST, "0.0")),
                 HC_COST: str(data.pop(HC_COST, "0.0")),
@@ -237,18 +234,16 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
         _LOGGER.info("async_set_options - proc -- done ")
 
     def update_OptionsMyEnedis(self):
-        _LOGGER.info(
-            "update_MyEnedis pre-getini for {}".format(self.entry.options["token"])
-        )
+        _LOGGER.info("update_MyEnedis pre-getini for {}".format(self.entry.title))
         _LOGGER.info("getInit()")
         hccost = float(self.entry.options.get(HC_COST, "0.0"))
         hpcost = float(self.entry.options.get(HP_COST, "0.0"))
         serviceEnedis = self.entry.options.get(CONF_SERVICE_ENEDIS, "enedisGateway")
         token, code = (
-            self.entry.options[CONF_TOKEN],
-            self.entry.options[CONF_CODE]
+            self.entry.data[CONF_TOKEN],
+            self.entry.data[CONF_CODE]
         )
-        heurescreusesON = self.entry.options[HEURESCREUSES_ON]
+        heurescreusesON = self.entry.options.get(HEURESCREUSES_ON, True)
         heurescreusesch = self.entry.options.get(HEURES_CREUSES, "[]")
         if heurescreusesch == "":
             heurescreusesch = "[]"

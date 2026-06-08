@@ -22,6 +22,7 @@ except ImportError:
     )
 
 from . import apiconst as API
+from .exceptions import EnedisApiError, EnedisAuthError, EnedisDataError
 from .myCall import myCall
 from .myContrat import myContrat
 from .myDataEnedis import myDataEnedis
@@ -1243,25 +1244,20 @@ class myClientEnedis:
                             self.getNbCall(),
                         )
                     except Exception as inst:
-                        # pour eviter de boucler le call en permanence
                         if self._forceCallJson:
                             self._forceCallJson = False
                             self.setDataJsonDefault({})
-                        if inst.args[:2] == (
-                            "call",
-                            "error",
-                        ):  # gestion que c'est pas une erreur de contrat trop recent ?
+                        if isinstance(inst, EnedisApiError):
                             log.error(
                                 "%s - Erreur call ERROR %s",
                                 self.contract.get_PDL_ID(),
                                 inst,
                             )
-                            # Erreur lors du call...
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
                             self.updateErrorLastCall(
                                 "{} - {}".format(
-                                    messages.getMessage(inst.args[2]),
+                                    str(inst),
                                     self._myCalli.getLastAnswer(),
                                 )
                             )
@@ -1275,23 +1271,19 @@ class myClientEnedis:
                                 " on retentera plus tard(A1)",
                                 self.contract.get_PDL_ID(),
                             )
-                        elif inst.args[:2] == (
-                            "call",
-                            "error_user_alert",
-                        ):  # gestion que c'est pas une erreur de contrat trop recent ?
+                        elif isinstance(inst, EnedisAuthError):
                             log.error(
                                 "%s - Erreur call ERROR %s",
                                 self.contract.get_PDL_ID(),
                                 inst,
                             )
-                            # Erreur lors du call...
                             self.updateTimeLastCall()
                             self.updateStatusLastCall(False)
                             self._myCalli.setLastAnswer("Enedis")
                             self.updateErrorLastCall(
                                 "%s - %s"
                                 % (
-                                    messages.getMessage(inst.args[2]),
+                                    str(inst),
                                     self._myCalli.getLastAnswer(),
                                 )
                             )
@@ -1319,16 +1311,16 @@ class myClientEnedis:
                                 " on retentera plus tard(B)",
                                 self.contract.get_PDL_ID(),
                             )
-                            raise Exception(inst)
+                            raise
 
                 except Exception as inst:
-                    if inst.args == ("call", None):
+                    if isinstance(inst, EnedisDataError):
                         log.error("*" * 60)
                         log.error(f"{self.contract.get_PDL_ID()} - Erreur call")
                         self.updateTimeLastCall()
                         self.updateStatusLastCall(False)
                         message = "{} - {}".format(
-                            messages.getMessage(inst.args[2]),
+                            str(inst),
                             self._myCalli.getLastAnswer(),
                         )
                         self.updateErrorLastCall(message)

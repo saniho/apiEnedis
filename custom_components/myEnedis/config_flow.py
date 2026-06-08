@@ -133,8 +133,6 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle options flow."""
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
-        token = "monToken"
-        code = "monCode"
         serviceEnedis = "enedisGateway"
         val_heures_creuses = ""
         all_repos = all_repos_Gateway
@@ -146,14 +144,6 @@ class myEnedisOptionsFlowHandler(config_entries.OptionsFlow):
                     default=self.config_entry.options.get(CONF_SERVICE_ENEDIS,
                                                           serviceEnedis),
                 ): vol.In(all_repos),
-                vol.Required(
-                    CONF_TOKEN,
-                    default=self.config_entry.options.get(CONF_TOKEN, token),
-                ): str,
-                vol.Required(
-                    CONF_CODE,
-                    default=self.config_entry.options.get(CONF_CODE, code),
-                ): str,
                 vol.Optional(
                     HC_COST,
                     default=self.config_entry.options.get(HC_COST, "0.0"),

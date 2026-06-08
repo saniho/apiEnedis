@@ -4,6 +4,7 @@ import logging
 from typing import Any
 
 from . import apiconst as API
+from .exceptions import EnedisApiError, EnedisAuthError
 
 try:
     from .const import (  # isort:skip
@@ -69,14 +70,14 @@ class myContrat:
             return myContrat._NULL_CONTRACT[clef]
 
     def __checkDataContract(self, dataAnswer):
-        if API.ERROR_CODE in dataAnswer.keys():
+        if API.ERROR_CODE in dataAnswer:
             if dataAnswer[API.ERROR_CODE] == "UNKERROR_001":
                 return False
-            raise Exception("call", "error", dataAnswer)
-        elif dataAnswer.get(API.ERROR_CODE, 200) != 200:
-            raise Exception("call", "error", dataAnswer[API.TAG])
-        elif dataAnswer.get("error", "") == "token_refresh_401":
-            raise Exception("call", "error", dataAnswer[API.DESCRIPTION])
+            raise EnedisApiError(str(dataAnswer))
+        if dataAnswer.get(API.ERROR_CODE, 200) != 200:
+            raise EnedisApiError(str(dataAnswer.get(API.TAG, "")))
+        if dataAnswer.get("error", "") == "token_refresh_401":
+            raise EnedisAuthError(dataAnswer.get(API.DESCRIPTION, ""))
         return True
 
     def getUsagePointStatus(self):
