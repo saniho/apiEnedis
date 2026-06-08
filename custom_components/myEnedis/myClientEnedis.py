@@ -184,9 +184,8 @@ class myClientEnedis:
                 with open(nomFichier) as json_file:
                     clef = os.path.basename(nomFichier).split(".")[0]
                     data[clef] = json.load(json_file)
-            except:
+            except Exception:
                 log.error(f" >>>> erreur lecture : {nomFichier}")
-                pass  # si erreur lecture ... on continue ;)
         return data
 
     def manageLastCallJson(self):
@@ -215,8 +214,7 @@ class myClientEnedis:
                     self.updateStatusLastCall(statutLastCall)
                 version = lastCallInformation.get("version", None)
                 log.info(f"manageLastCallJson : previous version : {version}")
-            except:
-                # si le fichier est mal formaté
+            except Exception:
                 pass
 
     def getPathArchive(self):
@@ -257,7 +255,7 @@ class myClientEnedis:
                 if not nePasEcrire:
                     with open(nomfichier, "w") as outfile:
                         json.dump(data, outfile)
-            except:
+            except Exception:
                 log.error(f" >>>> erreur ecriture : {nomfichier} / {data}")
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 log.error(sys.exc_info())

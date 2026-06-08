@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import datetime
 import logging
-from datetime import timedelta
 
 try:
+    from homeassistant.components.sensor import SensorEntity
     from homeassistant.const import ATTR_ATTRIBUTION
     from homeassistant.core import callback
     from homeassistant.helpers.restore_state import RestoreEntity
@@ -13,7 +13,6 @@ try:
         CoordinatorEntity,
         DataUpdateCoordinator,
     )
-    from homeassistant.util import Throttle
 
 except ImportError:
     # si py test
@@ -28,7 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 ICON = "mdi:package-variant-closed"
 
 
-class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
+class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity, SensorEntity):
     """."""
 
     def __init__(
@@ -41,8 +40,6 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
         self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
-        interval = sensor_type[ENTITY_DELAI]
-        self.update = Throttle(timedelta(seconds=interval))(self._update)
         self._attributes: dict[str, str] = {}
         self._state: str
         self._unit = "EUR"
@@ -78,12 +75,12 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
         return name
 
     @property
-    def state(self):
+    def native_value(self):
         """Return the state of the sensor."""
         return self._state
 
     @property
-    def unit_of_measurement(self):
+    def native_unit_of_measurement(self):
         """Return the unit of measurement of this entity, if any."""
         return self._unit
 
@@ -122,11 +119,6 @@ class myEnedisSensorYesterdayCostCoordinator(CoordinatorEntity, RestoreEntity):
                 self._lastYesterday = yesterdayDate
         self._attributes.update(status_counts)
         self._state = state
-
-    def _update(self):
-        """Update device state."""
-        self._attributes = {ATTR_ATTRIBUTION: ""}
-        self._state = "unavailable"
 
     @property
     def extra_state_attributes(self):

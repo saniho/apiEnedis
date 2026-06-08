@@ -1,30 +1,14 @@
 """Sensor for my first"""
 import logging
 
-try:
-    import homeassistant.helpers.config_validation as cv
-    import voluptuous as vol
-    from homeassistant.components.sensor import PLATFORM_SCHEMA
-    from homeassistant.config_entries import ConfigEntry
-    from homeassistant.core import HomeAssistant
-
-except ImportError:
-    # si py test
-    pass
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
 
 from .const import (  # isort:skip
     DOMAIN,
-    __name__,
     SENSOR_TYPES,
     COORDINATOR_ENEDIS,
-    CONF_TOKEN,
-    CONF_CODE,
-    CONF_SERVICE_ENEDIS,
-    HC_COST,
-    HP_COST,
-    HEURESCREUSES_ON,
-    HEURES_CREUSES,
     _production,
 )
 
@@ -45,19 +29,6 @@ from .myEnedisSensorCoordinatorEcoWatt import myEnedisSensorCoordinatorEcoWatt
 from .myEnedisSensorCoordinatorTempo import myEnedisSensorCoordinatorTempo
 
 _LOGGER = logging.getLogger(__name__)
-
-# pour gerer les anciennes config via yaml et le message d'erreur
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_SERVICE_ENEDIS): cv.string,
-        vol.Required(CONF_TOKEN): cv.string,
-        vol.Optional(CONF_CODE, default="enedisGateway"): cv.string,
-        vol.Optional(HC_COST, default="0.0"): cv.string,
-        vol.Optional(HP_COST, default="0.0"): cv.string,
-        vol.Optional(HEURESCREUSES_ON, default=True): cv.boolean,
-        vol.Optional(HEURES_CREUSES, default="[]"): cv.string,
-    }
-)
 
 ICON = "mdi:package-variant-closed"
 

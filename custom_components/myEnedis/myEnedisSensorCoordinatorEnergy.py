@@ -2,17 +2,16 @@
 from __future__ import annotations
 
 import logging
-from datetime import timedelta
 
 try:
-    from homeassistant.const import ATTR_ATTRIBUTION
+    from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
+    from homeassistant.const import ATTR_ATTRIBUTION, UnitOfEnergy
     from homeassistant.core import callback
     from homeassistant.helpers.restore_state import RestoreEntity
     from homeassistant.helpers.update_coordinator import (
         CoordinatorEntity,
         DataUpdateCoordinator,
     )
-    from homeassistant.util import Throttle
 
 except ImportError:
     # si py test
@@ -27,7 +26,7 @@ _LOGGER = logging.getLogger(__name__)
 ICON = "mdi:package-variant-closed"
 
 
-class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
+class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity, SensorEntity):
     """."""
 
     def __init__(
@@ -40,8 +39,6 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
         super().__init__(coordinator)
         self._myDataSensorEnedis = manageSensorState()
         self._myDataSensorEnedis.init(coordinator.clientEnedis, _LOGGER, __VERSION__)
-        interval = sensor_type[ENTITY_DELAI]
-        self.update = Throttle(timedelta(seconds=interval))(self._update)
         self._attributes: dict[str, str] = {}
         self._state: str
         self._unit = "kWh"
@@ -72,14 +69,9 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
         return name
 
     @property
-    def state(self):
+    def native_value(self):
         """Return the state of the sensor."""
         return self._state
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement of this entity, if any."""
-        return self._unit
 
     async def async_added_to_hass(self):
         """Handle entity which will be added."""
@@ -93,7 +85,7 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
             if "typeCompteur" in state.attributes:
                 self.attrs = state.attributes
                 _LOGGER.info("Redemarrage avec element present ??")
-        except:
+        except Exception:
             _LOGGER.info("Redemarrage mais rien de present")
 
         @callback
@@ -111,25 +103,31 @@ class myEnedisSensorCoordinatorEnergy(CoordinatorEntity, RestoreEntity):
         """Update sensors state."""
         self._attributes = {
             ATTR_ATTRIBUTION: "",
-            "device_class": "energy",
-            "state_class": "total",
-            "unit_of_measurement": self._unit,
-            "last_reset": "2021-01-01T00:00:00",  # à corriger plus tard !!
         }
         status_counts, state = self._myDataSensorEnedis.getStatusEnergy(
             self._typeSensor
         )
         self._state = state
 
-    def _update(self):
-        """Update device state."""
-        self._attributes = {ATTR_ATTRIBUTION: ""}
-        self._state = "unavailable"
-
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
         return self._attributes
+
+    @property
+    def device_class(self):
+        """Return the device class."""
+        return SensorDeviceClass.ENERGY
+
+    @property
+    def state_class(self):
+        """Return the state class."""
+        return SensorStateClass.TOTAL
+
+    @property
+    def native_unit_of_measurement(self):
+        """Return the unit of measurement."""
+        return UnitOfEnergy.KILO_WATT_HOUR
 
     @property
     def icon(self):

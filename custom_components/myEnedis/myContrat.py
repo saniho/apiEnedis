@@ -217,7 +217,7 @@ class myContrat:
                 try:  # gestion du 00:00 en heure de fin de creneau
                     if heure == {"24:00": "00:00"}[heureCreuse[1]]:
                         heurePleine = False
-                except:
+                except KeyError:
                     pass
                 if (heureCreuse[0] <= heure) and (heure < heureCreuse[1]):
                     heurePleine = False

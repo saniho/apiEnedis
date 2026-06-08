@@ -275,7 +275,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
                 _LOGGER.info(f"creation repertoire  ? {path}")
                 os.mkdir(path)
                 _LOGGER.info(f"repertoire cree {path}")
-        except:
+        except Exception:
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
         try:
@@ -284,7 +284,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
                 _LOGGER.info(f"creation repertoire  ? {path}")
                 os.mkdir(path)
                 _LOGGER.info(f"repertoire cree {path}")
-        except:
+        except Exception:
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
         try:
@@ -293,7 +293,7 @@ class sensorEnedisCoordinator(DataUpdateCoordinator):
                 _LOGGER.info(f"creation repertoire  ? {path}")
                 os.mkdir(path)
                 _LOGGER.info(f"repertoire cree {path}")
-        except:
+        except Exception:
             _LOGGER.info("error")
             _LOGGER.error(traceback.format_exc())
 
