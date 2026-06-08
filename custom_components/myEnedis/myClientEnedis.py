@@ -23,6 +23,7 @@ except ImportError:
 
 from . import apiconst as API
 from . import client_call_orchestrator as call_orch
+from . import client_getters as getters
 from .client_file_store import FileStore
 from .exceptions import EnedisApiError, EnedisAuthError, EnedisDataError
 from .myCall import myCall
@@ -152,20 +153,20 @@ class myClientEnedis:
         self._dataJson: dict[str, Any] = {}
 
     def getVersion(self) -> str:
-        return self._version
+        return getters.get_version(self)
 
     def setUpdateRealise(self, value: bool):
         self._updateRealise = value
 
     def getUpdateRealise(self) -> bool:
-        return self._updateRealise
+        return getters.get_update_realise(self)
 
     def setPathArchive(self, path: str):
         self._path = path
         self._file_store = FileStore(self._path, self._PDL_ID)
 
     def getServiceEnedis(self):
-        return self._serviceEnedis
+        return getters.get_service_enedis(self)
 
     def readDataJson(self):
         return self._file_store.read_all()
@@ -315,7 +316,7 @@ class myClientEnedis:
         self.setDataJsonValue(clefFunction, data)
 
     def getYesterday(self):
-        return self._yesterday
+        return getters.get_yesterday(self)
 
     def _run_update(self, clefFunction, data_obj, deb, fin, data=None, withControl=True):
         self.lastMethodCall = clefFunction
@@ -496,84 +497,89 @@ class myClientEnedis:
         self._run_update("updateYesterdayConsumptionMaxPower", self._yesterdayConsumptionMaxPower, deb, fin, data, withControl)
 
     def getYesterdayLastYear(self):
-        return self._yesterdayLastYear
+        return getters.get_yesterday_last_year(self)
 
     def getYesterdayConsumptionMaxPower(self):
-        return self._yesterdayConsumptionMaxPower
+        return getters.get_yesterday_consumption_max_power(self)
 
     def getProductionYesterday(self):
-        return self._productionYesterday
+        return getters.get_production_yesterday(self)
 
     def getYesterdayHCHP(self):
-        return self._yesterdayHCHP
+        return getters.get_yesterday_hchp(self)
 
     def getHCCost(self, val):
-        return val * self._heuresCreusesCost  # car à l'heure et non à la demi-heure
+        return getters.get_hc_cost(self, val)
 
     def getHPCost(self, val):
-        return val * self._heuresPleinesCost  # car à l'heure et non à la demi-heure
+        return getters.get_hp_cost(self, val)
 
     def getLastMonth(self):
-        return self._lastMonth
+        return getters.get_last_month(self)
 
     def getLastMonthLastYear(self):
-        return self._lastMonthLastYear
+        return getters.get_last_month_last_year(self)
 
     def getLastWeek(self):
-        return self._lastWeek
+        return getters.get_last_week(self)
 
     def getLast7Days(self):
-        return self._last7Days
+        return getters.get_last_7_days(self)
 
     def getLast7DaysDetails(self):
-        return self._last7DaysDetails
+        return getters.get_last_7_days_details(self)
 
     def getCurrentWeek(self):
-        return self._currentWeek
+        return getters.get_current_week(self)
 
     def getCurrentWeekLastYear(self):
-        return self._currentWeekLastYear
+        return getters.get_current_week_last_year(self)
 
     def getCurrentMonthLastYear(self):
-        return self._currentMonthLastYear
+        return getters.get_current_month_last_year(self)
 
     def getCurrentMonth(self):
-        return self._currentMonth
-
-    # def CallgetCurrentMonthDetails(self):
-    #    today = datetime.date.today()
-    #    debCurrentMonth = today.replace(day=1).strftime(_formatDateYmd)
-    #    cejour = today.strftime(_formatDateYmd)
-    #    if debCurrentMonth != cejour:
-    #        return self.getDataPeriodCLC(debCurrentMonth, cejour)
-    #    else:
-    #        return 0
+        return getters.get_current_month(self)
 
     def getLastYear(self):
-        return self._lastYear
+        return getters.get_last_year(self)
 
     def getCurrentYear(self):
-        return self._currentYear
+        return getters.get_current_year(self)
 
     def getEcoWatt(self):
-        return self._ecoWatt
+        return getters.get_ecowatt(self)
 
     def getTempo(self):
-        return self._tempo
+        return getters.get_tempo(self)
 
     def getLastUpdate(self):
-        return self._lastUpdate
+        return getters.get_last_update(self)
+
+    def getTimeLastCall(self):
+        return getters.get_time_last_call(self)
+
+    def getStatusLastCall(self):
+        return getters.get_status_last_call(self)
+
+    def getNbCall(self):
+        return getters.get_nb_call(self)
+
+    def getErrorLastCall(self):
+        return getters.get_error_last_call(self)
+
+    def getDelayError(self):
+        return getters.get_delay_error(self)
+
+    def getGitVersion(self):
+        return getters.get_git_version(self)
 
     def updateLastUpdate(self, t="_unset"):
         if t == "_unset":
             t = datetime.datetime.now()
         self._lastUpdate = t
 
-    def getTimeLastCall(self):
-        return self._timeLastUpdate
-
     def updateTimeLastCall(self, t=None):
-        # si on est dans le cas ou l'appel vient d'un forcage .. alors pas d'update
         if not self._forceCallJson:
             if t is None:
                 t = datetime.datetime.now()
@@ -584,23 +590,12 @@ class myClientEnedis:
             if t is not None:
                 self._timeLastUpdate = t
 
-    def getStatusLastCall(self):
-        return self._statusLastCall
-
-    def getNbCall(self):
-        return self._nbCall
-
     def setNbCall(self, nbCall):
         self._nbCall += nbCall
 
     def updateStatusLastCall(self, status):
-        if (
-            not self._forceCallJson
-        ):  # pour eviter d'ecraser le statut quand on recupere la date depuis le json
+        if not self._forceCallJson:
             self._statusLastCall = status
-
-    def getErrorLastCall(self):
-        return self._errorLastCall
 
     def getCardErrorLastCall(self):
         lastAnswer = self._myCalli.getLastAnswer()
@@ -615,17 +610,14 @@ class myClientEnedis:
             and API.TAG in lastAnswer
             and API.ERROR_CODE in lastAnswer
         ):
-            # si erreur autre que mauvais sens de lecture...
             if lastAnswer[API.ERROR_CODE] == "ADAM-ERR0069":
                 return ""
-            else:
-                return "{} ({}-{})".format(
-                    lastAnswer[API.DESCRIPTION],
-                    lastAnswer[API.ERROR_CODE],
-                    lastAnswer[API.TAG],
-                )
-        else:
-            return self.getErrorLastCall()
+            return "{} ({}-{})".format(
+                lastAnswer[API.DESCRIPTION],
+                lastAnswer[API.ERROR_CODE],
+                lastAnswer[API.TAG],
+            )
+        return self.getErrorLastCall()
 
     @property
     def lastMethodCall(self):
@@ -636,9 +628,7 @@ class myClientEnedis:
         self._lastMethodCall = methodName
         if self.lastMethodCallError == self._lastMethodCall:
             self.lastMethodCallError = ""
-            self.updateStatusLastCall(
-                True
-            )  # pour la prochaine reprenne normalement car tout est conforme
+            self.updateStatusLastCall(True)
 
     @property
     def lastMethodCallError(self):
@@ -653,9 +643,6 @@ class myClientEnedis:
 
     def setErrorLastCall(self, errorMessage):
         self._errorLastCall = errorMessage
-
-    def getDelayError(self):
-        return self._delay
 
     def getDelayIsGoodAfterError(self, currentDateTime):
         timeLastCall = self.getTimeLastCall()
@@ -674,25 +661,19 @@ class myClientEnedis:
         else:
             ecartOk = True
             log.info("DelayIsGoodAfterError: TimeLastCall is None, True")
-        # test
-        # ecartOk = True
         return ecartOk
 
     def getHoraireMin(self):
         return self._horaireMin.hour * 100 + self._horaireMin.minute
 
     def getHorairePossible(self):
-        # hier 23h
         hourNow = datetime.datetime.now().hour * 100 + datetime.datetime.now().minute
         hourMin = self.getHoraireMin()
         horairePossible = (hourNow >= hourMin) and (hourNow < 2330)
-        # for test
-        # horairePossible = ( hourNow >= 11 ) and ( hourNow < 23 )
         log.info(f"HorairePossible: {hourMin}<={hourNow}<2330 => {horairePossible}")
         return horairePossible
 
     def getLastCallHier(self):
-        """Return true if the last call was for yesterday"""
         if self.getTimeLastCall() is not None:
             hier = (datetime.datetime.now() - datetime.timedelta(days=1)).replace(
                 hour=23, minute=40
@@ -703,15 +684,7 @@ class myClientEnedis:
             lastCallHier = False
         return lastCallHier
 
-    def getGitVersion(self):
-        # if self._gitVersion is None:
-        #     await self.hass.async_add_executor_job(self.updateGitVersion())
-        return self._gitVersion
-
     def updateGitVersion(self):
-        # gitInfo = gitinformation.gitinformation(const.GITHUB_PRJ)
-        # gitInfo.getInformation()
-        # self._gitVersion = gitInfo.getVersion()
         self._gitVersion = ""
 
     def getCallPossible(self, trace=False):
