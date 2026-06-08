@@ -1,5 +1,5 @@
 from . import apiconst as API
-from .exceptions import EnedisApiError, EnedisAuthError, EnedisDataError
+from .exceptions import EnedisApiError, EnedisAuthError, EnedisDataError, EnedisQuotaError
 
 
 _OK_ERRORS_CONTRACT = {"ADAM-DC-0008", "ADAM-ERR0069", "UNKERROR_002"}
@@ -29,6 +29,8 @@ class myCheckData:
             raise EnedisAuthError(
                 dataAnswer[API.ERROR], dataAnswer[API.DESCRIPTION]
             )
+        if "detail" in dataAnswer and "quota" in str(dataAnswer["detail"]).lower():
+            raise EnedisQuotaError(str(dataAnswer["detail"]))
         return None
 
     def analyseValueAndAdd(self, data):

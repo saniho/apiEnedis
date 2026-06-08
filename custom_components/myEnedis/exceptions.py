@@ -15,3 +15,9 @@ class EnedisAuthError(EnedisError):
 
 class EnedisDataError(EnedisError):
     """No data available."""
+
+
+class EnedisQuotaError(EnedisApiError):
+    """API quota exceeded (50 calls/day)."""
+
+

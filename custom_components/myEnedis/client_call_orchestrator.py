@@ -11,7 +11,7 @@ try:
 except ImportError:
     from const import __nameMyEnedis__, _ENEDIS_MyElectricData  # type: ignore[no-redef]
 
-from .exceptions import EnedisApiError, EnedisAuthError, EnedisDataError
+from .exceptions import EnedisApiError, EnedisAuthError, EnedisDataError, EnedisQuotaError
 
 log = logging.getLogger(__nameMyEnedis__)
 
@@ -243,6 +243,12 @@ def _handle_update_exception(client, inst):
         log.error(
             "myEnedis ...%s update termine, on retentera plus tard(A2)",
             client.contract.get_PDL_ID(),
+        )
+    elif isinstance(inst, EnedisQuotaError):
+        log.warning(
+            "%s - Quota API atteint, données conservées : %s",
+            client.contract.get_PDL_ID(),
+            inst,
         )
     else:
         client.updateTimeLastCall()
