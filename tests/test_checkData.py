@@ -1,4 +1,5 @@
 """Tests for myCheckData with unified error checking."""
+import datetime
 import json
 import os
 
@@ -150,9 +151,39 @@ class TestAnalyseValueEcoWatt:
         assert check.analyseValueEcoWatt(None) is None
 
 
+class TestAnalyseValueEcoWattDetail:
+    def test_with_detail_key(self, check):
+        """When data has a 'detail' key, returns empty dict."""
+        result = check.analyseValueEcoWatt({"detail": {"some": "data"}})
+        assert result == {}
+
+    def test_with_valid_data(self, check):
+        data = load_json("EcoWatt/updateEcoWatt.json")
+        result = check.analyseValueEcoWatt(data)
+        assert isinstance(result, dict)
+        assert len(result) > 0
+        # Keys should be datetime objects
+        for k in result:
+            assert isinstance(k, datetime.datetime)
+        # Values should have expected structure
+        first_key = list(result.keys())[0]
+        first_val = result[first_key]
+        assert "value" in first_val
+        assert "message" in first_val
+
+
 class TestAnalyseValueTempo:
     def test_tempo_none(self, check):
         assert check.analyseValueTempo(None) is None
+
+    def test_tempo_empty_dict(self, check):
+        assert check.analyseValueTempo({}) == {}
+
+    def test_tempo_with_data(self, check):
+        result = check.analyseValueTempo({"2024-01-01": "BLUE", "2024-01-02": "RED"})
+        assert len(result) == 2
+        assert result[datetime.datetime(2024, 1, 1)] == "BLUE"
+        assert result[datetime.datetime(2024, 1, 2)] == "RED"
 
 
 class TestAnalyseValueAndMadeDico:
