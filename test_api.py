@@ -74,7 +74,10 @@ def _load_or_fetch(call_or_none, fname, fetch_fn):
             return None, True
         return _load(fname), True
     print(f"  Appel HTTP...")
-    return fetch_fn()
+    result = fetch_fn()
+    if isinstance(result, tuple) and len(result) == 2:
+        return result
+    return result, True
 
 
 # ---------------------------------------------------------------------------
