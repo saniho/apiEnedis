@@ -29,8 +29,11 @@ class myCheckData:
             raise EnedisAuthError(
                 dataAnswer[API.ERROR], dataAnswer[API.DESCRIPTION]
             )
-        if "detail" in dataAnswer and "quota" in str(dataAnswer["detail"]).lower():
-            raise EnedisQuotaError(str(dataAnswer["detail"]))
+        if "detail" in dataAnswer:
+            msg = str(dataAnswer["detail"])
+            if "quota" in msg.lower():
+                raise EnedisQuotaError(msg)
+            raise EnedisApiError(msg)
         return None
 
     def analyseValueAndAdd(self, data):
